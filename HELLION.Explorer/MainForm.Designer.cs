@@ -1,35 +1,33 @@
-﻿namespace HELLION
+﻿namespace HELLION.Explorer
 {
-    namespace Explorer
+    partial class MainForm
     {
-        partial class MainForm
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            /// <summary>
-            /// Required designer variable.
-            /// </summary>
-            private System.ComponentModel.IContainer components = null;
-
-            /// <summary>
-            /// Clean up any resources being used.
-            /// </summary>
-            /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-            protected override void Dispose(bool disposing)
+            if (disposing && (components != null))
             {
-                if (disposing && (components != null))
-                {
-                    components.Dispose();
-                }
-                base.Dispose(disposing);
+                components.Dispose();
             }
+            base.Dispose(disposing);
+        }
 
-            #region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-            /// <summary>
-            /// Required method for Designer support - do not modify
-            /// the contents of this method with the code editor.
-            /// </summary>
-            private void InitializeComponent()
-            {
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,10 +89,10 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.editToolStripMenuItem,
-            this.toolsToolStripMenuItem,
-            this.helpToolStripMenuItem});
+        this.fileToolStripMenuItem,
+        this.editToolStripMenuItem,
+        this.toolsToolStripMenuItem,
+        this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1239, 24);
@@ -104,15 +102,15 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
-            this.closeToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.propertiesToolStripMenuItem,
-            this.toolStripSeparator3,
-            this.exitToolStripMenuItem});
+        this.openToolStripMenuItem,
+        this.closeToolStripMenuItem,
+        this.toolStripSeparator1,
+        this.saveToolStripMenuItem,
+        this.saveAsToolStripMenuItem,
+        this.toolStripSeparator2,
+        this.propertiesToolStripMenuItem,
+        this.toolStripSeparator3,
+        this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -179,11 +177,11 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.findToolStripMenuItem,
-            this.findNextToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.deleteToolStripMenuItem,
-            this.selectAllToolStripMenuItem});
+        this.findToolStripMenuItem,
+        this.findNextToolStripMenuItem,
+        this.toolStripSeparator4,
+        this.deleteToolStripMenuItem,
+        this.selectAllToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -228,10 +226,10 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cleanupToolStripMenuItem,
-            this.repairToolStripMenuItem,
-            this.toolStripSeparator5,
-            this.optionsToolStripMenuItem});
+        this.cleanupToolStripMenuItem,
+        this.repairToolStripMenuItem,
+        this.toolStripSeparator5,
+        this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -258,7 +256,7 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setDataFolderLocationToolStripMenuItem});
+        this.setDataFolderLocationToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -273,7 +271,7 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+        this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -295,7 +293,7 @@
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
+        this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 565);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1239, 22);
@@ -362,8 +360,8 @@
             this.listView1.AutoArrange = false;
             this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
+        this.columnHeader1,
+        this.columnHeader2});
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.listView1.FullRowSelect = true;
@@ -493,53 +491,52 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
-            }
-
-            #endregion
-
-            private System.Windows.Forms.MenuStrip menuStrip1;
-            private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-            private System.Windows.Forms.OpenFileDialog openFileDialog1;
-            private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-            private System.Windows.Forms.StatusStrip statusStrip1;
-            private System.Windows.Forms.SplitContainer splitContainer1;
-            public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-            public System.Windows.Forms.TreeView tvNavigationTree;
-            private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-            public System.Windows.Forms.Label label1;
-            private System.Windows.Forms.SplitContainer splitContainer2;
-            private System.Windows.Forms.TabControl tabControl1;
-            private System.Windows.Forms.TabPage tabPage1;
-            private System.Windows.Forms.TabPage tabPage2;
-            public System.Windows.Forms.TextBox textBox1;
-            public System.Windows.Forms.ListView listView1;
-            private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-            private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-            private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
-            private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-            private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
-            private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-            private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
-            private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-            private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem cleanupToolStripMenuItem;
-            private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-            private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem setDataFolderLocationToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
-            private System.Windows.Forms.ToolStripMenuItem repairToolStripMenuItem;
-            public System.Windows.Forms.TextBox textBox2;
-            private System.Windows.Forms.ColumnHeader columnHeader1;
-            private System.Windows.Forms.ColumnHeader columnHeader2;
         }
-    } // End of namespace Explorer
-} // End of namespace HELLION
+
+        #endregion
+
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        public System.Windows.Forms.TreeView tvNavigationTree;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        public System.Windows.Forms.Label label1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        public System.Windows.Forms.TextBox textBox1;
+        public System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cleanupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setDataFolderLocationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findNextToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem repairToolStripMenuItem;
+        public System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+    }
+} // End of namespace HELLION.Explorer
 
