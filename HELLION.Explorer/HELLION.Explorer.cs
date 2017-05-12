@@ -26,16 +26,6 @@ namespace HELLION.Explorer
 
         private static bool bLogToDebug = true;
 
-        /* soon to be defunct object definitions
-        public static bool isFileOpen = false;
-        public static string openFileName = "";
-        public static bool isFileDirty = false;
-        public static JObject openFileData;
-
-        public static IList<HECelestialBody> dataCelestialBodies;
-        //public static IEnumerable<object> iCelestialBodies;
-        */
-
         public static void ControlledExit()
         {
             // Check the current document isn't null
@@ -135,7 +125,7 @@ namespace HELLION.Explorer
                 string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
 
                 docCurrent.MainFile.FileName = openFileDialog1.FileName;
-                MessageBox.Show("Loading file: " + docCurrent.MainFile.FileName);
+                frmMainForm.toolStripStatusLabel1.Text = ("Loading file: " + docCurrent.MainFile.FileName);
 
                 if (Properties.HELLIONExplorer.Default.bLoadCelestialBodiesFile)
                 {
@@ -144,6 +134,7 @@ namespace HELLION.Explorer
                 else
                 {
                     docCurrent.DataFileCelestialBodies.SkipLoading = true;
+
                 }
 
                 if (Properties.HELLIONExplorer.Default.bLoadAsteroidsFile)
@@ -200,6 +191,7 @@ namespace HELLION.Explorer
                     frmMainForm.tvNavigationTree.Nodes.Add(docCurrent.RootNode);
                     frmMainForm.tvNavigationTree.SelectedNode = docCurrent.RootNode;
                     frmMainForm.tvNavigationTree.SelectedNode.Expand();
+                    frmMainForm.toolStripStatusLabel1.Text = ("Loading complete");
                 }
                 else
                 {

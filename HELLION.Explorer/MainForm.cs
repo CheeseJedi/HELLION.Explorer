@@ -60,15 +60,31 @@ namespace HELLION.Explorer
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
 
+            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEDocumentWorkspace)).GetName();
+            sb.Append(anHELLIONDataStructures.Name);
+            sb.Append("   Version ");
+            sb.Append(anHELLIONDataStructures.Version);
+
+            sb.Append(Environment.NewLine);
+
+            var anNewtonsoftJson = System.Reflection.Assembly.GetAssembly(typeof(JObject)).GetName();
+            sb.Append(anNewtonsoftJson.Name);
+            sb.Append("   Version ");
+            sb.Append(anNewtonsoftJson.Version);
+
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+
             sb.Append("Uses the Newtonsoft JSON library http://www.newtonsoft.com/json");
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
 
-            sb.Append("This product is 100% certified Cheeseware and is not dishwasher safe.");
+            sb.Append("This product is 100% certified Cheeseware* and is not dishwasher safe.");
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
 
-            sb.Append("cheeseware (Noun)");
+            sb.Append("* cheeseware (Noun)");
             sb.Append(Environment.NewLine);
             sb.Append("  1. (computing, slang, pejorative) Exceptionally low-quality software.");
             sb.Append(Environment.NewLine);
