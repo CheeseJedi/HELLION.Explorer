@@ -1,0 +1,45 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HELLION.Explorer.Properties" GeneratedClassName="HELLIONExplorer">
+  <Profiles />
+  <Settings>
+    <Setting Name="sGameDataFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="bLoadCelestialBodiesFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="sCelestialBodiesFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">CelestialBodies.json</Value>
+    </Setting>
+    <Setting Name="bLoadAsteroidsFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="sAsteroidsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Asteroids.json</Value>
+    </Setting>
+    <Setting Name="bLoadStructuresFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="sStructuresFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Structures.json</Value>
+    </Setting>
+    <Setting Name="bLoadDynamicObjectsFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="sDynamicObjectsFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DynamicObjects.json</Value>
+    </Setting>
+    <Setting Name="bLoadModulesFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="sModulesFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Modules,json</Value>
+    </Setting>
+    <Setting Name="bLoadStationsFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="sStationsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Stations.json</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
