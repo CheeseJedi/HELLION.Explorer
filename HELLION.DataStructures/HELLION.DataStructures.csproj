@@ -48,6 +48,8 @@
     <Compile Include="HEDocumentWorkspace.cs" />
     <Compile Include="HEGameFile.cs" />
     <Compile Include="HEJsonFile.cs" />
+    <Compile Include="HEObjectTypesImageList.cs" />
+    <Compile Include="HEOrbitalData.cs" />
     <Compile Include="HEOrbitalObjTreeNode.cs" />
     <Compile Include="HEOrbitalObjTreeNodeComparer.cs" />
     <Compile Include="HETreeNode.cs" />

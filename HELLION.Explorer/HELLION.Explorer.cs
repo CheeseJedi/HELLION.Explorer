@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using HELLION.DataStructures;
+using System.Drawing;
+using System.Reflection;
 //using System.IO;
 //using System.Collections.Generic;
 //using System.Linq;
@@ -23,6 +25,9 @@ namespace HELLION.Explorer
 
         // Define an object to hold the current open document
         public static HEDocumentWorkspace docCurrent = null;
+
+        // Define an ImageList and fill it
+        public static ImageList ilObjectTypesImageList = BuildObjectTypesImageList();
 
         private static bool bLogToDebug = true;
 
@@ -61,7 +66,70 @@ namespace HELLION.Explorer
             */
         }
 
+        public static ImageList BuildObjectTypesImageList()
+        {
+            // Create a new ImageList to hold images used as icons in the tree and list views
+            ImageList ilObjectTypesImageList = new ImageList();
 
+            // there must be a better way of doing this, perhaps read from JSON file ;) 
+            string[] sListOfImages1 = new string[] {
+                "3DCameraOrbit_16x.png",
+                "3DExtrude_16x.png",
+                "3DScene_16x.png",
+                "Actor_16x.png",
+                "Assembly_16x.png",
+                "AzureLogicApp_16x.png",
+                "AzureLogicApp_color_16x.png",
+                "ButtonIcon_16x.png",
+                "CheckDot_16x.png",
+                "Checkerboard_16x.png",
+                "Component_16x.png",
+                "Contrast_16x.png",
+                "CSWorkflowDiagram_16x.png",
+                "DarkTheme_16x.png",
+                "Diagnose_16x.png",
+                "Document_16x.png",
+                "DomainType_16x.png",
+                "Driver_16x.png",
+                "Ellipsis_16x.png",
+                "Event_16x.png",
+                "ExplodedPieChart_16x.png",
+                "Filter_16x.png",
+                "FindResults_16x.png",
+                "Flag_16x.png",
+                "Gauge_16x.png",
+                "HotSpot_16x.png",
+                "Hub_16x.png",
+                "PieChart_16x.png",
+                "Property_16x.png",
+                "Settings_16x.png",
+                "Shader_16x.png",
+                "Share_16x.png",
+                "TreeView_16x.png"
+            };
+
+            // Use System.Reflection to get a list of all resource names
+            string[] sListOfImages = Assembly.GetEntryAssembly().GetManifestResourceNames();
+
+            // Get the currently executing assembly name
+            string sEntryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
+            //MessageBox.Show(sEntryAssemblyName);
+
+            // Process string array of resource names (this includes the namespace name)
+            foreach (string sImageName in sListOfImages)
+            {
+                if (sImageName.Contains(sEntryAssemblyName + ".Images."))
+                {
+                    //MessageBox.Show(sImageName);
+
+                    ilObjectTypesImageList.Images.Add(Image.FromStream(Assembly.GetEntryAssembly().GetManifestResourceStream(sImageName)));
+    
+                   }
+            }
+
+            // Return the image list
+            return ilObjectTypesImageList;
+        } // End of BuildObjectTypesImageList()
 
         public static void FileOpen()
         {
@@ -86,8 +154,6 @@ namespace HELLION.Explorer
             if (openFileDialog1.ShowDialog() == DialogResult.OK) // && openFileDialog1.CheckFileExists)
             {
 
-                // isFileOpen = true;
-                // isFileDirty = false;
                 RefreshMainFormTitleText();
 
                 //Application.UseWaitCursor = true;
@@ -96,13 +162,7 @@ namespace HELLION.Explorer
                 // Suppress repainting the TreeView until all the objects have been created.
                 frmMainForm.tvNavigationTree.BeginUpdate();
 
-                // Clear any existing nod
-
-
-
-
-
-
+                // Clear any existing nodes
                 frmMainForm.tvNavigationTree.Nodes.Clear();
 
                 docCurrent = new HEDocumentWorkspace()
@@ -111,14 +171,7 @@ namespace HELLION.Explorer
                     LogToDebug = bLogToDebug
                 };
 
-                // Apply the LogToDebug setting to all HEJsonFile objects
-                docCurrent.MainFile.LogToDebug = docCurrent.LogToDebug;
-                docCurrent.DataFileCelestialBodies.LogToDebug = docCurrent.LogToDebug;
-                docCurrent.DataFileAsteroids.LogToDebug = docCurrent.LogToDebug;
-                docCurrent.DataFileStructures.LogToDebug = docCurrent.LogToDebug;
-                docCurrent.DataFileDynamicObjects.LogToDebug = docCurrent.LogToDebug;
-                docCurrent.DataFileStructures.LogToDebug = docCurrent.LogToDebug;
-                docCurrent.DataFileStations.LogToDebug = docCurrent.LogToDebug;
+
 
 
                 // Grab the Game Data Folder from Properties
@@ -211,7 +264,7 @@ namespace HELLION.Explorer
                     
 
             }
-        } // End of FileOpen
+        } // End of FileOpen()
 
         public static bool IsGameDataFolderDefined()
         {
@@ -295,7 +348,7 @@ namespace HELLION.Explorer
             }
 
             frmMainForm.label1.Text = sb.ToString();
-        } // End of RefreshSelectedOjectPathBarText
+        } // End of RefreshSelectedOjectPathBarText()
 
         internal static void RefreshListView(HEOrbitalObjTreeNode nSelectedNode)
         {
@@ -406,7 +459,7 @@ namespace HELLION.Explorer
 
 
 
-        } // End of RefreshObjectSummaryText
+        } // End of RefreshObjectSummaryText()
 
         /// <summary>
         /// The main entry point for the application.
@@ -422,7 +475,20 @@ namespace HELLION.Explorer
             //Application.Run(new frmMainForm());
             frmMainForm = new MainForm();
             RefreshMainFormTitleText();
-                
+            // Set the tvNavigationTree and listView1 ImageLists to  
+            // ilObjectTypesImageList and set the default icons
+            frmMainForm.tvNavigationTree.ImageList = ilObjectTypesImageList;
+            frmMainForm.tvNavigationTree.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
+            frmMainForm.tvNavigationTree.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
+
+            frmMainForm.listView1.SmallImageList = ilObjectTypesImageList;
+            
+
+
+
+
+
+
 
             frmMainForm.ShowDialog();
         }

@@ -61,15 +61,6 @@ namespace HELLION.DataStructures
         {
             // Builds the solar system
             AddCBTreeNodesRecursively(DataFileCelestialBodies.JData, nThisNode: null, lParentGUID: -1, iDepth: 10, bLogToDebug: LogToDebug);
-            /*
-                IOrderedEnumerable<JToken> ioShips = from s in openFileData["Ships"]
-                                        where (string)s["OrbitData"]["ParentGUID"] == sThisNodeGUID
-                                        orderby (long)s["OrbitData"]["SemiMajorAxis"]
-                                        select s;
-
-                foreach (var jtShip in ioShips)
-            */
-
         } // End of BuildSolarSystem()
 
         public void AddCBTreeNodesRecursively(
@@ -134,7 +125,9 @@ namespace HELLION.DataStructures
                             SemiMajorAxis = (float)cbChild["SemiMajorAxis"],
                             Inclination = (float)cbChild["Inclination"],
                             Text = (string)cbChild["Name"],
-                            Tag = cbChild
+                            Tag = cbChild,
+                            ImageIndex = (int)HEObjectTypesImageList.Contrast_16x,
+                            SelectedImageIndex = (int)HEObjectTypesImageList.Contrast_16x
                         };
 
                         //Check to see if nThisNode is null and lParentGUI is -1 representing a root node which gets handled differently
@@ -144,6 +137,8 @@ namespace HELLION.DataStructures
                             if (bLogToDebug)
                             {
                                 Debug.Print("Creating ROOT node");
+                                nChildNode.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
+                                nChildNode.SelectedImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
                                 RootNode = nChildNode;
                             }
                             // Place first node
@@ -345,7 +340,7 @@ namespace HELLION.DataStructures
                             Debug.Print(sIndent + ">> Call: AddOrbitalObjTreeNodesRecursively with GUID: " + nChildNode.GUID);
                             Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                         }
-                        AddOrbitalObjTreeNodesRecursively(openFileData, nChildNode, ntAddNodesOfType, iDepth - 1, bLogToDebug, ++iLogIndentLevel);
+                        AddOrbitalObjTreeNodesRecursively(openFileData, nChildNode, ntAddNodesOfType, iDepth - 1, bLogToDebug, iLogIndentLevel +1);
 
                         if (bLogToDebug)
                         {
@@ -384,13 +379,26 @@ namespace HELLION.DataStructures
                             HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
                             {
                                 Name = (string)jtOrbitalObject["Name"],
-                                NodeType = ntAddNodesOfType, // HETreeNodeType.Ship,
+                                NodeType = ntAddNodesOfType,
                                 Text = (string)jtOrbitalObject["Name"],
                                 GUID = (long)jtOrbitalObject["GUID"],
                                 ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
                                 SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
                                 Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"],
                                 Tag = jtOrbitalObject
+                            };
+
+                            switch (ntAddNodesOfType)
+                            {
+                                case HETreeNodeType.Asteroid:
+                                    nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
+                                    nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
+                                    break;
+                                case HETreeNodeType.Ship:
+                                    nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
+                                    nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
+                                    break;
+                               
                             };
 
                             //Check and only continue if nThisNode is not null
@@ -442,7 +450,9 @@ namespace HELLION.DataStructures
                                 Text = (string)jtPlayerObject["Name"],
                                 GUID = (long)jtPlayerObject["GUID"],
                                 ParentGUID = (long)jtPlayerObject["ParentGUID"],
-                                Tag = jtPlayerObject
+                                Tag = jtPlayerObject,
+                                ImageIndex = (int)HEObjectTypesImageList.Actor_16x,
+                                SelectedImageIndex = (int)HEObjectTypesImageList.Actor_16x
                             };
 
                             //Check and only continue if nThisNode is not null
@@ -493,6 +503,17 @@ namespace HELLION.DataStructures
             if (File.Exists(MainFile.FileName))
             {
                 // do stuff
+
+                // Apply the LogToDebug setting to all HEJsonFile objects
+                MainFile.LogToDebug = LogToDebug;
+                DataFileCelestialBodies.LogToDebug = LogToDebug;
+                DataFileAsteroids.LogToDebug = LogToDebug;
+                DataFileStructures.LogToDebug = LogToDebug;
+                DataFileDynamicObjects.LogToDebug = LogToDebug;
+                DataFileStructures.LogToDebug = LogToDebug;
+                DataFileStations.LogToDebug = LogToDebug;
+
+
 
                 //Load Main File
                 MainFile.LoadFile();

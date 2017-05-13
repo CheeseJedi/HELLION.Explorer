@@ -134,10 +134,45 @@
       <Name>HELLION.DataStructures</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\3DCameraOrbit_16x.png" />
+    <EmbeddedResource Include="Images\3DExtrude_16x.png" />
+    <EmbeddedResource Include="Images\3DScene_16x.png" />
+    <EmbeddedResource Include="Images\Actor_16x.png" />
+    <EmbeddedResource Include="Images\Assembly_16x.png" />
+    <EmbeddedResource Include="Images\AzureLogicApp_16x.png" />
+    <EmbeddedResource Include="Images\AzureLogicApp_color_16x.png" />
+    <EmbeddedResource Include="Images\ButtonIcon_16x.png" />
+    <EmbeddedResource Include="Images\CheckDot_16x.png" />
+    <EmbeddedResource Include="Images\Checkerboard_16x.png" />
+    <EmbeddedResource Include="Images\Component_16x.png" />
+    <EmbeddedResource Include="Images\Contrast_16x.png" />
+    <EmbeddedResource Include="Images\CSWorkflowDiagram_16x.png" />
+    <EmbeddedResource Include="Images\DarkTheme_16x.png" />
+    <EmbeddedResource Include="Images\Diagnose_16x.png" />
+    <EmbeddedResource Include="Images\Document_16x.png" />
+    <EmbeddedResource Include="Images\DomainType_16x.png" />
+    <EmbeddedResource Include="Images\Driver_16x.png" />
+    <EmbeddedResource Include="Images\Ellipsis_16x.png" />
+    <EmbeddedResource Include="Images\Event_16x.png" />
+    <EmbeddedResource Include="Images\ExplodedPieChart_16x.png" />
+    <EmbeddedResource Include="Images\Filter_16x.png" />
+    <EmbeddedResource Include="Images\FindResults_16x.png" />
+    <EmbeddedResource Include="Images\Flag_16x.png" />
+    <EmbeddedResource Include="Images\Gauge_16x.png" />
+    <EmbeddedResource Include="Images\HotSpot_16x.png" />
+    <EmbeddedResource Include="Images\Hub_16x.png" />
+    <EmbeddedResource Include="Images\PieChart_16x.png" />
+    <EmbeddedResource Include="Images\Property_16x.png" />
+    <EmbeddedResource Include="Images\Settings_16x.png" />
+    <EmbeddedResource Include="Images\Shader_16x.png" />
+    <EmbeddedResource Include="Images\Share_16x.png" />
+    <EmbeddedResource Include="Images\TreeView_16x.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseGlobalSettings="True" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" />
+      <UserProperties BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

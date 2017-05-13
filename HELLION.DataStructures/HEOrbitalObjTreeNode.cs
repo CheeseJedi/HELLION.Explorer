@@ -11,8 +11,11 @@ namespace HELLION.DataStructures
         public string RealName { get; set; }
         public long GUID { get; set; }
         public long ParentGUID { get; set; }
+        public int SceneID { get; set; }
+        public int Type { get; set; }
         public float SemiMajorAxis { get; set; }
         public float Inclination { get; set; }
+        public HEOrbitalData OrbitData {get; set; }
 
         public HEOrbitalObjTreeNode()
         {
@@ -21,19 +24,11 @@ namespace HELLION.DataStructures
             RealName = "";
             GUID = 0;
             ParentGUID = 0;
+            SceneID = 0;
+            Type = 0;
             SemiMajorAxis = 0;
             Inclination = 0;
+            OrbitData = new HEOrbitalData();
         }
-
-        /* Constructor
-        public HEOrbitalObjTreeNode(int nodeId, string nodeType, string fp)
-        {
-            // Constructor that takes some arguments.
-            //NodeId = nodeId;
-            //NodeType = nodeType;
-            //this.Text = fp.Substring(fp.LastIndexOf("\\"));
-        }
-        */
-
     } // End of class HETreeNode
 } // End of namespace HELLION.DataStructures
