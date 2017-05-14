@@ -335,17 +335,19 @@ namespace HELLION.Explorer
             // Update the object path + name + Tag in the object summary bar
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(">>");
+            sb.Append(">> ");
             sb.Append(nSelectedNode.FullPath);
             sb.Append("  (");
             sb.Append(nSelectedNode.NodeType.ToString());
             sb.Append(")");
 
+            /*
             if (bLogToDebug)
             {
                 sb.Append(" GUID: [" + nSelectedNode.GUID + "]");
                 sb.Append(" ParentGUID: [" + nSelectedNode.ParentGUID + "]");
             }
+            */
 
             frmMainForm.label1.Text = sb.ToString();
         } // End of RefreshSelectedOjectPathBarText()
@@ -355,18 +357,25 @@ namespace HELLION.Explorer
             //throw new NotImplementedException();
             frmMainForm.listView1.Items.Clear();
 
+
+
             foreach (HEOrbitalObjTreeNode nodeChild in nSelectedNode.Nodes)
             {
 
-                string[] arr = new string[2];
+                string[] arr = new string[5];
                 arr[0] = nodeChild.Text;
                 arr[1] = nodeChild.NodeType.ToString();
+                arr[2] = nodeChild.OrbitData.ParentGUID.ToString();
+                arr[3] = nodeChild.GUID.ToString();
+                arr[4] = nodeChild.SceneID.ToString();
+
 
                 ListViewItem liNewItem = new ListViewItem(arr)
                 {
                     Name = nodeChild.Text,
                     Text = nodeChild.Text,
                     Tag = nodeChild.NodeType.ToString()
+                    
                 };
 
 
@@ -526,7 +535,14 @@ namespace HELLION.Explorer
             frmMainForm.tvNavigationTree.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
 
             frmMainForm.listView1.SmallImageList = ilObjectTypesImageList;
-            
+            // Add some colums appropriate to the data we intend to add
+            frmMainForm.listView1.Columns.Add("Name", 180, HorizontalAlignment.Left);
+            frmMainForm.listView1.Columns.Add("Type", 160, HorizontalAlignment.Left);
+            frmMainForm.listView1.Columns.Add("ParentGUID", 50, HorizontalAlignment.Right);
+            frmMainForm.listView1.Columns.Add("GUID", 50, HorizontalAlignment.Right);
+            frmMainForm.listView1.Columns.Add("SceneID", 50, HorizontalAlignment.Right);
+
+
 
 
 

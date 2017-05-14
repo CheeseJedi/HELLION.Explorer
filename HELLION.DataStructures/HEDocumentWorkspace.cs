@@ -453,7 +453,7 @@ namespace HELLION.DataStructures
                                     {
                                         Name = "SceneID_" + (string)jtOrbitalObject["SceneID"],
                                         NodeType = HETreeNodeType.Scene,
-                                        Text = "Scene ID " + (string)jtOrbitalObject["SceneID"],
+                                        Text = "Scene " + (string)jtOrbitalObject["SceneID"],
                                         //GUID = (long)jtOrbitalObject["GUID"],
                                         ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
                                         SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],

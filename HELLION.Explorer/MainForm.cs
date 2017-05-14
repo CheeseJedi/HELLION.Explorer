@@ -136,5 +136,26 @@ namespace HELLION.Explorer
         {
             Program.DefineGameFolder();
         }
+
+        private void navigationPaneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer1.Panel1Collapsed = !splitContainer1.Panel1Collapsed;
+
+        }
+
+        private void dynamicListPaneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer2.Panel1Collapsed = !splitContainer2.Panel1Collapsed;
+        }
+
+        private void infoPaneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainer2.Panel2Collapsed = !splitContainer2.Panel2Collapsed;
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 } // End of namespace HELLION.Explorer
