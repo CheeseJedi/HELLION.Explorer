@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Collections.Generic; // for IEnumerable
 using System.Linq;
 using System.Diagnostics;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Security.Cryptography;
+using HSLColorConverter;
+using System.Text;
 
 namespace HELLION.DataStructures
 {
@@ -16,7 +21,6 @@ namespace HELLION.DataStructures
         // to populate the dynamic list and full data from the source.
         // Eventually will include modifying and saving out the data.
 
-        //public string FileName { get; set; }
         public bool IsFileReady { get; private set; }
         public bool LoadError { get; private set; }
         public bool IsFileDirty { get; private set; }
@@ -55,6 +59,18 @@ namespace HELLION.DataStructures
             DataFileDynamicObjects = new HEJsonFile();
             DataFileModules = new HEJsonFile();
             DataFileStations = new HEJsonFile();
+        }
+
+        public Color ConvertStringToColor(string sInputString)
+        {
+            // Returns a System.Drawing.Color object for a given string, computed from the hash of the string
+
+            int iHue = (Math.Abs(sInputString.GetHashCode()) % 24) * 10;
+            // Debug.Print("iHue: {0}", iHue.ToString());
+
+            HSLColor hslColor = new HSLColor(hue: iHue, saturation: 200.0, luminosity: 80.0);
+            return hslColor;
+
         }
 
         public void BuildSolarSystem()
@@ -115,15 +131,32 @@ namespace HELLION.DataStructures
                             Debug.Print("Processing child: " + (string)cbChild["Name"] + " with GUID: " + (string)cbChild["GUID"]);
                         }
 
+                        // Set up a new HEOrbitalData object to hold whatever orbital data we have available
+                        HEOrbitalData Data = new HEOrbitalData()
+                        {
+                            ParentGUID = (long)cbChild["ParentGUID"],
+                            SemiMajorAxis = (float)cbChild["SemiMajorAxis"],
+                            Inclination = (float)cbChild["Inclination"],
+                            Eccentricity = (float)cbChild["Eccentricity"],
+                            ArgumentOfPeriapsis = (float)cbChild["ArgumentOfPeriapsis"],
+                            LongitudeOfAscendingNode = (float)cbChild["LongitudeOfAscendingNode"]
+                        };
+
                         // Set up a new TreeNode which will be added to the TreeView control
                         HEOrbitalObjTreeNode nChildNode = new HEOrbitalObjTreeNode()
                         {
                             Name = (string)cbChild["Name"], // GUID.ToString();
                             NodeType = HETreeNodeType.CelestialBody,
                             GUID = (long)cbChild["GUID"],
+
+
                             ParentGUID = (long)cbChild["ParentGUID"],
                             SemiMajorAxis = (float)cbChild["SemiMajorAxis"],
                             Inclination = (float)cbChild["Inclination"],
+                            OrbitData = Data,
+
+
+                            //OrbitData
                             Text = (string)cbChild["Name"],
                             Tag = cbChild,
                             ImageIndex = (int)HEObjectTypesImageList.Contrast_16x,
@@ -271,227 +304,308 @@ namespace HELLION.DataStructures
 
             // nThisNode prepresents the point at which this function starts from
 
-            if (bLogToDebug)
+            //Check and only continue if nThisNode is not null
+            if (nThisNode != null)
             {
-                Debug.Print(sIndent + "======================================================================================");
-                Debug.Print(sIndent + "AddOrbitalObjTreeNodesRecursively entered, started processing node type {0} for HECelestialBody {1} GUID:{2} ParentGUID:{3}",
-                    nThisNode.NodeType.ToString(), nThisNode.Name, nThisNode.GUID.ToString(), nThisNode.ParentGUID.ToString());
-                Debug.Print(sIndent + "iDepth: " + iDepth.ToString());
-                //Debug.Print()
-            }
+                // nThisNode was not null, continue processing
 
-            // Check to see if we've reached the max depth - used to prevent runaway recursion on deep structures
-            if (!(iDepth > 0))
-            {
-                // Max depth reached, don't continue at this level
                 if (bLogToDebug)
                 {
-                    Debug.Print(sIndent + "------------------ RECURSION PREVENTED DUE TO MAX DEPTH REACHED ----------------------");
+                    Debug.Print(sIndent + "======================================================================================");
+                    Debug.Print(sIndent + "AddOrbitalObjTreeNodesRecursively entered, started processing node type {0} for HECelestialBody {1} GUID:{2} ParentGUID:{3}",
+                        nThisNode.NodeType.ToString(), nThisNode.Name, nThisNode.GUID.ToString(), nThisNode.ParentGUID.ToString());
+                    Debug.Print(sIndent + "iDepth: " + iDepth.ToString());
+                    //Debug.Print()
+                }
+
+                // Check to see if we've reached the max depth - used to prevent runaway recursion on deep structures
+                if (!(iDepth > 0))
+                {
+                    // Max depth reached, don't continue at this level
+                    if (bLogToDebug)
+                    {
+                        Debug.Print(sIndent + "------------------ RECURSION PREVENTED DUE TO MAX DEPTH REACHED ----------------------");
+                    }
+                }
+                else
+                {
+                    // Max depth not yet reached, continue
+
+                    if (bLogToDebug)
+                    {
+                        Debug.Print(sIndent + "Processing " + nThisNode.Nodes.Count.ToString() + " child nodes...");
+                    }
+
+                    // Define an IEnumerable object to hold this node's children
+                    IEnumerable<HEOrbitalObjTreeNode> IThisNodesChildren = null;
+
+                    if (ntAddNodesOfType == HETreeNodeType.Player)
+                    {
+                        // Get all nodes as we're adding a player object
+                        IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>();
+                    }
+                    else
+                    {
+                        // Get the child nodes that are Celestial Bodies
+                        IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => p.NodeType == HETreeNodeType.CelestialBody);
+                    }
+
+                    // Check for child nodes and recurse to each in turn - this is done before creating objects at this level
+                    if (IThisNodesChildren.Count() > 0)
+                    {
+                        // There are child nodes (celcetial bodies) to process
+
+                        // Loop through each child body in the iCelestialBodies list and recurse
+                        foreach (HEOrbitalObjTreeNode nChildNode in IThisNodesChildren)
+                        {
+                            if (bLogToDebug)
+                            {
+                                Debug.Print(sIndent + "Preparing to recurse using Orbital Body: " + nChildNode.Name);
+                            }
+
+                            // Find the correct node in the Nav Tree for this cbChild
+
+                            if (bLogToDebug)
+                            {
+                                Debug.Print(sIndent + "nChildNode GetNodeCount: " + nChildNode.GetNodeCount(includeSubTrees: false).ToString());
+                            }
+
+                            // Recursive call here!
+                            if (bLogToDebug)
+                            {
+                                Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                                Debug.Print(sIndent + ">> Call: AddOrbitalObjTreeNodesRecursively with GUID: " + nChildNode.GUID);
+                                Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                            }
+                            AddOrbitalObjTreeNodesRecursively(openFileData, nChildNode, ntAddNodesOfType, iDepth - 1, bLogToDebug, iLogIndentLevel + 1);
+
+                            if (bLogToDebug)
+                            {
+                                Debug.Print(sIndent + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                                Debug.Print(sIndent + "<< Return: AddOrbitalObjTreeNodesRecursively with GUID: " + nChildNode.GUID);
+                                Debug.Print(sIndent + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                            }
+                        } // end of foreach (TreeNode nChildNode in nThisNode.Nodes)
+                    }
+                    else
+                    {
+                        // Node Count was zero or less
+                    }
+
+                    // Branch to node creation code based on type
+                    switch (ntAddNodesOfType)
+                    {
+                        case HETreeNodeType.Asteroid:
+                        case HETreeNodeType.Ship:
+                            // Process Ships and Asteroids similarly
+                            // Find the OrbitalObjects for this ParentGUID
+                            IOrderedEnumerable<JToken> ioOrbitalObjects = from s in openFileData
+                                                                          where (long)s["OrbitData"]["ParentGUID"] == nThisNode.GUID
+                                                                          orderby (long)s["OrbitData"]["SemiMajorAxis"]
+                                                                          select s;
+
+                            foreach (var jtOrbitalObject in ioOrbitalObjects)
+                            {
+
+                                if (bLogToDebug)
+                                {
+                                    Debug.Print(sIndent + "Processing Orbital Body: {0} GUID[{1}] ParentGUID[{2}]", (string)jtOrbitalObject["Name"], (string)jtOrbitalObject["GUID"], (string)jtOrbitalObject["OrbitData"]["ParentGUID"]);
+                                }
+
+                                // Set up a new HEOrbitalData object to hold whatever orbital data we have available
+                                // and will be cloned if we're creating the Scene node also
+                                HEOrbitalData OrbitalObjectData = new HEOrbitalData()
+                                {
+                                    ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
+
+                                    SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
+                                    Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"],
+                                    Eccentricity = (float)jtOrbitalObject["OrbitData"]["Eccentricity"],
+                                    ArgumentOfPeriapsis = (float)jtOrbitalObject["OrbitData"]["ArgumentOfPeriapsis"],
+                                    LongitudeOfAscendingNode = (float)jtOrbitalObject["OrbitData"]["LongitudeOfAscendingNode"]
+                                };
+
+                                //Find out if a Scene node exists for this jtOrbitalObject
+
+                                // Get the child nodes that are Scenes, if any, and filter by SceneID
+                                IEnumerable<HEOrbitalObjTreeNode> IThisNodesScenes = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => (p.NodeType == HETreeNodeType.Scene) & (p.SceneID == (int)jtOrbitalObject["SceneID"]));
+
+                                // Define a node to represent the scene the current object is in
+                                HEOrbitalObjTreeNode nodeScene = null;
+
+
+                                if (IThisNodesScenes.Count() > 0)
+                                {
+                                    // We found a match, scene node already exists, select it
+                                    nodeScene = IThisNodesScenes.First();
+
+                                    if (bLogToDebug)
+                                    {
+                                        Debug.Print(sIndent + "Using existing scene node SceneID {0}", nodeScene.Text);
+                                    }
+                                }
+                                else
+                                {
+                                    // No match found, create a Scene node to hold the jtOrbitalObject
+
+                                    // Set up a new TreeNode for the scene which will be added to the node tree ahead of the object node
+                                    nodeScene = new HEOrbitalObjTreeNode()
+                                    {
+                                        Name = "SceneID_" + (string)jtOrbitalObject["SceneID"],
+                                        NodeType = HETreeNodeType.Scene,
+                                        Text = "Scene ID " + (string)jtOrbitalObject["SceneID"],
+                                        //GUID = (long)jtOrbitalObject["GUID"],
+                                        ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
+                                        SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
+                                        Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"],
+                                        // Generate the foreground colour
+                                        ForeColor = ConvertStringToColor("SceneID_" + (string)jtOrbitalObject["Name"]),
+                                        SceneID = (int)jtOrbitalObject["SceneID"],
+                                        Type = (int)jtOrbitalObject["Type"],
+                                        OrbitData = OrbitalObjectData.Clone(), // use the custom Clone method to clone the OrbitalData object instead of redefining
+                                        ImageIndex = (int)HEObjectTypesImageList.a3DScene_16x,
+                                        SelectedImageIndex = (int)HEObjectTypesImageList.a3DScene_16x
+
+                                        //Tag = jtOrbitalObject
+                                    };
+
+                                    if (bLogToDebug)
+                                    {
+                                        Debug.Print(sIndent + "Creating new scene node SceneID {0}", nodeScene.Text);
+                                    }
+
+                                    // Add the nodeScene node to the nThisNode.Nodes collection
+                                    nThisNode.Nodes.Add(nodeScene);
+                                }
+
+                                // Continue processing the Orbital Object
+
+                                // Create a new TreeNode which will be added to the node tree
+                                HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
+                                {
+                                    Name = (string)jtOrbitalObject["Name"],
+                                    NodeType = ntAddNodesOfType,
+                                    Text = (string)jtOrbitalObject["Name"],
+                                    GUID = (long)jtOrbitalObject["GUID"],
+                                    ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
+                                    SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
+                                    Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"],
+                                    // Generate the foreground colour
+                                    //ForeColor = ConvertStringToColor((string)jtOrbitalObject["Name"]),
+                                    SceneID = (int)jtOrbitalObject["SceneID"],
+                                    Type = (int)jtOrbitalObject["Type"],
+                                    OrbitData = OrbitalObjectData
+                                    //Tag = jtOrbitalObject
+                                };
+
+                                switch (ntAddNodesOfType)
+                                {
+                                    case HETreeNodeType.Asteroid:
+                                        nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
+                                        nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
+                                        break;
+                                    case HETreeNodeType.Ship:
+                                        nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
+                                        nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
+
+                                        if ((string)jtOrbitalObject["OrbitData"]["VesselID"] != "")
+                                        {
+                                            //OrbitalObjectData.VesselID = (long)jtOrbitalObject["OrbitData"]["VesselID"];
+                                        }
+
+                                        if ((string)jtOrbitalObject["OrbitData"]["VesselType"] != "")
+                                        {
+                                            //OrbitalObjectData.VesselType = (long)jtOrbitalObject["OrbitData"]["VesselType"];
+                                        }
+
+                                        break;
+
+                                };
+
+
+                                // add the node
+                                nodeScene.Nodes.Add(nodeOrbitalObject);
+                            } // End of foreach (var jtOrbitalObject in ioOrbitalObjects)
+
+                            break;
+
+                        //case HETreeNodeType.DynamicObject:
+                        case HETreeNodeType.Player:
+                            // Players get handled differently
+
+                            // Find the OrbitalObjects for this ParentGUID
+                            IOrderedEnumerable<JToken> ioPlayerObjects = from s in openFileData
+                                                                         where (long)s["ParentGUID"] == nThisNode.GUID
+                                                                         orderby (long)s["GUID"]
+                                                                         select s;
+
+                            foreach (var jtPlayerObject in ioPlayerObjects)
+                            {
+
+                                if (bLogToDebug)
+                                {
+                                    Debug.Print(sIndent + "Processing Orbital Body: {0} GUID[{1}] ParentGUID[{2}]", (string)jtPlayerObject["Name"], (string)jtPlayerObject["GUID"], (string)jtPlayerObject["ParentGUID"]);
+                                }
+
+                                // Set up a new TreeNode which will be added to the node tree
+                                HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
+                                {
+                                    Name = (string)jtPlayerObject["Name"],
+                                    NodeType = ntAddNodesOfType,
+                                    Text = (string)jtPlayerObject["Name"],
+                                    GUID = (long)jtPlayerObject["GUID"],
+                                    //ParentGUID = (long)jtPlayerObject["ParentGUID"],
+                                    Tag = jtPlayerObject,
+                                    ImageIndex = (int)HEObjectTypesImageList.Actor_16x,
+                                    SelectedImageIndex = (int)HEObjectTypesImageList.Actor_16x
+                                };
+
+                                //Check and only continue if nThisNode is not null
+                                if (nThisNode != null)
+                                {
+                                    // nThisNode was not null, create child node
+
+                                    if (bLogToDebug)
+                                    {
+                                        Debug.Print(sIndent + "Creating {0} node", ntAddNodesOfType.GetType());
+                                    }
+
+                                    // add the node
+                                    nThisNode.Nodes.Add(nodeOrbitalObject);
+                                }
+                                else
+                                {
+                                    if (bLogToDebug)
+                                    {
+                                        Debug.Print(sIndent + "!! NodeParent was NULL !!");
+                                    }
+                                }
+                            } // end of foreach (var jtPlayerObject in ioPlayerObjects)
+
+                            break;
+
+                        default:
+                            break;
+                    }
+
+
+
+                }
+                if (bLogToDebug)
+                {
+                    Debug.Print(sIndent + "AddOrbitalObjTreeNodesRecursively exited, finished processing node type {0} for HECelestialBody {1} GUID:{2} ParentGUID:{3}",
+                        nThisNode.NodeType.ToString(), nThisNode.Name, nThisNode.GUID.ToString(), nThisNode.ParentGUID.ToString());
+                    Debug.Print(sIndent + "======================================================================================");
                 }
             }
             else
             {
-                // Max depth not yet reached, continue
-
                 if (bLogToDebug)
                 {
-                    Debug.Print(sIndent + "Processing " + nThisNode.Nodes.Count.ToString() + " child nodes...");
+                    Debug.Print(sIndent + "!! NodeParent was NULL !!");
                 }
-
-                // Define an IEnumerable object to hold this node's children
-                IEnumerable<HEOrbitalObjTreeNode> IThisNodesChildren = null;
-
-                if (ntAddNodesOfType == HETreeNodeType.Player)
-                {
-                    // Get all nodes as we're adding a player object
-                    IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>();
-                }
-                else
-                {
-                    // Get the child nodes that are Celestial Bodies
-                    IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => p.NodeType == HETreeNodeType.CelestialBody);
-                }
-
-
-                // Check for child nodes and recurse to each in turn - this is done before creating objects at this level
-                if (IThisNodesChildren.Count() > 0)
-                {
-                    // There are child nodes (celcetial bodies) to process
-
-                    // Loop through each child body in the iCelestialBodies list and recurse
-                    foreach (HEOrbitalObjTreeNode nChildNode in IThisNodesChildren)
-                    {
-                        if (bLogToDebug)
-                        {
-                            Debug.Print(sIndent + "Preparing to recurse using Orbital Body: " + nChildNode.Name);
-                        }
-
-                        // Find the correct node in the Nav Tree for this cbChild
-
-                        if (bLogToDebug)
-                        {
-                            Debug.Print(sIndent + "nChildNode GetNodeCount: " + nChildNode.GetNodeCount(includeSubTrees: false).ToString());
-                        }
-
-                        // Recursive call here!
-                        if (bLogToDebug)
-                        {
-                            Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                            Debug.Print(sIndent + ">> Call: AddOrbitalObjTreeNodesRecursively with GUID: " + nChildNode.GUID);
-                            Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-                        }
-                        AddOrbitalObjTreeNodesRecursively(openFileData, nChildNode, ntAddNodesOfType, iDepth - 1, bLogToDebug, iLogIndentLevel +1);
-
-                        if (bLogToDebug)
-                        {
-                            Debug.Print(sIndent + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                            Debug.Print(sIndent + "<< Return: AddOrbitalObjTreeNodesRecursively with GUID: " + nChildNode.GUID);
-                            Debug.Print(sIndent + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-                        }
-                    } // end of foreach (TreeNode nChildNode in nThisNode.Nodes)
-                }
-                else
-                {
-                    // Node Count was zero or less
-                }
-
-                // Branch to node creation code based on type
-                switch (ntAddNodesOfType)
-                {
-                    case HETreeNodeType.Asteroid:
-                    case HETreeNodeType.Ship:
-                        // Process Ships and Asteroids similarly
-                        // Find the OrbitalObjects for this ParentGUID
-                        IOrderedEnumerable<JToken> ioOrbitalObjects = from s in openFileData
-                                                                        where (long)s["OrbitData"]["ParentGUID"] == nThisNode.GUID
-                                                                        orderby (long)s["OrbitData"]["SemiMajorAxis"]
-                                                                        select s;
-
-                        foreach (var jtOrbitalObject in ioOrbitalObjects)
-                        {
-
-                            if (bLogToDebug)
-                            {
-                                Debug.Print(sIndent + "Processing Orbital Body: {0} GUID[{1}] ParentGUID[{2}]", (string)jtOrbitalObject["Name"], (string)jtOrbitalObject["GUID"], (string)jtOrbitalObject["OrbitData"]["ParentGUID"]);
-                            }
-
-                            // Set up a new TreeNode which will be added to the TreeView control
-                            HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
-                            {
-                                Name = (string)jtOrbitalObject["Name"],
-                                NodeType = ntAddNodesOfType,
-                                Text = (string)jtOrbitalObject["Name"],
-                                GUID = (long)jtOrbitalObject["GUID"],
-                                ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
-                                SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
-                                Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"],
-                                Tag = jtOrbitalObject
-                            };
-
-                            switch (ntAddNodesOfType)
-                            {
-                                case HETreeNodeType.Asteroid:
-                                    nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
-                                    nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
-                                    break;
-                                case HETreeNodeType.Ship:
-                                    nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
-                                    nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
-                                    break;
-                               
-                            };
-
-                            //Check and only continue if nThisNode is not null
-                            if (nThisNode != null)
-                            {
-                                // nThisNode was not null, create child node
-
-                                if (bLogToDebug)
-                                {
-                                    Debug.Print(sIndent + "Creating {0} node", ntAddNodesOfType.GetType());
-                                }
-
-                                // add the node
-                                nThisNode.Nodes.Add(nodeOrbitalObject);
-                            }
-                            else
-                            {
-                                if (bLogToDebug)
-                                {
-                                    Debug.Print(sIndent + "!! NodeParent was NULL !!");
-                                }
-                            }
-                        } // end of foreach (var jtOrbitalObject in ioOrbitalObjects)
-
-                        break;
-
-                    case HETreeNodeType.Player:
-                        // Players get handled differently
-
-                        // Find the OrbitalObjects for this ParentGUID
-                        IOrderedEnumerable<JToken> ioPlayerObjects = from s in openFileData
-                                                                        where (long)s["ParentGUID"] == nThisNode.GUID
-                                                                        orderby (long)s["GUID"]
-                                                                        select s;
-
-                        foreach (var jtPlayerObject in ioPlayerObjects)
-                        {
-
-                            if (bLogToDebug)
-                            {
-                                Debug.Print(sIndent + "Processing Orbital Body: {0} GUID[{1}] ParentGUID[{2}]", (string)jtPlayerObject["Name"], (string)jtPlayerObject["GUID"], (string)jtPlayerObject["ParentGUID"]);
-                            }
-
-                            // Set up a new TreeNode which will be added to the TreeView control
-                            HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
-                            {
-                                Name = (string)jtPlayerObject["Name"],
-                                NodeType = ntAddNodesOfType, 
-                                Text = (string)jtPlayerObject["Name"],
-                                GUID = (long)jtPlayerObject["GUID"],
-                                ParentGUID = (long)jtPlayerObject["ParentGUID"],
-                                Tag = jtPlayerObject,
-                                ImageIndex = (int)HEObjectTypesImageList.Actor_16x,
-                                SelectedImageIndex = (int)HEObjectTypesImageList.Actor_16x
-                            };
-
-                            //Check and only continue if nThisNode is not null
-                            if (nThisNode != null)
-                            {
-                                // nThisNode was not null, create child node
-
-                                if (bLogToDebug)
-                                {
-                                    Debug.Print(sIndent + "Creating {0} node", ntAddNodesOfType.GetType());
-                                }
-
-                                // add the node
-                                nThisNode.Nodes.Add(nodeOrbitalObject);
-                            }
-                            else
-                            {
-                                if (bLogToDebug)
-                                {
-                                    Debug.Print(sIndent + "!! NodeParent was NULL !!");
-                                }
-                            }
-                        } // end of foreach (var jtPlayerObject in ioPlayerObjects)
-
-                        break;
-
-                    default:
-                        break;
-                }
-
-
-
             }
-            if (bLogToDebug)
-            {
-                Debug.Print(sIndent + "AddOrbitalObjTreeNodesRecursively exited, finished processing node type {0} for HECelestialBody {1} GUID:{2} ParentGUID:{3}",
-                    nThisNode.NodeType.ToString(), nThisNode.Name, nThisNode.GUID.ToString(), nThisNode.ParentGUID.ToString());
-                Debug.Print(sIndent + "======================================================================================");
-            }
+
         } // end of AddOrbitalObjTreeNodesRecursively
 
 

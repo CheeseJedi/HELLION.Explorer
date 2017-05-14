@@ -76,9 +76,15 @@ namespace HELLION.Explorer
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
 
-            sb.Append("Uses the Newtonsoft JSON library http://www.newtonsoft.com/json");
+            sb.Append("Uses the Newtonsoft JSON library. http://www.newtonsoft.com/json");
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
+
+            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity games or it's licensors. http://http://www.zerogravitygames.com");
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+
 
             sb.Append("This product is 100% certified Cheeseware* and is not dishwasher safe.");
             sb.Append(Environment.NewLine);

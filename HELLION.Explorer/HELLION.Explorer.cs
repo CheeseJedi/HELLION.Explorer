@@ -151,7 +151,7 @@ namespace HELLION.Explorer
             };
 
             // Check that the file exists when the user clicked ok
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) // && openFileDialog1.CheckFileExists)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
 
                 RefreshMainFormTitleText();
@@ -244,7 +244,7 @@ namespace HELLION.Explorer
                     frmMainForm.tvNavigationTree.Nodes.Add(docCurrent.RootNode);
                     frmMainForm.tvNavigationTree.SelectedNode = docCurrent.RootNode;
                     frmMainForm.tvNavigationTree.SelectedNode.Expand();
-                    frmMainForm.toolStripStatusLabel1.Text = ("Loading complete");
+                    frmMainForm.toolStripStatusLabel1.Text = ("Ready");
                 }
                 else
                 {
@@ -380,7 +380,7 @@ namespace HELLION.Explorer
                 
             StringBuilder sb1 = new StringBuilder();
 
-            sb1.Append("Node Data from Node Tree");
+            sb1.Append("Node Tree Data");
             sb1.Append(Environment.NewLine);
             sb1.Append("Name: " + nSelectedNode.Name);
             sb1.Append(Environment.NewLine);
@@ -390,9 +390,52 @@ namespace HELLION.Explorer
             sb1.Append(Environment.NewLine);
             sb1.Append("ParentGUID: " + nSelectedNode.ParentGUID.ToString());
             sb1.Append(Environment.NewLine);
-            sb1.Append("SemiMajorAxis: " + nSelectedNode.SemiMajorAxis.ToString());
+
+            sb1.Append("SceneID: " + nSelectedNode.SceneID.ToString());
             sb1.Append(Environment.NewLine);
-            sb1.Append("Inclination: " + nSelectedNode.Inclination.ToString());
+            sb1.Append("Type: " + nSelectedNode.Type.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append(Environment.NewLine);
+
+            sb1.Append(Environment.NewLine);
+            sb1.Append("ORBITAL DATA");
+            sb1.Append(Environment.NewLine);
+
+            sb1.Append("OrbitData.ParentGUID: " + nSelectedNode.OrbitData.ParentGUID.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append("OrbitData.VesselID: " + nSelectedNode.OrbitData.VesselID.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append("OrbitData.VesselType: " + nSelectedNode.OrbitData.VesselType.ToString());
+            sb1.Append(Environment.NewLine);
+
+
+
+            sb1.Append("OrbitData.SemiMajorAxis: " + nSelectedNode.SemiMajorAxis.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append("OrbitData.Inclination: " + nSelectedNode.Inclination.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append(Environment.NewLine);
+
+            sb1.Append("OrbitData.Eccentricity: " + nSelectedNode.OrbitData.Eccentricity.ToString());
+            sb1.Append(Environment.NewLine);
+
+            sb1.Append("OrbitData.LongitudeOfAscendingNode: " + nSelectedNode.OrbitData.LongitudeOfAscendingNode.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append("OrbitData.ArgumentOfPeriapsis: " + nSelectedNode.OrbitData.ArgumentOfPeriapsis.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append(Environment.NewLine);
+
+
+
+            sb1.Append("OrbitData.TimeSincePeriapsis: " + nSelectedNode.OrbitData.TimeSincePeriapsis.ToString());
+            sb1.Append(Environment.NewLine);
+            sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedNode.OrbitData.SolarSystemPeriapsisTime.ToString());
+            sb1.Append(Environment.NewLine);
+
+
+
+
+
 
             sb1.Append(Environment.NewLine);
             sb1.Append("Immediate SubNodes (all types): ");
@@ -480,6 +523,7 @@ namespace HELLION.Explorer
             frmMainForm.tvNavigationTree.ImageList = ilObjectTypesImageList;
             frmMainForm.tvNavigationTree.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
             frmMainForm.tvNavigationTree.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
+            frmMainForm.tvNavigationTree.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
 
             frmMainForm.listView1.SmallImageList = ilObjectTypesImageList;
             

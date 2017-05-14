@@ -10,6 +10,7 @@ namespace HELLION.DataStructures
     {
         Unknown = 0,        // Default for new nodes
         SystemNAV,          // Node type for a system navigation tree item
+        Scene,              // Node type for a Scene item
         CelestialBody,      // Node type for Celestial Bodies (data usually loaded from CelestialBodies.json)
         Asteroid,           // Node type for Ateroids (loaded from save file, data usually loaded from Asteroids.json)
         Ship,               // Node type for Ships including modules (loaded from save file, data usually loaded from Structures.json)

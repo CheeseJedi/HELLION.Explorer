@@ -8,17 +8,16 @@ namespace HELLION.DataStructures
 {
     public class HEOrbitalData
     {
-        long ParentGUID { get; set; }
-        long VesselID { get; set; }
-        long VesselType { get; set; }
-        float Eccentricity { get; set; }
-        float SemiMajorAxis { get; set; }
-        float LongitudeOfAscendingNode { get; set; }
-        float ArgumentOfPeriapsis { get; set; }
-        float Inclination { get; set; }
-        float TimeSincePeriapsis { get; set; }
-        float SolarSystemPeriapsisTime { get; set; }
-
+        public long ParentGUID { get; set; }
+        public long VesselID { get; set; }
+        public long VesselType { get; set; }
+        public float Eccentricity { get; set; }
+        public float SemiMajorAxis { get; set; }
+        public float LongitudeOfAscendingNode { get; set; }
+        public float ArgumentOfPeriapsis { get; set; }
+        public float Inclination { get; set; }
+        public float TimeSincePeriapsis { get; set; }
+        public float SolarSystemPeriapsisTime { get; set; }
 
         public HEOrbitalData()
         {
@@ -33,6 +32,26 @@ namespace HELLION.DataStructures
             Inclination = 0;
             TimeSincePeriapsis = 0;
             SolarSystemPeriapsisTime = 0;
+        }
+
+        protected HEOrbitalData(HEOrbitalData another)
+        {
+            // Constructor that takes parameters from another object, used to 'clone' the obect
+            ParentGUID = another.ParentGUID;
+            VesselID = another.VesselID;
+            VesselType = another.VesselType;
+            Eccentricity = another.Eccentricity;
+            SemiMajorAxis = another.SemiMajorAxis;
+            LongitudeOfAscendingNode = another.LongitudeOfAscendingNode;
+            ArgumentOfPeriapsis = another.ArgumentOfPeriapsis;
+            Inclination = another.Inclination;
+            TimeSincePeriapsis = another.TimeSincePeriapsis;
+            SolarSystemPeriapsisTime = another.SolarSystemPeriapsisTime;
+        }
+
+        public HEOrbitalData Clone()
+        {
+            return new HEOrbitalData(this);
         }
     } // End of class HEOrbitalData
 } // End of namespace HELLION.DataStructures

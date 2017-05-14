@@ -15,7 +15,7 @@ namespace HELLION.DataStructures
         public int Type { get; set; }
         public float SemiMajorAxis { get; set; }
         public float Inclination { get; set; }
-        public HEOrbitalData OrbitData {get; set; }
+        public HEOrbitalData OrbitData { get; set; }
 
         public HEOrbitalObjTreeNode()
         {

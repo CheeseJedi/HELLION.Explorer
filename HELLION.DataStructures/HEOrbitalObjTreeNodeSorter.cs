@@ -1,4 +1,4 @@
-﻿/* HEOrbitalObjTreeNodeComparer.cs
+﻿/* HEOrbitalObjTreeNodeSorter.cs
  * CheeseJedi 2017
  * Defines a custom comparer class to sort HEOrbitalObjTreeNodes
  */
@@ -10,7 +10,7 @@ using System.Windows.Forms; // required for the base TreeNode class
 namespace HELLION.DataStructures
 {
     // Create a node sorter that implements the IComparer interface to sort HEOrbitalObjTreeNodes
-    public class HEOrbitalObjTreeNodeComparer : IComparer
+    public class HEOrbitalObjTreeNodeSorter : IComparer
     {
         // Compare the values of SemiMajorAxis, or the vaule of Inclination if they are the same
         public int Compare(object x, object y)
@@ -31,5 +31,5 @@ namespace HELLION.DataStructures
                 return iResult;
             }
         }
-    } // End of HEOrbitalObjTreeNodeComparer
+    } // End of HEOrbitalObjTreeNodeSorter
 } // End of namespace HELLION
