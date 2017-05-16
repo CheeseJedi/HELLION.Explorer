@@ -73,6 +73,10 @@ namespace HELLION.Explorer
             sb.Append(anNewtonsoftJson.Name);
             sb.Append("   Version ");
             sb.Append(anNewtonsoftJson.Version);
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+
+            sb.Append(" " + String.Format("Memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
 
             sb.Append(Environment.NewLine);
             sb.Append(Environment.NewLine);
@@ -238,6 +242,11 @@ namespace HELLION.Explorer
         private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
         {
 
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.FileClose();
         }
 
     }

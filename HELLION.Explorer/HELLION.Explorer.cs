@@ -39,21 +39,7 @@ namespace HELLION.Explorer
             // Check the current document isn't null
             if (docCurrent != null)
             {
-                // isFileDirty check before exiting
-                if (docCurrent.IsFileDirty)
-                {
-                    // Unsaved changes, prompt user to save
-                    string sMessage = docCurrent.MainFile.FileName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
-                    const string sCaption = "Unsaved Changes";
-                    var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                    // If the yes button was pressed ...
-                    if (result == DialogResult.Yes)
-                    {
-                        // User selected Yes, call save routine
-                        MessageBox.Show("User selected Yes to save changes", "Unsaved Changes Dialog", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
+                FileClose();
             }
             /*
             if (System.Windows.Forms.Application.MessageLoop)
@@ -166,15 +152,21 @@ namespace HELLION.Explorer
                 frmMainForm.treeView1.BeginUpdate();
 
                 // Clear any existing nodes
-                frmMainForm.treeView1.Nodes.Clear();
+                //frmMainForm.treeView1.Nodes.Clear();
 
                 // Check for an existing document and close it if necesary
                 if (docCurrent != null)
                 {
                     // Clear the existing document
-                    docCurrent.CloseFile();
-                    docCurrent = null;
+                    //docCurrent.CloseFile();
+                    //docCurrent = null;
+
+                    FileClose();
+
                 }
+
+
+
 
                 // Create a new DocumentWorkspace
                 docCurrent = new HEDocumentWorkspace()
@@ -272,10 +264,62 @@ namespace HELLION.Explorer
                 RefreshMainFormTitleText();
                 RefreshSelectedObjectSummaryText(docCurrent.SolarSystemRootNode);
 
-                    
+                frmMainForm.closeToolStripMenuItem.Enabled = true;
 
             }
         } // End of FileOpen()
+
+        public static void FileClose()
+        {
+            // Handles closing of files
+
+            // isFileDirty check before exiting
+            if (docCurrent.IsFileDirty)
+            {
+                // Unsaved changes, prompt user to save
+                string sMessage = docCurrent.MainFile.FileName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
+                const string sCaption = "Unsaved Changes";
+                var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                // If the yes button was pressed ...
+                if (result == DialogResult.Yes)
+                {
+                    // User selected Yes, call save routine
+                    MessageBox.Show("User selected Yes to save changes", "Unsaved Changes Dialog", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    // Saving is not yet implemented
+                }
+            }
+
+
+
+
+            // Clear any existing nodes from the tree view
+            frmMainForm.treeView1.Nodes.Clear();
+
+            // Clear any items from the list view
+            frmMainForm.listView1.Items.Clear();
+
+            // Check for an existing document and close it if necesary
+            if (docCurrent != null)
+            {
+                // Clear the existing document
+                docCurrent.CloseFile();
+                docCurrent = null;
+            }
+
+            frmMainForm.closeToolStripMenuItem.Enabled = false;
+
+            // Trigger refresh of UI elements
+            RefreshMainFormTitleText();
+
+            RefreshSelectedOjectPathBarText(null);
+            RefreshListView(null);
+            RefreshSelectedObjectSummaryText(null);
+
+            // Initiate Grabage Collection
+            GC.Collect();
+        }
 
         public static bool IsGameDataFolderDefined()
         {
@@ -364,6 +408,10 @@ namespace HELLION.Explorer
                 */
 
                 frmMainForm.label1.Text = sb.ToString();
+            }
+            else
+            {
+                frmMainForm.label1.Text = ">>";
             }
         } // End of RefreshSelectedOjectPathBarText()
 
@@ -467,7 +515,7 @@ namespace HELLION.Explorer
             }
             else if (nSelectedNode == null)
             {
-                MessageBox.Show("RefreshListView was passed a null nSelectedNode");
+                //MessageBox.Show("RefreshListView was passed a null nSelectedNode");
             }
         }
 
@@ -645,6 +693,10 @@ namespace HELLION.Explorer
             frmMainForm.listView1.Columns.Add("SemiMajorAxis", 80, HorizontalAlignment.Left);
             frmMainForm.listView1.Columns.Add("GUID", 50, HorizontalAlignment.Right);
             frmMainForm.listView1.Columns.Add("SceneID", 30, HorizontalAlignment.Right);
+
+            frmMainForm.closeToolStripMenuItem.Enabled = false;
+
+
 
 
             frmMainForm.ShowDialog();
