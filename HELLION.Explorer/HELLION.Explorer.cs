@@ -500,37 +500,39 @@ namespace HELLION.Explorer
                 sb1.Append(Environment.NewLine);
                 sb1.Append(Environment.NewLine);
 
-                sb1.Append(Environment.NewLine);
-                sb1.Append("ORBITAL DATA");
-                sb1.Append(Environment.NewLine);
 
-                sb1.Append("ParentGUID: " + nSelectedNode.OrbitData.ParentGUID.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("VesselID: " + nSelectedNode.OrbitData.VesselID.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("VesselType: " + nSelectedNode.OrbitData.VesselType.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("SemiMajorAxis: " + nSelectedNode.SemiMajorAxis.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("Inclination: " + nSelectedNode.Inclination.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("Eccentricity: " + nSelectedNode.OrbitData.Eccentricity.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("LongitudeOfAscendingNode: " + nSelectedNode.OrbitData.LongitudeOfAscendingNode.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("ArgumentOfPeriapsis: " + nSelectedNode.OrbitData.ArgumentOfPeriapsis.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append(Environment.NewLine);
+                if (nSelectedNode.NodeType == HETreeNodeType.CelestialBody || nSelectedNode.NodeType == HETreeNodeType.Ship || nSelectedNode.NodeType == HETreeNodeType.Asteroid)
+                {
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("ORBITAL DATA");
+                    sb1.Append(Environment.NewLine);
 
-                sb1.Append("OrbitData.TimeSincePeriapsis: " + nSelectedNode.OrbitData.TimeSincePeriapsis.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedNode.OrbitData.SolarSystemPeriapsisTime.ToString());
-                sb1.Append(Environment.NewLine);
+                    sb1.Append("ParentGUID: " + nSelectedNode.OrbitData.ParentGUID.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("VesselID: " + nSelectedNode.OrbitData.VesselID.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("VesselType: " + nSelectedNode.OrbitData.VesselType.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("SemiMajorAxis: " + nSelectedNode.SemiMajorAxis.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("Inclination: " + nSelectedNode.Inclination.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("Eccentricity: " + nSelectedNode.OrbitData.Eccentricity.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("LongitudeOfAscendingNode: " + nSelectedNode.OrbitData.LongitudeOfAscendingNode.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("ArgumentOfPeriapsis: " + nSelectedNode.OrbitData.ArgumentOfPeriapsis.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append(Environment.NewLine);
 
+                    sb1.Append("OrbitData.TimeSincePeriapsis: " + nSelectedNode.OrbitData.TimeSincePeriapsis.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedNode.OrbitData.SolarSystemPeriapsisTime.ToString());
+                    sb1.Append(Environment.NewLine);
+                }
 
                 if (nSelectedNode.NodeType != HETreeNodeType.SystemNAV)
                 {
-
                     // Get the count of the child nodes contained in the selected node
                     decimal iTotalNodeCount = docCurrent.SolarSystemRootNode.CountOfAllChildNodes;
                     int iThisNodeCount = nSelectedNode.CountOfChildNodes;

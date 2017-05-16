@@ -4,12 +4,10 @@ using System.IO;
 using System.Collections.Generic; // for IEnumerable
 using System.Linq;
 using System.Diagnostics;
-using System.Windows.Forms;
-using Newtonsoft.Json;
+//using System.Windows.Forms;
+//using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Security.Cryptography;
-using HSLColorConverter;
-using System.Text;
+using static HELLION.DataStructures.HEUtilities;
 
 namespace HELLION.DataStructures
 {

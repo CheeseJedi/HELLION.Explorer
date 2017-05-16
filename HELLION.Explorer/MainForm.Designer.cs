@@ -134,12 +134,10 @@
             // 
             // closeToolStripMenuItem
             // 
-            this.closeToolStripMenuItem.Enabled = false;
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
             this.closeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F4)));
             this.closeToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.closeToolStripMenuItem.Text = "Close";
-            this.closeToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator1
             // 
@@ -296,7 +294,7 @@
             // 
             this.cleanupToolStripMenuItem.Enabled = false;
             this.cleanupToolStripMenuItem.Name = "cleanupToolStripMenuItem";
-            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.cleanupToolStripMenuItem.Text = "Cleanup...";
             this.cleanupToolStripMenuItem.Visible = false;
             // 
@@ -304,14 +302,14 @@
             // 
             this.repairToolStripMenuItem.Enabled = false;
             this.repairToolStripMenuItem.Name = "repairToolStripMenuItem";
-            this.repairToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.repairToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.repairToolStripMenuItem.Text = "Repair...";
             this.repairToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(124, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // optionsToolStripMenuItem
@@ -319,7 +317,7 @@
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setDataFolderLocationToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // setDataFolderLocationToolStripMenuItem
