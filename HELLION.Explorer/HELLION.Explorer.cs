@@ -435,40 +435,27 @@ namespace HELLION.Explorer
 
                         HEOrbitalObjTreeNode nodeParent = (HEOrbitalObjTreeNode)nSelectedNode.Parent;
 
-                        string[] arrParentItem = new string[7];
+                        string[] arrParentItem = new string[2];
                         arrParentItem[0] = "<" + nodeParent.Text + ">";
                         arrParentItem[1] = "<PARENT>";
-                        arrParentItem[2] = nodeParent.CountOfChildNodes.ToString();
-                        arrParentItem[3] = nodeParent.CountOfAllChildNodes.ToString();
-                        arrParentItem[4] = nodeParent.OrbitData.SemiMajorAxis.ToString();
-                        arrParentItem[5] = nodeParent.GUID.ToString();
-                        arrParentItem[6] = nodeParent.SceneID.ToString();
-
-
 
                         ListViewItem liParentItem = new ListViewItem(arrParentItem)
                         {
                             Name = "<PARENT>",
-                            Text = "<" + nodeParent.Text + ">",
-                            Tag = nodeParent,
+                            Text = "<" + nSelectedNode.Parent.Text + ">",
+                            Tag = nSelectedNode.Parent,
                             ImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(nodeParent.NodeType)
                         };
                         // Add the item
                         frmMainForm.listView1.Items.Add(liParentItem);
                     }
 
-                    // Draw the <CURRENT> node if it's not null
+                    // Draw the <THIS> node if it's not null
                     //if (nSelectedNode.Parent != null && )
                     {
-                        string[] arrCurrentItem = new string[7];
+                        string[] arrCurrentItem = new string[2];
                         arrCurrentItem[0] = "<" + nSelectedNode.Text + ">";
                         arrCurrentItem[1] = "<CURRENT>";
-                        arrCurrentItem[2] = nSelectedNode.CountOfChildNodes.ToString();
-                        arrCurrentItem[3] = nSelectedNode.CountOfAllChildNodes.ToString();
-                        arrCurrentItem[4] = nSelectedNode.OrbitData.SemiMajorAxis.ToString();
-                        arrCurrentItem[5] = nSelectedNode.GUID.ToString();
-                        arrCurrentItem[6] = nSelectedNode.SceneID.ToString();
-
 
                         ListViewItem liCurrentItem = new ListViewItem(arrCurrentItem)
                         {
