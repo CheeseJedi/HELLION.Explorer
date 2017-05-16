@@ -20,6 +20,8 @@ namespace HELLION.Explorer
 {
     public partial class MainForm : Form
     {
+        //int iSearchButtonPadding = 5;
+
         public MainForm()
         {
             InitializeComponent();
@@ -99,23 +101,82 @@ namespace HELLION.Explorer
             MessageBox.Show(sb.ToString(), "About " + Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
-
         private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
         {
 
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Update the object information panel
+            if (Program.docCurrent.IsFileReady)
+            {
+
+                HEOrbitalObjTreeNode node = null;
+
+                ListView.SelectedListViewItemCollection selection = listView1.SelectedItems;
+
+                foreach (ListViewItem item in selection)
+                {
+                    // We only process the first
+                    node = (HEOrbitalObjTreeNode)item.Tag;
+                    break;
+                }
+
+                if (node == null)
+                {
+                    // We seem to get two updates, the first one has no data 
+                    
+                    //MessageBox.Show("listView1_SelectedIndexChanged: node is null ");
+                }
+                else
+                {
+                    // Update the object path + name + Tag in the object identifier bar
+                    Program.RefreshSelectedOjectPathBarText(node);
+                    //Program.RefreshListView(node);
+                    Program.RefreshSelectedObjectSummaryText(node);
+                }
+            }
+        }
+
+        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            // Drill down on double click
+            if (Program.docCurrent.IsFileReady)
+            {
+                HEOrbitalObjTreeNode node = null;
+
+                ListView.SelectedListViewItemCollection selection = listView1.SelectedItems;
+
+                foreach (ListViewItem item in selection)
+                {
+                    // We only process the first
+                    node = (HEOrbitalObjTreeNode)item.Tag;
+                    break;
+                }
+
+                if (node == null)
+                {
+                    // We seem to get two updates, the first one has no data 
+
+                    //MessageBox.Show("listView1_SelectedIndexChanged: node is null ");
+                }
+                else
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        treeView1.SelectedNode = node;
+                        treeView1.SelectedNode.Expand();
+
+                        // Update the object path + name + Tag in the object identifier bar
+                        //Program.RefreshSelectedOjectPathBarText(node);
+                        //Program.RefreshListView(node);
+                        //Program.RefreshSelectedObjectSummaryText(node);
+
+                    }
+
+                }
+            }
 
         }
 
@@ -139,23 +200,45 @@ namespace HELLION.Explorer
 
         private void navigationPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            splitContainer1.Panel1Collapsed = !splitContainer1.Panel1Collapsed;
+            // Show/hide the Navigation Pane
 
+            // Change the state of the bViewShowNavigationPane
+            Program.bViewShowNavigationPane = !Program.bViewShowNavigationPane;
+
+            splitContainer1.Panel1Collapsed = !Program.bViewShowNavigationPane;
+            navigationPaneToolStripMenuItem.Checked = Program.bViewShowNavigationPane;
         }
 
         private void dynamicListPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            splitContainer2.Panel1Collapsed = !splitContainer2.Panel1Collapsed;
+            // Show/hide the Dynamic list (listview control)
+
+            Program.bViewShowDynamicList = !Program.bViewShowDynamicList;
+
+            splitContainer2.Panel1Collapsed = !Program.bViewShowDynamicList;
+            dynamicListPaneToolStripMenuItem.Checked = Program.bViewShowDynamicList;
+            infoPaneToolStripMenuItem.Checked = splitContainer2.Panel2Collapsed;
         }
 
         private void infoPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            splitContainer2.Panel2Collapsed = !splitContainer2.Panel2Collapsed;
+            // Show/hide the info pane
+            Program.bViewShowInfoPane = !Program.bViewShowInfoPane;
+
+            splitContainer2.Panel1Collapsed = !Program.bViewShowInfoPane;
+            infoPaneToolStripMenuItem.Checked = Program.bViewShowInfoPane;
+            dynamicListPaneToolStripMenuItem.Checked = splitContainer2.Panel1Collapsed;
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
 
         }
+
+        private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+
+        }
+
     }
 } // End of namespace HELLION.Explorer

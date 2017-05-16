@@ -36,7 +36,7 @@ namespace HELLION.DataStructures
 
         protected HEOrbitalData(HEOrbitalData another)
         {
-            // Constructor that takes parameters from another object, used to 'clone' the obect
+            // Constructor that copies its parameters from another object, used to 'shallow clone' the obect
             ParentGUID = another.ParentGUID;
             VesselID = another.VesselID;
             VesselType = another.VesselType;
