@@ -5,12 +5,11 @@ using Newtonsoft.Json.Linq;
 using HELLION.DataStructures;
 using System.Drawing;
 using System.Reflection;
+using System.Diagnostics;
 //using System.IO;
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
-//using System.Diagnostics;
-//using Newtonsoft.Json;
 
 namespace HELLION.Explorer
 {
@@ -444,7 +443,7 @@ namespace HELLION.Explorer
             };
 
             // Hacky workaround for the Folder Browser Dialog not scrolling to folder passed to it :(
-            SendKeys.Send("{TAB}{TAB}{RIGHT}");
+            //SendKeys.Send("{TAB}{TAB}{RIGHT}");
 
             // If the user clicked ok then set the game data path on the settings
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK) // && folderBrowserDialog1. CheckFolderExists)
@@ -801,8 +800,31 @@ namespace HELLION.Explorer
 
             frmMainForm.Show();
 
-            MessageBox.Show("Testing!");
-            //frmMainForm.ShowDialog();
+            if (bLogToDebug)
+            {
+                // The Length property provides the number of array elements
+               Debug.Print("parameter count = {0}", args.Length);
+
+                //for (int i = 0; i < args.Length; i++)
+                foreach (string s in args)
+                {
+                    Debug.Print(s);
+                }
+            }
+
+            if (args.Length > 0)
+            {
+                FileOpen(args[0]);
+            }
+
+
+            /*
+            if (args.Length > 0 )
+            {
+                MessageBox.Show(args[1].ToString());
+            }
+            */
+
 
             // Start the Windows Forms message loop
             Application.Run(); // Application.Run(new MainForm());
