@@ -39,8 +39,12 @@ namespace HELLION.Explorer
             // Check the current document isn't null
             if (docCurrent != null)
             {
+                // Looks like there was a document open, call the FileClose method.
                 FileClose();
             }
+           
+            Application.Exit();
+
             /*
             if (System.Windows.Forms.Application.MessageLoop)
             {
@@ -120,7 +124,7 @@ namespace HELLION.Explorer
             return ilObjectTypesImageList;
         } // End of BuildObjectTypesImageList()
 
-        public static void FileOpen()
+        public static void FileOpen(string sFileName = "")
         {
             // Loads a save file in to memory and processes it
 
@@ -131,17 +135,40 @@ namespace HELLION.Explorer
                 return;
             }
 
-            // Create a new OpenFileDialog box and set some parameters
-            var openFileDialog1 = new OpenFileDialog()
+            // If the sFileName is set, check the file exists otherwise prompt the user to select a file
+            
+            if (sFileName == "")
             {
-                Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
-                Title = "Open file",
-                CheckFileExists = true
-            };
+                // Create a new OpenFileDialog box and set some parameters
+                var openFileDialog1 = new OpenFileDialog()
+                {
+                    Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
+                    Title = "Open file",
+                    CheckFileExists = true
+                };
 
-            // Check that the file exists when the user clicked ok
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                // Check that the file exists when the user clicked ok
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    sFileName = openFileDialog1.FileName;
+                }
+            }
+            else
             {
+                // We were passed a file name, check to see if it's actually there
+
+                if (!System.IO.File.Exists(sFileName))
+                {
+                    // The file name passed doesn't exist
+                    MessageBox.Show(String.Format("Error opening file:{0}{1}{0] from command line - file doesn't exist.", Environment.NewLine, sFileName));
+                    return;
+                }
+
+
+            }
+
+
+            { 
 
                 RefreshMainFormTitleText();
 
@@ -178,7 +205,7 @@ namespace HELLION.Explorer
                 // Grab the Game Data Folder from Properties
                 string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
 
-                docCurrent.MainFile.FileName = openFileDialog1.FileName;
+                docCurrent.MainFile.FileName = sFileName;
                 frmMainForm.toolStripStatusLabel1.Text = ("Loading file: " + docCurrent.MainFile.FileName);
 
                 if (Properties.HELLIONExplorer.Default.bLoadCelestialBodiesFile)
@@ -319,6 +346,71 @@ namespace HELLION.Explorer
 
             // Initiate Grabage Collection
             GC.Collect();
+        }
+
+        public static string GenerateAboutBoxText()
+        {
+            // Define a StringBuilder to hold the string to be sent to the dalog box
+            StringBuilder sb = new StringBuilder();
+
+            // Create a 'shorthand' for the new line character appropriate for this environment
+            string sNL = Environment.NewLine;
+
+            // Assemble the About dialog text
+            sb.Append(sNL);
+
+            // Add the product name and version
+            sb.Append(Application.ProductName);
+            sb.Append("   Version ");
+            sb.Append(Application.ProductVersion);
+            sb.Append(sNL);
+            sb.Append(sNL);
+
+            // Add version information for HELLION.DataStructures.dll
+            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEDocumentWorkspace)).GetName();
+            sb.Append(anHELLIONDataStructures.Name);
+            sb.Append("   Version ");
+            sb.Append(anHELLIONDataStructures.Version);
+            sb.Append(sNL);
+
+            // Add verison information for NewtonsoftJson.dll
+            var anNewtonsoftJson = System.Reflection.Assembly.GetAssembly(typeof(JObject)).GetName();
+            sb.Append(anNewtonsoftJson.Name);
+            sb.Append("   Version ");
+            sb.Append(anNewtonsoftJson.Version);
+            sb.Append(sNL);
+            sb.Append(sNL);
+
+            // Add an estimate of current memory usage from the garbage collector
+            sb.Append(String.Format("Memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
+            sb.Append(sNL);
+            sb.Append(sNL);
+            sb.Append(sNL);
+
+            // Credit
+            sb.Append("Uses the Newtonsoft JSON library. http://www.newtonsoft.com/json");
+            sb.Append(sNL);
+            sb.Append(sNL);
+
+            // Credit
+            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity games or it's licensors. http://http://www.zerogravitygames.com");
+            sb.Append(sNL);
+            sb.Append(sNL);
+            sb.Append(sNL);
+
+            // Cheeseware statement
+            sb.Append("This product is 100% certified Cheeseware* and is not dishwasher safe.");
+            sb.Append(sNL);
+            sb.Append(sNL);
+
+            // Cheeseware definition ;)
+            sb.Append("* cheeseware (Noun)");
+            sb.Append(sNL);
+            sb.Append("  1. (computing, slang, pejorative) Exceptionally low-quality software.");
+            sb.Append(sNL);
+
+            return sb.ToString();
+
         }
 
         public static bool IsGameDataFolderDefined()
@@ -652,26 +744,21 @@ namespace HELLION.Explorer
 
         } // End of RefreshObjectSummaryText()
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-
-
-
-        [STAThread]
-        static void Main(string[] args)
+        public static void InitialiseTreeView(TreeView tvCurrent)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new frmMainForm());
-            frmMainForm = new MainForm();
-            RefreshMainFormTitleText();
-            // Set the tvNavigationTree and listView1 ImageLists to  
+            // Set the specified TreeView control's ImageLists to  
             // ilObjectTypesImageList and set the default icons
-            frmMainForm.treeView1.ImageList = ilObjectTypesImageList;
-            frmMainForm.treeView1.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
-            frmMainForm.treeView1.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
-            frmMainForm.treeView1.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
+            tvCurrent.ImageList = ilObjectTypesImageList;
+            tvCurrent.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
+            tvCurrent.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
+            tvCurrent.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
+
+        }
+
+        public static void InitialiseListView(ListView lvCurrent)
+        {
+            // Set the specified ListView control's ImageLists to  
+            // ilObjectTypesImageList and set the default icons
 
             frmMainForm.listView1.SmallImageList = ilObjectTypesImageList;
             // Add some colums appropriate to the data we intend to add
@@ -683,12 +770,43 @@ namespace HELLION.Explorer
             frmMainForm.listView1.Columns.Add("GUID", 50, HorizontalAlignment.Right);
             frmMainForm.listView1.Columns.Add("SceneID", 30, HorizontalAlignment.Right);
 
+        }
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+
+        [STAThread]
+        static void Main(string[] args)
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+
+            frmMainForm = new MainForm();
+
+            // Update the main form's title text - this adds the application name
+            RefreshMainFormTitleText();
+
+            // Prepare the TreeView control
+            InitialiseTreeView(frmMainForm.treeView1);
+
+            // Prepare the ListView control
+            InitialiseListView(frmMainForm.listView1);
+
+            // Disable the File/Close menu item - this is renabled when a file is loaded
             frmMainForm.closeToolStripMenuItem.Enabled = false;
 
 
 
+            frmMainForm.Show();
 
-            frmMainForm.ShowDialog();
+            MessageBox.Show("Testing!");
+            //frmMainForm.ShowDialog();
+
+            // Start the Windows Forms message loop
+            Application.Run(); // Application.Run(new MainForm());
+
         }
     } // end class Program
 } // end namepsace HELLION

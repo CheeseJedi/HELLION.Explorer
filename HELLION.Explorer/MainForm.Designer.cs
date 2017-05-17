@@ -257,7 +257,7 @@
             this.navigationPaneToolStripMenuItem.Checked = true;
             this.navigationPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.navigationPaneToolStripMenuItem.Name = "navigationPaneToolStripMenuItem";
-            this.navigationPaneToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.navigationPaneToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.navigationPaneToolStripMenuItem.Text = "Navigation Pane";
             this.navigationPaneToolStripMenuItem.Click += new System.EventHandler(this.navigationPaneToolStripMenuItem_Click);
             // 
@@ -266,9 +266,8 @@
             this.dynamicListPaneToolStripMenuItem.Checked = true;
             this.dynamicListPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.dynamicListPaneToolStripMenuItem.Name = "dynamicListPaneToolStripMenuItem";
-            this.dynamicListPaneToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.dynamicListPaneToolStripMenuItem.Text = "Dynamic List";
-            this.dynamicListPaneToolStripMenuItem.Visible = false;
+            this.dynamicListPaneToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.dynamicListPaneToolStripMenuItem.Text = "Dynamic List Pane";
             this.dynamicListPaneToolStripMenuItem.Click += new System.EventHandler(this.dynamicListPaneToolStripMenuItem_Click);
             // 
             // infoPaneToolStripMenuItem
@@ -276,7 +275,7 @@
             this.infoPaneToolStripMenuItem.Checked = true;
             this.infoPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.infoPaneToolStripMenuItem.Name = "infoPaneToolStripMenuItem";
-            this.infoPaneToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.infoPaneToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.infoPaneToolStripMenuItem.Text = "Info Pane";
             this.infoPaneToolStripMenuItem.Click += new System.EventHandler(this.infoPaneToolStripMenuItem_Click);
             // 
@@ -403,7 +402,6 @@
             this.splitContainer1.SplitterDistance = 200;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 2;
-            this.splitContainer1.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer1_SplitterMoved);
             // 
             // treeView1
             // 
@@ -505,7 +503,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(2);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPage2.Size = new System.Drawing.Size(449, 517);
+            this.tabPage2.Size = new System.Drawing.Size(437, 517);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Object Counts";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -521,7 +519,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox2.Size = new System.Drawing.Size(445, 513);
+            this.textBox2.Size = new System.Drawing.Size(433, 513);
             this.textBox2.TabIndex = 0;
             // 
             // tabPage3
@@ -529,7 +527,7 @@
             this.tabPage3.Controls.Add(this.textBox3);
             this.tabPage3.Location = new System.Drawing.Point(4, 26);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(449, 517);
+            this.tabPage3.Size = new System.Drawing.Size(437, 517);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Data View";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -545,9 +543,8 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox3.Size = new System.Drawing.Size(449, 517);
+            this.textBox3.Size = new System.Drawing.Size(437, 517);
             this.textBox3.TabIndex = 0;
-            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // label1
             // 
@@ -577,7 +574,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "MainForm";
-            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMainForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -616,7 +613,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        public System.Windows.Forms.Label label1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
@@ -652,6 +648,7 @@
         private System.Windows.Forms.ToolStripMenuItem updatecheckToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         public System.Windows.Forms.TreeView treeView1;
+        public System.Windows.Forms.Label label1;
     }
 } // End of namespace HELLION.Explorer
 
