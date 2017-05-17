@@ -471,17 +471,6 @@ namespace HELLION.Explorer
 
                 foreach (HEOrbitalObjTreeNode nodeChild in nSelectedNode.Nodes)
                 {
-
-                    /*
-                    frmMainForm.listView1.Columns.Add("Name", 180, HorizontalAlignment.Left);
-                    frmMainForm.listView1.Columns.Add("Type", 120, HorizontalAlignment.Left);
-                    frmMainForm.listView1.Columns.Add("Count", 50, HorizontalAlignment.Left);
-                    frmMainForm.listView1.Columns.Add("TotalCount", 60, HorizontalAlignment.Left);
-                    frmMainForm.listView1.Columns.Add("SemiMajorAxis", 80, HorizontalAlignment.Left);
-                    frmMainForm.listView1.Columns.Add("GUID", 50, HorizontalAlignment.Right);
-                    frmMainForm.listView1.Columns.Add("SceneID", 30, HorizontalAlignment.Right);
-                    */
-
                     string[] arr = new string[7];
                     arr[0] = nodeChild.Text;
                     arr[1] = nodeChild.NodeType.ToString();

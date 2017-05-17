@@ -21,8 +21,8 @@ namespace HELLION.DataStructures
             // Set the NodeType to Unknown
             NodeType = HETreeNodeType.Unknown;
             IsReadOnly = false;
-            CountOfChildNodes = -1;
-            CountOfAllChildNodes = -1;
+            CountOfChildNodes = -1; // Set to -1 to signify no count has been made yet
+            CountOfAllChildNodes = -1; // Set to -1 to signify no count has been made yet
         }
 
         public void UpdateCounts()
