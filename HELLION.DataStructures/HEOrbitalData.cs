@@ -11,13 +11,13 @@ namespace HELLION.DataStructures
         public long ParentGUID { get; set; }
         public long VesselID { get; set; }
         public long VesselType { get; set; }
-        public float Eccentricity { get; set; }
-        public float SemiMajorAxis { get; set; }
-        public float LongitudeOfAscendingNode { get; set; }
-        public float ArgumentOfPeriapsis { get; set; }
-        public float Inclination { get; set; }
-        public float TimeSincePeriapsis { get; set; }
-        public float SolarSystemPeriapsisTime { get; set; }
+        public double Eccentricity { get; set; }
+        public double SemiMajorAxis { get; set; }
+        public double LongitudeOfAscendingNode { get; set; }
+        public double ArgumentOfPeriapsis { get; set; }
+        public double Inclination { get; set; }
+        public double TimeSincePeriapsis { get; set; }
+        public double SolarSystemPeriapsisTime { get; set; }
 
         public HEOrbitalData()
         {

@@ -19,12 +19,12 @@ namespace HELLION.DataStructures
             HEOrbitalObjTreeNode nodeY = y as HEOrbitalObjTreeNode;
 
             // Compare the values of SemiMajorAxis, returning the difference.
-            int iResult = Comparer<float>.Default.Compare(nodeX.SemiMajorAxis, nodeY.SemiMajorAxis);
+            int iResult = Comparer<double>.Default.Compare(nodeX.SemiMajorAxis, nodeY.SemiMajorAxis);
 
             if (iResult == 0)
             {
                 // They were the same value, call Compare on the Inclination
-                return Comparer<float>.Default.Compare(nodeX.Inclination, nodeY.Inclination);
+                return Comparer<double>.Default.Compare(nodeX.Inclination, nodeY.Inclination);
             }
             else
             {

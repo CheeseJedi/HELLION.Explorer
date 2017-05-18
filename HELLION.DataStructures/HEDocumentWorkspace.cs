@@ -145,11 +145,11 @@ namespace HELLION.DataStructures
                         HEOrbitalData Data = new HEOrbitalData()
                         {
                             ParentGUID = (long)cbChild["ParentGUID"],
-                            SemiMajorAxis = (float)cbChild["SemiMajorAxis"],
-                            Inclination = (float)cbChild["Inclination"],
-                            Eccentricity = (float)cbChild["Eccentricity"],
-                            ArgumentOfPeriapsis = (float)cbChild["ArgumentOfPeriapsis"],
-                            LongitudeOfAscendingNode = (float)cbChild["LongitudeOfAscendingNode"]
+                            SemiMajorAxis = (double)cbChild["SemiMajorAxis"],
+                            Inclination = (double)cbChild["Inclination"],
+                            Eccentricity = (double)cbChild["Eccentricity"],
+                            ArgumentOfPeriapsis = (double)cbChild["ArgumentOfPeriapsis"],
+                            LongitudeOfAscendingNode = (double)cbChild["LongitudeOfAscendingNode"]
                         };
 
                         // Set up a new custom TreeNode which will be added to the node tree
@@ -161,8 +161,8 @@ namespace HELLION.DataStructures
 
 
                             ParentGUID = (long)cbChild["ParentGUID"],
-                            SemiMajorAxis = (float)cbChild["SemiMajorAxis"],
-                            Inclination = (float)cbChild["Inclination"],
+                            SemiMajorAxis = (double)cbChild["SemiMajorAxis"],
+                            Inclination = (double)cbChild["Inclination"],
                             OrbitData = Data,
 
 
@@ -446,11 +446,11 @@ namespace HELLION.DataStructures
                                 HEOrbitalData OrbitalObjectData = new HEOrbitalData()
                                 {
                                     ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
-                                    SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
-                                    Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"],
-                                    Eccentricity = (float)jtOrbitalObject["OrbitData"]["Eccentricity"],
-                                    ArgumentOfPeriapsis = (float)jtOrbitalObject["OrbitData"]["ArgumentOfPeriapsis"],
-                                    LongitudeOfAscendingNode = (float)jtOrbitalObject["OrbitData"]["LongitudeOfAscendingNode"]
+                                    SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
+                                    Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"],
+                                    Eccentricity = (double)jtOrbitalObject["OrbitData"]["Eccentricity"],
+                                    ArgumentOfPeriapsis = (double)jtOrbitalObject["OrbitData"]["ArgumentOfPeriapsis"],
+                                    LongitudeOfAscendingNode = (double)jtOrbitalObject["OrbitData"]["LongitudeOfAscendingNode"]
                                 };
 
                                 // Create a new TreeNode representing the object we're adding
@@ -461,8 +461,8 @@ namespace HELLION.DataStructures
                                     Text = (string)jtOrbitalObject["Name"],
                                     GUID = (long)jtOrbitalObject["GUID"],
                                     ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"], // to be removed
-                                    SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"], // to be removed
-                                    Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"], // to be removed
+                                    SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"], // to be removed
+                                    Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"], // to be removed
                                     // Generate the foreground colour
                                     //ForeColor = ConvertStringToColor((string)jtOrbitalObject["Name"]),
                                     ImageIndex = iImageIndex,
@@ -537,8 +537,8 @@ namespace HELLION.DataStructures
                                             Text = "Scene " + (string)jtOrbitalObject["SceneID"],
                                             //GUID = (long)jtOrbitalObject["GUID"],
                                             ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
-                                            SemiMajorAxis = (float)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
-                                            Inclination = (float)jtOrbitalObject["OrbitData"]["Inclination"],
+                                            SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
+                                            Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"],
                                             // Generate the foreground colour
                                             ForeColor = ConvertStringToColor("SceneID_" + (string)jtOrbitalObject["Name"]),
                                             SceneID = (int)jtOrbitalObject["SceneID"],
@@ -755,8 +755,8 @@ namespace HELLION.DataStructures
 
 
                     //ParentGUID = (long)cbChild["ParentGUID"],
-                    //SemiMajorAxis = (float)cbChild["SemiMajorAxis"],
-                    //Inclination = (float)cbChild["Inclination"],
+                    //SemiMajorAxis = (double)cbChild["SemiMajorAxis"],
+                    //Inclination = (double)cbChild["Inclination"],
                     //OrbitData = Data,
 
 

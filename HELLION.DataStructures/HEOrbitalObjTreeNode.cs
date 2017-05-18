@@ -13,8 +13,8 @@ namespace HELLION.DataStructures
         public long ParentGUID { get; set; }
         public int SceneID { get; set; }
         public int Type { get; set; }
-        public float SemiMajorAxis { get; set; }
-        public float Inclination { get; set; }
+        public double SemiMajorAxis { get; set; }
+        public double Inclination { get; set; }
         public HEOrbitalData OrbitData { get; set; }
 
         public HEOrbitalObjTreeNode()
