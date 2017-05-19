@@ -32,9 +32,28 @@ namespace HELLION.DataStructures
         // Define a custom tree node to become the root node for the Solar System tree
         public HEOrbitalObjTreeNode SolarSystemRootNode { get; private set; }
         
+        // Define a custom tree node to become the root node for the Data tree
+        public HETreeNode GameDataRootNode { get; private set; }
+
+
+        public HETreeNode SaveFileRootNode { get; private set; }
+        public HETreeNode SaveFileShipsRootNode { get; private set; }
+        public HETreeNode SaveFileAsteroidsRootNode { get; private set; }
+        public HETreeNode SaveFilePlayersRootNode { get; private set; }
+        public HETreeNode SaveFileRespawnObjectsRootNode { get; private set; }
+        public HETreeNode SaveFileSpawnPointsRootNode { get; private set; }
+        public HETreeNode SaveFileArenaControllersRootNode { get; private set; }
+
+        public HETreeNode DataFilesRootNode { get; private set; }
+        public HETreeNode DataFilesAsteroidsRootNode { get; private set; }
+        public HETreeNode DataFilesCelestialBodiesRootNode { get; private set; }
+        public HETreeNode DataFilesStructuresRootNode { get; private set; }
+        public HETreeNode DataFilesDynamicObjectsRootNode { get; private set; }
+        //public HETreeNode DataFilesModulesRootNode { get; private set; }
+        //public HETreeNode DataFilesStationsRootNode { get; private set; }
+
         // Define a custom tree node to become the root node for the Search Results tree
         public HEOrbitalObjTreeNode SearchResultsRootNode { get; private set; }
-
 
         // Define the HEJsonFile object that holds the .save data file
         public HEGameFile MainFile { get; set; }
@@ -727,11 +746,6 @@ namespace HELLION.DataStructures
                     SelectedImageIndex = (int)HEObjectTypesImageList.Share_16x
                 };
 
-
-
-
-
-
                 // Build master node tree
                 BuildSolarSystem(SolarSystemRootNode);
 
@@ -743,6 +757,45 @@ namespace HELLION.DataStructures
                 // Update counts of nodes
                 SolarSystemRootNode.UpdateCounts();
 
+
+                // Add Entry point for the game data tree
+                GameDataRootNode = new HEOrbitalObjTreeNode()
+                {
+                    Name = "NAV_GameData",
+                    Text = "Game Data",
+                    NodeType = HETreeNodeType.SystemNAV,
+                    Tag = "No data available for this view",
+                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
+                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
+                };
+                GameDataRootNode.Expand();
+
+                // Add Entry points for the data files
+                GameDataRootNode.Nodes.Add(new HEOrbitalObjTreeNode()
+                {
+                    Name = "NAV_SaveFile",
+                    Text = "Save File",
+                    NodeType = HETreeNodeType.SystemNAV,
+                    Tag = "No data available for this view",
+                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
+                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
+                });
+
+                // Add Entry points for the data files
+                GameDataRootNode.Nodes.Add(new HEOrbitalObjTreeNode()
+                {
+                    Name = "NAV_DataFiles",
+                    Text = "Data Files",
+                    NodeType = HETreeNodeType.SystemNAV,
+                    Tag = "No data available for this view",
+                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
+                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
+                });
+
+
+
+
+                //PopulateGameData()
 
                 // Add the entry for search results
 

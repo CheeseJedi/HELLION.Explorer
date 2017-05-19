@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
+using System.Windows.Forms;
 
 
 namespace HELLION.DataStructures
@@ -41,6 +42,14 @@ namespace HELLION.DataStructures
                     //break;
             }
         }
+
+        // Not currently used, will need to have similar version that find nodes by other parameters
+        public static TreeNode GetNodeByName(TreeNode nCurrentNode, string key)
+        {
+            TreeNode[] nodes = nCurrentNode.Nodes.Find(key, true);
+            return nodes.Length > 0 ? nodes[0] : null;
+        }
+
 
         public static class EnumUtil
         {

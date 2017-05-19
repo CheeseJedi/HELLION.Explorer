@@ -16,6 +16,8 @@ namespace HELLION.Explorer
     static class Program
     {
         // This is the main class that implements the HELLION Explorer program.
+        // Most of the work is done by the HEDocumentWorkspace object however this
+        // assembly is responsible for building the output for the  ListView control
             
         // main object definitions
             
@@ -28,7 +30,7 @@ namespace HELLION.Explorer
         // Define an ImageList and fill it
         public static ImageList ilObjectTypesImageList = BuildObjectTypesImageList();
 
-        private static bool bLogToDebug = true;
+        private static bool bLogToDebug = false;
         public static bool bViewShowNavigationPane = true;
         public static bool bViewShowDynamicList = true;
         public static bool bViewShowInfoPane = true;
@@ -56,7 +58,7 @@ namespace HELLION.Explorer
                 System.Environment.Exit(1);
             }
             */
-        }
+        } // End of ControlledExit()
 
         public static ImageList BuildObjectTypesImageList()
         {
@@ -112,10 +114,7 @@ namespace HELLION.Explorer
             {
                 if (sImageName.Contains(sEntryAssemblyName + ".Images."))
                 {
-                    //MessageBox.Show(sImageName);
-
-                    ilObjectTypesImageList.Images.Add(Image.FromStream(Assembly.GetEntryAssembly().GetManifestResourceStream(sImageName)));
-    
+                    ilObjectTypesImageList.Images.Add(Image.FromStream(Assembly.GetEntryAssembly().GetManifestResourceStream(sImageName)));   
                    }
             }
 
@@ -190,9 +189,6 @@ namespace HELLION.Explorer
                     FileClose();
 
                 }
-
-
-
 
                 // Create a new DocumentWorkspace
                 docCurrent = new HEDocumentWorkspace()
@@ -269,6 +265,7 @@ namespace HELLION.Explorer
                 {
                     // Add the SolarSystemRoot and SearchResultsRoot nodes to the treeview 
                     frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystemRootNode);
+                    frmMainForm.treeView1.Nodes.Add(docCurrent.GameDataRootNode);
                     frmMainForm.treeView1.Nodes.Add(docCurrent.SearchResultsRootNode);
 
                     frmMainForm.treeView1.SelectedNode = docCurrent.SolarSystemRootNode;
@@ -345,7 +342,7 @@ namespace HELLION.Explorer
 
             // Initiate Grabage Collection
             GC.Collect();
-        }
+        } // End of FileClose()
 
         public static string GenerateAboutBoxText()
         {
@@ -392,7 +389,7 @@ namespace HELLION.Explorer
             sb.Append(sNL);
 
             // Credit
-            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity games or it's licensors. http://http://www.zerogravitygames.com");
+            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity games or it's licensors. http://www.zerogravitygames.com");
             sb.Append(sNL);
             sb.Append(sNL);
             sb.Append(sNL);
@@ -410,7 +407,7 @@ namespace HELLION.Explorer
 
             return sb.ToString();
 
-        }
+        } // End of GenerateAboutBoxText()
 
         public static bool IsGameDataFolderDefined()
         {
@@ -597,7 +594,7 @@ namespace HELLION.Explorer
             {
                 //MessageBox.Show("RefreshListView was passed a null nSelectedNode");
             }
-        }
+        } // End of RefreshListView
 
         public static void RefreshSelectedObjectSummaryText(HEOrbitalObjTreeNode nSelectedNode)
         {
@@ -752,7 +749,7 @@ namespace HELLION.Explorer
             tvCurrent.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
             tvCurrent.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
 
-        }
+        } // End of InitialiseTreeView
 
         public static void InitialiseListView(ListView lvCurrent)
         {
@@ -769,7 +766,7 @@ namespace HELLION.Explorer
             frmMainForm.listView1.Columns.Add("GUID", 50, HorizontalAlignment.Right);
             frmMainForm.listView1.Columns.Add("SceneID", 30, HorizontalAlignment.Right);
 
-        }
+        } // End of InitialiseListView
 
         /// <summary>
         /// The main entry point for the application.
@@ -829,8 +826,8 @@ namespace HELLION.Explorer
             // Start the Windows Forms message loop
             Application.Run(); // Application.Run(new MainForm());
 
-        }
-    } // end class Program
-} // end namepsace HELLION
+        } // End of Main()
+    } // End of class Program
+} // End of namepsace HELLION.Explorer
 
 
