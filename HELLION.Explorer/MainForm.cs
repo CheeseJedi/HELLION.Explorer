@@ -124,9 +124,9 @@ namespace HELLION.Explorer
             if (Program.docCurrent.IsFileReady)
             {
                 // Update the object path + name + Tag in the object identifier bar
-                Program.RefreshSelectedOjectPathBarText((HEOrbitalObjTreeNode)e.Node);
-                Program.RefreshListView((HEOrbitalObjTreeNode)e.Node);
-                Program.RefreshSelectedObjectSummaryText((HEOrbitalObjTreeNode)e.Node);
+                //Program.RefreshSelectedOjectPathBarText((HEOrbitalObjTreeNode)e.Node);
+                //Program.RefreshListView((HEOrbitalObjTreeNode)e.Node);
+                //Program.RefreshSelectedObjectSummaryText((HEOrbitalObjTreeNode)e.Node);
             }
         }
 

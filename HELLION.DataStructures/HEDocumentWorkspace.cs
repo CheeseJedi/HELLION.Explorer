@@ -34,9 +34,9 @@ namespace HELLION.DataStructures
         
         // Define a custom tree node to become the root node for the Data tree
         public HETreeNode GameDataRootNode { get; private set; }
-
-
+        public HETreeNode DataFilesRootNode { get; private set; }
         public HETreeNode SaveFileRootNode { get; private set; }
+
         public HETreeNode SaveFileShipsRootNode { get; private set; }
         public HETreeNode SaveFileAsteroidsRootNode { get; private set; }
         public HETreeNode SaveFilePlayersRootNode { get; private set; }
@@ -44,13 +44,6 @@ namespace HELLION.DataStructures
         public HETreeNode SaveFileSpawnPointsRootNode { get; private set; }
         public HETreeNode SaveFileArenaControllersRootNode { get; private set; }
 
-        public HETreeNode DataFilesRootNode { get; private set; }
-        public HETreeNode DataFilesAsteroidsRootNode { get; private set; }
-        public HETreeNode DataFilesCelestialBodiesRootNode { get; private set; }
-        public HETreeNode DataFilesStructuresRootNode { get; private set; }
-        public HETreeNode DataFilesDynamicObjectsRootNode { get; private set; }
-        //public HETreeNode DataFilesModulesRootNode { get; private set; }
-        //public HETreeNode DataFilesStationsRootNode { get; private set; }
 
         // Define a custom tree node to become the root node for the Search Results tree
         public HEOrbitalObjTreeNode SearchResultsRootNode { get; private set; }
@@ -60,12 +53,18 @@ namespace HELLION.DataStructures
 
         // Define additional HEJsonFile objects to hold accompanying information
         public HEJsonFile DataFileCelestialBodies { get; set; }
+        public HETreeNode DataFilesCelestialBodiesRootNode { get; private set; }
         public HEJsonFile DataFileAsteroids { get; set; }
+        public HETreeNode DataFilesAsteroidsRootNode { get; private set; }
         public HEJsonFile DataFileStructures { get; set; }
+        public HETreeNode DataFilesStructuresRootNode { get; private set; }
         public HEJsonFile DataFileDynamicObjects { get; set; }
+        public HETreeNode DataFilesDynamicObjectsRootNode { get; private set; }
         // Other data file definitions would go here - these two are not yet implemented in game
         public HEJsonFile DataFileModules { get; set; }
+        public HETreeNode DataFilesModulesRootNode { get; private set; }
         public HEJsonFile DataFileStations { get; set; }
+        public HETreeNode DataFilesStationsRootNode { get; private set; }
 
         public HEDocumentWorkspace()
         {
@@ -103,9 +102,8 @@ namespace HELLION.DataStructures
         public void BuildSolarSystem(HEOrbitalObjTreeNode nStartingPoint)
         {
             // Builds a tree of nodes representing the solar system and attaches it to the Starting Point on an existing node tree
-
-
             AddCBTreeNodesRecursively(DataFileCelestialBodies.JData, nThisNode: nStartingPoint, lParentGUID: -1, iDepth: 10, bLogToDebug: LogToDebug);
+
         } // End of BuildSolarSystem()
 
         public void AddCBTreeNodesRecursively(
@@ -261,6 +259,8 @@ namespace HELLION.DataStructures
         public void PopulateOrbitalObjects(HETreeNodeType ntAddNodesOfType, bool bAddScenes)
         {
             // Populates a given node tree with objects of a given type from the .save file
+
+            // TODO add variable nStartingPoint rather than starting at an arbirtary place
 
             // Controls the maximum recursion depth to prevent runaway recursion
             int iMaxRecursionDepth = 10;
@@ -771,18 +771,7 @@ namespace HELLION.DataStructures
                 GameDataRootNode.Expand();
 
                 // Add Entry points for the data files
-                GameDataRootNode.Nodes.Add(new HEOrbitalObjTreeNode()
-                {
-                    Name = "NAV_SaveFile",
-                    Text = "Save File",
-                    NodeType = HETreeNodeType.SystemNAV,
-                    Tag = "No data available for this view",
-                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
-                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
-                });
-
-                // Add Entry points for the data files
-                GameDataRootNode.Nodes.Add(new HEOrbitalObjTreeNode()
+                DataFilesRootNode = new HEOrbitalObjTreeNode()
                 {
                     Name = "NAV_DataFiles",
                     Text = "Data Files",
@@ -790,7 +779,59 @@ namespace HELLION.DataStructures
                     Tag = "No data available for this view",
                     ImageIndex = (int)HEObjectTypesImageList.Document_16x,
                     SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
-                });
+                };
+                GameDataRootNode.Nodes.Add(DataFilesRootNode);
+
+                // Add Entry points for the save file
+                SaveFileRootNode = new HEOrbitalObjTreeNode()
+                {
+                    Name = "NAV_SaveFile",
+                    Text = "Save File",
+                    NodeType = HETreeNodeType.SystemNAV,
+                    Tag = "No data available for this view",
+                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
+                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
+                };
+                GameDataRootNode.Nodes.Add(SaveFileRootNode);
+
+                // something = BuildNodeCollection(
+
+                DataFilesCelestialBodiesRootNode = DataFileCelestialBodies.BuildNodeCollection(HETreeNodeType.CelestialBody);
+                DataFilesCelestialBodiesRootNode.Name = "DataFileCelestialBodies";
+                DataFilesCelestialBodiesRootNode.Text = "Celestial Bodies (" + DataFilesCelestialBodiesRootNode.Nodes.Count.ToString() + ")";
+                DataFilesCelestialBodiesRootNode.NodeType = HETreeNodeType.SystemNAV;
+                DataFilesCelestialBodiesRootNode.Tag = "No data available for this view";
+                DataFilesCelestialBodiesRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                // Add the node
+                DataFilesRootNode.Nodes.Add(DataFilesCelestialBodiesRootNode);
+
+
+                DataFilesAsteroidsRootNode = DataFileAsteroids.BuildNodeCollection(HETreeNodeType.Asteroid);
+                DataFilesAsteroidsRootNode.Name = "DataFileAsteroids";
+                DataFilesAsteroidsRootNode.Text = "Asteroids (" + DataFilesAsteroidsRootNode.Nodes.Count.ToString() + ")";
+                DataFilesAsteroidsRootNode.NodeType = HETreeNodeType.SystemNAV;
+                DataFilesAsteroidsRootNode.Tag = "No data available for this view";
+                DataFilesAsteroidsRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                // Add the node
+                DataFilesRootNode.Nodes.Add(DataFilesAsteroidsRootNode);
+                
+                DataFilesStructuresRootNode = DataFileStructures.BuildNodeCollection(HETreeNodeType.Ship);
+                DataFilesStructuresRootNode.Name = "DataFileStructures";
+                DataFilesStructuresRootNode.Text = "Structures (" + DataFilesStructuresRootNode.Nodes.Count.ToString() + ")";
+                DataFilesStructuresRootNode.NodeType = HETreeNodeType.SystemNAV;
+                DataFilesStructuresRootNode.Tag = "No data available for this view";
+                DataFilesStructuresRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                // Add the node
+                DataFilesRootNode.Nodes.Add(DataFilesStructuresRootNode);
+
+                DataFilesDynamicObjectsRootNode = DataFileDynamicObjects.BuildNodeCollection(HETreeNodeType.DynamicObject);
+                DataFilesDynamicObjectsRootNode.Name = "DataFileDynamicObjects";
+                DataFilesDynamicObjectsRootNode.Text = "Dynamic Objects (" + DataFilesDynamicObjectsRootNode.Nodes.Count.ToString() + ")";
+                DataFilesDynamicObjectsRootNode.NodeType = HETreeNodeType.SystemNAV;
+                DataFilesDynamicObjectsRootNode.Tag = "No data available for this view";
+                DataFilesDynamicObjectsRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                // Add the node
+                DataFilesRootNode.Nodes.Add(DataFilesDynamicObjectsRootNode);
 
 
 

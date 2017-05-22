@@ -747,7 +747,7 @@ namespace HELLION.Explorer
             tvCurrent.ImageList = ilObjectTypesImageList;
             tvCurrent.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
             tvCurrent.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
-            tvCurrent.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
+            //tvCurrent.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
 
         } // End of InitialiseTreeView
 

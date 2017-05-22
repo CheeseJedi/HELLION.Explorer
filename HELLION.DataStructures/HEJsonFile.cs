@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Windows.Forms; // for the TreeNodeCollection
 
 using System.Diagnostics;
 
@@ -103,5 +104,51 @@ namespace HELLION.DataStructures
             return LoadError;
         } // End of LoadFile()
 
+        
+        public HETreeNode BuildNodeCollection(HETreeNodeType nodeType)
+        {
+            // Builds and returns a HETreeNode whose Node Collection contains HETreeNode type nodes
+            // based on the data stored in this JSON file - only for use on Data files currently
+            // Returns null instead of an empty collection
+
+            // Define an HETreeNode node to serve as the parent for this collection of data objects
+            HETreeNode nodeRoot = new HETreeNode();
+
+            if (IsFileLoaded && !LoadError)
+            {
+
+                // Get the index of the image associated with this node type
+                int iImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(nodeType);
+
+                foreach (JToken dataItem in JData)
+                {
+                    // Set up a new HETreeNode with data from this object and the type as passed in
+                    // via nodeType
+
+                    HETreeNode nodeDataItem = new HETreeNode()
+                    {
+                        Name = (string)dataItem["Name"],
+                        NodeType = nodeType,
+                        Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
+                        Tag = dataItem,
+                        ImageIndex = iImageIndex,
+                        SelectedImageIndex = iImageIndex,
+                    };
+
+                    // Add nodeDataItem to the nodeRoot's Nodes collection
+                    nodeRoot.Nodes.Add(nodeDataItem);
+
+                }
+                
+
+                //
+                
+
+
+            }
+            //
+            return nodeRoot;
+        }
+        
     } // End of class HEjsonFile
 } // End of namespace HELLION.DataStructures
