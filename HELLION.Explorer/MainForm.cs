@@ -51,14 +51,14 @@ namespace HELLION.Explorer
             if (Program.docCurrent.IsFileReady)
             {
 
-                HEOrbitalObjTreeNode node = null;
+                TreeNode node = null;
 
                 ListView.SelectedListViewItemCollection selection = listView1.SelectedItems;
 
                 foreach (ListViewItem item in selection)
                 {
                     // We only process the first
-                    node = (HEOrbitalObjTreeNode)item.Tag;
+                    node = (TreeNode)item.Tag;
                     break;
                 }
 
@@ -84,7 +84,7 @@ namespace HELLION.Explorer
             if (Program.docCurrent.IsFileReady)
             {
                 // Create a node to represent the currently selected item
-                HEOrbitalObjTreeNode node = null;
+                TreeNode node = null;
 
                 // Set up a collection
                 ListView.SelectedListViewItemCollection selection = listView1.SelectedItems;
@@ -93,7 +93,7 @@ namespace HELLION.Explorer
                 foreach (ListViewItem item in selection)
                 {
                     // We only process the first item
-                    node = (HEOrbitalObjTreeNode)item.Tag;
+                    node = (TreeNode)item.Tag;
                     break;
                 }
                 // Null check - the ListView fires off two events when the selected imdex is changed the
@@ -124,9 +124,9 @@ namespace HELLION.Explorer
             if (Program.docCurrent.IsFileReady)
             {
                 // Update the object path + name + Tag in the object identifier bar
-                //Program.RefreshSelectedOjectPathBarText((HEOrbitalObjTreeNode)e.Node);
-                //Program.RefreshListView((HEOrbitalObjTreeNode)e.Node);
-                //Program.RefreshSelectedObjectSummaryText((HEOrbitalObjTreeNode)e.Node);
+                Program.RefreshSelectedOjectPathBarText(e.Node);
+                Program.RefreshListView(e.Node);
+                Program.RefreshSelectedObjectSummaryText(e.Node);
             }
         }
 

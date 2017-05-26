@@ -46,7 +46,7 @@ namespace HELLION.DataStructures
 
 
         // Define a custom tree node to become the root node for the Search Results tree
-        public HEOrbitalObjTreeNode SearchResultsRootNode { get; private set; }
+        public HETreeNode SearchResultsRootNode { get; private set; }
 
         // Define the HEJsonFile object that holds the .save data file
         public HEGameFile MainFile { get; set; }
@@ -186,8 +186,8 @@ namespace HELLION.DataStructures
                             //OrbitData
                             Text = (string)cbChild["Name"],
                             Tag = cbChild,
-                            ImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(HETreeNodeType.CelestialBody),
-                            SelectedImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(HETreeNodeType.CelestialBody)
+                            ImageIndex = HEUtilities.GetImageIndexByNodeType(HETreeNodeType.CelestialBody),
+                            SelectedImageIndex = HEUtilities.GetImageIndexByNodeType(HETreeNodeType.CelestialBody)
                         };
 
 
@@ -347,7 +347,7 @@ namespace HELLION.DataStructures
             string sIndent = String.Join("| ", new String[iLogIndentLevel]);
 
             // Get the index of the image associated with this node type
-            int iImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(ntAddNodesOfType);
+            int iImageIndex = HEUtilities.GetImageIndexByNodeType(ntAddNodesOfType);
 
             // nThisNode prepresents the point at which this function starts from
             //Check and only continue if nThisNode is not null
@@ -545,7 +545,7 @@ namespace HELLION.DataStructures
                                     {
                                         // No match found, create a Scene node to hold the jtOrbitalObject
 
-                                        int iSceneImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(HETreeNodeType.Scene);
+                                        int iSceneImageIndex = HEUtilities.GetImageIndexByNodeType(HETreeNodeType.Scene);
 
 
                                         // Set up a new TreeNode for the scene which will be added to the node tree ahead of the object node
@@ -750,86 +750,90 @@ namespace HELLION.DataStructures
                 BuildSolarSystem(SolarSystemRootNode);
 
                 // Add other orbital objects
-                PopulateOrbitalObjects(HETreeNodeType.Asteroid, false);
-                PopulateOrbitalObjects(HETreeNodeType.Ship, false);
-                PopulateOrbitalObjects(HETreeNodeType.Player, false);
+                PopulateOrbitalObjects(HETreeNodeType.Asteroid, bAddScenes: false);
+                PopulateOrbitalObjects(HETreeNodeType.Ship, bAddScenes: false);
+                PopulateOrbitalObjects(HETreeNodeType.Player, bAddScenes: false);
 
                 // Update counts of nodes
                 SolarSystemRootNode.UpdateCounts();
 
+                // Define an int to represent the Document_16x ison, used by the FileData nodes
+                int iFileIconIndex = (int)HEObjectTypesImageList.Document_16x;
 
                 // Add Entry point for the game data tree
-                GameDataRootNode = new HEOrbitalObjTreeNode()
+                GameDataRootNode = new HETreeNode()
                 {
                     Name = "NAV_GameData",
                     Text = "Game Data",
                     NodeType = HETreeNodeType.SystemNAV,
                     Tag = "No data available for this view",
-                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
-                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
+                    ImageIndex = iFileIconIndex,
+                    SelectedImageIndex = iFileIconIndex
                 };
                 GameDataRootNode.Expand();
 
                 // Add Entry points for the data files
-                DataFilesRootNode = new HEOrbitalObjTreeNode()
+                DataFilesRootNode = new HETreeNode()
                 {
                     Name = "NAV_DataFiles",
                     Text = "Data Files",
                     NodeType = HETreeNodeType.SystemNAV,
                     Tag = "No data available for this view",
-                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
-                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
+                    ImageIndex = iFileIconIndex,
+                    SelectedImageIndex = iFileIconIndex
                 };
                 GameDataRootNode.Nodes.Add(DataFilesRootNode);
 
                 // Add Entry points for the save file
-                SaveFileRootNode = new HEOrbitalObjTreeNode()
+                SaveFileRootNode = new HETreeNode()
                 {
                     Name = "NAV_SaveFile",
                     Text = "Save File",
                     NodeType = HETreeNodeType.SystemNAV,
                     Tag = "No data available for this view",
-                    ImageIndex = (int)HEObjectTypesImageList.Document_16x,
-                    SelectedImageIndex = (int)HEObjectTypesImageList.Document_16x
+                    ImageIndex = iFileIconIndex,
+                    SelectedImageIndex = iFileIconIndex
                 };
                 GameDataRootNode.Nodes.Add(SaveFileRootNode);
 
-                // something = BuildNodeCollection(
-
-                DataFilesCelestialBodiesRootNode = DataFileCelestialBodies.BuildNodeCollection(HETreeNodeType.CelestialBody);
+                DataFilesCelestialBodiesRootNode = DataFileCelestialBodies.BuildNodeCollection(HETreeNodeType.DefCelestialBody);
                 DataFilesCelestialBodiesRootNode.Name = "DataFileCelestialBodies";
-                DataFilesCelestialBodiesRootNode.Text = "Celestial Bodies (" + DataFilesCelestialBodiesRootNode.Nodes.Count.ToString() + ")";
+                DataFilesCelestialBodiesRootNode.Text = "Celestial Bodies"; // (" + DataFilesCelestialBodiesRootNode.Nodes.Count.ToString() + ")";
                 DataFilesCelestialBodiesRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesCelestialBodiesRootNode.Tag = "No data available for this view";
-                DataFilesCelestialBodiesRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                DataFilesCelestialBodiesRootNode.Tag = "File Path: " + DataFileCelestialBodies.FileName;
+                DataFilesCelestialBodiesRootNode.ImageIndex = iFileIconIndex;
+                DataFilesCelestialBodiesRootNode.SelectedImageIndex = iFileIconIndex;
                 // Add the node
                 DataFilesRootNode.Nodes.Add(DataFilesCelestialBodiesRootNode);
 
 
-                DataFilesAsteroidsRootNode = DataFileAsteroids.BuildNodeCollection(HETreeNodeType.Asteroid);
+                DataFilesAsteroidsRootNode = DataFileAsteroids.BuildNodeCollection(HETreeNodeType.DefAsteroid);
                 DataFilesAsteroidsRootNode.Name = "DataFileAsteroids";
-                DataFilesAsteroidsRootNode.Text = "Asteroids (" + DataFilesAsteroidsRootNode.Nodes.Count.ToString() + ")";
+                DataFilesAsteroidsRootNode.Text = "Asteroids"; // (" + DataFilesAsteroidsRootNode.Nodes.Count.ToString() + ")";
                 DataFilesAsteroidsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesAsteroidsRootNode.Tag = "No data available for this view";
-                DataFilesAsteroidsRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                DataFilesAsteroidsRootNode.Tag = "File Path: " + DataFileAsteroids.FileName;
+                DataFilesAsteroidsRootNode.ImageIndex = iFileIconIndex;
+                DataFilesAsteroidsRootNode.SelectedImageIndex = iFileIconIndex;
                 // Add the node
                 DataFilesRootNode.Nodes.Add(DataFilesAsteroidsRootNode);
                 
-                DataFilesStructuresRootNode = DataFileStructures.BuildNodeCollection(HETreeNodeType.Ship);
+                DataFilesStructuresRootNode = DataFileStructures.BuildNodeCollection(HETreeNodeType.DefStructure);
                 DataFilesStructuresRootNode.Name = "DataFileStructures";
-                DataFilesStructuresRootNode.Text = "Structures (" + DataFilesStructuresRootNode.Nodes.Count.ToString() + ")";
+                DataFilesStructuresRootNode.Text = "Structures"; // (" + DataFilesStructuresRootNode.Nodes.Count.ToString() + ")";
                 DataFilesStructuresRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesStructuresRootNode.Tag = "No data available for this view";
-                DataFilesStructuresRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                DataFilesStructuresRootNode.Tag = "File Path: " + DataFileStructures.FileName;
+                DataFilesStructuresRootNode.ImageIndex = iFileIconIndex;
+                DataFilesStructuresRootNode.SelectedImageIndex = iFileIconIndex;
                 // Add the node
                 DataFilesRootNode.Nodes.Add(DataFilesStructuresRootNode);
 
-                DataFilesDynamicObjectsRootNode = DataFileDynamicObjects.BuildNodeCollection(HETreeNodeType.DynamicObject);
+                DataFilesDynamicObjectsRootNode = DataFileDynamicObjects.BuildNodeCollection(HETreeNodeType.DefDynamicObject);
                 DataFilesDynamicObjectsRootNode.Name = "DataFileDynamicObjects";
-                DataFilesDynamicObjectsRootNode.Text = "Dynamic Objects (" + DataFilesDynamicObjectsRootNode.Nodes.Count.ToString() + ")";
+                DataFilesDynamicObjectsRootNode.Text = "Dynamic Objects"; // (" + DataFilesDynamicObjectsRootNode.Nodes.Count.ToString() + ")";
                 DataFilesDynamicObjectsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesDynamicObjectsRootNode.Tag = "No data available for this view";
-                DataFilesDynamicObjectsRootNode.ImageIndex = (int)HEObjectTypesImageList.Document_16x;
+                DataFilesDynamicObjectsRootNode.Tag = "File Path: " + DataFileDynamicObjects.FileName;
+                DataFilesDynamicObjectsRootNode.ImageIndex = iFileIconIndex;
+                DataFilesDynamicObjectsRootNode.SelectedImageIndex = iFileIconIndex;
                 // Add the node
                 DataFilesRootNode.Nodes.Add(DataFilesDynamicObjectsRootNode);
 
@@ -841,7 +845,7 @@ namespace HELLION.DataStructures
                 // Add the entry for search results
 
                 // Set up a new custom TreeNode which will be added to the node tree
-                SearchResultsRootNode = new HEOrbitalObjTreeNode() // <-- WRONG CLASS!!
+                SearchResultsRootNode = new HETreeNode() // <-- WRONG CLASS!!
                 {
                     Name = "NAV_SearchResults",
                     NodeType = HETreeNodeType.SystemNAV,

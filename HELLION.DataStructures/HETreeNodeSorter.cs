@@ -1,4 +1,4 @@
-﻿/* HEOrbitalObjTreeNodeSorter.cs
+﻿/* HETreeNodeSorter.cs
  * CheeseJedi 2017
  * Defines a custom comparer class to sort HEOrbitalObjTreeNodes
  */
@@ -10,7 +10,7 @@ using System.Windows.Forms; // required for the base TreeNode class
 namespace HELLION.DataStructures
 {
     // Create a node sorter that implements the IComparer interface to sort HEOrbitalObjTreeNodes
-    public class HEOrbitalObjTreeNodeSorter : IComparer
+    public class HETreeNodeSorter : IComparer
     {
         // Compare the values of SemiMajorAxis, or the vaule of Inclination if they are the same
         public int Compare(object x, object y)
@@ -18,18 +18,18 @@ namespace HELLION.DataStructures
             HEOrbitalObjTreeNode nodeX = x as HEOrbitalObjTreeNode;
             HEOrbitalObjTreeNode nodeY = y as HEOrbitalObjTreeNode;
 
-            // Compare the values of SemiMajorAxis, returning the difference.
-            int iResult = Comparer<double>.Default.Compare(nodeX.SemiMajorAxis, nodeY.SemiMajorAxis);
+            // int iResult = Comparer<double>.Default.Compare(nodeX.SemiMajorAxis, nodeY.SemiMajorAxis);
 
-            if (iResult == 0)
+            if (nodeX != null && nodeY != null)
             {
-                // They were the same value, call Compare on the Inclination
-                return Comparer<double>.Default.Compare(nodeX.Inclination, nodeY.Inclination);
+                // Compare the values of SemiMajorAxis, returning the result.
+                return Comparer<double>.Default.Compare(nodeX.SemiMajorAxis, nodeY.SemiMajorAxis);
             }
             else
             {
-                return iResult;
+                // One of the two nodes was null, cannot compare so resturn 0 indicating equivalency
+                return 0;
             }
         }
-    } // End of HEOrbitalObjTreeNodeSorter
+    } // End of HETreeNodeSorter
 } // End of namespace HELLION

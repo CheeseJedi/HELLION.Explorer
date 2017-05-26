@@ -12,16 +12,18 @@ namespace HELLION.DataStructures
         // A class to hold utility functions
 
 
-        public static int GetImageIndexByOrbitalObjectType(HETreeNodeType NodeType)
+        public static int GetImageIndexByNodeType(HETreeNodeType NodeType)
         {
             // Returns the defined image list index for the node type 
 
             switch (NodeType)
             {
                 case HETreeNodeType.CelestialBody:
+                case HETreeNodeType.DefCelestialBody:
                     return (int)HEObjectTypesImageList.Contrast_16x;
                     //break;
                 case HETreeNodeType.Asteroid:
+                case HETreeNodeType.DefAsteroid:
                     return (int)HEObjectTypesImageList.CheckDot_16x;
                     //break;
                 case HETreeNodeType.Ship:
@@ -31,12 +33,14 @@ namespace HELLION.DataStructures
                     return (int)HEObjectTypesImageList.Actor_16x;
                     //break;
                 case HETreeNodeType.DynamicObject:
+                case HETreeNodeType.DefDynamicObject:
                     return (int)HEObjectTypesImageList.Property_16x;
                     //break;
                 case HETreeNodeType.Scene:
                     return (int)HEObjectTypesImageList.a3DScene_16x;
-                    //break;
-
+                //break;
+                case HETreeNodeType.DefStructure:
+                    return (int)HEObjectTypesImageList.Component_16x;
                 default:
                     return (int)HEObjectTypesImageList.Checkerboard_16x;
                     //break;

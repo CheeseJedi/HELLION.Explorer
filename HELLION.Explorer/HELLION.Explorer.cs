@@ -473,7 +473,7 @@ namespace HELLION.Explorer
 
         } // End of RefreshMainFormTitleText
 
-        public static void RefreshSelectedOjectPathBarText(HEOrbitalObjTreeNode nSelectedNode)
+        public static void RefreshSelectedOjectPathBarText(TreeNode nSelectedNode)
         {
 
             if (docCurrent != null && docCurrent.IsFileReady)
@@ -483,17 +483,9 @@ namespace HELLION.Explorer
 
                 sb.Append(">> ");
                 sb.Append(nSelectedNode.FullPath);
-                sb.Append("  (");
-                sb.Append(nSelectedNode.NodeType.ToString());
-                sb.Append(")");
-
-                /*
-                if (bLogToDebug)
-                {
-                    sb.Append(" GUID: [" + nSelectedNode.GUID + "]");
-                    sb.Append(" ParentGUID: [" + nSelectedNode.ParentGUID + "]");
-                }
-                */
+                //sb.Append("  (");
+                //sb.Append(nSelectedNode.NodeType.ToString());
+                //sb.Append(")");
 
                 frmMainForm.label1.Text = sb.ToString();
             }
@@ -503,13 +495,18 @@ namespace HELLION.Explorer
             }
         } // End of RefreshSelectedOjectPathBarText()
 
-        internal static void RefreshListView(HEOrbitalObjTreeNode nSelectedNode)
+        internal static void RefreshListView(TreeNode nSelectedNode)
         {
             //throw new NotImplementedException();
 
             if (nSelectedNode != null && docCurrent != null && docCurrent.IsFileReady)
             {
 
+
+                HETreeNode nSelectedHETNNode = (HETreeNode)nSelectedNode;
+
+
+                // Clear the list view's items
                 frmMainForm.listView1.Items.Clear();
 
 
@@ -521,7 +518,7 @@ namespace HELLION.Explorer
                     if (nSelectedNode.Parent != null)
                     {
 
-                        HEOrbitalObjTreeNode nodeParent = (HEOrbitalObjTreeNode)nSelectedNode.Parent;
+                        HETreeNode nodeParent = (HETreeNode)nSelectedHETNNode.Parent;
 
                         string[] arrParentItem = new string[2];
                         arrParentItem[0] = "<" + nodeParent.Text + ">";
@@ -532,7 +529,7 @@ namespace HELLION.Explorer
                             Name = "<PARENT>",
                             Text = "<" + nSelectedNode.Parent.Text + ">",
                             Tag = nSelectedNode.Parent,
-                            ImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(nodeParent.NodeType)
+                            ImageIndex = HEUtilities.GetImageIndexByNodeType(nodeParent.NodeType)
                         };
                         // Add the item
                         frmMainForm.listView1.Items.Add(liParentItem);
@@ -550,23 +547,23 @@ namespace HELLION.Explorer
                             Name = "<CURRENT>",
                             Text = "<" + nSelectedNode.Text + ">",
                             Tag = nSelectedNode,
-                            ImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(nSelectedNode.NodeType)
+                            ImageIndex = HEUtilities.GetImageIndexByNodeType(nSelectedHETNNode.NodeType)
                         };
                         // Add the item
                         frmMainForm.listView1.Items.Add(liCurrentItem);
                     }
                 }
 
-                foreach (HEOrbitalObjTreeNode nodeChild in nSelectedNode.Nodes)
+                foreach (HETreeNode nodeChild in nSelectedNode.Nodes)
                 {
                     string[] arr = new string[7];
                     arr[0] = nodeChild.Text;
                     arr[1] = nodeChild.NodeType.ToString();
                     arr[2] = nodeChild.CountOfChildNodes.ToString();
                     arr[3] = nodeChild.CountOfAllChildNodes.ToString();
-                    arr[4] = nodeChild.OrbitData.SemiMajorAxis.ToString();
-                    arr[5] = nodeChild.GUID.ToString();
-                    arr[6] = nodeChild.SceneID.ToString();
+                    arr[4] = ""; // nodeChild.OrbitData.SemiMajorAxis.ToString();
+                    arr[5] = ""; // nodeChild.GUID.ToString();
+                    arr[6] = ""; // nodeChild.SceneID.ToString();
 
                     ListViewItem liNewItem = new ListViewItem(arr)
                     {
@@ -574,17 +571,17 @@ namespace HELLION.Explorer
                         Text = nodeChild.Text,
                         Tag = nodeChild
                     };
-
+                    /*
                     if ((nodeChild.OrbitData.ParentGUID == -1) && (nodeChild.NodeType == HETreeNodeType.CelestialBody))
                     {
                         // It's the star, a special case
                         liNewItem.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
                     }
-                    else
+                    else */
                     {
-                        liNewItem.ImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(nodeChild.NodeType);
+                        liNewItem.ImageIndex = HEUtilities.GetImageIndexByNodeType(nodeChild.NodeType);
                     }
-
+                    
 
                     // Add the item
                     frmMainForm.listView1.Items.Add(liNewItem);
@@ -596,7 +593,7 @@ namespace HELLION.Explorer
             }
         } // End of RefreshListView
 
-        public static void RefreshSelectedObjectSummaryText(HEOrbitalObjTreeNode nSelectedNode)
+        public static void RefreshSelectedObjectSummaryText(TreeNode nSelectedNode)
         {
             // Updates the Object Information panel
 
@@ -608,65 +605,72 @@ namespace HELLION.Explorer
             if (nSelectedNode != null && docCurrent != null && docCurrent.IsFileReady)
             {
 
+                HETreeNode nSelectedHETNNode = (HETreeNode)nSelectedNode;
+
                 sb1.Append("Node Tree Data");
                 sb1.Append(Environment.NewLine);
-                sb1.Append("Name: " + nSelectedNode.Name);
+                sb1.Append("Name: " + nSelectedHETNNode.Name);
                 sb1.Append(Environment.NewLine);
-                sb1.Append("NodeType: " + nSelectedNode.NodeType.ToString());
+                sb1.Append("NodeType: " + nSelectedHETNNode.NodeType.ToString());
                 sb1.Append(Environment.NewLine);
-                sb1.Append("GUID: " + nSelectedNode.GUID.ToString());
+                //sb1.Append("GUID: " + nSelectedHETNNode.GUID.ToString());
                 sb1.Append(Environment.NewLine);
-                sb1.Append("ParentGUID: " + nSelectedNode.ParentGUID.ToString());
-                sb1.Append(Environment.NewLine);
-
-                sb1.Append("SceneID: " + nSelectedNode.SceneID.ToString());
-                sb1.Append(Environment.NewLine);
-                sb1.Append("Type: " + nSelectedNode.Type.ToString());
-                sb1.Append(Environment.NewLine);
+                //sb1.Append("ParentGUID: " + nSelectedHETNNode.ParentGUID.ToString());
                 sb1.Append(Environment.NewLine);
 
+                //sb1.Append("SceneID: " + nSelectedNode.SceneID.ToString());
+                sb1.Append(Environment.NewLine);
+                //sb1.Append("Type: " + nSelectedNode.Type.ToString());
+                sb1.Append(Environment.NewLine);
+                sb1.Append(Environment.NewLine);
 
-                if (nSelectedNode.NodeType == HETreeNodeType.CelestialBody || nSelectedNode.NodeType == HETreeNodeType.Ship || nSelectedNode.NodeType == HETreeNodeType.Asteroid)
+
+                if (false) //nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody || nSelectedHETNNode.NodeType == HETreeNodeType.Ship || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
                 {
+
+                    HEOrbitalObjTreeNode nSelectedOrbitalObjNode = (HEOrbitalObjTreeNode)nSelectedNode;
+
+
+
                     sb1.Append(Environment.NewLine);
                     sb1.Append("ORBITAL DATA");
                     sb1.Append(Environment.NewLine);
 
-                    sb1.Append("ParentGUID: " + nSelectedNode.OrbitData.ParentGUID.ToString());
+                    sb1.Append("ParentGUID: " + nSelectedOrbitalObjNode.OrbitData.ParentGUID.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("VesselID: " + nSelectedNode.OrbitData.VesselID.ToString());
+                    sb1.Append("VesselID: " + nSelectedOrbitalObjNode.OrbitData.VesselID.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("VesselType: " + nSelectedNode.OrbitData.VesselType.ToString());
+                    sb1.Append("VesselType: " + nSelectedOrbitalObjNode.OrbitData.VesselType.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("SemiMajorAxis: " + nSelectedNode.SemiMajorAxis.ToString());
+                    sb1.Append("SemiMajorAxis: " + nSelectedOrbitalObjNode.SemiMajorAxis.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("Inclination: " + nSelectedNode.Inclination.ToString());
+                    sb1.Append("Inclination: " + nSelectedOrbitalObjNode.Inclination.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("Eccentricity: " + nSelectedNode.OrbitData.Eccentricity.ToString());
+                    sb1.Append("Eccentricity: " + nSelectedOrbitalObjNode.OrbitData.Eccentricity.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("LongitudeOfAscendingNode: " + nSelectedNode.OrbitData.LongitudeOfAscendingNode.ToString());
+                    sb1.Append("LongitudeOfAscendingNode: " + nSelectedOrbitalObjNode.OrbitData.LongitudeOfAscendingNode.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("ArgumentOfPeriapsis: " + nSelectedNode.OrbitData.ArgumentOfPeriapsis.ToString());
+                    sb1.Append("ArgumentOfPeriapsis: " + nSelectedOrbitalObjNode.OrbitData.ArgumentOfPeriapsis.ToString());
                     sb1.Append(Environment.NewLine);
                     sb1.Append(Environment.NewLine);
 
-                    sb1.Append("OrbitData.TimeSincePeriapsis: " + nSelectedNode.OrbitData.TimeSincePeriapsis.ToString());
+                    sb1.Append("OrbitData.TimeSincePeriapsis: " + nSelectedOrbitalObjNode.OrbitData.TimeSincePeriapsis.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedNode.OrbitData.SolarSystemPeriapsisTime.ToString());
+                    sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedOrbitalObjNode.OrbitData.SolarSystemPeriapsisTime.ToString());
                     sb1.Append(Environment.NewLine);
                 }
 
-                if (nSelectedNode.NodeType != HETreeNodeType.SystemNAV)
+                if (true) //nSelectedNode.NodeType != HETreeNodeType.SystemNAV)
                 {
                     // Get the count of the child nodes contained in the selected node
                     decimal iTotalNodeCount = docCurrent.SolarSystemRootNode.CountOfAllChildNodes;
-                    int iThisNodeCount = nSelectedNode.CountOfChildNodes;
-                    int iThisNodeAndSubsCount = nSelectedNode.CountOfAllChildNodes;
+                    int iThisNodeCount = nSelectedHETNNode.CountOfChildNodes;
+                    int iThisNodeAndSubsCount = nSelectedHETNNode.CountOfAllChildNodes;
 
                     decimal dThisNodeCountAsPercentage = ((decimal)iThisNodeCount / iTotalNodeCount) * 100;
                     decimal dThisNodeAndSubsCountAsPercentage = ((decimal)iThisNodeAndSubsCount / iTotalNodeCount) * 100;
 
-                    sb2.Append("Node object counts for object " + nSelectedNode.Name + " of type " + nSelectedNode.NodeType.ToString());
+                    sb2.Append("Node object counts for object " + nSelectedHETNNode.Name + " of type " + nSelectedHETNNode.NodeType.ToString());
                     sb2.Append(Environment.NewLine);
                     sb2.Append(Environment.NewLine);
 
@@ -747,7 +751,7 @@ namespace HELLION.Explorer
             tvCurrent.ImageList = ilObjectTypesImageList;
             tvCurrent.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
             tvCurrent.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
-            //tvCurrent.TreeViewNodeSorter = new HEOrbitalObjTreeNodeSorter();
+            tvCurrent.TreeViewNodeSorter = new HETreeNodeSorter();
 
         } // End of InitialiseTreeView
 

@@ -118,7 +118,7 @@ namespace HELLION.DataStructures
             {
 
                 // Get the index of the image associated with this node type
-                int iImageIndex = HEUtilities.GetImageIndexByOrbitalObjectType(nodeType);
+                int iImageIndex = HEUtilities.GetImageIndexByNodeType(nodeType);
 
                 foreach (JToken dataItem in JData)
                 {
@@ -139,14 +139,11 @@ namespace HELLION.DataStructures
                     nodeRoot.Nodes.Add(nodeDataItem);
 
                 }
-                
-
-                //
-                
-
+                // Update the count of objects for the root node
+                nodeRoot.UpdateCounts();
 
             }
-            //
+            // Return the node with child objects in the Nodes collection
             return nodeRoot;
         }
         
