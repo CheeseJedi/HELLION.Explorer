@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using System.Windows.Forms;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net;
+using System.IO;
 
 namespace HELLION.DataStructures
 {
@@ -11,6 +14,74 @@ namespace HELLION.DataStructures
     {
         // A class to hold utility functions
 
+
+        public static string FindLatestRelease(string sGithubUsername, string sRepositoryName)
+        {
+
+            // GET /repos/owner/repo/releases
+            JArray JData = FindAllGitHubReleases(sGithubUsername, sRepositoryName);
+
+
+            IOrderedEnumerable<JToken> ioOrderedReleases = from s in JData //[""]
+                                                           orderby (string)s["tag_name"] descending
+                                                           select s;
+            string sLatestVersion = "";
+
+            if (ioOrderedReleases.Count() > 0)
+            {
+                foreach (var item in ioOrderedReleases)
+                {
+                    //
+                    sLatestVersion = (string)item["tag_name"];
+                    break;
+                }
+            }
+
+            return sLatestVersion;
+        }
+
+
+        private static JArray FindAllGitHubReleases(string sGithubUsername, string sRepositoryName)
+        {
+
+            // Set the URL for the request
+            string sURL = "https://api.github.com/repos/" + sGithubUsername + "/" + sRepositoryName + "/releases";
+
+            JArray JData = null;
+
+            try
+            {
+                // Create a new WebClient object to handle the HTTP request
+                using (WebClient webClient = new WebClient())
+                {
+                    // Add a user-agent header
+                    webClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+
+                    // Define up a stream object and assign the webClient's OpenRead
+                    using (Stream stm = webClient.OpenRead(sURL))
+                    {
+                        // Create a StreamReader from the stream
+                        using (StreamReader sr = new StreamReader(stm))
+                        {
+                            // Process the stream with the JSON Text Reader in to a JArray; was previously an IOrderedEnumerable<JToken> JObject
+                            using (JsonTextReader jtr = new JsonTextReader(sr))
+                            {
+                                JData = (JArray)JToken.ReadFrom(jtr);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                // Some error handling to be implemented here
+                MessageBox.Show("Exception caught during StreamReader or JsonTextReader while processing FindAllGitHubReleases" + Environment.NewLine + e.ToString());
+            }
+
+            // return the JArray
+            return JData;
+
+        }
 
         public static int GetImageIndexByNodeType(HETreeNodeType NodeType)
         {

@@ -35,6 +35,27 @@ namespace HELLION.Explorer
         public static bool bViewShowDynamicList = true;
         public static bool bViewShowInfoPane = true;
 
+        public static void CheckForUpdates()
+        {
+            //
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(Environment.NewLine);
+
+            sb.Append("Current Version: ");
+            sb.Append("v");
+            sb.Append(Application.ProductVersion);
+
+            sb.Append(Environment.NewLine);
+            sb.Append("Latest Version:  ");
+            sb.Append(HEUtilities.FindLatestRelease("CheeseJedi", "HELLION.Explorer"));
+
+
+            MessageBox.Show(sb.ToString(), "Version update check", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+        } // End of CheckForUpdates()
+
         public static void ControlledExit()
         {
             // Check the current document isn't null
@@ -817,6 +838,7 @@ namespace HELLION.Explorer
             {
                 FileOpen(args[0]);
             }
+
 
 
             /*

@@ -183,5 +183,10 @@ namespace HELLION.Explorer
             // User closed the window - call the exit routine
             Program.ControlledExit();
         }
+
+        private void updatecheckToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.CheckForUpdates();
+        }
     }
 } // End of namespace HELLION.Explorer
