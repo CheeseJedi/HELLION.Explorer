@@ -19,6 +19,9 @@ namespace HELLION.DataStructures
         DefCelestialBody,   // Node type for a defintion of a celestial body
         DefAsteroid,        // Node type for a definition of an asteroid
         DefStructure,       // Node type for a definition of a structure (ship/module)
-        DefDynamicObject    // Node type for a definition of a dynamic object
+        DefDynamicObject,   // Node type for a definition of a dynamic object
+        RespawnObject,      // Node type for a respawn object
+        SpawnPoint,         // Node type for a spawn point
+        ArenaController,    // Node type for an arena controller
     };
 } // End of namespace HELLION

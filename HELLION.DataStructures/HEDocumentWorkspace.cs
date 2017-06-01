@@ -770,7 +770,7 @@ namespace HELLION.DataStructures
                     ImageIndex = iFileIconIndex,
                     SelectedImageIndex = iFileIconIndex
                 };
-                GameDataRootNode.Expand();
+                //GameDataRootNode.Expand();
 
                 // Add Entry points for the data files
                 DataFilesRootNode = new HETreeNode()
@@ -798,25 +798,20 @@ namespace HELLION.DataStructures
 
                 DataFilesCelestialBodiesRootNode = DataFileCelestialBodies.BuildNodeCollection(HETreeNodeType.DefCelestialBody);
                 DataFilesCelestialBodiesRootNode.Name = "DataFileCelestialBodies";
-                DataFilesCelestialBodiesRootNode.Text = "Celestial Bodies"; // (" + DataFilesCelestialBodiesRootNode.Nodes.Count.ToString() + ")";
+                DataFilesCelestialBodiesRootNode.Text = "Celestial Bodies";
                 DataFilesCelestialBodiesRootNode.NodeType = HETreeNodeType.SystemNAV;
                 DataFilesCelestialBodiesRootNode.Tag = "File Path: " + DataFileCelestialBodies.FileName;
                 DataFilesCelestialBodiesRootNode.ImageIndex = iFileIconIndex;
                 DataFilesCelestialBodiesRootNode.SelectedImageIndex = iFileIconIndex;
-                // Add the node
-                DataFilesRootNode.Nodes.Add(DataFilesCelestialBodiesRootNode);
-
 
                 DataFilesAsteroidsRootNode = DataFileAsteroids.BuildNodeCollection(HETreeNodeType.DefAsteroid);
                 DataFilesAsteroidsRootNode.Name = "DataFileAsteroids";
-                DataFilesAsteroidsRootNode.Text = "Asteroids"; // (" + DataFilesAsteroidsRootNode.Nodes.Count.ToString() + ")";
+                DataFilesAsteroidsRootNode.Text = "Asteroids";
                 DataFilesAsteroidsRootNode.NodeType = HETreeNodeType.SystemNAV;
                 DataFilesAsteroidsRootNode.Tag = "File Path: " + DataFileAsteroids.FileName;
                 DataFilesAsteroidsRootNode.ImageIndex = iFileIconIndex;
                 DataFilesAsteroidsRootNode.SelectedImageIndex = iFileIconIndex;
-                // Add the node
-                DataFilesRootNode.Nodes.Add(DataFilesAsteroidsRootNode);
-                
+
                 DataFilesStructuresRootNode = DataFileStructures.BuildNodeCollection(HETreeNodeType.DefStructure);
                 DataFilesStructuresRootNode.Name = "DataFileStructures";
                 DataFilesStructuresRootNode.Text = "Structures"; // (" + DataFilesStructuresRootNode.Nodes.Count.ToString() + ")";
@@ -824,8 +819,6 @@ namespace HELLION.DataStructures
                 DataFilesStructuresRootNode.Tag = "File Path: " + DataFileStructures.FileName;
                 DataFilesStructuresRootNode.ImageIndex = iFileIconIndex;
                 DataFilesStructuresRootNode.SelectedImageIndex = iFileIconIndex;
-                // Add the node
-                DataFilesRootNode.Nodes.Add(DataFilesStructuresRootNode);
 
                 DataFilesDynamicObjectsRootNode = DataFileDynamicObjects.BuildNodeCollection(HETreeNodeType.DefDynamicObject);
                 DataFilesDynamicObjectsRootNode.Name = "DataFileDynamicObjects";
@@ -834,9 +827,74 @@ namespace HELLION.DataStructures
                 DataFilesDynamicObjectsRootNode.Tag = "File Path: " + DataFileDynamicObjects.FileName;
                 DataFilesDynamicObjectsRootNode.ImageIndex = iFileIconIndex;
                 DataFilesDynamicObjectsRootNode.SelectedImageIndex = iFileIconIndex;
-                // Add the node
-                DataFilesRootNode.Nodes.Add(DataFilesDynamicObjectsRootNode);
 
+                // Add the nodes
+                DataFilesRootNode.Nodes.Add(DataFilesDynamicObjectsRootNode);
+                DataFilesRootNode.Nodes.Add(DataFilesStructuresRootNode);
+                DataFilesRootNode.Nodes.Add(DataFilesAsteroidsRootNode);
+                DataFilesRootNode.Nodes.Add(DataFilesCelestialBodiesRootNode);
+
+
+
+
+                // Add data from the save file
+
+                SaveFileShipsRootNode = MainFile.BuildNodeCollection(HETreeNodeType.Ship);
+                SaveFileShipsRootNode.Name = "SaveFileShips";
+                SaveFileShipsRootNode.Text = "Ships";
+                SaveFileShipsRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFileShipsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileShipsRootNode.ImageIndex = iFileIconIndex;
+                SaveFileShipsRootNode.SelectedImageIndex = iFileIconIndex;
+
+                SaveFileAsteroidsRootNode = MainFile.BuildNodeCollection(HETreeNodeType.Asteroid);
+                SaveFileAsteroidsRootNode.Name = "SaveFileAsteroids";
+                SaveFileAsteroidsRootNode.Text = "Asteroids";
+                SaveFileAsteroidsRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFileAsteroidsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileAsteroidsRootNode.ImageIndex = iFileIconIndex;
+                SaveFileAsteroidsRootNode.SelectedImageIndex = iFileIconIndex;
+
+                SaveFilePlayersRootNode = MainFile.BuildNodeCollection(HETreeNodeType.Player);
+                SaveFilePlayersRootNode.Name = "SaveFilePlayerss";
+                SaveFilePlayersRootNode.Text = "Players";
+                SaveFilePlayersRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFilePlayersRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFilePlayersRootNode.ImageIndex = iFileIconIndex;
+                SaveFilePlayersRootNode.SelectedImageIndex = iFileIconIndex;
+
+                SaveFileRespawnObjectsRootNode = MainFile.BuildNodeCollection(HETreeNodeType.RespawnObject);
+                SaveFileRespawnObjectsRootNode.Name = "SaveFileRespawnObjects";
+                SaveFileRespawnObjectsRootNode.Text = "Respawn Objects";
+                SaveFileRespawnObjectsRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFileRespawnObjectsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileRespawnObjectsRootNode.ImageIndex = iFileIconIndex;
+                SaveFileRespawnObjectsRootNode.SelectedImageIndex = iFileIconIndex;
+
+
+                SaveFileSpawnPointsRootNode = MainFile.BuildNodeCollection(HETreeNodeType.SpawnPoint);
+                SaveFileSpawnPointsRootNode.Name = "SaveFileSpawnPoints";
+                SaveFileSpawnPointsRootNode.Text = "Spawn Points";
+                SaveFileSpawnPointsRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFileSpawnPointsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileSpawnPointsRootNode.ImageIndex = iFileIconIndex;
+                SaveFileSpawnPointsRootNode.SelectedImageIndex = iFileIconIndex;
+
+                SaveFileArenaControllersRootNode = MainFile.BuildNodeCollection(HETreeNodeType.ArenaController);
+                SaveFileArenaControllersRootNode.Name = "SaveFileArenaControllers";
+                SaveFileArenaControllersRootNode.Text = "Arena Controllers";
+                SaveFileArenaControllersRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFileArenaControllersRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileArenaControllersRootNode.ImageIndex = iFileIconIndex;
+                SaveFileArenaControllersRootNode.SelectedImageIndex = iFileIconIndex;
+
+
+                SaveFileRootNode.Nodes.Add(SaveFileArenaControllersRootNode);
+                SaveFileRootNode.Nodes.Add(SaveFileSpawnPointsRootNode);
+                SaveFileRootNode.Nodes.Add(SaveFileRespawnObjectsRootNode);
+                SaveFileRootNode.Nodes.Add(SaveFilePlayersRootNode);
+                SaveFileRootNode.Nodes.Add(SaveFileAsteroidsRootNode);
+                SaveFileRootNode.Nodes.Add(SaveFileShipsRootNode);
 
 
 
@@ -845,7 +903,7 @@ namespace HELLION.DataStructures
                 // Add the entry for search results
 
                 // Set up a new custom TreeNode which will be added to the node tree
-                SearchResultsRootNode = new HETreeNode() // <-- WRONG CLASS!!
+                SearchResultsRootNode = new HETreeNode()
                 {
                     Name = "NAV_SearchResults",
                     NodeType = HETreeNodeType.SystemNAV,

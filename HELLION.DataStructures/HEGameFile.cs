@@ -172,6 +172,86 @@ namespace HELLION.DataStructures
 
         } // End of SaveFile()
 
+        public new HETreeNode BuildNodeCollection(HETreeNodeType nodeType)
+        {
+            // Builds and returns a HETreeNode whose Node Collection contains HETreeNode type nodes
+            // based on the data stored in the JSON file - only for use on Data files currently
+            // Returns null instead of an empty collection
+
+            // Define an HETreeNode node to serve as the parent for this collection of data objects
+            HETreeNode nodeRoot = new HETreeNode();
+
+            string sSectionName = "";
+
+            switch (nodeType)
+            {
+                case HETreeNodeType.Asteroid:
+                    sSectionName = "Asteroids";
+                    break;
+                case HETreeNodeType.Ship:
+                    sSectionName = "Ships";
+                    break;
+                case HETreeNodeType.Player:
+                    sSectionName = "Players";
+                    break;
+                case HETreeNodeType.RespawnObject:
+                    sSectionName = "RespawnObjects";
+                    break;
+                case HETreeNodeType.SpawnPoint:
+                    sSectionName = "SpawnPoints";
+                    break;
+                case HETreeNodeType.ArenaController:
+                    sSectionName = "ArenaControllers";
+                    break;
+                case HETreeNodeType.CelestialBody:
+                case HETreeNodeType.DefCelestialBody:
+                case HETreeNodeType.DefAsteroid:
+
+
+                case HETreeNodeType.DynamicObject:
+                case HETreeNodeType.DefDynamicObject:
+                case HETreeNodeType.Scene:
+                case HETreeNodeType.DefStructure:
+                default:
+                    throw new NotImplementedException();
+                    //break;
+            }
+
+
+            if (IsFileLoaded && !LoadError)
+            {
+
+                // Get the index of the image associated with this node type
+                int iImageIndex = HEUtilities.GetImageIndexByNodeType(nodeType);
+
+                foreach (JToken dataItem in JData[sSectionName].Reverse()) // seems to come in backwards, hence the .Reverse()
+                {
+                    // Set up a new HETreeNode with data from this object and the type as passed in
+                    // via nodeType
+
+                    HETreeNode nodeDataItem = new HETreeNode()
+                    {
+                        Name = (string)dataItem["Name"],
+                        NodeType = nodeType,
+                        Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
+                        Tag = dataItem,
+                        ImageIndex = iImageIndex,
+                        SelectedImageIndex = iImageIndex,
+                    };
+
+                    // Add nodeDataItem to the nodeRoot's Nodes collection
+                    nodeRoot.Nodes.Add(nodeDataItem);
+
+                }
+                // Update the count of objects for the root node
+                nodeRoot.UpdateCounts();
+
+            }
+            // Return the node with child objects in the Nodes collection
+            return nodeRoot;
+        }
+
+
 
     } // End of class HEjsonFile
 
