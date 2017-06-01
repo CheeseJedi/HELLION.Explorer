@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.IO;
+using System.Text;
 
 namespace HELLION.DataStructures
 {
@@ -18,25 +19,28 @@ namespace HELLION.DataStructures
         public static string FindLatestRelease(string sGithubUsername, string sRepositoryName)
         {
 
-            // GET /repos/owner/repo/releases
+            // http request GET /repos/owner/repo/releases
             JArray JData = FindAllGitHubReleases(sGithubUsername, sRepositoryName);
 
 
             IOrderedEnumerable<JToken> ioOrderedReleases = from s in JData //[""]
-                                                           orderby (string)s["tag_name"] descending
+                                                           orderby (string)s["published_at"] descending
                                                            select s;
             string sLatestVersion = "";
+            //StringBuilder sb = new StringBuilder();
+
 
             if (ioOrderedReleases.Count() > 0)
             {
+
                 foreach (var item in ioOrderedReleases)
                 {
                     //
-                    sLatestVersion = (string)item["tag_name"];
-                    break;
+                    if (sLatestVersion == "") sLatestVersion = (string)item["tag_name"];
+                    //sb.Append((string)item["tag_name"] + " - " + (string)item["published_at"] + Environment.NewLine);
                 }
             }
-
+            //MessageBox.Show(sb.ToString());
             return sLatestVersion;
         }
 

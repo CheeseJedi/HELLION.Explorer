@@ -37,22 +37,22 @@ namespace HELLION.Explorer
 
         public static void CheckForUpdates()
         {
-            //
+            // Checks current build number against the latest release on GitHub repo
             StringBuilder sb = new StringBuilder();
 
             sb.Append(Environment.NewLine);
 
-            sb.Append("Current Version: ");
-            sb.Append("v");
-            sb.Append(Application.ProductVersion);
+            sb.Append("You're currently running version:");
+            sb.Append(Environment.NewLine);
+            sb.Append("v" + Application.ProductVersion);
+            sb.Append(Environment.NewLine);
 
             sb.Append(Environment.NewLine);
-            sb.Append("Latest Version:  ");
+            sb.Append("Latest GitHub release version:");
+            sb.Append(Environment.NewLine);
             sb.Append(HEUtilities.FindLatestRelease("CheeseJedi", "HELLION.Explorer"));
 
-
             MessageBox.Show(sb.ToString(), "Version update check", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
 
         } // End of CheckForUpdates()
 
@@ -803,7 +803,7 @@ namespace HELLION.Explorer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-
+            // Initialise the main form
             frmMainForm = new MainForm();
 
             // Update the main form's title text - this adds the application name
@@ -818,8 +818,7 @@ namespace HELLION.Explorer
             // Disable the File/Close menu item - this is renabled when a file is loaded
             frmMainForm.closeToolStripMenuItem.Enabled = false;
 
-
-
+            // Show the main form
             frmMainForm.Show();
 
             if (bLogToDebug)
@@ -838,16 +837,6 @@ namespace HELLION.Explorer
             {
                 FileOpen(args[0]);
             }
-
-
-
-            /*
-            if (args.Length > 0 )
-            {
-                MessageBox.Show(args[1].ToString());
-            }
-            */
-
 
             // Start the Windows Forms message loop
             Application.Run(); // Application.Run(new MainForm());

@@ -120,7 +120,7 @@ namespace HELLION.DataStructures
                 // Get the index of the image associated with this node type
                 int iImageIndex = HEUtilities.GetImageIndexByNodeType(nodeType);
 
-                foreach (JToken dataItem in JData)
+                foreach (JToken dataItem in JData.Reverse()) // seems to come in backwards, hence the .Reverse()
                 {
                     // Set up a new HETreeNode with data from this object and the type as passed in
                     // via nodeType
