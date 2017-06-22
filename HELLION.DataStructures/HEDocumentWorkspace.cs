@@ -4,8 +4,8 @@ using System.IO;
 using System.Collections.Generic; // for IEnumerable
 using System.Linq;
 using System.Diagnostics;
-//using System.Windows.Forms;
-//using Newtonsoft.Json;
+using System.Windows.Forms;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.HEUtilities;
 
@@ -472,12 +472,24 @@ namespace HELLION.DataStructures
                                     LongitudeOfAscendingNode = (double)jtOrbitalObject["OrbitData"]["LongitudeOfAscendingNode"]
                                 };
 
+                                string sObjectName;
+                                // Build the node names for ships differently
+                                if (ntAddNodesOfType == HETreeNodeType.Ship)
+                                {
+                                    sObjectName = (string)jtOrbitalObject["Registration"] + " " + (string)jtOrbitalObject["Name"];
+                                }
+                                else
+                                {
+                                    sObjectName = (string)jtOrbitalObject["Name"];
+                                }
+
                                 // Create a new TreeNode representing the object we're adding
                                 HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
                                 {
-                                    Name = (string)jtOrbitalObject["Name"],
+
+                                    Name = sObjectName,
                                     NodeType = ntAddNodesOfType,
-                                    Text = (string)jtOrbitalObject["Name"],
+                                    Text = sObjectName,
                                     GUID = (long)jtOrbitalObject["GUID"],
                                     ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"], // to be removed
                                     SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"], // to be removed
@@ -682,6 +694,113 @@ namespace HELLION.DataStructures
 
         } // end of AddOrbitalObjTreeNodesRecursively
 
+        public ListView.ListViewItemCollection PopulateJsonListViewItemCollection(JContainer JData)
+        {
+            // Handler routine for deserialising JSON data to a ListViewItemollection to be
+            // passed back to the listview control.
+
+            // Define a collection of ListViewItems - this is what gets filled and returned
+            ListView.ListViewItemCollection collection = null;
+
+            // Set up a temporary ListView to act as the parent for the collection
+            using (ListView tempListView = new ListView())
+            {
+                // Create the new collection, parented on the temporary ListView
+                collection = new ListView.ListViewItemCollection(tempListView);
+
+                // Call the recursive routine to start adding items to the collection recursively
+                // AddListViewItemsToParentRecursively(JData, collection, iDepth: 0, bLogToDebug: true);
+            }
+            return collection;
+        } // End of PopulateJsonListViewItemCollection
+
+        /*
+        public void AddListViewItemsToParentRecursively(
+            JContainer JData,
+            ListView.ListViewItemCollection cParentCollection,
+            int iDepth,
+            bool bLogToDebug = false,
+            int iLogIndentLevel = 0)
+
+            
+        {
+            //
+
+            JContainer json;
+            try
+            {
+                if (true) //jsonString.StartsWith("["))
+                {
+                    //json = JArray.Parse(jsonString);
+                    //treeView1.Nodes.Add(Utilities.Json2Tree((JArray)json, rootName, nodeName));
+
+                    foreach (JToken obj in JData)
+                    {
+                        //TreeNode child = new TreeNode(string.Format("{0}[{1}]", nodeName, index++));
+                        foreach (KeyValuePair<string, JToken> token in (JObject)obj)
+                        {
+                            switch (token.Value.Type)
+                            {
+                                case JTokenType.Array:
+                                case JTokenType.Object:
+                                    cParentCollection.Add(Json2Tree((JObject)token.Value, token.Key));
+                                    break;
+                                default:
+                                    cParentCollection.Add(GetChild(token));
+                                    break;
+                            }
+                        }
+                        parent.Nodes.Add(child);
+                    }
+
+
+
+
+
+                }
+                else
+                {
+                    //json = JObject.Parse(jsonString);
+                    //treeView1.Nodes.Add(Utilities.Json2Tree((JObject)json, text));
+
+                    foreach (KeyValuePair<string, JToken> token in JData)
+                    {
+
+                        switch (token.Value.Type)
+                        {
+                            case JTokenType.Object:
+                                cParentCollection.Add(Json2Tree((JObject)token.Value, token.Key));
+                                break;
+                            case JTokenType.Array:
+                                int index = 0;
+                                foreach (JToken element in (JArray)token.Value)
+                                {
+                                    cParentCollection.Add(Json2Tree((JObject)element, string.Format("{0}[{1}]", token.Key, index++)));
+                                }
+
+                                if (index == 0) parent.Nodes.Add(string.Format("{0}[ ]", token.Key)); //to handle empty arrays
+                                break;
+                            default:
+                                parent.Nodes.Add(GetChild(token));
+                                break;
+                        }
+                    }
+
+
+                }
+            }
+            catch (JsonReaderException jre)
+            {
+                MessageBox.Show("Invalid Json.");
+            }
+
+
+
+
+        }
+         */ // End of AddListViewItemsToParentRecursively
+
+
         public bool LoadFile()
         {
             // Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
@@ -741,7 +860,7 @@ namespace HELLION.DataStructures
                     //GUID = (long)cbChild["GUID"],
 
                     Text = "Solar System",
-                    Tag = "Please select a game object within the Solar System to see JSON data",
+                    Tag = "{\"Message\":\"No data available for this view\"}",
                     ImageIndex = (int)HEObjectTypesImageList.Share_16x,
                     SelectedImageIndex = (int)HEObjectTypesImageList.Share_16x
                 };
@@ -766,7 +885,7 @@ namespace HELLION.DataStructures
                     Name = "NAV_GameData",
                     Text = "Game Data",
                     NodeType = HETreeNodeType.SystemNAV,
-                    Tag = "No data available for this view",
+                    Tag = "{\"Message\":\"No data available for this view\"}",
                     ImageIndex = iFileIconIndex,
                     SelectedImageIndex = iFileIconIndex
                 };
@@ -778,7 +897,7 @@ namespace HELLION.DataStructures
                     Name = "NAV_DataFiles",
                     Text = "Data Files",
                     NodeType = HETreeNodeType.SystemNAV,
-                    Tag = "No data available for this view",
+                    Tag = "{\"Message\":\"No data available for this view\"}",
                     ImageIndex = iFileIconIndex,
                     SelectedImageIndex = iFileIconIndex
                 };
@@ -790,7 +909,7 @@ namespace HELLION.DataStructures
                     Name = "NAV_SaveFile",
                     Text = "Save File",
                     NodeType = HETreeNodeType.SystemNAV,
-                    Tag = "No data available for this view",
+                    Tag = "{\"Message\":\"No data available for this view\"}",
                     ImageIndex = iFileIconIndex,
                     SelectedImageIndex = iFileIconIndex
                 };
@@ -799,32 +918,32 @@ namespace HELLION.DataStructures
                 DataFilesCelestialBodiesRootNode = DataFileCelestialBodies.BuildNodeCollection(HETreeNodeType.DefCelestialBody);
                 DataFilesCelestialBodiesRootNode.Name = "DataFileCelestialBodies";
                 DataFilesCelestialBodiesRootNode.Text = "Celestial Bodies";
-                DataFilesCelestialBodiesRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesCelestialBodiesRootNode.Tag = "File Path: " + DataFileCelestialBodies.FileName;
+                DataFilesCelestialBodiesRootNode.NodeType = HETreeNodeType.DefCelestialBody;
+                DataFilesCelestialBodiesRootNode.Tag = "{\"File Path\":\"" + DataFileCelestialBodies.FileName + "\"}";
                 DataFilesCelestialBodiesRootNode.ImageIndex = iFileIconIndex;
                 DataFilesCelestialBodiesRootNode.SelectedImageIndex = iFileIconIndex;
 
                 DataFilesAsteroidsRootNode = DataFileAsteroids.BuildNodeCollection(HETreeNodeType.DefAsteroid);
                 DataFilesAsteroidsRootNode.Name = "DataFileAsteroids";
                 DataFilesAsteroidsRootNode.Text = "Asteroids";
-                DataFilesAsteroidsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesAsteroidsRootNode.Tag = "File Path: " + DataFileAsteroids.FileName;
+                DataFilesAsteroidsRootNode.NodeType = HETreeNodeType.DefAsteroid;
+                DataFilesAsteroidsRootNode.Tag = "{\"File Path\":\"" + DataFileAsteroids.FileName + "\"}";
                 DataFilesAsteroidsRootNode.ImageIndex = iFileIconIndex;
                 DataFilesAsteroidsRootNode.SelectedImageIndex = iFileIconIndex;
 
                 DataFilesStructuresRootNode = DataFileStructures.BuildNodeCollection(HETreeNodeType.DefStructure);
                 DataFilesStructuresRootNode.Name = "DataFileStructures";
-                DataFilesStructuresRootNode.Text = "Structures"; // (" + DataFilesStructuresRootNode.Nodes.Count.ToString() + ")";
-                DataFilesStructuresRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesStructuresRootNode.Tag = "File Path: " + DataFileStructures.FileName;
+                DataFilesStructuresRootNode.Text = "Structures";
+                DataFilesStructuresRootNode.NodeType = HETreeNodeType.DefStructure;
+                DataFilesStructuresRootNode.Tag = "{\"File Path\":\"" + DataFileStructures.FileName + "\"}";
                 DataFilesStructuresRootNode.ImageIndex = iFileIconIndex;
                 DataFilesStructuresRootNode.SelectedImageIndex = iFileIconIndex;
 
                 DataFilesDynamicObjectsRootNode = DataFileDynamicObjects.BuildNodeCollection(HETreeNodeType.DefDynamicObject);
                 DataFilesDynamicObjectsRootNode.Name = "DataFileDynamicObjects";
-                DataFilesDynamicObjectsRootNode.Text = "Dynamic Objects"; // (" + DataFilesDynamicObjectsRootNode.Nodes.Count.ToString() + ")";
-                DataFilesDynamicObjectsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                DataFilesDynamicObjectsRootNode.Tag = "File Path: " + DataFileDynamicObjects.FileName;
+                DataFilesDynamicObjectsRootNode.Text = "Dynamic Objects";
+                DataFilesDynamicObjectsRootNode.NodeType = HETreeNodeType.DefDynamicObject;
+                DataFilesDynamicObjectsRootNode.Tag = "{\"File Path\":\"" + DataFileDynamicObjects.FileName + "\"}";
                 DataFilesDynamicObjectsRootNode.ImageIndex = iFileIconIndex;
                 DataFilesDynamicObjectsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -843,7 +962,7 @@ namespace HELLION.DataStructures
                 SaveFileShipsRootNode.Name = "SaveFileShips";
                 SaveFileShipsRootNode.Text = "Ships";
                 SaveFileShipsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileShipsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileShipsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
                 SaveFileShipsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileShipsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -851,15 +970,15 @@ namespace HELLION.DataStructures
                 SaveFileAsteroidsRootNode.Name = "SaveFileAsteroids";
                 SaveFileAsteroidsRootNode.Text = "Asteroids";
                 SaveFileAsteroidsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileAsteroidsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileAsteroidsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
                 SaveFileAsteroidsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileAsteroidsRootNode.SelectedImageIndex = iFileIconIndex;
 
                 SaveFilePlayersRootNode = MainFile.BuildNodeCollection(HETreeNodeType.Player);
-                SaveFilePlayersRootNode.Name = "SaveFilePlayerss";
+                SaveFilePlayersRootNode.Name = "SaveFilePlayers";
                 SaveFilePlayersRootNode.Text = "Players";
                 SaveFilePlayersRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFilePlayersRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFilePlayersRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
                 SaveFilePlayersRootNode.ImageIndex = iFileIconIndex;
                 SaveFilePlayersRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -867,7 +986,7 @@ namespace HELLION.DataStructures
                 SaveFileRespawnObjectsRootNode.Name = "SaveFileRespawnObjects";
                 SaveFileRespawnObjectsRootNode.Text = "Respawn Objects";
                 SaveFileRespawnObjectsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileRespawnObjectsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileRespawnObjectsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
                 SaveFileRespawnObjectsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileRespawnObjectsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -876,7 +995,7 @@ namespace HELLION.DataStructures
                 SaveFileSpawnPointsRootNode.Name = "SaveFileSpawnPoints";
                 SaveFileSpawnPointsRootNode.Text = "Spawn Points";
                 SaveFileSpawnPointsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileSpawnPointsRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileSpawnPointsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
                 SaveFileSpawnPointsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileSpawnPointsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -884,7 +1003,7 @@ namespace HELLION.DataStructures
                 SaveFileArenaControllersRootNode.Name = "SaveFileArenaControllers";
                 SaveFileArenaControllersRootNode.Text = "Arena Controllers";
                 SaveFileArenaControllersRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileArenaControllersRootNode.Tag = "File Path: " + MainFile.FileName;
+                SaveFileArenaControllersRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
                 SaveFileArenaControllersRootNode.ImageIndex = iFileIconIndex;
                 SaveFileArenaControllersRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -909,16 +1028,13 @@ namespace HELLION.DataStructures
                     NodeType = HETreeNodeType.SystemNAV,
                     //GUID = (long)cbChild["GUID"],
 
-
                     //ParentGUID = (long)cbChild["ParentGUID"],
                     //SemiMajorAxis = (double)cbChild["SemiMajorAxis"],
                     //Inclination = (double)cbChild["Inclination"],
                     //OrbitData = Data,
-
-
                     //OrbitData
                     Text = "Search Results",
-                    Tag = "No data available for this view",
+                    Tag = "{\"Message\":\"No data available for this view\"}",
                     ImageIndex = (int)HEObjectTypesImageList.FindResults_16x,
                     SelectedImageIndex = (int)HEObjectTypesImageList.FindResults_16x
                 };

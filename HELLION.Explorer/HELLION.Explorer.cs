@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Text;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using HELLION.DataStructures;
 using System.Drawing;
 using System.Reflection;
 using System.Diagnostics;
+using System.Data;
 //using System.IO;
 //using System.Collections.Generic;
 //using System.Linq;
@@ -18,24 +20,24 @@ namespace HELLION.Explorer
         // This is the main class that implements the HELLION Explorer program.
         // Most of the work is done by the HEDocumentWorkspace object however this
         // assembly is responsible for building the output for the  ListView control
-            
+
         // main object definitions
-            
+
         // Define the main form object
-        public static MainForm frmMainForm { get; private set; }
+        internal static MainForm frmMainForm { get; private set; }
 
         // Define an object to hold the current open document
-        public static HEDocumentWorkspace docCurrent = null;
+        internal static HEDocumentWorkspace docCurrent = null;
 
         // Define an ImageList and fill it
-        public static ImageList ilObjectTypesImageList = BuildObjectTypesImageList();
+        internal static ImageList ilObjectTypesImageList = BuildObjectTypesImageList();
 
-        private static bool bLogToDebug = false;
-        public static bool bViewShowNavigationPane = true;
-        public static bool bViewShowDynamicList = true;
-        public static bool bViewShowInfoPane = true;
+        internal static bool bLogToDebug = false;
+        internal static bool bViewShowNavigationPane = true;
+        internal static bool bViewShowDynamicList = true;
+        internal static bool bViewShowInfoPane = true;
 
-        public static void CheckForUpdates()
+        internal static void CheckForUpdates()
         {
             // Checks current build number against the latest release on GitHub repo
             StringBuilder sb = new StringBuilder();
@@ -56,7 +58,7 @@ namespace HELLION.Explorer
 
         } // End of CheckForUpdates()
 
-        public static void ControlledExit()
+        internal static void ControlledExit()
         {
             // Check the current document isn't null
             if (docCurrent != null)
@@ -81,7 +83,7 @@ namespace HELLION.Explorer
             */
         } // End of ControlledExit()
 
-        public static ImageList BuildObjectTypesImageList()
+        internal static ImageList BuildObjectTypesImageList()
         {
             // Create a new ImageList to hold images used as icons in the tree and list views
             ImageList ilObjectTypesImageList = new ImageList();
@@ -143,7 +145,7 @@ namespace HELLION.Explorer
             return ilObjectTypesImageList;
         } // End of BuildObjectTypesImageList()
 
-        public static void FileOpen(string sFileName = "")
+        internal static void FileOpen(string sFileName = "")
         {
             // Loads a save file in to memory and processes it
 
@@ -313,7 +315,7 @@ namespace HELLION.Explorer
             }
         } // End of FileOpen()
 
-        public static void FileClose()
+        internal static void FileClose()
         {
             // Handles closing of files
 
@@ -365,7 +367,7 @@ namespace HELLION.Explorer
             GC.Collect();
         } // End of FileClose()
 
-        public static string GenerateAboutBoxText()
+        internal static string GenerateAboutBoxText()
         {
             // Define a StringBuilder to hold the string to be sent to the dalog box
             StringBuilder sb = new StringBuilder();
@@ -410,7 +412,7 @@ namespace HELLION.Explorer
             sb.Append(sNL);
 
             // Credit
-            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity games or it's licensors. http://www.zerogravitygames.com");
+            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity Games or it's licensors. http://www.zerogravitygames.com");
             sb.Append(sNL);
             sb.Append(sNL);
             sb.Append(sNL);
@@ -430,7 +432,7 @@ namespace HELLION.Explorer
 
         } // End of GenerateAboutBoxText()
 
-        public static bool IsGameDataFolderDefined()
+        internal static bool IsGameDataFolderDefined()
         {
             // Checks that the GameDataFolder in settings is not empty, if it is empty offer the folder browser and store the location
 
@@ -446,7 +448,7 @@ namespace HELLION.Explorer
             }
         } // End of IsGameDataFolderDefined()
 
-        public static void DefineGameFolder()
+        internal static void DefineGameFolder()
         {
             MessageBox.Show("Please use the following folder browser window to select the location of the game Data folder." + Environment.NewLine + Environment.NewLine +
                 "The Data folder and the files within can be obtained as part of the HELLION Dedicated Server installation and are required to load a .save file."
@@ -472,7 +474,7 @@ namespace HELLION.Explorer
             }
         } // End of DefineGameFilder()
 
-        public static void RefreshMainFormTitleText()
+        internal static void RefreshMainFormTitleText()
         {
             // Regenerates and sets the application's main window title text
             StringBuilder sb = new StringBuilder();
@@ -494,7 +496,7 @@ namespace HELLION.Explorer
 
         } // End of RefreshMainFormTitleText
 
-        public static void RefreshSelectedOjectPathBarText(TreeNode nSelectedNode)
+        internal static void RefreshSelectedOjectPathBarText(TreeNode nSelectedNode)
         {
 
             if (docCurrent != null && docCurrent.IsFileReady)
@@ -614,7 +616,7 @@ namespace HELLION.Explorer
             }
         } // End of RefreshListView
 
-        public static void RefreshSelectedObjectSummaryText(TreeNode nSelectedNode)
+        internal static void RefreshSelectedObjectSummaryText(TreeNode nSelectedNode)
         {
             // Updates the Object Information panel
 
@@ -645,7 +647,7 @@ namespace HELLION.Explorer
                 sb1.Append(Environment.NewLine);
                 sb1.Append(Environment.NewLine);
 
-
+/*
                 if (false) //nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody || nSelectedHETNNode.NodeType == HETreeNodeType.Ship || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
                 {
 
@@ -680,6 +682,7 @@ namespace HELLION.Explorer
                     sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedOrbitalObjNode.OrbitData.SolarSystemPeriapsisTime.ToString());
                     sb1.Append(Environment.NewLine);
                 }
+*/
 
                 if (true) //nSelectedNode.NodeType != HETreeNodeType.SystemNAV)
                 {
@@ -710,8 +713,48 @@ namespace HELLION.Explorer
 
                 // Create JSON data for selected node
                 if (nSelectedNode.Tag != null) sb3.Append((JValue)nSelectedNode.Tag.ToString());
+                /*
+                if (nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody) // || nSelectedHETNNode.NodeType == HETreeNodeType.SystemNAV)
+                {
+                    DataTable myObjectDT = JsonConvert.DeserializeObject<DataTable>("[" + (nSelectedNode.Tag).ToString() + "]"); // (JValue)
+                    frmMainForm.dataGridView1.DataSource = myObjectDT;
 
 
+                    //frmMainForm.dataGridView1.DataBindings.
+                }
+                else
+                {
+                    frmMainForm.dataGridView1.DataSource = null;
+                }
+                */
+                string jsonString = sb3.ToString();
+
+                /*
+                frmMainForm.treeView2.Nodes.Clear();
+                if (jsonString != "")
+                {
+
+                    string rootName = "root", nodeName = "node";
+                    JContainer json;
+                    try
+                    {
+                        if (jsonString.StartsWith("["))
+                        {
+                            json = JArray.Parse(jsonString);
+                            frmMainForm.treeView2.Nodes.Add(HEUtilities.Json2Tree((JArray)json, rootName, nodeName));
+                        }
+                        else
+                        {
+                            json = JObject.Parse(jsonString);
+                            frmMainForm.treeView2.Nodes.Add(HEUtilities.Json2Tree((JObject)json, "text"));
+                        }
+                    }
+                    catch (JsonReaderException jre)
+                    {
+                        MessageBox.Show("Invalid Json." + Environment.NewLine + jre.ToString() + Environment.NewLine + jsonString);
+                    }
+                }
+                */
                 /*
                 switch (nSelectedNode.NodeType)
                 {
@@ -758,14 +801,18 @@ namespace HELLION.Explorer
                 */
             }
 
-            // Pass results to textBox1.Text
+            // Pass results to various textboxes
             frmMainForm.textBox1.Text = sb1.ToString();
             frmMainForm.textBox2.Text = sb2.ToString();
             frmMainForm.textBox3.Text = sb3.ToString();
 
+            // 
+
+
+
         } // End of RefreshObjectSummaryText()
 
-        public static void InitialiseTreeView(TreeView tvCurrent)
+        internal static void InitialiseTreeView(TreeView tvCurrent)
         {
             // Set the specified TreeView control's ImageLists to  
             // ilObjectTypesImageList and set the default icons
@@ -776,7 +823,7 @@ namespace HELLION.Explorer
 
         } // End of InitialiseTreeView
 
-        public static void InitialiseListView(ListView lvCurrent)
+        internal static void InitialiseListView(ListView lvCurrent)
         {
             // Set the specified ListView control's ImageLists to  
             // ilObjectTypesImageList and set the default icons

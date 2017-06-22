@@ -125,11 +125,22 @@ namespace HELLION.DataStructures
                     // Set up a new HETreeNode with data from this object and the type as passed in
                     // via nodeType
 
+                    string sObjectName;
+                    // Build the node names for ships differently
+                    //if (nodeType == HETreeNodeType.DefStructure)
+                    //{
+                        sObjectName = (string)dataItem["Registration"] + " " + (string)dataItem["Name"];
+                    //}
+                    //else
+                    //{
+                    //    sObjectName = (string)dataItem["Name"];
+                    //}
+
                     HETreeNode nodeDataItem = new HETreeNode()
                     {
-                        Name = (string)dataItem["Name"],
+                        Name = sObjectName,
                         NodeType = nodeType,
-                        Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
+                        Text = (string)dataItem["ItemID"] + " " + sObjectName + (string)dataItem["GameName"],
                         Tag = dataItem,
                         ImageIndex = iImageIndex,
                         SelectedImageIndex = iImageIndex,

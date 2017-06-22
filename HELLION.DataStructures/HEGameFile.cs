@@ -233,7 +233,7 @@ namespace HELLION.DataStructures
                     {
                         Name = (string)dataItem["Name"],
                         NodeType = nodeType,
-                        Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
+                        Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Registration"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
                         Tag = dataItem,
                         ImageIndex = iImageIndex,
                         SelectedImageIndex = iImageIndex,
