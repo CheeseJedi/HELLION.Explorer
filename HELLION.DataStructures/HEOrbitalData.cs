@@ -1,4 +1,4 @@
-﻿/* HEOrbitalObjTreeNode.cs
+﻿/* HEOrbitalData.cs
  * CheeseJedi 2017
  * Defines a custom TreeNode class to hold some additional parameters used to speed up searches
  */
