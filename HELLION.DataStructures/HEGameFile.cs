@@ -147,6 +147,8 @@ namespace HELLION.DataStructures
             {
                 using (StreamWriter sw = new StreamWriter(FileName))
                 {
+                    // stuff from the load routine for reference only
+                    
                     // Read the contents of the file
                     String file = sr.ReadToEnd();
                     // Parse the contents of the file in to the Data JArray
@@ -203,6 +205,13 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.ArenaController:
                     sSectionName = "ArenaControllers";
                     break;
+                case HETreeNodeType.DoomControllerData:
+                    sSectionName = "DoomControllerData";
+                    break;
+                case HETreeNodeType.SpawnManagerData:
+                    sSectionName = "ArenaControllers";
+                    break;
+
                 case HETreeNodeType.CelestialBody:
                 case HETreeNodeType.DefCelestialBody:
                 case HETreeNodeType.DefAsteroid:
@@ -224,25 +233,30 @@ namespace HELLION.DataStructures
                 // Get the index of the image associated with this node type
                 int iImageIndex = HEUtilities.GetImageIndexByNodeType(nodeType);
 
-                foreach (JToken dataItem in JData[sSectionName].Reverse()) // seems to come in backwards, hence the .Reverse()
+                try
                 {
-                    // Set up a new HETreeNode with data from this object and the type as passed in
-                    // via nodeType
-
-                    HETreeNode nodeDataItem = new HETreeNode()
+                    foreach (JToken dataItem in JData[sSectionName].Reverse()) // seems to come in backwards, hence the .Reverse()
                     {
-                        Name = (string)dataItem["Name"],
-                        NodeType = nodeType,
-                        Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Registration"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
-                        Tag = dataItem,
-                        ImageIndex = iImageIndex,
-                        SelectedImageIndex = iImageIndex,
-                    };
+                        // Set up a new HETreeNode with data from this object and the type as passed in
+                        // via nodeType
 
-                    // Add nodeDataItem to the nodeRoot's Nodes collection
-                    nodeRoot.Nodes.Add(nodeDataItem);
+                        HETreeNode nodeDataItem = new HETreeNode()
+                        {
+                            Name = (string)dataItem["Name"],
+                            NodeType = nodeType,
+                            Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Registration"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
+                            Tag = dataItem,
+                            ImageIndex = iImageIndex,
+                            SelectedImageIndex = iImageIndex,
+                        };
 
+                        // Add nodeDataItem to the nodeRoot's Nodes collection
+                        nodeRoot.Nodes.Add(nodeDataItem);
+
+                    }
                 }
+                catch { }
+                
                 // Update the count of objects for the root node
                 nodeRoot.UpdateCounts();
 

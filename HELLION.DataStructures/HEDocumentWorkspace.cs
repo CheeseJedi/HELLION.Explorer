@@ -43,6 +43,8 @@ namespace HELLION.DataStructures
         public HETreeNode SaveFileRespawnObjectsRootNode { get; private set; }
         public HETreeNode SaveFileSpawnPointsRootNode { get; private set; }
         public HETreeNode SaveFileArenaControllersRootNode { get; private set; }
+        public HETreeNode SaveFileDoomControllerDataRootNode { get; private set; }
+        public HETreeNode SaveFileSpawnManagerDataRootNode { get; private set; }
 
 
         // Define a custom tree node to become the root node for the Search Results tree
@@ -65,6 +67,9 @@ namespace HELLION.DataStructures
         public HETreeNode DataFilesModulesRootNode { get; private set; }
         public HEJsonFile DataFileStations { get; set; }
         public HETreeNode DataFilesStationsRootNode { get; private set; }
+        
+        // Additional data files have been added around the 0.2 update, including a spawn rules file.
+        // These will need to have appropriate references added here to be included in the game data view
 
         public HEDocumentWorkspace()
         {
@@ -85,6 +90,43 @@ namespace HELLION.DataStructures
             DataFileDynamicObjects = new HEJsonFile();
             DataFileModules = new HEJsonFile();
             DataFileStations = new HEJsonFile();
+        }
+
+        //
+        public bool IsDataFolderValid(string folderName)
+        {
+            // This will be changed to false if any test(s) fails, and will be returned on exit
+            bool isFolderValid = true;
+
+            // Check the folder exists
+            if (!Directory.Exists(folderName))
+                isFolderValid = false;
+
+            // Check the Celestial Bodies file - this one is particularly critical
+            if (!File.Exists(DataFileCelestialBodies.FileName))
+                isFolderValid = false;
+
+            // Check the Asteroids file
+            if (!File.Exists(DataFileAsteroids.FileName))
+                isFolderValid = false;
+
+            // Check the Structures file
+            if (!File.Exists(DataFileStructures.FileName))
+                isFolderValid = false;
+
+            // Check the Dynamic Objects file
+            if (!File.Exists(DataFileDynamicObjects.FileName))
+                isFolderValid = false;
+            /*
+            // Check the Asteroids file
+            if (!File.Exists(DataFileAsteroids.FileName))
+                isFolderValid = false;
+
+            // Check the Asteroids file
+            if (!File.Exists(DataFileAsteroids.FileName))
+                isFolderValid = false;
+            */
+            return isFolderValid;
         }
 
         public Color ConvertStringToColor(string sInputString)
@@ -696,7 +738,7 @@ namespace HELLION.DataStructures
 
         public ListView.ListViewItemCollection PopulateJsonListViewItemCollection(JContainer JData)
         {
-            // Handler routine for deserialising JSON data to a ListViewItemollection to be
+            // Handler routine for deserialising JSON data to a ListViewItemCollection to be
             // passed back to the listview control.
 
             // Define a collection of ListViewItems - this is what gets filled and returned
@@ -851,6 +893,8 @@ namespace HELLION.DataStructures
 
                 // need to change mouse cursor here
 
+                string noDataMessageTag = "{" + Environment.NewLine + "  \"Message\": \"No data available for this view\"" + Environment.NewLine + "}";
+
 
                 // Set up a new custom TreeNode which will be added to the node tree
                 SolarSystemRootNode = new HEOrbitalObjTreeNode()
@@ -860,7 +904,7 @@ namespace HELLION.DataStructures
                     //GUID = (long)cbChild["GUID"],
 
                     Text = "Solar System",
-                    Tag = "{\"Message\":\"No data available for this view\"}",
+                    Tag = noDataMessageTag,
                     ImageIndex = (int)HEObjectTypesImageList.Share_16x,
                     SelectedImageIndex = (int)HEObjectTypesImageList.Share_16x
                 };
@@ -885,7 +929,7 @@ namespace HELLION.DataStructures
                     Name = "NAV_GameData",
                     Text = "Game Data",
                     NodeType = HETreeNodeType.SystemNAV,
-                    Tag = "{\"Message\":\"No data available for this view\"}",
+                    Tag = noDataMessageTag,
                     ImageIndex = iFileIconIndex,
                     SelectedImageIndex = iFileIconIndex
                 };
@@ -897,7 +941,7 @@ namespace HELLION.DataStructures
                     Name = "NAV_DataFiles",
                     Text = "Data Files",
                     NodeType = HETreeNodeType.SystemNAV,
-                    Tag = "{\"Message\":\"No data available for this view\"}",
+                    Tag = noDataMessageTag,
                     ImageIndex = iFileIconIndex,
                     SelectedImageIndex = iFileIconIndex
                 };
@@ -909,7 +953,7 @@ namespace HELLION.DataStructures
                     Name = "NAV_SaveFile",
                     Text = "Save File",
                     NodeType = HETreeNodeType.SystemNAV,
-                    Tag = "{\"Message\":\"No data available for this view\"}",
+                    Tag = noDataMessageTag,
                     ImageIndex = iFileIconIndex,
                     SelectedImageIndex = iFileIconIndex
                 };
@@ -919,7 +963,7 @@ namespace HELLION.DataStructures
                 DataFilesCelestialBodiesRootNode.Name = "DataFileCelestialBodies";
                 DataFilesCelestialBodiesRootNode.Text = "Celestial Bodies";
                 DataFilesCelestialBodiesRootNode.NodeType = HETreeNodeType.DefCelestialBody;
-                DataFilesCelestialBodiesRootNode.Tag = "{\"File Path\":\"" + DataFileCelestialBodies.FileName + "\"}";
+                DataFilesCelestialBodiesRootNode.Tag = "{" + Environment.NewLine + "  \"File Path\": \"" + DataFileCelestialBodies.FileName + "\"" + Environment.NewLine + "}";
                 DataFilesCelestialBodiesRootNode.ImageIndex = iFileIconIndex;
                 DataFilesCelestialBodiesRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -927,7 +971,7 @@ namespace HELLION.DataStructures
                 DataFilesAsteroidsRootNode.Name = "DataFileAsteroids";
                 DataFilesAsteroidsRootNode.Text = "Asteroids";
                 DataFilesAsteroidsRootNode.NodeType = HETreeNodeType.DefAsteroid;
-                DataFilesAsteroidsRootNode.Tag = "{\"File Path\":\"" + DataFileAsteroids.FileName + "\"}";
+                DataFilesAsteroidsRootNode.Tag = "{" + Environment.NewLine + "  \"File Path\": \"" + DataFileAsteroids.FileName + "\"" + Environment.NewLine + "}";
                 DataFilesAsteroidsRootNode.ImageIndex = iFileIconIndex;
                 DataFilesAsteroidsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -935,7 +979,7 @@ namespace HELLION.DataStructures
                 DataFilesStructuresRootNode.Name = "DataFileStructures";
                 DataFilesStructuresRootNode.Text = "Structures";
                 DataFilesStructuresRootNode.NodeType = HETreeNodeType.DefStructure;
-                DataFilesStructuresRootNode.Tag = "{\"File Path\":\"" + DataFileStructures.FileName + "\"}";
+                DataFilesStructuresRootNode.Tag = "{" + Environment.NewLine + "  \"File Path\": \"" + DataFileStructures.FileName + "\"" + Environment.NewLine + "}";
                 DataFilesStructuresRootNode.ImageIndex = iFileIconIndex;
                 DataFilesStructuresRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -943,9 +987,11 @@ namespace HELLION.DataStructures
                 DataFilesDynamicObjectsRootNode.Name = "DataFileDynamicObjects";
                 DataFilesDynamicObjectsRootNode.Text = "Dynamic Objects";
                 DataFilesDynamicObjectsRootNode.NodeType = HETreeNodeType.DefDynamicObject;
-                DataFilesDynamicObjectsRootNode.Tag = "{\"File Path\":\"" + DataFileDynamicObjects.FileName + "\"}";
+                DataFilesDynamicObjectsRootNode.Tag = "{" + Environment.NewLine + "  \"File Path\": \"" + DataFileDynamicObjects.FileName + "\"" + Environment.NewLine + "}";
                 DataFilesDynamicObjectsRootNode.ImageIndex = iFileIconIndex;
                 DataFilesDynamicObjectsRootNode.SelectedImageIndex = iFileIconIndex;
+
+                //spawn rules defs etc need to be added here
 
                 // Add the nodes
                 DataFilesRootNode.Nodes.Add(DataFilesDynamicObjectsRootNode);
@@ -958,11 +1004,14 @@ namespace HELLION.DataStructures
 
                 // Add data from the save file
 
+                string mainFileTag = "{" + Environment.NewLine + "  \"File Path\": \"" + MainFile.FileName + "\"" + Environment.NewLine + "}";
+
+
                 SaveFileShipsRootNode = MainFile.BuildNodeCollection(HETreeNodeType.Ship);
                 SaveFileShipsRootNode.Name = "SaveFileShips";
                 SaveFileShipsRootNode.Text = "Ships";
                 SaveFileShipsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileShipsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
+                SaveFileShipsRootNode.Tag = mainFileTag;
                 SaveFileShipsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileShipsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -970,7 +1019,7 @@ namespace HELLION.DataStructures
                 SaveFileAsteroidsRootNode.Name = "SaveFileAsteroids";
                 SaveFileAsteroidsRootNode.Text = "Asteroids";
                 SaveFileAsteroidsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileAsteroidsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
+                SaveFileAsteroidsRootNode.Tag = mainFileTag;
                 SaveFileAsteroidsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileAsteroidsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -978,7 +1027,7 @@ namespace HELLION.DataStructures
                 SaveFilePlayersRootNode.Name = "SaveFilePlayers";
                 SaveFilePlayersRootNode.Text = "Players";
                 SaveFilePlayersRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFilePlayersRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
+                SaveFilePlayersRootNode.Tag = mainFileTag; ;
                 SaveFilePlayersRootNode.ImageIndex = iFileIconIndex;
                 SaveFilePlayersRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -986,7 +1035,7 @@ namespace HELLION.DataStructures
                 SaveFileRespawnObjectsRootNode.Name = "SaveFileRespawnObjects";
                 SaveFileRespawnObjectsRootNode.Text = "Respawn Objects";
                 SaveFileRespawnObjectsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileRespawnObjectsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
+                SaveFileRespawnObjectsRootNode.Tag = mainFileTag;
                 SaveFileRespawnObjectsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileRespawnObjectsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -995,7 +1044,7 @@ namespace HELLION.DataStructures
                 SaveFileSpawnPointsRootNode.Name = "SaveFileSpawnPoints";
                 SaveFileSpawnPointsRootNode.Text = "Spawn Points";
                 SaveFileSpawnPointsRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileSpawnPointsRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
+                SaveFileSpawnPointsRootNode.Tag = mainFileTag;
                 SaveFileSpawnPointsRootNode.ImageIndex = iFileIconIndex;
                 SaveFileSpawnPointsRootNode.SelectedImageIndex = iFileIconIndex;
 
@@ -1003,10 +1052,30 @@ namespace HELLION.DataStructures
                 SaveFileArenaControllersRootNode.Name = "SaveFileArenaControllers";
                 SaveFileArenaControllersRootNode.Text = "Arena Controllers";
                 SaveFileArenaControllersRootNode.NodeType = HETreeNodeType.SystemNAV;
-                SaveFileArenaControllersRootNode.Tag = "{\"File Path\":\"" + MainFile.FileName + "\"}";
+                SaveFileArenaControllersRootNode.Tag = mainFileTag;
                 SaveFileArenaControllersRootNode.ImageIndex = iFileIconIndex;
                 SaveFileArenaControllersRootNode.SelectedImageIndex = iFileIconIndex;
 
+
+                SaveFileDoomControllerDataRootNode = MainFile.BuildNodeCollection(HETreeNodeType.DoomControllerData);
+                SaveFileDoomControllerDataRootNode.Name = "SaveFileDoomControllerData";
+                SaveFileDoomControllerDataRootNode.Text = "Doom Controller Data";
+                SaveFileDoomControllerDataRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFileDoomControllerDataRootNode.Tag = mainFileTag;
+                SaveFileDoomControllerDataRootNode.ImageIndex = iFileIconIndex;
+                SaveFileDoomControllerDataRootNode.SelectedImageIndex = iFileIconIndex;
+
+                SaveFileSpawnManagerDataRootNode = MainFile.BuildNodeCollection(HETreeNodeType.SpawnManagerData);
+                SaveFileSpawnManagerDataRootNode.Name = "SaveFileSpawnManagerData";
+                SaveFileSpawnManagerDataRootNode.Text = "Spawn Manager Data";
+                SaveFileSpawnManagerDataRootNode.NodeType = HETreeNodeType.SystemNAV;
+                SaveFileSpawnManagerDataRootNode.Tag = mainFileTag;
+                SaveFileSpawnManagerDataRootNode.ImageIndex = iFileIconIndex;
+                SaveFileSpawnManagerDataRootNode.SelectedImageIndex = iFileIconIndex;
+
+
+                SaveFileRootNode.Nodes.Add(SaveFileSpawnManagerDataRootNode);
+                SaveFileRootNode.Nodes.Add(SaveFileDoomControllerDataRootNode);
 
                 SaveFileRootNode.Nodes.Add(SaveFileArenaControllersRootNode);
                 SaveFileRootNode.Nodes.Add(SaveFileSpawnPointsRootNode);
@@ -1015,12 +1084,7 @@ namespace HELLION.DataStructures
                 SaveFileRootNode.Nodes.Add(SaveFileAsteroidsRootNode);
                 SaveFileRootNode.Nodes.Add(SaveFileShipsRootNode);
 
-
-
-                //PopulateGameData()
-
                 // Add the entry for search results
-
                 // Set up a new custom TreeNode which will be added to the node tree
                 SearchResultsRootNode = new HETreeNode()
                 {
@@ -1034,12 +1098,10 @@ namespace HELLION.DataStructures
                     //OrbitData = Data,
                     //OrbitData
                     Text = "Search Results",
-                    Tag = "{\"Message\":\"No data available for this view\"}",
+                    Tag = noDataMessageTag,
                     ImageIndex = (int)HEObjectTypesImageList.FindResults_16x,
                     SelectedImageIndex = (int)HEObjectTypesImageList.FindResults_16x
                 };
-
-
             }
             else
             {

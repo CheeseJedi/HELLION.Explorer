@@ -19,7 +19,7 @@ namespace HELLION.Explorer
     {
         // This is the main class that implements the HELLION Explorer program.
         // Most of the work is done by the HEDocumentWorkspace object however this
-        // assembly is responsible for building the output for the  ListView control
+        // assembly is responsible for building the output for the ListView control
 
         // main object definitions
 
@@ -149,15 +149,7 @@ namespace HELLION.Explorer
         {
             // Loads a save file in to memory and processes it
 
-            // Check that the Data folder path has been defined, if not trigger the DefineGameFolder then return
-            if (!IsGameDataFolderDefined())
-            {
-                DefineGameFolder();
-                return;
-            }
-
             // If the sFileName is set, check the file exists otherwise prompt the user to select a file
-            
             if (sFileName == "")
             {
                 // Create a new OpenFileDialog box and set some parameters
@@ -177,20 +169,17 @@ namespace HELLION.Explorer
             else
             {
                 // We were passed a file name, check to see if it's actually there
-
                 if (!System.IO.File.Exists(sFileName))
                 {
                     // The file name passed doesn't exist
                     MessageBox.Show(String.Format("Error opening file:{0}{1}{0] from command line - file doesn't exist.", Environment.NewLine, sFileName));
                     return;
                 }
-
-
             }
 
 
             { 
-
+                // Update the main window's title text to reflect the filename selected
                 RefreshMainFormTitleText();
 
                 //Application.UseWaitCursor = true;
@@ -206,11 +195,7 @@ namespace HELLION.Explorer
                 if (docCurrent != null)
                 {
                     // Clear the existing document
-                    //docCurrent.CloseFile();
-                    //docCurrent = null;
-
                     FileClose();
-
                 }
 
                 // Create a new DocumentWorkspace
@@ -219,6 +204,9 @@ namespace HELLION.Explorer
                     // Activates LogToDebug for docCurrent
                     LogToDebug = bLogToDebug
                 };
+
+                // Check that the Data folder path has been defined
+                VerifyGameDataFolder(true);
 
                 // Grab the Game Data Folder from Properties
                 string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
@@ -289,7 +277,9 @@ namespace HELLION.Explorer
                     // Add the SolarSystemRoot and SearchResultsRoot nodes to the treeview 
                     frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystemRootNode);
                     frmMainForm.treeView1.Nodes.Add(docCurrent.GameDataRootNode);
-                    frmMainForm.treeView1.Nodes.Add(docCurrent.SearchResultsRootNode);
+                    
+                    // Search results node - currently not enabled
+                    //frmMainForm.treeView1.Nodes.Add(docCurrent.SearchResultsRootNode);
 
                     frmMainForm.treeView1.SelectedNode = docCurrent.SolarSystemRootNode;
                     frmMainForm.treeView1.SelectedNode.Expand();
@@ -432,23 +422,43 @@ namespace HELLION.Explorer
 
         } // End of GenerateAboutBoxText()
 
-        internal static bool IsGameDataFolderDefined()
+        internal static void VerifyGameDataFolder(bool ReportSuccess = false)
         {
-            // Checks that the GameDataFolder in settings is not empty, if it is empty offer the folder browser and store the location
+            // Called by menu option on the main form, when opening a file, or by other means
+            // Verifies that there's a data folder defined, and that it's got files in it with
+            // familiar names. If not it calls SetGameDataFolder
 
-            // Properties.Program.Default.sGameDataFolder
+            // Checks that the GameDataFolder in settings is not empty, and is valid, if not it offers the folder browser to store the location
+            bool IsGameDataFolderDefined = true;
+            string StoredDataFolderPath = Properties.HELLIONExplorer.Default.sGameDataFolder.Trim();
 
-            if (Properties.HELLIONExplorer.Default.sGameDataFolder.Trim() == "")  // Other conditions to test should be added here
+            if (StoredDataFolderPath == null || StoredDataFolderPath == "") 
             {
-                return false;
+                IsGameDataFolderDefined = false;
+            }
+
+            // Calls the Data Folder verification routine from within the workspace
+            else if (docCurrent != null && !docCurrent.IsDataFolderValid(StoredDataFolderPath))
+            {
+                IsGameDataFolderDefined = false;
+            }
+
+
+            if (IsGameDataFolderDefined)
+            {
+                if (ReportSuccess)
+                    MessageBox.Show("Game Data folder seems valid.");
             }
             else
             {
-                return true;
-            }
-        } // End of IsGameDataFolderDefined()
+                MessageBox.Show("Game Data folder: " + Environment.NewLine + StoredDataFolderPath + Environment.NewLine + "is INVALID! Please set this in the following dialog.");
+                SetGameDataFolder();
 
-        internal static void DefineGameFolder()
+            }
+
+        }
+
+        internal static void SetGameDataFolder()
         {
             MessageBox.Show("Please use the following folder browser window to select the location of the game Data folder." + Environment.NewLine + Environment.NewLine +
                 "The Data folder and the files within can be obtained as part of the HELLION Dedicated Server installation and are required to load a .save file."
@@ -623,6 +633,7 @@ namespace HELLION.Explorer
             StringBuilder sb1 = new StringBuilder();
             StringBuilder sb2 = new StringBuilder();
             StringBuilder sb3 = new StringBuilder();
+            StringBuilder sb4 = new StringBuilder();
 
 
             if (nSelectedNode != null && docCurrent != null && docCurrent.IsFileReady)
@@ -711,8 +722,22 @@ namespace HELLION.Explorer
                     sb2.Append(string.Format(" {0:###.##}% of total ({1})", dThisNodeAndSubsCountAsPercentage, iTotalNodeCount));
                 }
 
+                sb4.Append("<html><head><style>"
+                    + "body { margin: 0em; padding: 0em; } body div { white-space: pre-wrap; font-family:Segoe UI; font-size: 0.8em } .number { color: orange; } "
+                    + ".key { color: crimson; } .string { color: darkgreen; } .boolean { color: blue; } .null { color: black; } "
+                    + "</style></head><body><div>");
+
                 // Create JSON data for selected node
-                if (nSelectedNode.Tag != null) sb3.Append((JValue)nSelectedNode.Tag.ToString());
+                if (nSelectedNode.Tag != null)
+                {
+                    sb3.Append((JValue)nSelectedNode.Tag.ToString());
+
+                    sb4.Append(HEUtilities.SyntaxHighlightJson(sb3.ToString().Replace(" ", "&nbsp;").Replace("\n", "<br>")));
+                    //MessageBox.Show(sb4.ToString());
+
+                }
+                sb4.Append("</div></body></html>");
+
                 /*
                 if (nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody) // || nSelectedHETNNode.NodeType == HETreeNodeType.SystemNAV)
                 {
@@ -726,10 +751,8 @@ namespace HELLION.Explorer
                 {
                     frmMainForm.dataGridView1.DataSource = null;
                 }
-                */
                 string jsonString = sb3.ToString();
 
-                /*
                 frmMainForm.treeView2.Nodes.Clear();
                 if (jsonString != "")
                 {
@@ -805,6 +828,19 @@ namespace HELLION.Explorer
             frmMainForm.textBox1.Text = sb1.ToString();
             frmMainForm.textBox2.Text = sb2.ToString();
             frmMainForm.textBox3.Text = sb3.ToString();
+
+            //frmMainForm.webBrowser1.DocumentText = sb4.ToString();
+            //frmMainForm.webBrowser1.Refresh();
+
+            frmMainForm.webBrowser1.Navigate("about:blank");
+            if (frmMainForm.webBrowser1.Document != null)
+            {
+                frmMainForm.webBrowser1.Document.Write(string.Empty);
+            }
+            frmMainForm.webBrowser1.DocumentText = sb4.ToString();
+
+
+
 
             // 
 

@@ -12,7 +12,7 @@ namespace HELLION.Explorer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
     internal sealed partial class HELLIONExplorer : global::System.Configuration.ApplicationSettingsBase {
         
         private static HELLIONExplorer defaultInstance = ((HELLIONExplorer)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new HELLIONExplorer())));
@@ -176,6 +176,102 @@ namespace HELLION.Explorer.Properties {
             }
             set {
                 this["sStationsFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool bLoadLootCategoriesFile {
+            get {
+                return ((bool)(this["bLoadLootCategoriesFile"]));
+            }
+            set {
+                this["bLoadLootCategoriesFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("LootCategories.json")]
+        public string sLootCategoriesFileName {
+            get {
+                return ((string)(this["sLootCategoriesFileName"]));
+            }
+            set {
+                this["sLootCategoriesFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool bLoadSpawnRulesFile {
+            get {
+                return ((bool)(this["bLoadSpawnRulesFile"]));
+            }
+            set {
+                this["bLoadSpawnRulesFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("SpawnRules.json")]
+        public string sSpawnRulesFileName {
+            get {
+                return ((string)(this["sSpawnRulesFileName"]));
+            }
+            set {
+                this["sSpawnRulesFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool bLoadItemRecipiesFile {
+            get {
+                return ((bool)(this["bLoadItemRecipiesFile"]));
+            }
+            set {
+                this["bLoadItemRecipiesFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ItemRecipies.json")]
+        public string sItemRecipiesFileName {
+            get {
+                return ((string)(this["sItemRecipiesFileName"]));
+            }
+            set {
+                this["sItemRecipiesFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool bLoadGlossaryFile {
+            get {
+                return ((bool)(this["bLoadGlossaryFile"]));
+            }
+            set {
+                this["bLoadGlossaryFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Glossery.json")]
+        public string sGlossaryFileName {
+            get {
+                return ((string)(this["sGlossaryFileName"]));
+            }
+            set {
+                this["sGlossaryFileName"] = value;
             }
         }
     }

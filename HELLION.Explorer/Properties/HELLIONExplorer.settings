@@ -41,5 +41,29 @@
     <Setting Name="sStationsFileName" Type="System.String" Scope="User">
       <Value Profile="(Default)">Stations.json</Value>
     </Setting>
+    <Setting Name="bLoadLootCategoriesFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="sLootCategoriesFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">LootCategories.json</Value>
+    </Setting>
+    <Setting Name="bLoadSpawnRulesFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="sSpawnRulesFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SpawnRules.json</Value>
+    </Setting>
+    <Setting Name="bLoadItemRecipiesFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="sItemRecipiesFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ItemRecipies.json</Value>
+    </Setting>
+    <Setting Name="bLoadGlossaryFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="sGlossaryFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Glossery.json</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

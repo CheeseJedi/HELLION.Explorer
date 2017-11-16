@@ -65,7 +65,8 @@ namespace HELLION.Explorer
                 if (node == null)
                 {
                     // We seem to get two updates, the first one has no data 
-                    
+                    // in this case we do nothing
+
                     //MessageBox.Show("listView1_SelectedIndexChanged: node is null ");
                 }
                 else
@@ -102,7 +103,8 @@ namespace HELLION.Explorer
                 // The second firing of the event usually contains the selected item passed
                 if (node == null)
                 {
-                    // We seem to get two updates, the first one has no data 
+                    // We seem to get two updates, the first one has no data
+                    // in this case we do nothing
                 }
                 else
                 {
@@ -132,7 +134,7 @@ namespace HELLION.Explorer
 
         private void setDataFolderLocationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.DefineGameFolder();
+            Program.SetGameDataFolder();
         }
 
         private void navigationPaneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -187,6 +189,11 @@ namespace HELLION.Explorer
         private void updatecheckToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.CheckForUpdates();
+        }
+
+        private void verifyDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.VerifyGameDataFolder(true);
         }
     }
 } // End of namespace HELLION.Explorer

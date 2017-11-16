@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace HELLION.DataStructures
 {
@@ -15,27 +16,21 @@ namespace HELLION.DataStructures
     {
         // A class to hold utility functions
 
-
         public static string FindLatestRelease(string sGithubUsername, string sRepositoryName)
         {
-
             // http request GET /repos/owner/repo/releases
             JArray JData = FindAllGitHubReleases(sGithubUsername, sRepositoryName);
-
 
             IOrderedEnumerable<JToken> ioOrderedReleases = from s in JData //[""]
                                                            orderby (string)s["published_at"] descending
                                                            select s;
             string sLatestVersion = "";
             //StringBuilder sb = new StringBuilder();
-
-
             if (ioOrderedReleases.Count() > 0)
             {
 
                 foreach (var item in ioOrderedReleases)
                 {
-                    //
                     if (sLatestVersion == "") sLatestVersion = (string)item["tag_name"];
                     //sb.Append((string)item["tag_name"] + " - " + (string)item["published_at"] + Environment.NewLine);
                 }
@@ -43,7 +38,6 @@ namespace HELLION.DataStructures
             //MessageBox.Show(sb.ToString());
             return sLatestVersion;
         }
-
 
         private static JArray FindAllGitHubReleases(string sGithubUsername, string sRepositoryName)
         {
@@ -277,6 +271,40 @@ namespace HELLION.DataStructures
             }
 
         } // End of HSLColor
+
+        // from http://joelabrahamsson.com/syntax-highlighting-json-with-c/
+        public static string SyntaxHighlightJson(string original)
+        {
+            return Regex.Replace(
+              original,
+              @"(¤(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\¤])*¤(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)".Replace('¤', '"'),
+              match => {
+                  var cls = "number";
+                  if (Regex.IsMatch(match.Value, @"^¤".Replace('¤', '"')))
+                  {
+                      if (Regex.IsMatch(match.Value, ":$"))
+                      {
+                          cls = "key";
+                      }
+                      else
+                      {
+                          cls = "string";
+                      }
+                  }
+                  else if (Regex.IsMatch(match.Value, "true|false"))
+                  {
+                      cls = "boolean";
+                  }
+                  else if (Regex.IsMatch(match.Value, "null"))
+                  {
+                      cls = "null";
+                  }
+                  return "<span class=\"" + cls + "\">" + match + "</span>";
+              });
+        }
+
+
+
 
 
         // adapted from https://stackoverflow.com/questions/18769634/creating-tree-view-dynamically-according-to-json-text-in-winforms

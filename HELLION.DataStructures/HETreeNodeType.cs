@@ -20,8 +20,10 @@ namespace HELLION.DataStructures
         DefAsteroid,        // Node type for a definition of an asteroid
         DefStructure,       // Node type for a definition of a structure (ship/module)
         DefDynamicObject,   // Node type for a definition of a dynamic object
-        RespawnObject,      // Node type for a respawn object
+        RespawnObject,      // Node type for a respawn object - these seem to be deprecated now
         SpawnPoint,         // Node type for a spawn point
-        ArenaController,    // Node type for an arena controller
+        ArenaController,    // Node type for an arena controller - these also seem to be deprecated now
+        DoomControllerData, // Node type for the doomed station controller data
+        SpawnManagerData,   // Node type for the SpawnManager data
     };
 } // End of namespace HELLION
