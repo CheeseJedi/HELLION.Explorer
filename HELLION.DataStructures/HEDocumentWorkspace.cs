@@ -24,19 +24,14 @@ namespace HELLION.DataStructures
         public bool IsFileDirty { get; private set; }
         public bool LogToDebug { get; set; }
         public bool UseScenes { get; set; }
-
-
         // Define a custom tree node to become the root node for the Nav Tree
         public HEOrbitalObjTreeNode NavRootNode { get; private set; }
-
         // Define a custom tree node to become the root node for the Solar System tree
         public HEOrbitalObjTreeNode SolarSystemRootNode { get; private set; }
-        
         // Define a custom tree node to become the root node for the Data tree
         public HETreeNode GameDataRootNode { get; private set; }
         public HETreeNode DataFilesRootNode { get; private set; }
         public HETreeNode SaveFileRootNode { get; private set; }
-
         public HETreeNode SaveFileShipsRootNode { get; private set; }
         public HETreeNode SaveFileAsteroidsRootNode { get; private set; }
         public HETreeNode SaveFilePlayersRootNode { get; private set; }
@@ -45,14 +40,10 @@ namespace HELLION.DataStructures
         public HETreeNode SaveFileArenaControllersRootNode { get; private set; }
         public HETreeNode SaveFileDoomControllerDataRootNode { get; private set; }
         public HETreeNode SaveFileSpawnManagerDataRootNode { get; private set; }
-
-
         // Define a custom tree node to become the root node for the Search Results tree
         public HETreeNode SearchResultsRootNode { get; private set; }
-
         // Define the HEJsonFile object that holds the .save data file
         public HEGameFile MainFile { get; set; }
-
         // Define additional HEJsonFile objects to hold accompanying information
         public HEJsonFile DataFileCelestialBodies { get; set; }
         public HETreeNode DataFilesCelestialBodiesRootNode { get; private set; }
@@ -62,7 +53,6 @@ namespace HELLION.DataStructures
         public HETreeNode DataFilesStructuresRootNode { get; private set; }
         public HEJsonFile DataFileDynamicObjects { get; set; }
         public HETreeNode DataFilesDynamicObjectsRootNode { get; private set; }
-        // Other data file definitions would go here - these two are not yet implemented in game
         public HEJsonFile DataFileModules { get; set; }
         public HETreeNode DataFilesModulesRootNode { get; private set; }
         public HEJsonFile DataFileStations { get; set; }
@@ -90,43 +80,6 @@ namespace HELLION.DataStructures
             DataFileDynamicObjects = new HEJsonFile();
             DataFileModules = new HEJsonFile();
             DataFileStations = new HEJsonFile();
-        }
-
-        //
-        public bool IsDataFolderValid(string folderName)
-        {
-            // This will be changed to false if any test(s) fails, and will be returned on exit
-            bool isFolderValid = true;
-
-            // Check the folder exists
-            if (!Directory.Exists(folderName))
-                isFolderValid = false;
-
-            // Check the Celestial Bodies file - this one is particularly critical
-            if (!File.Exists(DataFileCelestialBodies.FileName))
-                isFolderValid = false;
-
-            // Check the Asteroids file
-            if (!File.Exists(DataFileAsteroids.FileName))
-                isFolderValid = false;
-
-            // Check the Structures file
-            if (!File.Exists(DataFileStructures.FileName))
-                isFolderValid = false;
-
-            // Check the Dynamic Objects file
-            if (!File.Exists(DataFileDynamicObjects.FileName))
-                isFolderValid = false;
-            /*
-            // Check the Asteroids file
-            if (!File.Exists(DataFileAsteroids.FileName))
-                isFolderValid = false;
-
-            // Check the Asteroids file
-            if (!File.Exists(DataFileAsteroids.FileName))
-                isFolderValid = false;
-            */
-            return isFolderValid;
         }
 
         public Color ConvertStringToColor(string sInputString)
@@ -842,7 +795,6 @@ namespace HELLION.DataStructures
         }
          */ // End of AddListViewItemsToParentRecursively
 
-
         public bool LoadFile()
         {
             // Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
@@ -1115,7 +1067,6 @@ namespace HELLION.DataStructures
             // Return the value of LoadError
             return LoadError;
         } // End of LoadFile()
-
 
         public void CloseFile()
         {

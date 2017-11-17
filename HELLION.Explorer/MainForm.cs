@@ -193,7 +193,7 @@ namespace HELLION.Explorer
 
         private void verifyDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.VerifyGameDataFolder(true);
+            Program.VerifyGameDataFolder();
         }
     }
 } // End of namespace HELLION.Explorer

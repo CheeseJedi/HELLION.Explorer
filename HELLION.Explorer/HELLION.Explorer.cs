@@ -8,7 +8,9 @@ using System.Drawing;
 using System.Reflection;
 using System.Diagnostics;
 using System.Data;
-//using System.IO;
+using System.IO;
+using System.Configuration;
+
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Threading.Tasks;
@@ -21,14 +23,10 @@ namespace HELLION.Explorer
         // Most of the work is done by the HEDocumentWorkspace object however this
         // assembly is responsible for building the output for the ListView control
 
-        // main object definitions
-
         // Define the main form object
         internal static MainForm frmMainForm { get; private set; }
-
         // Define an object to hold the current open document
         internal static HEDocumentWorkspace docCurrent = null;
-
         // Define an ImageList and fill it
         internal static ImageList ilObjectTypesImageList = BuildObjectTypesImageList();
 
@@ -172,11 +170,11 @@ namespace HELLION.Explorer
                 if (!System.IO.File.Exists(sFileName))
                 {
                     // The file name passed doesn't exist
-                    MessageBox.Show(String.Format("Error opening file:{0}{1}{0] from command line - file doesn't exist.", Environment.NewLine, sFileName));
+                    MessageBox.Show(String.Format("Error opening file:{0}{1}{0} from command line - file doesn't exist.", Environment.NewLine, sFileName));
+                    
                     return;
                 }
             }
-
 
             { 
                 // Update the main window's title text to reflect the filename selected
@@ -205,8 +203,19 @@ namespace HELLION.Explorer
                     LogToDebug = bLogToDebug
                 };
 
-                // Check that the Data folder path has been defined
-                VerifyGameDataFolder(true);
+
+
+                // Check that the Data folder path has been defined and the expected files are there
+                if (!IsGameDataFolderValid())
+                {
+                    // The checks failed, throw up an error message and cancel the load
+                    MessageBox.Show("There was a problem with the Data Folder - use Set Data Folder option in Tools menu :)"); // this needs to be massively improved!
+                                                                                                                               
+                    // Restore mouse cursor and return
+                    frmMainForm.Cursor = Cursors.Default;
+                    return;
+                }
+
 
                 // Grab the Game Data Folder from Properties
                 string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
@@ -422,41 +431,146 @@ namespace HELLION.Explorer
 
         } // End of GenerateAboutBoxText()
 
-        internal static void VerifyGameDataFolder(bool ReportSuccess = false)
+        internal static bool IsGameDataFolderValid()
         {
-            // Called by menu option on the main form, when opening a file, or by other means
-            // Verifies that there's a data folder defined, and that it's got files in it with
-            // familiar names. If not it calls SetGameDataFolder
+            // Called indirectly by menu option on the main form, and directly when opening a file, or by other means. 
+            // Verifies that there's a data folder defined, and that it's got files in it with familiar names, but honours
+            // the loading flags in the config file and doesn't check files that are marked as not to be loaded.
+            // Does not chech the contents of the files.
 
-            // Checks that the GameDataFolder in settings is not empty, and is valid, if not it offers the folder browser to store the location
-            bool IsGameDataFolderDefined = true;
+
             string StoredDataFolderPath = Properties.HELLIONExplorer.Default.sGameDataFolder.Trim();
 
+            // Check GameDataFolder path in settings is not null or empty
             if (StoredDataFolderPath == null || StoredDataFolderPath == "") 
+                return false;
+
+            // Check the folder exists
+            if (!Directory.Exists(StoredDataFolderPath))
+                return false;
+
+            // Check the Celestial Bodies file - this one is particularly critical
+            if (Properties.HELLIONExplorer.Default.bLoadCelestialBodiesFile)
             {
-                IsGameDataFolderDefined = false;
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName.Trim()))
+                    return false;
             }
 
-            // Calls the Data Folder verification routine from within the workspace
-            else if (docCurrent != null && !docCurrent.IsDataFolderValid(StoredDataFolderPath))
+            // Check the Asteroids file
+            if (Properties.HELLIONExplorer.Default.bLoadAsteroidsFile)
             {
-                IsGameDataFolderDefined = false;
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sAsteroidsFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Structures file
+            if (Properties.HELLIONExplorer.Default.bLoadStructuresFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sStructuresFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Dynamic Objects file
+            if (Properties.HELLIONExplorer.Default.bLoadStructuresFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sStructuresFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Modules file
+            if (Properties.HELLIONExplorer.Default.bLoadModulesFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sModulesFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Stations file
+            if (Properties.HELLIONExplorer.Default.bLoadStationsFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sStationsFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Loot Categories file
+            if (Properties.HELLIONExplorer.Default.bLoadLootCategoriesFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sLootCategoriesFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Spawn Rules file
+            if (Properties.HELLIONExplorer.Default.bLoadSpawnRulesFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sSpawnRulesFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Item Recipies file
+            if (Properties.HELLIONExplorer.Default.bLoadItemRecipiesFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sItemRecipiesFileName.Trim()))
+                    return false;
+            }
+
+            // Check the Glossary file
+            if (Properties.HELLIONExplorer.Default.bLoadGlossaryFile)
+            {
+                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sGlossaryFileName.Trim()))
+                    return false;
+            }
+
+            /*
+            // Some test code for enumerating the settings - potentially less code changes needed in future if this could be dynamic
+            string result = "Settings ";
+            foreach (SettingsProperty currentProperty in Properties.HELLIONExplorer.Default.Properties)
+            {
+                result += currentProperty.Name.ToString() + ": " + Properties.HELLIONExplorer.Default[currentProperty.Name].ToString() + Environment.NewLine;
+            }
+            MessageBox.Show(result);
+            */
+            
+
+            // No checks failed, assume folder is ok
+            return true;
+
+        } // End of IsGameDataFolderValid()
+
+
+        internal static void VerifyGameDataFolder()
+        {
+
+            // Called by menu option on the main form
+            // Is interactive and will prompt the user to set a valid folder
+
+
+            // Check that the Data folder path has been defined and there's stuff there
+            if (!IsGameDataFolderValid())
+            {
+                // The checks failed, throw up an error message and cancel the load
+                MessageBox.Show("There was a problem with the Data Folder - use Set Data Folder option in Tools menu :)"); // this needs to be massively improved!
+                return;
+            }
+            else
+            {
+                MessageBox.Show("Game Data folder seems valid.");
             }
 
 
-            if (IsGameDataFolderDefined)
+            /*  OLD CODE!
+            if (false)
             {
-                if (ReportSuccess)
+                if (false)
                     MessageBox.Show("Game Data folder seems valid.");
             }
             else
             {
                 MessageBox.Show("Game Data folder: " + Environment.NewLine + StoredDataFolderPath + Environment.NewLine + "is INVALID! Please set this in the following dialog.");
                 SetGameDataFolder();
-
             }
-
+            */
         }
+
+
 
         internal static void SetGameDataFolder()
         {
@@ -469,6 +583,7 @@ namespace HELLION.Explorer
             {
                 Description = "Select location of Data folder",
                 RootFolder = Environment.SpecialFolder.Desktop,
+                // Pre-populate the path with whatever's stored in the Properties 
                 SelectedPath = Properties.HELLIONExplorer.Default.sGameDataFolder,
             };
 
@@ -888,6 +1003,12 @@ namespace HELLION.Explorer
 
             // Initialise the main form
             frmMainForm = new MainForm();
+
+            // Set the form's icon
+            var exe = System.Reflection.Assembly.GetExecutingAssembly();
+            var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HELLION.Explorer.ico");
+            if (iconStream != null)
+                frmMainForm.Icon = new Icon(iconStream);
 
             // Update the main form's title text - this adds the application name
             RefreshMainFormTitleText();
