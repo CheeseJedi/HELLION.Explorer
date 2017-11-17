@@ -535,7 +535,6 @@ namespace HELLION.Explorer
 
         } // End of IsGameDataFolderValid()
 
-
         internal static void VerifyGameDataFolder()
         {
 
@@ -569,8 +568,6 @@ namespace HELLION.Explorer
             }
             */
         }
-
-
 
         internal static void SetGameDataFolder()
         {

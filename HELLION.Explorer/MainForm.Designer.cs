@@ -488,6 +488,7 @@
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(438, 517);
             this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Data View (Experimental!)";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // webBrowser1
