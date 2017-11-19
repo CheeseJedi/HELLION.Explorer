@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using System.Diagnostics;
+using System.Text;
 
 namespace HELLION.DataStructures
 {
@@ -233,29 +234,66 @@ namespace HELLION.DataStructures
                 // Get the index of the image associated with this node type
                 int iImageIndex = HEUtilities.GetImageIndexByNodeType(nodeType);
 
-                try
+                //try
                 {
                     foreach (JToken dataItem in JData[sSectionName].Reverse()) // seems to come in backwards, hence the .Reverse()
                     {
-                        // Set up a new HETreeNode with data from this object and the type as passed in
-                        // via nodeType
+                        // Set up a new HETreeNode with data from this object and the type as passed in via nodeType
 
                         HETreeNode nodeDataItem = new HETreeNode()
                         {
-                            Name = (string)dataItem["Name"],
+                            //Name = (string)dataItem["Name"],
                             NodeType = nodeType,
-                            Text = (string)dataItem["ItemID"] + " " + (string)dataItem["Registration"] + " " + (string)dataItem["Name"] + (string)dataItem["GameName"],
                             Tag = dataItem,
                             ImageIndex = iImageIndex,
                             SelectedImageIndex = iImageIndex,
                         };
+
+                        StringBuilder sb = new StringBuilder();
+
+                        try
+                        {
+                            JToken testToken = dataItem["ItemID"];
+                            if (testToken != null)
+                                sb.Append("ItemID: " + (string)dataItem["ItemID"] + " ");
+
+                            testToken = dataItem["Registration"];
+                            if (testToken != null)
+                                sb.Append("Registration: " + (string)dataItem["Registration"] + " ");
+
+                            testToken = dataItem["Name"];
+                            if (testToken != null)
+                                sb.Append("Name: " + (string)dataItem["Name"] + " ");
+
+                            testToken = dataItem["GameName"];
+                            if (testToken != null)
+                                sb.Append("GameName: " + (string)dataItem["GameName"] + " ");
+
+                            testToken = dataItem["SpawnID"];
+                            if (testToken != null)
+                                sb.Append("SpawnID: " + (string)dataItem["SpawnID"] + " ");
+
+                        }
+                        catch
+                        {
+                            Debug.Print("Exception occurred when accessing non existent data for identification purposes during BuildNodeCollection" 
+                                + Environment.NewLine + sb.ToString());
+                            continue;
+                        }
+                        // TODO the above needs to decide which fields to attempt to request rather than trying them all and
+                        // silently handling failures
+
+                        nodeDataItem.Name = nodeDataItem.Text = sb.ToString();
 
                         // Add nodeDataItem to the nodeRoot's Nodes collection
                         nodeRoot.Nodes.Add(nodeDataItem);
 
                     }
                 }
-                catch { }
+                //catch (Exception e) {
+                 //   Debug.Print("Exception occurred: " + e.ToString());
+                //}
+
                 
                 // Update the count of objects for the root node
                 nodeRoot.UpdateCounts();

@@ -16,6 +16,9 @@ namespace HELLION.DataStructures
         public double SemiMajorAxis { get; set; }
         public double Inclination { get; set; }
         public HEOrbitalData OrbitData { get; set; }
+        public long DockedToShipGUID { get; set; }
+        public int DockedPortID { get; set; }
+        public int DockedToPortID { get; set; }
 
         public HEOrbitalObjTreeNode()
         {
@@ -29,6 +32,9 @@ namespace HELLION.DataStructures
             SemiMajorAxis = 0;
             Inclination = 0;
             OrbitData = new HEOrbitalData();
+            DockedToShipGUID = 0;
+            DockedPortID = 0;
+            DockedToPortID = 0;
         }
     } // End of class HETreeNode
 } // End of namespace HELLION.DataStructures

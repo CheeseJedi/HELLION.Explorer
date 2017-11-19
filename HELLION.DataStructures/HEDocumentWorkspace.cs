@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Collections.Generic; // for IEnumerable
 using System.Linq;
+using System.Text;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -213,9 +214,10 @@ namespace HELLION.DataStructures
                                 if (bLogToDebug)
                                 {
                                     Debug.Print("Creating Star node");
-                                    nChildNode.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
-                                    nChildNode.SelectedImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
                                 }
+                                nChildNode.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
+                                nChildNode.SelectedImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
+                                
                             }
                             else if (bLogToDebug)
                             {
@@ -227,7 +229,7 @@ namespace HELLION.DataStructures
 
                         }
 
-                        // Recursive call here!
+                        // Recursive call here
                         if (bLogToDebug)
                         {
                             Debug.Print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -251,7 +253,7 @@ namespace HELLION.DataStructures
             }
         } // end of AddCBTreeNodesRecursively
 
-        public void PopulateOrbitalObjects(HETreeNodeType ntAddNodesOfType, bool bAddScenes)
+        public void PopulateOrbitalObjects(HETreeNodeType ntAddNodesOfType, bool bAddScenes, bool bLogToDebug = false)
         {
             // Populates a given node tree with objects of a given type from the .save file
 
@@ -290,12 +292,51 @@ namespace HELLION.DataStructures
                     foreach (var jtFiltObj in ioFilteredObjects)
                     {
                         iShipCount++;
-                        Debug.Print("Name: " + (string)jtFiltObj["Name"] + " GUID: " + (string)jtFiltObj["GUID"] + " ParentGUID: " + (string)jtFiltObj["OrbitData"]["ParentGUID"]);
+
+                        if (bLogToDebug)
+                        {
+                            StringBuilder sb = new StringBuilder();
+
+                            sb.Append("PopOrbObj #" + iShipCount.ToString());
+
+                            sb.Append(" Name: " + (string)jtFiltObj["Name"]);
+
+                            JToken testToken = jtFiltObj["Registration"];
+                            if (testToken != null)
+                            {
+                                sb.Append(" Registration: " + (string)jtFiltObj["Registration"]);
+                            }
+
+                            sb.Append(" GUID: " + (string)jtFiltObj["GUID"]);
+                            sb.Append(" ParentGUID: " + (string)jtFiltObj["OrbitData"]["ParentGUID"]);
+
+                            testToken = jtFiltObj["DockedToShipGUID"];
+                            if (testToken != null)
+                            {
+                                sb.Append(" DockedToShipGUID: " + (long)jtFiltObj["DockedToShipGUID"]);
+                            }
+
+                            //sb.Append(Environment.NewLine);
+
+                            Debug.Print(sb.ToString());
+
+                        }
+
                     }
 
 
                     // start traversing the node tree recursively, starting from the root and adding children depth-first as it progresses
                     AddOrbitalObjTreeNodesRecursively(ioFilteredObjects, SolarSystemRootNode, ntAddNodesOfType, bAddScenes ,iMaxRecursionDepth, LogToDebug, iLogIndentLevel: 1);
+
+                    // Parses the tree of nodes looking for ships/modules that have a DockedToShipGUID value that's not null/empty
+                    // and re-parents them to the appropriate node with the 
+
+                    if (ntAddNodesOfType == HETreeNodeType.Ship)
+                    {
+                        // Call the routine to collapse docked stations
+                        //FlattenDockedShipNodesRecursively(SolarSystemRootNode, iMaxRecursionDepth, true, iLogIndentLevel: 1);
+                    }
+
 
                     break;
 
@@ -481,14 +522,13 @@ namespace HELLION.DataStructures
                                 // Create a new TreeNode representing the object we're adding
                                 HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
                                 {
-
                                     Name = sObjectName,
                                     NodeType = ntAddNodesOfType,
                                     Text = sObjectName,
                                     GUID = (long)jtOrbitalObject["GUID"],
-                                    ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"], // to be removed
-                                    SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"], // to be removed
-                                    Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"], // to be removed
+                                    ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
+                                    SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
+                                    Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"],
                                     // Generate the foreground colour
                                     //ForeColor = ConvertStringToColor((string)jtOrbitalObject["Name"]),
                                     ImageIndex = iImageIndex,
@@ -498,6 +538,19 @@ namespace HELLION.DataStructures
                                     OrbitData = OrbitalObjectData,
                                     Tag = jtOrbitalObject
                                 };
+
+                                JToken testToken = jtOrbitalObject["DockedToShipGUID"];
+                                if (testToken != null)
+                                    nodeOrbitalObject.DockedToShipGUID = (long)jtOrbitalObject["DockedToShipGUID"];
+
+                                testToken = jtOrbitalObject["DockedPortID"];
+                                if (testToken != null)
+                                    nodeOrbitalObject.DockedPortID = (int)jtOrbitalObject["DockedPortID"];
+
+                                testToken = jtOrbitalObject["DockedToPortID"];
+                                if (testToken != null)
+                                    nodeOrbitalObject.DockedToPortID = (int)jtOrbitalObject["DockedToPortID"];
+
 
                                 // Set Image index for the node we're adding
                                 switch (ntAddNodesOfType)
@@ -689,6 +742,147 @@ namespace HELLION.DataStructures
 
         } // end of AddOrbitalObjTreeNodesRecursively
 
+
+        public void FlattenDockedShipNodesRecursively(
+            HEOrbitalObjTreeNode nThisNode,
+            int iDepth,
+            bool bLogToDebug = false,
+            int iLogIndentLevel = 0)
+        {
+            // Breadth-first recursive function for implemening flattening of docked ship groups
+
+            // Set up indenting for this level
+            string sIndent = String.Join("| ", new String[iLogIndentLevel]);
+
+            // nThisNode prepresents the point at which this function starts from
+            //Check and only continue if nThisNode is not null
+            if (nThisNode != null)
+            {
+                if (bLogToDebug)
+                {
+                    Debug.Print(sIndent + "======================================================================================");
+                    Debug.Print(sIndent + "CollapseDockedShipNodesRecursively entered, started processing node for HECelestialBody {0} GUID:{1} ParentGUID:{2}",
+                        nThisNode.Name, nThisNode.GUID.ToString(), nThisNode.OrbitData.ParentGUID.ToString());
+                    Debug.Print(sIndent + "iDepth: " + iDepth.ToString());
+                    //Debug.Print()
+                }
+
+                // Check to see if we've reached the max depth - used to prevent runaway recursion on deep structures
+                if (!(iDepth > 0))
+                {
+                    // Max depth reached, don't continue at this level
+                    if (bLogToDebug)
+                    {
+                        Debug.Print(sIndent + "------------------ RECURSION PREVENTED DUE TO MAX DEPTH REACHED ----------------------");
+                    }
+                }
+                else
+                {
+                    // Max depth not yet reached, continue
+
+                    if (bLogToDebug)
+                    {
+                        Debug.Print(sIndent + "Processing " + nThisNode.Nodes.Count.ToString() + " child nodes...");
+                    }
+
+                    // Define an IEnumerable object to hold this node's children
+                    IEnumerable<HEOrbitalObjTreeNode> IThisNodesChildren = null;
+
+                    // Get the child nodes that are Celestial Bodies
+                    IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => p.NodeType == HETreeNodeType.CelestialBody);
+
+                    // Check for child nodes and recurse to each in turn - this is done before processing objects at this level
+                    if (IThisNodesChildren.Count() > 0)
+                    {
+                        // There are child nodes (celcetial bodies) to process
+
+                        // Loop through each child body in the iCelestialBodies list and RECURSE
+                        foreach (HEOrbitalObjTreeNode nChildNode in IThisNodesChildren)
+                        {
+                            if (bLogToDebug)
+                            {
+                                Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                                Debug.Print(sIndent + ">> Call: FlattenDockedShipNodesRecursively with GUID: " + nChildNode.GUID);
+                                Debug.Print(sIndent + ">> : Preparing to recurse using Orbital Body: " + nChildNode.Name);
+                                Debug.Print(sIndent + ">> : nChildNode GetNodeCount: " + nChildNode.GetNodeCount(includeSubTrees: false).ToString());
+                                Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                            }
+                            // Find the correct node in the Nav Tree for this cbChild
+
+                            // *** Recursive call here ***
+                            FlattenDockedShipNodesRecursively(nChildNode, iDepth - 1, bLogToDebug, iLogIndentLevel + 1);
+
+                            if (bLogToDebug)
+                            {
+                                Debug.Print(sIndent + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                                Debug.Print(sIndent + "<< Return: FlattenDockedShipNodesRecursively with GUID: " + nChildNode.GUID);
+                                Debug.Print(sIndent + "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                            }
+                        } // end of foreach (TreeNode nChildNode in nThisNode.Nodes)
+                    }
+                    else
+                    {
+                        // Node Count was zero or less
+                    }
+
+                    // Process this node's ships
+
+                    // Define an IEnumerable object to hold this node's children
+                    IEnumerable<HEOrbitalObjTreeNode> IShipsToReParent = null;
+
+                    // Get the child nodes that are Ships and have a DockedToShipGUID
+                    IShipsToReParent = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>()
+                        .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0) );
+
+                    // Check for child nodes and recurse to each in turn - this is done before processing objects at this level
+                    if (IShipsToReParent.Count() > 0)
+                    {
+                        // There are nodes to process
+
+                        IEnumerable<HEOrbitalObjTreeNode> DockingParents = null;
+
+                        // Loop through each child body in the iCelestialBodies list and RECURSE
+                        foreach (HEOrbitalObjTreeNode nShipToReparent in IShipsToReParent)
+                        {
+                            DockingParents = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(n => n.GUID == nShipToReparent.DockedToShipGUID);
+                            foreach (HEOrbitalObjTreeNode DockingParent in DockingParents)
+                            {
+                                // Only process the first, there should only be one match anyway
+                                // Add the ship being re-parented to the parent's node collection
+                                DockingParent.Nodes.Add(nShipToReparent);
+                            }
+                        }
+
+
+                    }
+
+
+
+
+
+
+                }
+                if (bLogToDebug)
+                {
+                    Debug.Print(sIndent + "FlattenDockedShipNodesRecursively exited, finished processing node type  HECelestialBody {0} GUID:{1} ParentGUID:{2}",
+                        nThisNode.Name, nThisNode.GUID.ToString(), nThisNode.OrbitData.ParentGUID.ToString());
+                    Debug.Print(sIndent + "======================================================================================");
+                }
+            }
+            else
+            {
+                if (bLogToDebug)
+                {
+                    Debug.Print(sIndent + "!! NodeParent was NULL !!");
+                }
+            }
+
+        } // end of FlattenDockedShipNodesRecursively
+
+
+
+
+
         public ListView.ListViewItemCollection PopulateJsonListViewItemCollection(JContainer JData)
         {
             // Handler routine for deserialising JSON data to a ListViewItemCollection to be
@@ -865,9 +1059,9 @@ namespace HELLION.DataStructures
                 BuildSolarSystem(SolarSystemRootNode);
 
                 // Add other orbital objects
-                PopulateOrbitalObjects(HETreeNodeType.Asteroid, bAddScenes: false);
-                PopulateOrbitalObjects(HETreeNodeType.Ship, bAddScenes: false);
-                PopulateOrbitalObjects(HETreeNodeType.Player, bAddScenes: false);
+                PopulateOrbitalObjects(HETreeNodeType.Asteroid, bAddScenes: false, bLogToDebug: LogToDebug);
+                PopulateOrbitalObjects(HETreeNodeType.Ship, bAddScenes: false, bLogToDebug: LogToDebug);
+                PopulateOrbitalObjects(HETreeNodeType.Player, bAddScenes: false, bLogToDebug: LogToDebug);
 
                 // Update counts of nodes
                 SolarSystemRootNode.UpdateCounts();

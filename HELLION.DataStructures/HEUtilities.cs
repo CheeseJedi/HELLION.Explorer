@@ -110,6 +110,11 @@ namespace HELLION.DataStructures
                 //break;
                 case HETreeNodeType.DefStructure:
                     return (int)HEObjectTypesImageList.Component_16x;
+                case HETreeNodeType.SpawnPoint:
+                case HETreeNodeType.DoomControllerData:
+                case HETreeNodeType.SpawnManagerData:
+                    return (int)HEObjectTypesImageList.a3DCameraOrbit_16x;
+
                 default:
                     return (int)HEObjectTypesImageList.Checkerboard_16x;
                     //break;

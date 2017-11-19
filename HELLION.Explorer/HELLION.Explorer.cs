@@ -1030,7 +1030,7 @@ namespace HELLION.Explorer
                 //for (int i = 0; i < args.Length; i++)
                 foreach (string s in args)
                 {
-                    Debug.Print(s);
+                    Debug.Print(s + " ");
                 }
             }
 
