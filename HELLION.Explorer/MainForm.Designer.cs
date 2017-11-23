@@ -79,6 +79,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.testOption1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -289,7 +290,8 @@
             this.cleanupToolStripMenuItem,
             this.repairToolStripMenuItem,
             this.toolStripSeparator5,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.testOption1ToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
@@ -298,7 +300,7 @@
             // 
             this.cleanupToolStripMenuItem.Enabled = false;
             this.cleanupToolStripMenuItem.Name = "cleanupToolStripMenuItem";
-            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.cleanupToolStripMenuItem.Text = "Cleanup...";
             this.cleanupToolStripMenuItem.Visible = false;
             // 
@@ -306,14 +308,14 @@
             // 
             this.repairToolStripMenuItem.Enabled = false;
             this.repairToolStripMenuItem.Name = "repairToolStripMenuItem";
-            this.repairToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.repairToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.repairToolStripMenuItem.Text = "Repair...";
             this.repairToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(124, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // optionsToolStripMenuItem
@@ -322,7 +324,7 @@
             this.setDataFolderLocationToolStripMenuItem,
             this.verifyDataFolderToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // setDataFolderLocationToolStripMenuItem
@@ -593,6 +595,13 @@
             this.label1.Text = ">>";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // testOption1ToolStripMenuItem
+            // 
+            this.testOption1ToolStripMenuItem.Name = "testOption1ToolStripMenuItem";
+            this.testOption1ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.testOption1ToolStripMenuItem.Text = "TestOption1";
+            this.testOption1ToolStripMenuItem.Click += new System.EventHandler(this.testOption1ToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -684,6 +693,7 @@
         private System.Windows.Forms.ToolStripMenuItem verifyDataFolderToolStripMenuItem;
         private System.Windows.Forms.TabPage tabPage4;
         public System.Windows.Forms.WebBrowser webBrowser1;
+        private System.Windows.Forms.ToolStripMenuItem testOption1ToolStripMenuItem;
     }
 } // End of namespace HELLION.Explorer
 

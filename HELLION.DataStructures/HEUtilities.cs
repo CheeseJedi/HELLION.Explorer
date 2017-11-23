@@ -9,6 +9,7 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace HELLION.DataStructures
 {
@@ -81,39 +82,249 @@ namespace HELLION.DataStructures
 
         }
 
+        public static ImageList BuildObjectTypesImageList()
+        {
+            // Create a new ImageList to hold images used as icons in the tree and list views
+            ImageList ilObjectTypesImageList = new ImageList();
+
+            // there must be a better way of doing this
+            string[] sListOfImages1 = new string[] {
+                "3DCameraOrbit_16x.png",
+                "3DExtrude_16x.png",
+                "3DScene_16x.png",
+                "Actor_16x.png",
+                "Add_grey_16x.png",
+                "Alert_16x.png",
+                "Aserif_16x.png",
+                "Assembly_16x.png",
+                "Attribute_16x.png",
+                "AzureDefaultResource_16x.png",
+                "AzureLogicApp_16x.png",
+                "AzureLogicApp_color_16x.png",
+                "AzureResourceGroup_16x.png",
+                "AzureResourceTypeView_16x.png",
+                "AzureVirtualMachineExtension_16x.png",
+                "BalanceBrace_16x.png",
+                "BatchFile_16x.png",
+                "BehaviorAction_16x.png",
+                "Binary_16x.png",
+                "Bios_16x.png",
+                "BlankFile_16x.png",
+                "Bolt_16x.png",
+                "BranchRelationshipChild_16x.png",
+                "BranchRelationshipCousin_16x.png",
+                "BranchRelationshipGroup_16x.png",
+                "BranchRelationshipParent_16x.png",
+                "BranchRelationshipSibling_16x.png",
+                "BranchRelationship_16x.png",
+                "Branch_16x.png",
+                "Brightness_16x.png",
+                "BubbleChart_16x.png",
+                "Bug_16x.png",
+                "Builder_16x.png",
+                "BulletList_16x.png",
+                "ButtonIcon_16x.png",
+                "Callout_16x.png",
+                "CheckDot_16x.png",
+                "Checkerboard_16x.png",
+                "Collection_16x.png",
+                "ComponentDiagram_16x.png",
+                "Component_16x.png",
+                "Contrast_16x.png",
+                "CordovaMultidevice_16x.png",
+                "CSWorkflowDiagram_16x.png",
+                "DarkTheme_16x.png",
+                "DateTimeAxis_16x.png",
+                "Diagnose_16x.png",
+                "Dictionary_16x.png",
+                "Document_16x.png",
+                "DomainType_16x.png",
+                "Driver_16x.png",
+                "Ellipsis_16x.png",
+                "EndpointComponent_16x.png",
+                "Event_16x.png",
+                "Expander_16x.png",
+                "ExplodedPieChart_16x.png",
+                "FeedbackBubble_16x.png",
+                "FeedbackSad_16x.png",
+                "FeedbackSmile_16x.png",
+                "FileCollection_16x.png",
+                "FileError_16x.png",
+                "FileGroupError_16x.png",
+                "FileGroupWarning_16x.png",
+                "FileGroup_16x.png",
+                "FileOK_16x.png",
+                "FileWarning_16x.png",
+                "Filter_16x.png",
+                "FindResults_16x.png",
+                "Flag_16x.png",
+                "FolderError_16x.png",
+                "older_16x.png",
+                "Gauge_16x.png",
+                "HotSpot_16x.png",
+                "Hub_16x.png",
+                "JS_16x.png",
+                "Label_16x.png",
+                "ListFolder_16x.png",
+                "Marquee_16x.png",
+                "Numeric_16x.png",
+                "PermissionFile_16x.png",
+                "PieChart_16x.png",
+                "Property_16x.png",
+                "Rename_16x.png",
+                "SemanticZoom_16x.png",
+                "Settings_16x.png",
+                "Shader_16x.png",
+                "Share_16x.png",
+                "String_16x.png",
+                "Toolbox_16x.png",
+                "TreeView_16x.png",
+            };
+            /* old list
+                "3DCameraOrbit_16x.png",
+                "3DExtrude_16x.png",
+                "3DScene_16x.png",
+                "Actor_16x.png",
+                "Assembly_16x.png",
+                "AzureLogicApp_16x.png",
+                "AzureLogicApp_color_16x.png",
+                "ButtonIcon_16x.png",
+                "CheckDot_16x.png",
+                "Checkerboard_16x.png",
+                "Component_16x.png",
+                "Contrast_16x.png",
+                "CSWorkflowDiagram_16x.png",
+                "DarkTheme_16x.png",
+                "Diagnose_16x.png",
+                "Document_16x.png",
+                "DomainType_16x.png",
+                "Driver_16x.png",
+                "Ellipsis_16x.png",
+                "Event_16x.png",
+                "ExplodedPieChart_16x.png",
+                "Filter_16x.png",
+                "FindResults_16x.png",
+                "Flag_16x.png",
+                "Gauge_16x.png",
+                "HotSpot_16x.png",
+                "Hub_16x.png",
+                "PieChart_16x.png",
+                "Property_16x.png",
+                "Settings_16x.png",
+                "Shader_16x.png",
+                "Share_16x.png",
+                "TreeView_16x.png"
+            */
+
+            // Use System.Reflection to get a list of all resource names
+            string[] embeddedResources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            
+            // Get the currently executing assembly name
+            string sEntryAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+
+            // Process string array of resource names (this includes the namespace name)
+            foreach (string embeddedResource in embeddedResources)
+            {
+                if (embeddedResource.Contains(sEntryAssemblyName + ".Images."))
+                {
+                    // Adds ANY file in the Images folder to the image list
+                    ilObjectTypesImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
+                }
+                else
+                {
+                    // not an image reference
+                }
+            }
+                
+                    
+
+            // Return the image list
+            return ilObjectTypesImageList;
+        } // End of BuildObjectTypesImageList()
+
         public static int GetImageIndexByNodeType(HETreeNodeType NodeType)
         {
             // Returns the defined image list index for the node type 
 
             switch (NodeType)
             {
+
+                case HETreeNodeType.SolarSystemView:
+                    return (int)HEObjectTypesImageList.Share_16x;
+
+                case HETreeNodeType.DataView:
+                    return (int)HEObjectTypesImageList.ListFolder_16x;
+
+                case HETreeNodeType.SearchResultsView:
+                    return (int)HEObjectTypesImageList.FindResults_16x;
+
                 case HETreeNodeType.CelestialBody:
                 case HETreeNodeType.DefCelestialBody:
+                    return (int)HEObjectTypesImageList.Shader_16x;
+
+                case HETreeNodeType.SolSysStar:
+                    return (int)HEObjectTypesImageList.Brightness_16x;
+
+                case HETreeNodeType.SolSysPlanet:
                     return (int)HEObjectTypesImageList.Contrast_16x;
-                    //break;
+
+                case HETreeNodeType.SolSysMoon:
+                    return (int)HEObjectTypesImageList.DarkTheme_16x;
+
                 case HETreeNodeType.Asteroid:
                 case HETreeNodeType.DefAsteroid:
                     return (int)HEObjectTypesImageList.CheckDot_16x;
-                    //break;
+
                 case HETreeNodeType.Ship:
                     return (int)HEObjectTypesImageList.AzureLogicApp_16x;
-                    //break;
+
                 case HETreeNodeType.Player:
                     return (int)HEObjectTypesImageList.Actor_16x;
-                    //break;
+
                 case HETreeNodeType.DynamicObject:
                 case HETreeNodeType.DefDynamicObject:
-                    return (int)HEObjectTypesImageList.Property_16x;
-                    //break;
+                    return (int)HEObjectTypesImageList.Driver_16x;
+
                 case HETreeNodeType.Scene:
                     return (int)HEObjectTypesImageList.a3DScene_16x;
-                //break;
+
                 case HETreeNodeType.DefStructure:
                     return (int)HEObjectTypesImageList.Component_16x;
+
                 case HETreeNodeType.SpawnPoint:
                 case HETreeNodeType.DoomControllerData:
                 case HETreeNodeType.SpawnManagerData:
                     return (int)HEObjectTypesImageList.a3DCameraOrbit_16x;
+
+                case HETreeNodeType.ExpansionAvailable:
+                    return (int)HEObjectTypesImageList.Event_16x;
+
+                case HETreeNodeType.JsonArray:
+                    return (int)HEObjectTypesImageList.Assembly_16x;
+
+                case HETreeNodeType.JsonObject:
+                    return (int)HEObjectTypesImageList.Settings_16x;
+
+                case HETreeNodeType.JsonProperty:
+                    return (int)HEObjectTypesImageList.Property_16x;
+
+                case HETreeNodeType.JsonValue:
+                    return (int)HEObjectTypesImageList.DomainType_16x;
+
+                case HETreeNodeType.SaveFile:
+                case HETreeNodeType.DataFile:
+                    return (int)HEObjectTypesImageList.Document_16x;
+
+                case HETreeNodeType.SaveFileError:
+                case HETreeNodeType.DataFileError:
+                    return (int)HEObjectTypesImageList.FileError_16x;
+
+
+                case HETreeNodeType.DataFolder:
+                    return (int)HEObjectTypesImageList.Folder_16x;
+
+                case HETreeNodeType.DataFolderError:
+                    return (int)HEObjectTypesImageList.FolderError_16x;
 
                 default:
                     return (int)HEObjectTypesImageList.Checkerboard_16x;
@@ -124,10 +335,10 @@ namespace HELLION.DataStructures
         // Not currently used, will need to have similar version that find nodes by other parameters
         public static TreeNode GetNodeByName(TreeNode nCurrentNode, string key)
         {
-            TreeNode[] nodes = nCurrentNode.Nodes.Find(key, true);
+            // Gets the first node that matches the given key in the current nodes children
+            TreeNode[] nodes = nCurrentNode.Nodes.Find(key, searchAllChildren: true);
             return nodes.Length > 0 ? nodes[0] : null;
         }
-
 
         public static class EnumUtil
         {
@@ -139,6 +350,19 @@ namespace HELLION.DataStructures
                 return Enum.GetValues(typeof(T)).Cast<T>();
             }
         }
+
+        public static Color ConvertStringToColor(string sInputString)
+        {
+            // Returns a System.Drawing.Color object for a given string, computed from the hash of the string
+
+            int iHue = (Math.Abs(sInputString.GetHashCode()) % 24) * 10;
+            // Debug.Print("iHue: {0}", iHue.ToString());
+
+            HSLColor hslColor = new HSLColor(hue: iHue, saturation: 200.0, luminosity: 80.0);
+            return hslColor;
+        }
+
+
 
         // HSLColor Class by Rich Newman
         // https://richnewman.wordpress.com/about/code-listings-and-diagrams/hslcolor-class/
@@ -308,10 +532,7 @@ namespace HELLION.DataStructures
               });
         }
 
-
-
-
-
+        /*
         // adapted from https://stackoverflow.com/questions/18769634/creating-tree-view-dynamically-according-to-json-text-in-winforms
         public static TreeNode Json2Tree(JArray root, string rootName = "", string nodeName = "")
         {
@@ -369,6 +590,8 @@ namespace HELLION.DataStructures
 
             return parent;
         }
+
+        */
 
         private static TreeNode GetChild(KeyValuePair<string, JToken> token)
         {

@@ -9,6 +9,9 @@ namespace HELLION.DataStructures
     public enum HETreeNodeType
     {
         Unknown = 0,        // Default for new nodes
+        SolarSystemView,    // Node type for the root of the solar system view tree
+        DataView,           // Node type for the root of the data view tree
+        SearchResultsView,  // Nore type for the root of the search results view tree
         SystemNAV,          // Node type for a system navigation tree item
         Scene,              // Node type for a Scene item
         CelestialBody,      // Node type for Celestial Bodies (data usually loaded from CelestialBodies.json)
@@ -25,5 +28,19 @@ namespace HELLION.DataStructures
         ArenaController,    // Node type for an arena controller - these also seem to be deprecated now
         DoomControllerData, // Node type for the doomed station controller data
         SpawnManagerData,   // Node type for the SpawnManager data
+        ExpansionAvailable, // Node type used temporarily to indicate that an item can be evaluated further on-demand, replaced by real data
+        JsonArray,          // Node type for a json Array
+        JsonObject,         // Node type for a json Object
+        JsonProperty,       // Node type for a json Property
+        JsonValue,          // Node type for a json Value
+        SaveFile,           // Node type for the save file as represented in the node tree
+        SaveFileError,      // Node type for the save file in error state as represented in the node tree
+        DataFolder,         // Node type for the data folder
+        DataFolderError,    // Node type for the data folder
+        DataFile,           // Node type for a data file
+        DataFileError,      // Node type for a data file
+        SolSysStar,  // Node type for the star in the Solar System view (guid of the star)
+        SolSysPlanet,// Node type for a planet (parent guid of the star)
+        SolSysMoon,  // Node type for a moon (not the star, or orbiting it directly)
     };
 } // End of namespace HELLION

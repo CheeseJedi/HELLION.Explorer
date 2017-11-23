@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Data;
 using System.IO;
 using System.Configuration;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 //using System.Collections.Generic;
 //using System.Linq;
@@ -28,7 +30,7 @@ namespace HELLION.Explorer
         // Define an object to hold the current open document
         internal static HEDocumentWorkspace docCurrent = null;
         // Define an ImageList and fill it
-        internal static ImageList ilObjectTypesImageList = BuildObjectTypesImageList();
+        internal static ImageList ilObjectTypesImageList = HEUtilities.BuildObjectTypesImageList();
 
         internal static bool bLogToDebug = false;
         internal static bool bViewShowNavigationPane = true;
@@ -80,7 +82,7 @@ namespace HELLION.Explorer
             }
             */
         } // End of ControlledExit()
-
+        /*
         internal static ImageList BuildObjectTypesImageList()
         {
             // Create a new ImageList to hold images used as icons in the tree and list views
@@ -88,6 +90,99 @@ namespace HELLION.Explorer
 
             // there must be a better way of doing this, perhaps read from JSON file ;) 
             string[] sListOfImages1 = new string[] {
+                "3DCameraOrbit_16x.png",
+                "3DExtrude_16x.png",
+                "3DScene_16x.png",
+                "Actor_16x.png",
+                "Add_grey_16x.png",
+                "Alert_16x.png",
+                "Aserif_16x.png",
+                "Assembly_16x.png",
+                "Attribute_16x.png",
+                "AzureDefaultResource_16x.png",
+                "AzureLogicApp_16x.png",
+                "AzureLogicApp_color_16x.png",
+                "AzureResourceGroup_16x.png",
+                "AzureResourceTypeView_16x.png",
+                "AzureVirtualMachineExtension_16x.png",
+                "BalanceBrace_16x.png",
+                "BatchFile_16x.png",
+                "BehaviorAction_16x.png",
+                "Binary_16x.png",
+                "Bios_16x.png",
+                "BlankFile_16x.png",
+                "Bolt_16x.png",
+                "BranchRelationshipChild_16x.png",
+                "BranchRelationshipCousin_16x.png",
+                "BranchRelationshipGroup_16x.png",
+                "BranchRelationshipParent_16x.png",
+                "BranchRelationshipSibling_16x.png",
+                "BranchRelationship_16x.png",
+                "Branch_16x.png",
+                "Brightness_16x.png",
+                "BubbleChart_16x.png",
+                "Bug_16x.png",
+                "Builder_16x.png",
+                "BulletList_16x.png",
+                "ButtonIcon_16x.png",
+                "Callout_16x.png",
+                "CheckDot_16x.png",
+                "Checkerboard_16x.png",
+                "Collection_16x.png",
+                "ComponentDiagram_16x.png",
+                "Component_16x.png",
+                "Contrast_16x.png",
+                "CordovaMultidevice_16x.png",
+                "CSWorkflowDiagram_16x.png",
+                "DarkTheme_16x.png",
+                "DateTimeAxis_16x.png",
+                "Diagnose_16x.png",
+                "Dictionary_16x.png",
+                "Document_16x.png",
+                "DomainType_16x.png",
+                "Driver_16x.png",
+                "Ellipsis_16x.png",
+                "EndpointComponent_16x.png",
+                "Event_16x.png",
+                "Expander_16x.png",
+                "ExplodedPieChart_16x.png",
+                "FeedbackBubble_16x.png",
+                "FeedbackSad_16x.png",
+                "FeedbackSmile_16x.png",
+                "FileCollection_16x.png",
+                "FileError_16x.png",
+                "FileGroupError_16x.png",
+                "FileGroupWarning_16x.png",
+                "FileGroup_16x.png",
+                "FileOK_16x.png",
+                "FileWarning_16x.png",
+                "Filter_16x.png",
+                "FindResults_16x.png",
+                "Flag_16x.png",
+                "FolderError_16x.png",
+                "older_16x.png",
+                "Gauge_16x.png",
+                "HotSpot_16x.png",
+                "Hub_16x.png",
+                "JS_16x.png",
+                "Label_16x.png",
+                "ListFolder_16x.png",
+                "Marquee_16x.png",
+                "Numeric_16x.png",
+                "PermissionFile_16x.png",
+                "PieChart_16x.png",
+                "Property_16x.png",
+                "Rename_16x.png",
+                "SemanticZoom_16x.png",
+                "Settings_16x.png",
+                "Shader_16x.png",
+                "Share_16x.png",
+                "String_16x.png",
+                "Toolbox_16x.png",
+                "TreeView_16x.png",
+            };
+
+            /* old list
                 "3DCameraOrbit_16x.png",
                 "3DExtrude_16x.png",
                 "3DScene_16x.png",
@@ -121,8 +216,8 @@ namespace HELLION.Explorer
                 "Shader_16x.png",
                 "Share_16x.png",
                 "TreeView_16x.png"
-            };
-
+            */
+            /*
             // Use System.Reflection to get a list of all resource names
             string[] sListOfImages = Assembly.GetEntryAssembly().GetManifestResourceNames();
 
@@ -142,7 +237,7 @@ namespace HELLION.Explorer
             // Return the image list
             return ilObjectTypesImageList;
         } // End of BuildObjectTypesImageList()
-
+        */
         internal static void FileOpen(string sFileName = "")
         {
             // Loads a save file in to memory and processes it
@@ -621,7 +716,7 @@ namespace HELLION.Explorer
         internal static void RefreshSelectedOjectPathBarText(TreeNode nSelectedNode)
         {
 
-            if (docCurrent != null && docCurrent.IsFileReady)
+            if (docCurrent != null) //  && docCurrent.IsFileReady)
             {
                 // Update the object path + name + Tag in the object summary bar
                 StringBuilder sb = new StringBuilder();
@@ -644,7 +739,7 @@ namespace HELLION.Explorer
         {
             //throw new NotImplementedException();
 
-            if (nSelectedNode != null && docCurrent != null && docCurrent.IsFileReady)
+            if (nSelectedNode != null) // && docCurrent != null && docCurrent.IsFileReady) // temp change to allow unloaded document tree display
             {
 
 
@@ -748,7 +843,7 @@ namespace HELLION.Explorer
             StringBuilder sb4 = new StringBuilder();
 
 
-            if (nSelectedNode != null && docCurrent != null && docCurrent.IsFileReady)
+            if (nSelectedNode != null) //  && docCurrent != null && docCurrent.IsFileReady) // temp change to allow for tree use without a doc loaded
             {
 
                 HETreeNode nSelectedHETNNode = (HETreeNode)nSelectedNode;
@@ -807,7 +902,7 @@ namespace HELLION.Explorer
                 }
 */
 
-                if (true) //nSelectedNode.NodeType != HETreeNodeType.SystemNAV)
+                if (false) //nSelectedNode.NodeType != HETreeNodeType.SystemNAV) // temp addition
                 {
                     // Get the count of the child nodes contained in the selected node
                     decimal iTotalNodeCount = docCurrent.SolarSystemRootNode.CountOfAllChildNodes;
@@ -834,21 +929,29 @@ namespace HELLION.Explorer
                     sb2.Append(string.Format(" {0:###.##}% of total ({1})", dThisNodeAndSubsCountAsPercentage, iTotalNodeCount));
                 }
 
-                sb4.Append("<html><head><style>"
-                    + "body { margin: 0em; padding: 0em; } body div { white-space: pre-wrap; font-family:Segoe UI; font-size: 0.8em } .number { color: orange; } "
-                    + ".key { color: crimson; } .string { color: darkgreen; } .boolean { color: blue; } .null { color: black; } "
-                    + "</style></head><body><div>");
+                sb4.Append("<!DOCTYPE html><html><head><style>"
+                    + "body { margin: 0em; padding: 0em; } "
+                    + "body div { white-space: pre-wrap; font-family:Courier; font-size: 0.9em } " 
+                    + ".container { counter-reset: line; "
+                    + "  .ln:before { counter-increment: line; content: counter(line); display: inline - block; border - right: 1px solid #ddd; padding: 0 .5em; margin - right: .5em; color: #888 } "
+                    + "} "                    
+                    + ".number { color: orange; } "
+                    + ".key { color: crimson; } "
+                    + ".string { color: darkgreen; } "
+                    + ".boolean { color: blue; } "
+                    + ".null { color: black; } "
+                    + "</style></head><body><div class='container'><div class='ln'>");
 
                 // Create JSON data for selected node
                 if (nSelectedNode.Tag != null)
                 {
                     sb3.Append((JValue)nSelectedNode.Tag.ToString());
 
-                    sb4.Append(HEUtilities.SyntaxHighlightJson(sb3.ToString().Replace(" ", "&nbsp;").Replace("\n", "<br>")));
+                    sb4.Append(HEUtilities.SyntaxHighlightJson(sb3.ToString().Replace("  ", "&emsp;").Replace("\n", "</div><div class='ln'>")));
                     //MessageBox.Show(sb4.ToString());
 
                 }
-                sb4.Append("</div></body></html>");
+                sb4.Append("</div></div></body></html>");
 
                 /*
                 if (nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody) // || nSelectedHETNNode.NodeType == HETreeNodeType.SystemNAV)
@@ -968,6 +1071,7 @@ namespace HELLION.Explorer
             tvCurrent.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
             tvCurrent.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
             tvCurrent.TreeViewNodeSorter = new HETreeNodeSorter();
+            tvCurrent.ShowNodeToolTips = true;
 
         } // End of InitialiseTreeView
 
@@ -988,11 +1092,74 @@ namespace HELLION.Explorer
 
         } // End of InitialiseListView
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
+        internal static void TestOption1()
+        {
+            // Make a note of the starting time
+            DateTime StartingTime = DateTime.Now;
 
-        [STAThread]
+
+            // Grab a data file path Properties
+            HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
+            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\CelestialBodies.json");
+            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(Properties.HELLIONExplorer.Default.sGameDataFolder + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName);
+
+            testDataFile.LogToDebug = true;
+            testDataFile.LoadFile();
+
+
+            HETreeNode tempParent = new HETreeNode("DATAVIEW", HETreeNodeType.DataView, "Data View");
+
+
+
+            frmMainForm.treeView1.Nodes.Add(tempParent);
+
+            int numRuns = 0;
+
+            // Some async test stuff
+
+            HETreeNode nodeSaveFile = new HETreeNode("SAVEFILE", HETreeNodeType.SaveFile, nodeText: testDataFile.File.Name, nodeToolTipText: testDataFile.File.FullName);
+            HETreeNode tempLoadingIndicatorNode = new HETreeNode("Loading...", HETreeNodeType.ExpansionAvailable);
+            nodeSaveFile.Nodes.Add(tempLoadingIndicatorNode);
+            tempLoadingIndicatorNode.Expand();
+
+
+            // Task to run asynchronously
+            List<Task> tasks = new List<Task>();
+            Task t1 = Task.Run(() => testDataFile.BuildNodeTreesFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 10, logToDebug: bLogToDebug));
+            tasks.Add(t1);
+
+            //testDataFile.BuildNodeTreesFromJson(testDataFile.JData, tempParent, numRuns);
+
+            HEJsonDataFileCollection testDataFileCollection = null;
+
+            if (Properties.HELLIONExplorer.Default.sGameDataFolder != "")
+            {
+
+                //Task t2 = Task.Run(() => 
+                testDataFileCollection = new HEJsonDataFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
+                //tasks.Add(t2);
+                
+            }
+
+
+            // Wait for both to complete
+            Task.WaitAll(tasks.ToArray());
+            tempParent.Nodes.Add(testDataFileCollection.CollectionRoot ?? new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder - ERROR"));
+            tempParent.Nodes.Add(nodeSaveFile);
+
+            foreach (Task t in tasks)
+                Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
+            Debug.Print("{0} runs took {1}", numRuns, DateTime.Now - StartingTime);
+            tempParent.UpdateCounts();
+            GC.Collect();
+    }
+
+
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+
+    [STAThread]
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();

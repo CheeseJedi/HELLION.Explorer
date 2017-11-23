@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Windows.Forms; // for the TreeNodeCollection
-
+//using System.Windows.Forms; // for the TreeNodeCollection
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace HELLION.DataStructures
 {
@@ -22,9 +22,7 @@ namespace HELLION.DataStructures
         public bool IsFileLoaded { get; set; }
         public bool LoadError { get; set; }
         public bool SkipLoading { get; set; }
-
         public bool LogToDebug { get; set; }
-
 
         public HEJsonFile()
         {
@@ -104,13 +102,23 @@ namespace HELLION.DataStructures
             return LoadError;
         } // End of LoadFile()
 
-        
-        public HETreeNode BuildNodeCollection(HETreeNodeType nodeType)
+        public HETreeNode BuildNodeCollection(HETreeNodeType nodeType, [CallerMemberName] string callerName = "")
         {
             // Builds and returns a HETreeNode whose Node Collection contains HETreeNode type nodes
             // based on the data stored in this JSON file - only for use on Data files currently
             // Returns null instead of an empty collection
-
+            if (LogToDebug)
+            {
+                foreach (var method in new StackTrace().GetFrames())
+                {
+                    if (method.GetMethod().Name == callerName)
+                    {
+                        callerName = $"{method.GetMethod().ReflectedType.Name}.{callerName}";
+                        break;
+                    }
+                }
+                Debug.Print("INFO: HEJsonFile.BuildNodeCollection in was called by " + callerName + " with type: " + nodeType.ToString());
+            }
             // Define an HETreeNode node to serve as the parent for this collection of data objects
             HETreeNode nodeRoot = new HETreeNode();
 
@@ -129,7 +137,7 @@ namespace HELLION.DataStructures
                     // Build the node names for ships differently
                     //if (nodeType == HETreeNodeType.DefStructure)
                     //{
-                        sObjectName = (string)dataItem["Registration"] + " " + (string)dataItem["Name"];
+                    sObjectName = (string)dataItem["Registration"] + " " + (string)dataItem["Name"];
                     //}
                     //else
                     //{
@@ -157,6 +165,6 @@ namespace HELLION.DataStructures
             // Return the node with child objects in the Nodes collection
             return nodeRoot;
         }
-        
+
     } // End of class HEjsonFile
 } // End of namespace HELLION.DataStructures

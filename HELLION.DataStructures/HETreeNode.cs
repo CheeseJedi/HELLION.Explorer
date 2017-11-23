@@ -3,6 +3,7 @@
  * Defines a custom TreeNode class to hold some additional parameters used to speed up searches
  */
 
+using System;
 using System.Windows.Forms; // required for the base TreeNode class
 
 namespace HELLION.DataStructures
@@ -23,6 +24,59 @@ namespace HELLION.DataStructures
             IsReadOnly = false;
             CountOfChildNodes = -1; // Set to -1 to signify no count has been made yet
             CountOfAllChildNodes = -1; // Set to -1 to signify no count has been made yet
+        }
+
+        // Constructor that takes a minimum of a name, but also optionally a type and text (display name) 
+        public HETreeNode(string nodeName, HETreeNodeType nodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
+        {
+            if (nodeName != null && nodeName !="")
+            {
+                Name = nodeName;
+            }
+            else
+            {
+                Name = "node " + DateTime.Now.ToString();
+            }
+            if (nodeText == "")
+            {
+                Text = nodeName;
+            }
+            else
+            {
+                Text = nodeText;
+            }
+
+            if (nodeText == "")
+            {
+                Text = nodeName;
+            }
+            else
+            {
+                Text = nodeText;
+            }
+
+            if (nodeToolTipText == "")
+            {
+                ToolTipText = nodeName + "(" + nodeType.ToString() + ")";
+            }
+            else
+            {
+                ToolTipText = nodeToolTipText;
+            }
+
+            NodeType = nodeType;
+
+            ImageIndex = SelectedImageIndex = HEUtilities.GetImageIndexByNodeType(NodeType);
+
+            IsReadOnly = false;
+            CountOfChildNodes = -1; // Set to -1 to signify no count has been made yet
+            CountOfAllChildNodes = -1; // Set to -1 to signify no count has been made yet
+        }
+
+        public void UpdateImageIndeces()
+        {
+            ImageIndex = SelectedImageIndex = HEUtilities.GetImageIndexByNodeType(NodeType);
+
         }
 
         public void UpdateCounts()

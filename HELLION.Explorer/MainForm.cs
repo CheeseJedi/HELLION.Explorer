@@ -48,7 +48,7 @@ namespace HELLION.Explorer
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Update the object information panel
-            if (Program.docCurrent.IsFileReady)
+            if (Program.docCurrent != null) // && Program.docCurrent.IsFileReady)
             {
 
                 TreeNode node = null;
@@ -82,7 +82,7 @@ namespace HELLION.Explorer
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // Drill down on double click
-            if (Program.docCurrent.IsFileReady)
+            if (Program.docCurrent != null) // && Program.docCurrent.IsFileReady)
             {
                 // Create a node to represent the currently selected item
                 TreeNode node = null;
@@ -123,13 +123,16 @@ namespace HELLION.Explorer
         {
 
             // Update the object information panel
-            if (Program.docCurrent.IsFileReady)
+            if (Program.docCurrent != null && Program.docCurrent.IsFileReady)
             {
-                // Update the object path + name + Tag in the object identifier bar
-                Program.RefreshSelectedOjectPathBarText(e.Node);
-                Program.RefreshListView(e.Node);
-                Program.RefreshSelectedObjectSummaryText(e.Node);
             }
+
+            // Update the object path + name + Tag in the object identifier bar
+            Program.RefreshSelectedOjectPathBarText(e.Node);
+            Program.RefreshListView(e.Node);
+
+            Program.RefreshSelectedObjectSummaryText(e.Node);
+
         }
 
         private void setDataFolderLocationToolStripMenuItem_Click(object sender, EventArgs e)
@@ -194,6 +197,11 @@ namespace HELLION.Explorer
         private void verifyDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.VerifyGameDataFolder();
+        }
+
+        private void testOption1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.TestOption1();
         }
     }
 } // End of namespace HELLION.Explorer

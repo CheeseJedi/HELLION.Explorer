@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 
 using System.Diagnostics;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace HELLION.DataStructures
 {
@@ -175,11 +176,23 @@ namespace HELLION.DataStructures
 
         } // End of SaveFile()
 
-        public new HETreeNode BuildNodeCollection(HETreeNodeType nodeType)
+        public new HETreeNode BuildNodeCollection(HETreeNodeType nodeType, [CallerMemberName] string callerName = "")
         {
             // Builds and returns a HETreeNode whose Node Collection contains HETreeNode type nodes
             // based on the data stored in the JSON file - only for use on Data files currently
             // Returns null instead of an empty collection
+            if (LogToDebug)
+            {
+                foreach (var method in new StackTrace().GetFrames())
+                {
+                    if (method.GetMethod().Name == callerName)
+                    {
+                        callerName = $"{method.GetMethod().ReflectedType.Name}.{callerName}";
+                        break;
+                    }
+                }
+                Debug.Print("INFO: HEGameFile.BuildNodeCollection in was called by " + callerName + " with type: " + nodeType.ToString());
+            }
 
             // Define an HETreeNode node to serve as the parent for this collection of data objects
             HETreeNode nodeRoot = new HETreeNode();
@@ -280,7 +293,7 @@ namespace HELLION.DataStructures
                                 + Environment.NewLine + sb.ToString());
                             continue;
                         }
-                        // TODO the above needs to decide which fields to attempt to request rather than trying them all and
+                        // TODO ^^ the above needs to decide which fields to attempt to request rather than trying them all and
                         // silently handling failures
 
                         nodeDataItem.Name = nodeDataItem.Text = sb.ToString();
@@ -303,10 +316,6 @@ namespace HELLION.DataStructures
             return nodeRoot;
         }
 
-
-
-    } // End of class HEjsonFile
-
-
+    } // End of class HEGameFile
 
 } // End of namespace HELLION.DataStructures
