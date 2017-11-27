@@ -297,7 +297,7 @@ namespace HELLION.DataStructures
                     return (int)HEObjectTypesImageList.a3DCameraOrbit_16x;
 
                 case HETreeNodeType.ExpansionAvailable:
-                    return (int)HEObjectTypesImageList.Event_16x;
+                    return (int)HEObjectTypesImageList.Expander_16x;
 
                 case HETreeNodeType.JsonArray:
                     return (int)HEObjectTypesImageList.Assembly_16x;

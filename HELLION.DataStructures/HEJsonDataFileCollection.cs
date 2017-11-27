@@ -66,7 +66,7 @@ namespace HELLION.DataStructures
                     if (tempFile.IsFileLoaded && !LoadError)
                     {
                         // Create and run new task to build the node tree asynchronously
-                        Task t = Task.Run(() => tempFile.BuildNodeTreesFromJson(tempFile.JData, tempNode, maxDepth:10));
+                        Task t = Task.Run(() => tempFile.BuildBasicNodeTreeFromJson(tempFile.JData, tempNode, maxDepth:1));
                         // Add the task to the list so it can be monitored
                         tasks.Add(t);
                     }

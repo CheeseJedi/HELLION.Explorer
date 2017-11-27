@@ -1097,9 +1097,18 @@ namespace HELLION.Explorer
             // Make a note of the starting time
             DateTime StartingTime = DateTime.Now;
 
+            HETreeNode tempParent = new HETreeNode("DATAVIEW", HETreeNodeType.DataView, "Data View");
+            HETreeNode tempLoadingIndicatorNode = new HETreeNode("Loading...", HETreeNodeType.ExpansionAvailable);
+            tempParent.Nodes.Add(tempLoadingIndicatorNode);
+            tempLoadingIndicatorNode.Expand();
+
+            frmMainForm.treeView1.Nodes.Add(tempParent);
+
 
             // Grab a data file path Properties
-            HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
+            HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
+
+            //HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\CelestialBodies.json");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(Properties.HELLIONExplorer.Default.sGameDataFolder + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName);
 
@@ -1107,25 +1116,18 @@ namespace HELLION.Explorer
             testDataFile.LoadFile();
 
 
-            HETreeNode tempParent = new HETreeNode("DATAVIEW", HETreeNodeType.DataView, "Data View");
-
-
-
-            frmMainForm.treeView1.Nodes.Add(tempParent);
 
             int numRuns = 0;
 
             // Some async test stuff
 
             HETreeNode nodeSaveFile = new HETreeNode("SAVEFILE", HETreeNodeType.SaveFile, nodeText: testDataFile.File.Name, nodeToolTipText: testDataFile.File.FullName);
-            HETreeNode tempLoadingIndicatorNode = new HETreeNode("Loading...", HETreeNodeType.ExpansionAvailable);
-            nodeSaveFile.Nodes.Add(tempLoadingIndicatorNode);
-            tempLoadingIndicatorNode.Expand();
+
 
 
             // Task to run asynchronously
             List<Task> tasks = new List<Task>();
-            Task t1 = Task.Run(() => testDataFile.BuildNodeTreesFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 10, logToDebug: bLogToDebug));
+            Task t1 = Task.Run(() => testDataFile.BuildBasicNodeTreeFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 2, logToDebug: true));
             tasks.Add(t1);
 
             //testDataFile.BuildNodeTreesFromJson(testDataFile.JData, tempParent, numRuns);
@@ -1142,15 +1144,18 @@ namespace HELLION.Explorer
             }
 
 
-            // Wait for both to complete
+            // Wait for tasks to complete
             Task.WaitAll(tasks.ToArray());
+
             tempParent.Nodes.Add(testDataFileCollection.CollectionRoot ?? new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder - ERROR"));
             tempParent.Nodes.Add(nodeSaveFile);
+            tempParent.Nodes.Remove(tempLoadingIndicatorNode);
 
             foreach (Task t in tasks)
                 Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
             Debug.Print("{0} runs took {1}", numRuns, DateTime.Now - StartingTime);
-            tempParent.UpdateCounts();
+
+            //tempParent.UpdateCounts();
             GC.Collect();
     }
 

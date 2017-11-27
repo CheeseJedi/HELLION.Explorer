@@ -434,7 +434,7 @@ namespace HELLION.DataStructures
             return nodeRoot;
         }
 
-        public void BuildNodeTreesFromJson(JToken json, HETreeNode nodeParent, int maxDepth = 1, string nameHint = "", bool logToDebug = false)
+        public void BuildBasicNodeTreeFromJson(JToken json, HETreeNode nodeParent, int maxDepth = 1, string nameHint = "", bool collapseJArrays = false , bool logToDebug = false)
         {
             // Builds a section of node tree and recurses if necessary
             if (logToDebug)
@@ -442,181 +442,283 @@ namespace HELLION.DataStructures
                 Debug.Print("BNTFJ {0} ENTERED with type: {1}", maxDepth, json.Type);
             }
 
-            if (maxDepth > 0)
+
+            if (json != null) // prob needs more tests that this
             {
-                if (json != null) // prob needs more tests that this
+                HETreeNode newNode;
+                //JToken token = (JToken)json.Reverse();
+
+                switch (json.Type)
                 {
-                    foreach (JToken token in json.Reverse())
-                    //JToken token = json;
-                    {
-
-                        HETreeNode newNode;
-
-                        switch (token.Type)
+                    case JTokenType.Object: // It's a JObject
+                        // Depth and null check, if valid, create this node
+                        JObject tmpJObject = (JObject)json;
+                        if (tmpJObject != null)
                         {
-                            case JTokenType.Object:
-                                //
-                                JObject tmpJObject = (JObject)token;
-                                if (tmpJObject != null)
+                            if (maxDepth < 1) // maxDepth (zero) has been reached, offer expansion if this has child tokens
+                            {
+                                // Count children
+                                int numChildTokens = 0;
+                                foreach (JToken token in tmpJObject.Children<JToken>())
+                                    numChildTokens++;
+                                // If it has child tokens
+                                if (numChildTokens > 0)
                                 {
-                                    if (nameHint != "")
+                                    // attach a single expansion node to the tree - this will be removed when the actual tree is generated
+                                    HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + "nodes...", HETreeNodeType.ExpansionAvailable);
+                                    nodeParent.Nodes.Add(tempExpansionNode);
+                                }
+                            }
+                            else
+                            {
+                                // Creation of this node
+                                if (nameHint != "")
+                                {
+                                    // Name hint provided, use that
+                                    newNode = new HETreeNode(nameHint, HETreeNodeType.JsonObject);
+                                }
+                                else
+                                {
+                                    if (false)
                                     {
-                                        newNode = new HETreeNode(nameHint, HETreeNodeType.JsonObject);
-
+                                        // name lookup/generation should be hooked in here, but doesn't yet exist
                                     }
                                     else
                                     {
-                                        // name lookup/generation should be hooked in here
-
                                         newNode = new HETreeNode("Object", HETreeNodeType.JsonObject);
-
                                     }
-                                    newNode.Tag = tmpJObject;
-                                    //nodeParent.NodeType = HETreeNodeType.JsonObject;
-                                    //nodeParent.UpdateImageIndeces();
-
-                                    if (logToDebug)
-                                        Debug.Print("BNTFJ {0} Recursing with type: {1}", maxDepth, token.Type);
-                                    BuildNodeTreesFromJson(tmpJObject, newNode, maxDepth - 1, logToDebug: logToDebug);
-                                    if (logToDebug)
-                                        Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
-                                    nodeParent.Nodes.Add(newNode);
                                 }
-                                break;
-                            case JTokenType.Array:
-                                //
-                                JArray tmpJArray = (JArray)token;
-                                if (tmpJArray != null)
+                                // Set the node's tag to the JObject
+                                //newNode.Tag = tmpJObject;
+
+                                // Process child tokens - actually JProperties in the case of a JObject
+                                int numChildProperties = 0;
+                                foreach (JToken token in tmpJObject.Children<JToken>())
                                 {
-                                    // It's an array
-
-
-                                    if (nameHint != "")
+                                    numChildProperties++;
+                                    if (maxDepth >= 2)
                                     {
-                                        newNode = new HETreeNode(nameHint, HETreeNodeType.JsonArray);
+                                        if (logToDebug) Debug.Print("BNTFJ {0} Recursing with type: {1}", maxDepth, token.Type);
+                                        BuildBasicNodeTreeFromJson(token, newNode, maxDepth - 1, logToDebug: logToDebug);
+                                        if (logToDebug) Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
+                                        // Add the node
+                                        nodeParent.Nodes.Add(newNode);
+                                    }
+                                }
+                            }
+                             
+                        }
+                        else
+                        {
+                            // We shouldn't be here!
+                            if (logToDebug) Debug.Print("tmpJObject was null");
+                        }
+                        break;
 
+                    case JTokenType.Array: // It's a JArray
+                        // Depth and null check, if valid, create this node
+                        JArray tmpJArray = (JArray)json;
+                        if (tmpJArray != null)
+                        {
+                            if (maxDepth <= 0) // maxDepth (zero) has been reached, offer expansion if this has child tokens
+                            {
+                                // Count children
+                                int numChildTokens = 0;
+                                foreach (JToken token in tmpJArray) // .Children<JToken>()
+                                    numChildTokens++;
+                                // If it has child tokens
+                                if (numChildTokens > 0)
+                                {
+                                    // attach a single expansion node to the tree - this will be removed when the actual tree is generated
+                                    if (logToDebug) Debug.Print("BNTFJ {0} Adding expansion node", maxDepth);
+                                    HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + " nodes...", HETreeNodeType.ExpansionAvailable);
+                                    nodeParent.Nodes.Add(tempExpansionNode);
+                                }
+                            }
+                            else
+                            {
+                                // Creation of this node
+                                if (nameHint != "")
+                                {
+                                    // Name hint provided, use that
+                                    newNode = new HETreeNode(nameHint, HETreeNodeType.JsonArray);
+                                }
+                                else
+                                {
+                                    if (false)
+                                    {
+                                        // name lookup/generation should be hooked in here, but doesn't yet exist
                                     }
                                     else
                                     {
                                         newNode = new HETreeNode("Array", HETreeNodeType.JsonArray);
-
                                     }
-
-                                    newNode.Tag = tmpJArray;
-
-                                    //nodeParent.NodeType = HETreeNodeType.JsonArray;
-                                    //nodeParent.UpdateImageIndeces();
-
-                                    if (logToDebug)
-                                        Debug.Print("BNTFJ {0} Recursing, type: {1}", maxDepth, token.Type);
-                                    BuildNodeTreesFromJson(tmpJArray, newNode, maxDepth - 1, logToDebug: logToDebug);
-                                    if (logToDebug)
-                                        Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
-                                    nodeParent.Nodes.Add(newNode);
-
                                 }
-                                break;
-                            case JTokenType.Property:
-                                //
-                                JProperty tmpJProperty = (JProperty)token;
-                                if (tmpJProperty != null)
+                                // Set the node's tag to the JArray
+                                //newNode.Tag = tmpJArray;
+
+                                // Process child tokens - actually JProperties in the case of a JObject
+                                foreach (JToken token in tmpJArray) // .Children<JToken>()
                                 {
-                                    if (logToDebug)
-                                        Debug.Print("::Property Name {0}" + Environment.NewLine + "{1}", tmpJProperty.Name, tmpJProperty.Value.Type);
-
-                                    if (tmpJProperty.Value.Type == JTokenType.Array || tmpJProperty.Value.Type == JTokenType.Object)
+                                    if (logToDebug) Debug.Print("BNTFJ {0} Recursing with type: {1}", maxDepth, token.Type);
+                                    // collapsearrays check to go here
+                                    if (collapseJArrays)
                                     {
-                                        switch (tmpJProperty.Value.Type)
-                                        {
-                                            case JTokenType.Array:
-                                                //
-                                                newNode = new HETreeNode(tmpJProperty.Name, HETreeNodeType.JsonArray);
+                                        // Adjust parent node instead of using the generated node
+                                        // Changes the nodetype to represent an array
+                                        //nodeParent.NodeType = HETreeNodeType.JsonArray; // HETreeNodeType.JsonArray;
+                                        //nodeParent.UpdateImageIndeces();
+                                        // Recursive call, but don't decrease the maxDepth as collapseArrays is true
+                                        BuildBasicNodeTreeFromJson(token, nodeParent, maxDepth, logToDebug: logToDebug);
+                                    }
+                                    else
+                                    {
+                                        BuildBasicNodeTreeFromJson(token, newNode, maxDepth - 1, logToDebug: logToDebug);
+                                    }
+                                    if (logToDebug) Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
+                                    // Add the node
+                                    nodeParent.Nodes.Add(newNode);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // We shouldn't be here!
+                            if (logToDebug) Debug.Print("tmpJArray was null");
+                        }
+                        break;
 
-                                                break;
-                                            case JTokenType.Object:
-                                                //
-                                                newNode = new HETreeNode(tmpJProperty.Name, HETreeNodeType.JsonObject);
+                    case JTokenType.Property: // Ity's a JProperty, similar to a key value pair
+                        //
 
-                                                break;
-                                        }
-                                        newNode = new HETreeNode(tmpJProperty.Name, HETreeNodeType.JsonProperty);
-                                        newNode.Tag = tmpJProperty;
-                                        nodeParent.Nodes.Add(newNode);
-
-                                        //newNode.UpdateImageIndeces();
-
-                                        //nodeParent.Name = nodeParent.Text = tmpJProperty.Name;
-
-
-                                        if (logToDebug)
-                                            Debug.Print("BNTFJ {0} Recursing, type: {1}", maxDepth, token.Type);
-                                        BuildNodeTreesFromJson(tmpJProperty, newNode, maxDepth - 1, logToDebug: logToDebug); // nameHint: tmpJProperty.Name, 
-                                        if (logToDebug)
-                                            Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
-
+                        // Depth and null check, if valid, create this node
+                        JProperty tmpJProperty = (JProperty)json;
+                        if (tmpJProperty != null)
+                        {
+                            if (maxDepth >= 0)
+                            {
+                                // Creation of this node
+                                if (nameHint != "")
+                                {
+                                    // Name hint provided, use that
+                                    newNode = new HETreeNode(nameHint, HETreeNodeType.JsonProperty);
+                                }
+                                else
+                                {
+                                    if (false)
+                                    {
+                                        // name lookup/generation should be hooked in here, but doesn't yet exist
                                     }
                                     else
                                     {
                                         newNode = new HETreeNode(tmpJProperty.Name, HETreeNodeType.JsonProperty);
-                                        newNode.Tag = tmpJProperty;
-                                        nodeParent.Nodes.Add(newNode);
-
-                                        if (logToDebug)
-                                            Debug.Print("BNTFJ {0} Recursing, type: {1}", maxDepth, token.Type);
-                                        BuildNodeTreesFromJson(tmpJProperty, newNode, maxDepth - 1, logToDebug: logToDebug);
-                                        if (logToDebug)
-                                            Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
-
-
                                     }
-
                                 }
+                                // Set the node's tag to the JObject
+                                //newNode.Tag = tmpJProperty;
 
-                                break;
-                            case JTokenType.Boolean:
-                            case JTokenType.Bytes:
-                            case JTokenType.Comment:
-                            case JTokenType.Date:
-                            case JTokenType.Float:
-                            case JTokenType.Guid:
-                            case JTokenType.Integer:
-                            case JTokenType.String:
-                            case JTokenType.TimeSpan:
-                            case JTokenType.Uri:
-                                JValue tmpJValue = (JValue)token;
-                                if (tmpJValue != null)
-                                {
-                                    if (logToDebug)
-                                        Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
+                                // Process value
 
-                                    newNode = new HETreeNode(tmpJValue.Value.ToString(), HETreeNodeType.JsonValue);
-                                    newNode.Tag = tmpJValue;
-                                    nodeParent.Nodes.Add(newNode);
+                                if (logToDebug) Debug.Print("BNTFJ {0} Recursing with type: {1}", maxDepth, tmpJProperty.Type);
 
-                                }
-                                break;
+                                BuildBasicNodeTreeFromJson(tmpJProperty.Value, newNode, maxDepth - 1, logToDebug: logToDebug);
 
-                            default:
-                                //
-                                if (logToDebug)
-                                {
-                                    Debug.Print("BNTFJ {0} VALUE, type: {1} - NO ACTION TAKEN!", maxDepth, token.Type);
-                                    Debug.Print(token.ToString());
-                                }
-                                break;
+                                if (logToDebug) Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, tmpJProperty.Type);
 
+                                // Add the node
+                                nodeParent.Nodes.Add(newNode);
+                            }
+                            else
+                            {
+                                Debug.Print("### JProperty maxDepth {0}", maxDepth);
+                            }
+                        }
+
+                        break;
+
+                    case JTokenType.Boolean:
+                    case JTokenType.Bytes:
+                    case JTokenType.Comment:
+                    case JTokenType.Date:
+                    case JTokenType.Float:
+                    case JTokenType.Guid:
+                    case JTokenType.Integer:
+                    case JTokenType.String:
+                    case JTokenType.TimeSpan:
+                    case JTokenType.Uri:
+                        JValue tmpJValue = (JValue)json;
+                        if (tmpJValue != null)
+                        {
+                            int newNodeImageIndex = 0;
+
+                            switch (json.Type)
+                            {
+                                case JTokenType.Boolean:
+                                    // Bool (checkdot)
+                                    newNodeImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
+                                    break;
+                                case JTokenType.Bytes:
+                                    // Binary
+                                    newNodeImageIndex = (int)HEObjectTypesImageList.Binary_16x;
+                                    break;
+                                case JTokenType.Integer:
+                                case JTokenType.Float:
+                                    // Number
+                                    newNodeImageIndex = (int)HEObjectTypesImageList.DomainType_16x;
+                                    break;
+                                case JTokenType.String:
+                                case JTokenType.Comment:
+                                case JTokenType.Guid:
+                                case JTokenType.Uri:
+                                    // Text
+                                    newNodeImageIndex = (int)HEObjectTypesImageList.String_16x;
+                                    break;
+                                case JTokenType.Date:
+                                case JTokenType.TimeSpan:
+                                    // Time/Date
+                                    newNodeImageIndex = (int)HEObjectTypesImageList.DateTimeAxis_16x;
+                                    break;
+                                default:
+                                    //
+                                    newNodeImageIndex = (int)HEObjectTypesImageList.Checkerboard_16x;
+                                    break;
+                            }
+
+
+
+                            if (logToDebug) Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
+
+                            newNode = new HETreeNode(tmpJValue.Value.ToString(), HETreeNodeType.JsonValue)
+                            {
+                                Tag = tmpJValue,
+                                // Update the imageindex and selectedimageindex directly - we're overriding the standard icons
+                                ImageIndex = newNodeImageIndex,
+                                SelectedImageIndex = newNodeImageIndex,
+                            };
+                            nodeParent.Nodes.Add(newNode);
 
                         }
-                    } // End of foreach (JToken token in json)
+                        break;
+
+                    default:
+                        //
+                        if (logToDebug)
+                        {
+                            Debug.Print("BNTFJ {0} VALUE, type: {1} - NO ACTION TAKEN!", maxDepth, json.Type);
+                            Debug.Print(json.ToString());
+                        }
+                        break;
                 }
             }
+            //}
+            /*
             else
             {
                 if (logToDebug)
                     Debug.Print("BNTFJ {0} RECURSION LIMIT with type: {1}", maxDepth, json.Type);
 
             }
-
+            */
 
             if (logToDebug)
                 Debug.Print("BNTFJ {0} EXITING with type: {1}", maxDepth, json.Type);

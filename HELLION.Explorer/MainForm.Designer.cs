@@ -56,6 +56,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setDataFolderLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verifyDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testOption1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updatecheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
@@ -79,7 +80,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.testOption1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -300,7 +300,7 @@
             // 
             this.cleanupToolStripMenuItem.Enabled = false;
             this.cleanupToolStripMenuItem.Name = "cleanupToolStripMenuItem";
-            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.cleanupToolStripMenuItem.Text = "Cleanup...";
             this.cleanupToolStripMenuItem.Visible = false;
             // 
@@ -308,14 +308,14 @@
             // 
             this.repairToolStripMenuItem.Enabled = false;
             this.repairToolStripMenuItem.Name = "repairToolStripMenuItem";
-            this.repairToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.repairToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.repairToolStripMenuItem.Text = "Repair...";
             this.repairToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(135, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // optionsToolStripMenuItem
@@ -324,7 +324,7 @@
             this.setDataFolderLocationToolStripMenuItem,
             this.verifyDataFolderToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // setDataFolderLocationToolStripMenuItem
@@ -340,6 +340,13 @@
             this.verifyDataFolderToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
             this.verifyDataFolderToolStripMenuItem.Text = "Verify Data folder";
             this.verifyDataFolderToolStripMenuItem.Click += new System.EventHandler(this.verifyDataFolderToolStripMenuItem_Click);
+            // 
+            // testOption1ToolStripMenuItem
+            // 
+            this.testOption1ToolStripMenuItem.Name = "testOption1ToolStripMenuItem";
+            this.testOption1ToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.testOption1ToolStripMenuItem.Text = "TestOption1";
+            this.testOption1ToolStripMenuItem.Click += new System.EventHandler(this.testOption1ToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -411,7 +418,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Size = new System.Drawing.Size(1001, 578);
-            this.splitContainer1.SplitterDistance = 199;
+            this.splitContainer1.SplitterDistance = 257;
             this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -424,7 +431,7 @@
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
             this.treeView1.PathSeparator = " > ";
-            this.treeView1.Size = new System.Drawing.Size(199, 578);
+            this.treeView1.Size = new System.Drawing.Size(257, 578);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
@@ -442,8 +449,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer2.Size = new System.Drawing.Size(799, 547);
-            this.splitContainer2.SplitterDistance = 350;
+            this.splitContainer2.Size = new System.Drawing.Size(741, 547);
+            this.splitContainer2.SplitterDistance = 324;
             this.splitContainer2.SplitterWidth = 3;
             this.splitContainer2.TabIndex = 1;
             // 
@@ -460,7 +467,7 @@
             this.listView1.Margin = new System.Windows.Forms.Padding(2);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(350, 547);
+            this.listView1.Size = new System.Drawing.Size(324, 547);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -479,7 +486,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(446, 547);
+            this.tabControl1.Size = new System.Drawing.Size(414, 547);
             this.tabControl1.TabIndex = 2;
             // 
             // tabPage4
@@ -488,7 +495,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 26);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(438, 517);
+            this.tabPage4.Size = new System.Drawing.Size(406, 517);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Data View (Experimental!)";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -500,7 +507,7 @@
             this.webBrowser1.Location = new System.Drawing.Point(3, 3);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(432, 511);
+            this.webBrowser1.Size = new System.Drawing.Size(400, 511);
             this.webBrowser1.TabIndex = 0;
             // 
             // tabPage3
@@ -590,17 +597,10 @@
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Padding = new System.Windows.Forms.Padding(2);
-            this.label1.Size = new System.Drawing.Size(799, 31);
+            this.label1.Size = new System.Drawing.Size(741, 31);
             this.label1.TabIndex = 0;
             this.label1.Text = ">>";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // testOption1ToolStripMenuItem
-            // 
-            this.testOption1ToolStripMenuItem.Name = "testOption1ToolStripMenuItem";
-            this.testOption1ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.testOption1ToolStripMenuItem.Text = "TestOption1";
-            this.testOption1ToolStripMenuItem.Click += new System.EventHandler(this.testOption1ToolStripMenuItem_Click);
             // 
             // MainForm
             // 
