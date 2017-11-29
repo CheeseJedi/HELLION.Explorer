@@ -30,7 +30,6 @@ namespace HELLION.DataStructures
         public bool SkipLoading { get; set; }
         public bool LogToDebug { get; set; }
 
-
         public HEJsonBaseFile()
         {
             // Basic Constructor
@@ -41,7 +40,7 @@ namespace HELLION.DataStructures
             IsFileWritable = false;
             LoadError = false;
             SkipLoading = false;
-            LogToDebug = false;
+            LogToDebug = true;
             dataFileRoot = new HETreeNode("DATAFILE", HETreeNodeType.DataFile);
 
 
@@ -56,7 +55,7 @@ namespace HELLION.DataStructures
             IsFileLoaded = false;
             LoadError = false;
             SkipLoading = false;
-            LogToDebug = false;
+            LogToDebug = true;
             dataFileRoot = null;
 
             if (System.IO.File.Exists(PassedFileName))
@@ -78,7 +77,7 @@ namespace HELLION.DataStructures
             IsFileLoaded = false;
             LoadError = false;
             SkipLoading = false;
-            LogToDebug = false;
+            LogToDebug = true;
 
             if (PassedFileInfo != null)
             {
@@ -87,9 +86,6 @@ namespace HELLION.DataStructures
                     LoadFile();
             }
         }
-
-
-
 
         public bool LoadFile()
         {
@@ -227,7 +223,6 @@ namespace HELLION.DataStructures
             // Changes the IsFileWritable to false
             IsFileWritable = false;
         } // End of MakeReadOnly()
-
 
 
         public HETreeNode BuildNodeCollection(HETreeNodeType dummy, [CallerMemberName] string callerName = "")
@@ -379,10 +374,6 @@ namespace HELLION.DataStructures
                                     Debug.Print("Property name " + PropertyName + " added");
 
 
-
-
-
-
                                 //JProperty athisProperty = (JProperty)thing;
                                 //subPropertyName = (string)thing["Name"];
                                 /*
@@ -434,15 +425,33 @@ namespace HELLION.DataStructures
             return nodeRoot;
         }
 
-        public void BuildBasicNodeTreeFromJson(JToken json, HETreeNode nodeParent, int maxDepth = 1, string nameHint = "", bool collapseJArrays = false , bool logToDebug = false)
+        public void BuildBasicNodeTreeFromJson(
+            JToken json,
+            HETreeNode nodeParent,
+            int maxDepth = 1,
+            int currentDepth = 0,
+            string nameHint = "",
+            bool collapseJArrays = false,
+            [CallerMemberName] string callerName = "")
         {
-            // Builds a section of node tree and recurses if necessary
-            if (logToDebug)
+            // Set up indenting for this level
+            string thisLevelIndent = String.Join("| ", new String[currentDepth]);
+
+            if (LogToDebug)
             {
-                Debug.Print("BNTFJ {0} ENTERED with type: {1}", maxDepth, json.Type);
+                foreach (var method in new StackTrace().GetFrames())
+                {
+                    if (method.GetMethod().Name == callerName)
+                    {
+                        callerName = $"{method.GetMethod().ReflectedType.Name}.{callerName}";
+                        break;
+                    }
+                }
+                Debug.Print("{0} :{1} BuildTree depth {2}({3}) ENTERED with type: {4}, {5}", DateTime.Now, thisLevelIndent, currentDepth, maxDepth, json.Type, callerName);
+                Debug.Print(json.ToString());
             }
 
-
+            // Builds a section of node tree and recurses if necessary
             if (json != null) // prob needs more tests that this
             {
                 HETreeNode newNode;
@@ -465,6 +474,9 @@ namespace HELLION.DataStructures
                                 if (numChildTokens > 0)
                                 {
                                     // attach a single expansion node to the tree - this will be removed when the actual tree is generated
+                                    if (LogToDebug)
+                                        Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding (obj) expansion node", DateTime.Now, thisLevelIndent, currentDepth, maxDepth);
+
                                     HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + "nodes...", HETreeNodeType.ExpansionAvailable);
                                     nodeParent.Nodes.Add(tempExpansionNode);
                                 }
@@ -498,39 +510,46 @@ namespace HELLION.DataStructures
                                     numChildProperties++;
                                     if (maxDepth >= 2)
                                     {
-                                        if (logToDebug) Debug.Print("BNTFJ {0} Recursing with type: {1}", maxDepth, token.Type);
-                                        BuildBasicNodeTreeFromJson(token, newNode, maxDepth - 1, logToDebug: logToDebug);
-                                        if (logToDebug) Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
+                                        if (LogToDebug)
+                                            Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
+                                        BuildBasicNodeTreeFromJson(token, newNode, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
+                                        if (LogToDebug)
+                                            Debug.Print("{0} :{1} BuildTree depth {2}({3}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                                         // Add the node
+                                        if (LogToDebug)
+                                            Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
                                         nodeParent.Nodes.Add(newNode);
                                     }
                                 }
                             }
-                             
+
                         }
                         else
                         {
                             // We shouldn't be here!
-                            if (logToDebug) Debug.Print("tmpJObject was null");
+                            if (LogToDebug)
+                                Debug.Print("{0} :{1} BuildTree depth {2}({3}) tmpJObject was null", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                         }
                         break;
 
                     case JTokenType.Array: // It's a JArray
                         // Depth and null check, if valid, create this node
-                        JArray tmpJArray = (JArray)json;
-                        if (tmpJArray != null)
-                        {
+                        //JArray tmpJArray = (JArray)json;
+                        //if (tmpJArray != null)
+                        //{
                             if (maxDepth <= 0) // maxDepth (zero) has been reached, offer expansion if this has child tokens
                             {
                                 // Count children
                                 int numChildTokens = 0;
-                                foreach (JToken token in tmpJArray) // .Children<JToken>()
+                                foreach (JToken token in json) // tmpJArray.Children<JToken>()
                                     numChildTokens++;
                                 // If it has child tokens
                                 if (numChildTokens > 0)
                                 {
                                     // attach a single expansion node to the tree - this will be removed when the actual tree is generated
-                                    if (logToDebug) Debug.Print("BNTFJ {0} Adding expansion node", maxDepth);
+                                    if (LogToDebug)
+                                        Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding expansion node", DateTime.Now, thisLevelIndent, currentDepth, maxDepth);
+
                                     HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + " nodes...", HETreeNodeType.ExpansionAvailable);
                                     nodeParent.Nodes.Add(tempExpansionNode);
                                 }
@@ -558,34 +577,45 @@ namespace HELLION.DataStructures
                                 //newNode.Tag = tmpJArray;
 
                                 // Process child tokens - actually JProperties in the case of a JObject
-                                foreach (JToken token in tmpJArray) // .Children<JToken>()
+                                foreach (JToken token in json) // .Children<JToken>()
                                 {
-                                    if (logToDebug) Debug.Print("BNTFJ {0} Recursing with type: {1}", maxDepth, token.Type);
-                                    // collapsearrays check to go here
+                                    if (LogToDebug)
+                                        Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
+                                    // collapsearrays mounts members of the array to the parent rather than creating a distinct node for the array. Defaults to off.
                                     if (collapseJArrays)
                                     {
                                         // Adjust parent node instead of using the generated node
                                         // Changes the nodetype to represent an array
                                         //nodeParent.NodeType = HETreeNodeType.JsonArray; // HETreeNodeType.JsonArray;
                                         //nodeParent.UpdateImageIndeces();
-                                        // Recursive call, but don't decrease the maxDepth as collapseArrays is true
-                                        BuildBasicNodeTreeFromJson(token, nodeParent, maxDepth, logToDebug: logToDebug);
-                                    }
-                                    else
-                                    {
-                                        BuildBasicNodeTreeFromJson(token, newNode, maxDepth - 1, logToDebug: logToDebug);
-                                    }
-                                    if (logToDebug) Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, token.Type);
-                                    // Add the node
-                                    nodeParent.Nodes.Add(newNode);
+                                        // Recursive call
+                                        BuildBasicNodeTreeFromJson(token, nodeParent, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
+                                        if (LogToDebug)
+                                            Debug.Print("{0} :{1} BuildTree depth{1}({2}) CollapseArrays using parent {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, nodeParent.Name);
+
                                 }
+                                else
+                                    {
+                                        BuildBasicNodeTreeFromJson(token, newNode, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
+                                        // Add the node
+                                        if (LogToDebug)
+                                            Debug.Print("{0} :{1} BuildTree depth{1}({2}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
+
+                                        nodeParent.Nodes.Add(newNode);
+                                        }
+                                if (LogToDebug)
+                                    Debug.Print("{0} :{1} BuildTree depth{1}({2}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
+
+                                
+
                             }
                         }
-                        else
-                        {
+                        //}
+                        //else
+                        //{
                             // We shouldn't be here!
-                            if (logToDebug) Debug.Print("tmpJArray was null");
-                        }
+                            //if (logToDebug) Debug.Print("tmpJArray was null");
+                        //}
                         break;
 
                     case JTokenType.Property: // Ity's a JProperty, similar to a key value pair
@@ -619,18 +649,23 @@ namespace HELLION.DataStructures
 
                                 // Process value
 
-                                if (logToDebug) Debug.Print("BNTFJ {0} Recursing with type: {1}", maxDepth, tmpJProperty.Type);
+                                if (LogToDebug)
+                                    Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
-                                BuildBasicNodeTreeFromJson(tmpJProperty.Value, newNode, maxDepth - 1, logToDebug: logToDebug);
+                                BuildBasicNodeTreeFromJson(tmpJProperty.Value, newNode, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
 
-                                if (logToDebug) Debug.Print("BNTFJ {0} Back with type: {1}", maxDepth, tmpJProperty.Type);
+                                if (LogToDebug)
+                                    Debug.Print("{0} :{1} BuildTree depth {2}({3}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
+                                if (LogToDebug)
+                                    Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {4}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
                                 // Add the node
                                 nodeParent.Nodes.Add(newNode);
                             }
                             else
                             {
-                                Debug.Print("### JProperty maxDepth {0}", maxDepth);
+                                if (LogToDebug)
+                                    Debug.Print("{0} :{1} BuildTree depth {2}({3}) Max Depth reached", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                             }
                         }
 
@@ -686,7 +721,7 @@ namespace HELLION.DataStructures
 
 
 
-                            if (logToDebug) Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
+                            if (LogToDebug) Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
 
                             newNode = new HETreeNode(tmpJValue.Value.ToString(), HETreeNodeType.JsonValue)
                             {
@@ -695,6 +730,9 @@ namespace HELLION.DataStructures
                                 ImageIndex = newNodeImageIndex,
                                 SelectedImageIndex = newNodeImageIndex,
                             };
+                            if (LogToDebug)
+                                Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
+
                             nodeParent.Nodes.Add(newNode);
 
                         }
@@ -702,27 +740,23 @@ namespace HELLION.DataStructures
 
                     default:
                         //
-                        if (logToDebug)
+                        if (LogToDebug)
                         {
-                            Debug.Print("BNTFJ {0} VALUE, type: {1} - NO ACTION TAKEN!", maxDepth, json.Type);
+                            Debug.Print("BNTFJ {0} VALUE, type: {1} - NO ACTION TAKEN!", currentDepth, json.Type);
                             Debug.Print(json.ToString());
                         }
                         break;
                 }
             }
-            //}
-            /*
             else
             {
-                if (logToDebug)
-                    Debug.Print("BNTFJ {0} RECURSION LIMIT with type: {1}", maxDepth, json.Type);
-
+                if (LogToDebug)
+                    Debug.Print("{0} : BuildTree depth {1}({2}) JToken was null", DateTime.Now.ToString(), currentDepth, maxDepth);
             }
-            */
 
-            if (logToDebug)
-                Debug.Print("BNTFJ {0} EXITING with type: {1}", maxDepth, json.Type);
-        }
+            if (LogToDebug)
+                Debug.Print("{0} : BuildTree depth {1}({2}) EXITING", DateTime.Now.ToString(), currentDepth, maxDepth);
+        } // End of BuildBasicNodeTreeFromJson
 
 
     } // End of class HEjsonFile

@@ -66,21 +66,20 @@ namespace HELLION.DataStructures
                     if (tempFile.IsFileLoaded && !LoadError)
                     {
                         // Create and run new task to build the node tree asynchronously
-                        Task t = Task.Run(() => tempFile.BuildBasicNodeTreeFromJson(tempFile.JData, tempNode, maxDepth:1));
+                        //Task t = Task.Run(() => 
+                        tempFile.BuildBasicNodeTreeFromJson(tempFile.JData, tempNode, maxDepth:8, collapseJArrays: false);
                         // Add the task to the list so it can be monitored
-                        tasks.Add(t);
+                        //tasks.Add(t);
                     }
-
-
 
                     // Add tree node representing this file
                     CollectionRoot.Nodes.Add(tempNode);
 
                 }
 
-                Task.WaitAll(tasks.ToArray());
-                foreach (Task t in tasks)
-                    Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
+                //Task.WaitAll(tasks.ToArray());
+                //foreach (Task t in tasks)
+                    //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
 
             }
         }

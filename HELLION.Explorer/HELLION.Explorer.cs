@@ -1106,14 +1106,15 @@ namespace HELLION.Explorer
 
 
             // Grab a data file path Properties
-            HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
+
+            //HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
 
             //HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\CelestialBodies.json");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(Properties.HELLIONExplorer.Default.sGameDataFolder + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName);
 
-            testDataFile.LogToDebug = true;
-            testDataFile.LoadFile();
+            //testDataFile.LogToDebug = true;
+            //testDataFile.LoadFile();
 
 
 
@@ -1121,14 +1122,17 @@ namespace HELLION.Explorer
 
             // Some async test stuff
 
-            HETreeNode nodeSaveFile = new HETreeNode("SAVEFILE", HETreeNodeType.SaveFile, nodeText: testDataFile.File.Name, nodeToolTipText: testDataFile.File.FullName);
+            //HETreeNode nodeSaveFile = new HETreeNode("SAVEFILE", HETreeNodeType.SaveFile, nodeText: testDataFile.File.Name, nodeToolTipText: testDataFile.File.FullName);
 
 
 
             // Task to run asynchronously
             List<Task> tasks = new List<Task>();
-            Task t1 = Task.Run(() => testDataFile.BuildBasicNodeTreeFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 2, logToDebug: true));
-            tasks.Add(t1);
+            //Task t1 = Task.Run(() => 
+
+            //testDataFile.BuildBasicNodeTreeFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 2, logToDebug: true);
+            
+            //tasks.Add(t1);
 
             //testDataFile.BuildNodeTreesFromJson(testDataFile.JData, tempParent, numRuns);
 
@@ -1148,7 +1152,9 @@ namespace HELLION.Explorer
             Task.WaitAll(tasks.ToArray());
 
             tempParent.Nodes.Add(testDataFileCollection.CollectionRoot ?? new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder - ERROR"));
-            tempParent.Nodes.Add(nodeSaveFile);
+
+            //tempParent.Nodes.Add(nodeSaveFile);
+
             tempParent.Nodes.Remove(tempLoadingIndicatorNode);
 
             foreach (Task t in tasks)
