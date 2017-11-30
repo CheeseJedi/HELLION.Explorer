@@ -46,7 +46,7 @@ namespace HELLION.DataStructures
 
         public /*async*/ void LoadStaticData()
         {
-            //
+            // Loads the static data and builds the trees representing the data files
             if (StaticDataFolder.Exists)
             {
                 // Set up a list to monitor tasks running asynchronously
@@ -67,7 +67,13 @@ namespace HELLION.DataStructures
                     {
                         // Create and run new task to build the node tree asynchronously
                         //Task t = Task.Run(() => 
-                        tempFile.BuildBasicNodeTreeFromJson(tempFile.JData, tempNode, maxDepth:8, collapseJArrays: false);
+
+                        HETreeNode tn = tempFile.BuildHETreeNodeTreeFromJson(tempFile.JData, maxDepth:10, collapseJArrays: false);
+                        if (tn != null)
+                        {
+                            tempNode.Nodes.Add(tn);
+                        }
+
                         // Add the task to the list so it can be monitored
                         //tasks.Add(t);
                     }

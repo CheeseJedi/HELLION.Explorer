@@ -1094,6 +1094,7 @@ namespace HELLION.Explorer
 
         internal static void TestOption1()
         {
+            // Scratchpad area for testing new stuff out - has corresponding menu item
             // Make a note of the starting time
             DateTime StartingTime = DateTime.Now;
 
@@ -1113,12 +1114,14 @@ namespace HELLION.Explorer
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\CelestialBodies.json");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(Properties.HELLIONExplorer.Default.sGameDataFolder + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName);
 
-            //testDataFile.LogToDebug = true;
-            //testDataFile.LoadFile();
 
+            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
+            HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\New folder\arraywith2objects.json");
 
+            testDataFile.LogToDebug = true;
+            testDataFile.LoadFile();
 
-            int numRuns = 0;
+            //int numRuns = 0;
 
             // Some async test stuff
 
@@ -1131,7 +1134,10 @@ namespace HELLION.Explorer
             //Task t1 = Task.Run(() => 
 
             //testDataFile.BuildBasicNodeTreeFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 2, logToDebug: true);
-            
+
+            //tempParent.Nodes.Add(testDataFile.BuildHETreeNodeTreeFromJson(json: testDataFile.JData, maxDepth: 6) ?? new HETreeNode("LOADING ERROR!"));
+
+
             //tasks.Add(t1);
 
             //testDataFile.BuildNodeTreesFromJson(testDataFile.JData, tempParent, numRuns);
@@ -1149,7 +1155,7 @@ namespace HELLION.Explorer
 
 
             // Wait for tasks to complete
-            Task.WaitAll(tasks.ToArray());
+            //Task.WaitAll(tasks.ToArray());
 
             tempParent.Nodes.Add(testDataFileCollection.CollectionRoot ?? new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder - ERROR"));
 
@@ -1157,10 +1163,11 @@ namespace HELLION.Explorer
 
             tempParent.Nodes.Remove(tempLoadingIndicatorNode);
 
-            foreach (Task t in tasks)
-                Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
-            Debug.Print("{0} runs took {1}", numRuns, DateTime.Now - StartingTime);
+            //foreach (Task t in tasks)
+                //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
+            Debug.Print("Process completed in {0}", DateTime.Now - StartingTime);
 
+            
             //tempParent.UpdateCounts();
             GC.Collect();
     }
