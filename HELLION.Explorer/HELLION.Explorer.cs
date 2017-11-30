@@ -1108,7 +1108,7 @@ namespace HELLION.Explorer
 
             // Grab a data file path Properties
 
-            //HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
+            HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
 
             //HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\CelestialBodies.json");
@@ -1116,9 +1116,9 @@ namespace HELLION.Explorer
 
 
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
-            HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\New folder\arraywith2objects.json");
+            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\New folder\arraywith2objects.json");
 
-            testDataFile.LogToDebug = true;
+            testDataFile.LogToDebug = false;
             testDataFile.LoadFile();
 
             //int numRuns = 0;
@@ -1135,7 +1135,7 @@ namespace HELLION.Explorer
 
             //testDataFile.BuildBasicNodeTreeFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 2, logToDebug: true);
 
-            //tempParent.Nodes.Add(testDataFile.BuildHETreeNodeTreeFromJson(json: testDataFile.JData, maxDepth: 6) ?? new HETreeNode("LOADING ERROR!"));
+            tempParent.Nodes.Add(testDataFile.BuildHETreeNodeTreeFromJson(json: testDataFile.JData, maxDepth: 6) ?? new HETreeNode("LOADING ERROR!",HETreeNodeType.DataFileError));
 
 
             //tasks.Add(t1);

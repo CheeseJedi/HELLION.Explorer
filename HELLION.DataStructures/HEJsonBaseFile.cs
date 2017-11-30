@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace HELLION.DataStructures
 {
@@ -39,7 +40,7 @@ namespace HELLION.DataStructures
             IsFileWritable = false;
             LoadError = false;
             SkipLoading = false;
-            LogToDebug = true;
+            LogToDebug = false;
             dataFileRoot = new HETreeNode("DATAFILE", HETreeNodeType.DataFile);
         }
 
@@ -51,7 +52,7 @@ namespace HELLION.DataStructures
             IsFileLoaded = false;
             LoadError = false;
             SkipLoading = false;
-            LogToDebug = true;
+            LogToDebug = false;
             dataFileRoot = null;
 
             if (System.IO.File.Exists(PassedFileName))
@@ -72,7 +73,7 @@ namespace HELLION.DataStructures
             IsFileLoaded = false;
             LoadError = false;
             SkipLoading = false;
-            LogToDebug = true;
+            LogToDebug = false;
 
             if (PassedFileInfo != null)
             {
@@ -785,25 +786,27 @@ namespace HELLION.DataStructures
                         // It's a JObject
                         // Depth and null check, if valid, create this node
                         JObject tmpJObject = (JObject)json;
+                        string newNodeName = "";
                         if (tmpJObject != null)
                         {
                             // Creation of this node
                             if (nameHint != "")
                             {
                                 // Name hint provided, use that
-                                newNode = new HETreeNode(nameHint, HETreeNodeType.JsonObject);
+                                newNodeName = nameHint;
                             }
                             else
                             {
-                                if (false)
+                                // name lookup/generation used
+                                newNodeName = GenerateDisplayName(tmpJObject).Trim();
+                                if (newNodeName == "")
                                 {
-                                    // name lookup/generation should be hooked in here, but doesn't yet exist
+                                    newNodeName = "Unnamed Object";
                                 }
-                                else
-                                {
-                                    newNode = new HETreeNode("Object", HETreeNodeType.JsonObject);
-                                }
+                                
                             }
+                            newNode = new HETreeNode(newNodeName, HETreeNodeType.JsonObject);
+                            
 
 
                             // Set the node's tag to the JObject
@@ -1081,7 +1084,17 @@ namespace HELLION.DataStructures
 
 
 
+        public string GenerateDisplayName (JObject obj)
+        {
+            // Attempts to build a user-friendly name from available data in a JObject
+            StringBuilder sb = new StringBuilder();
 
+            sb.Append((string)obj["Registration"] + " ");
+            sb.Append((string)obj["Name"]);
+            sb.Append((string)obj["ItemID"]);
+            sb.Append((string)obj["GameName"]);
+            return sb.ToString() ?? null;
+        }
 
 
 
