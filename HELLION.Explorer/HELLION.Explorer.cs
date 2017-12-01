@@ -1097,29 +1097,44 @@ namespace HELLION.Explorer
             // Scratchpad area for testing new stuff out - has corresponding menu item
             // Make a note of the starting time
             DateTime StartingTime = DateTime.Now;
-
-            HETreeNode tempParent = new HETreeNode("DATAVIEW", HETreeNodeType.DataView, "Data View");
             HETreeNode tempLoadingIndicatorNode = new HETreeNode("Loading...", HETreeNodeType.ExpansionAvailable);
-            tempParent.Nodes.Add(tempLoadingIndicatorNode);
-            tempLoadingIndicatorNode.Expand();
+            HEViewGameData GameDataView = null;
 
-            frmMainForm.treeView1.Nodes.Add(tempParent);
+            frmMainForm.treeView1.Nodes.Add(tempLoadingIndicatorNode);
+
+            FileInfo fileInfo = new FileInfo(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(Properties.HELLIONExplorer.Default.sGameDataFolder);
+
+            if (fileInfo != null && fileInfo.Exists && directoryInfo != null && directoryInfo.Exists)
+            {
+                GameDataView = new HEViewGameData(fileInfo, directoryInfo);
+            }
+
+            if (GameDataView != null)
+            {
+                frmMainForm.treeView1.Nodes.Add(GameDataView.RootNode);
+            }
+            else
+            {
+                MessageBox.Show("Loading error");
+            }
+
+
+
 
 
             // Grab a data file path Properties
 
-            HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
-
+            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
             //HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\CelestialBodies.json");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(Properties.HELLIONExplorer.Default.sGameDataFolder + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName);
-
-
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
             //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\New folder\arraywith2objects.json");
 
-            testDataFile.LogToDebug = false;
-            testDataFile.LoadFile();
+            //testDataFile.LogToDebug = false;
+            //testDataFile.LoadFile();
 
             //int numRuns = 0;
 
@@ -1130,38 +1145,38 @@ namespace HELLION.Explorer
 
 
             // Task to run asynchronously
-            List<Task> tasks = new List<Task>();
+            //List<Task> tasks = new List<Task>();
             //Task t1 = Task.Run(() => 
 
             //testDataFile.BuildBasicNodeTreeFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 2, logToDebug: true);
 
-            tempParent.Nodes.Add(testDataFile.BuildHETreeNodeTreeFromJson(json: testDataFile.JData, maxDepth: 6) ?? new HETreeNode("LOADING ERROR!",HETreeNodeType.DataFileError));
+            //tempParent.Nodes.Add(testDataFile.BuildHETreeNodeTreeFromJson(json: testDataFile.JData, maxDepth: 6) ?? new HETreeNode("LOADING ERROR!",HETreeNodeType.DataFileError));
 
 
             //tasks.Add(t1);
 
             //testDataFile.BuildNodeTreesFromJson(testDataFile.JData, tempParent, numRuns);
 
-            HEJsonDataFileCollection testDataFileCollection = null;
+            //HEStaticDataFileCollection testDataFileCollection = null;
 
-            if (Properties.HELLIONExplorer.Default.sGameDataFolder != "")
+            //if (Properties.HELLIONExplorer.Default.sGameDataFolder != "")
             {
 
                 //Task t2 = Task.Run(() => 
-                testDataFileCollection = new HEJsonDataFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
+                //testDataFileCollection = new HEStaticDataFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
                 //tasks.Add(t2);
-                
+
             }
 
 
             // Wait for tasks to complete
             //Task.WaitAll(tasks.ToArray());
 
-            tempParent.Nodes.Add(testDataFileCollection.CollectionRoot ?? new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder - ERROR"));
+            //tempParent.Nodes.Add(testDataFileCollection.RootNode ?? new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder - ERROR"));
 
             //tempParent.Nodes.Add(nodeSaveFile);
 
-            tempParent.Nodes.Remove(tempLoadingIndicatorNode);
+            frmMainForm.treeView1.Nodes.Remove(tempLoadingIndicatorNode);
 
             //foreach (Task t in tasks)
                 //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);

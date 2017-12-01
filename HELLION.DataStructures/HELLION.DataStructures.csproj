@@ -74,11 +74,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HEStaticDataFileCollection.cs" />
+    <Compile Include="HEViewGameData.cs" />
+    <Compile Include="HEViewSolarSystem.cs" />
     <Compile Include="_HECelestialBody.cs" />
     <Compile Include="_HEDocumentWorkspace.cs" />
     <Compile Include="_HEGameFile.cs" />
     <Compile Include="HEJsonBaseFile.cs" />
-    <Compile Include="HEJsonDataFileCollection.cs" />
     <Compile Include="_HEJsonFile.cs" />
     <Compile Include="HEJsonGameFile.cs" />
     <Compile Include="HEnewDocumentWorkspace.cs" />
@@ -186,7 +188,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

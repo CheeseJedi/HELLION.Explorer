@@ -20,17 +20,15 @@ namespace HELLION.DataStructures
     public class HEJsonBaseFile
     {
         // Base class for a generic JSON data file
-
-        //public string FileName { get; set; }
         public FileInfo File { get; set; }
         public JToken JData { get; set; }
-        public HETreeNode dataFileRoot { get; set; }
+        public HETreeNode RootNode { get; set; }
         public bool IsFileLoaded { get; set; }
         public bool IsFileWritable { get; set; }
         public bool LoadError { get; set; }
         public bool SkipLoading { get; set; }
         public bool LogToDebug { get; set; }
-
+        
         public HEJsonBaseFile()
         {
             // Basic Constructor
@@ -41,31 +39,10 @@ namespace HELLION.DataStructures
             LoadError = false;
             SkipLoading = false;
             LogToDebug = false;
-            dataFileRoot = new HETreeNode("DATAFILE", HETreeNodeType.DataFile);
+
+            RootNode = null; // new HETreeNode("DATAFILE", HETreeNodeType.DataFile);
         }
-
-        public HEJsonBaseFile(string PassedFileName)
-        {
-            // Constructor that allows the file name to be set and triggers load
-            File = null;
-            JData = null;
-            IsFileLoaded = false;
-            LoadError = false;
-            SkipLoading = false;
-            LogToDebug = false;
-            dataFileRoot = null;
-
-            if (System.IO.File.Exists(PassedFileName))
-            {
-                File = new FileInfo(PassedFileName);
-                if (File.Exists)
-                {
-                    dataFileRoot = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: File.Name, nodeToolTipText: File.FullName);
-                    //LoadFile();
-                }
-            }
-        }
-
+        
         public HEJsonBaseFile(FileInfo PassedFileInfo)
         {
             // Constructor that allows the FileInfo to be passed
@@ -80,6 +57,7 @@ namespace HELLION.DataStructures
                 File = PassedFileInfo;
                 if (File.Exists)
                 {
+                    RootNode = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: File.Name, nodeToolTipText: File.FullName);
                     LoadFile();
                 }
             }
@@ -222,7 +200,7 @@ namespace HELLION.DataStructures
             IsFileWritable = false;
         } // End of MakeReadOnly()
 
-
+        /*
         public HETreeNode BuildNodeCollection(HETreeNodeType dummy, [CallerMemberName] string callerName = "")
         {
             // Builds and returns a HETreeNode whose Node Collection contains HETreeNode type nodes
@@ -374,13 +352,13 @@ namespace HELLION.DataStructures
 
                                 //JProperty athisProperty = (JProperty)thing;
                                 //subPropertyName = (string)thing["Name"];
-                                /*
-                                JToken token = thing["Registration"];
-                                if (token != null)
-                                {
-                                    aPropertyName += " " + (string)thing["Registration"];
-                                }
-                                */
+                                
+                                //JToken token = thing["Registration"];
+                                //if (token != null)
+                                //{
+                                //    aPropertyName += " " + (string)thing["Registration"];
+                                //}
+                                
                                 HETreeNode anodeDataItem = new HETreeNode()
                                 {
                                     Name = SubPropertyName,
@@ -755,10 +733,10 @@ namespace HELLION.DataStructures
             if (LogToDebug)
                 Debug.Print("{0} : BuildTree depth {1}({2}) EXITING", DateTime.Now.ToString(), currentDepth, maxDepth);
         } // End of BuildBasicNodeTreeFromJson
+        */
 
         public HETreeNode BuildHETreeNodeTreeFromJson(
             JToken json,
-            //HETreeNode nodeParent,
             int maxDepth = 10,
             int currentDepth = 0,
             string nameHint = "",
@@ -1082,7 +1060,12 @@ namespace HELLION.DataStructures
             return newNode;
         } // End of BuildBasicNodeTreeFromJson
 
-
+        public void PopulateNodeTree()
+        {
+            // Populates the RootNode using the build function
+            HETreeNode tn = BuildHETreeNodeTreeFromJson(JData, maxDepth: 10, collapseJArrays: false);
+            RootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
+        }
 
         public string GenerateDisplayName (JObject obj)
         {
@@ -1091,8 +1074,16 @@ namespace HELLION.DataStructures
 
             sb.Append((string)obj["Registration"] + " ");
             sb.Append((string)obj["Name"]);
-            sb.Append((string)obj["ItemID"]);
             sb.Append((string)obj["GameName"]);
+            sb.Append((string)obj["CategoryName"]);
+            sb.Append((string)obj["name"]);
+            //string[] prefabPathParts = obj["PrefabPath"].ToString().Split('\\');
+            //sb.Append(prefabPathParts[prefabPathParts.Length - 1]);
+            sb.Append((string)obj["PrefabPath"]);
+            sb.Append((string)obj["RuleName"]);
+            sb.Append((string)obj["TierName"]);
+            sb.Append((string)obj["GroupName"]);
+            sb.Append((string)obj["ItemID"]);
             return sb.ToString() ?? null;
         }
 

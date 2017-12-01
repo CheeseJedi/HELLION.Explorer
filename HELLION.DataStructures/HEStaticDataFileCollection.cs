@@ -8,31 +8,32 @@ using System.Diagnostics;
 
 namespace HELLION.DataStructures
 {
-    public class HEJsonDataFileCollection
+    public class HEStaticDataFileCollection
     {
         // Defines a class to hold a collection of HEJsonBaseFiles representing the Static Data
         public IEnumerable<HEJsonBaseFile> StaticData { get; set; } // The collection of static data files
         public DirectoryInfo StaticDataFolder { get; set; } // The object representing the static Data folder
         public bool IsCollectionLoaded { get; private set; }
         public bool LoadError { get; private set; }
-        public HETreeNode CollectionRoot { get; set; }
+        public HETreeNode RootNode { get; set; }
 
-        public HEJsonDataFileCollection()
+        public HEStaticDataFileCollection()
         {
             // Basic constructor
             StaticData = null;
             StaticDataFolder = null;
             IsCollectionLoaded = false;
-            CollectionRoot = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder");
+            RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder");
             
         }
-        public HEJsonDataFileCollection(string passedFolderName)
+        /*
+        public HEStaticDataFileCollection(string passedFolderName)
         {
             // Constructor that takes a folder name
             StaticData = null;
             StaticDataFolder = null;
             IsCollectionLoaded = false;
-            CollectionRoot = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, "Data Folder");
+            RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, "Data Folder");
 
             // Check validity and if good load the data set
             if (passedFolderName != "")
@@ -40,11 +41,35 @@ namespace HELLION.DataStructures
                 StaticDataFolder = new DirectoryInfo(passedFolderName);
 
                 if (StaticDataFolder.Exists)
-                    LoadStaticData();
+                    PopulateNodeTree();
+            }
+        }
+        */
+        public HEStaticDataFileCollection(DirectoryInfo passedFolderInfo)
+        {
+            // Constructor that takes a DirectoryInfo and loads
+            StaticData = null;
+            StaticDataFolder = null;
+            IsCollectionLoaded = false;
+            RootNode = null; ;
+
+            // Check validity and if good load the data set
+            if (passedFolderInfo != null)
+            {
+                StaticDataFolder = passedFolderInfo;
+
+                if (StaticDataFolder.Exists)
+                {
+                    RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, nodeText: StaticDataFolder.Name, nodeToolTipText: StaticDataFolder.FullName);
+                    PopulateNodeTree();
+
+                }
             }
         }
 
-        public /*async*/ void LoadStaticData()
+
+
+        public /*async*/ void PopulateNodeTree()
         {
             // Loads the static data and builds the trees representing the data files
             if (StaticDataFolder.Exists)
@@ -59,7 +84,7 @@ namespace HELLION.DataStructures
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
-                    HETreeNode tempNode = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: dataFile.Name, nodeToolTipText: dataFile.FullName);
+                    //HETreeNode tempNode = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: dataFile.Name, nodeToolTipText: dataFile.FullName);
 
                     // Create a new HEJsonBaseFile, populate the path and check validity before creating a new task
                     HEJsonBaseFile tempFile = new HEJsonBaseFile(dataFile);
@@ -68,10 +93,14 @@ namespace HELLION.DataStructures
                         // Create and run new task to build the node tree asynchronously
                         //Task t = Task.Run(() => 
 
-                        HETreeNode tn = tempFile.BuildHETreeNodeTreeFromJson(tempFile.JData, maxDepth:10, collapseJArrays: false);
-                        if (tn != null)
+                        tempFile.PopulateNodeTree();
+                        if (tempFile.RootNode != null)
+                            RootNode.Nodes.Add(tempFile.RootNode);
+
+                        //HETreeNode tn = tempFile.BuildHETreeNodeTreeFromJson(tempFile.JData, maxDepth:10, collapseJArrays: false);
+                        //if (tn != null)
                         {
-                            tempNode.Nodes.Add(tn);
+                            //tempNode.Nodes.Add(tn);
                         }
 
                         // Add the task to the list so it can be monitored
@@ -79,7 +108,7 @@ namespace HELLION.DataStructures
                     }
 
                     // Add tree node representing this file
-                    CollectionRoot.Nodes.Add(tempNode);
+                    //RootNode.Nodes.Add(tempNode);
 
                 }
 
