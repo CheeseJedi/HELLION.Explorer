@@ -8,14 +8,14 @@ using System.Windows.Forms;
 
 namespace HELLION.DataStructures
 {
-    public class HEViewGameData
+    public class HEGameData
     {
         // Implements the Game Data view node tree
         public HETreeNode RootNode { get; set; }
-        public HEJsonBaseFile SaveFile { get; set; }
+        public HEJsonGameFile SaveFile { get; set; }
         public HEStaticDataFileCollection StaticData { get; set; }
 
-        public HEViewGameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
+        public HEGameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
         {
             // Constructor that takes a FileInfo representing the save file
             RootNode = new HETreeNode("GAMEDATAVIEW", HETreeNodeType.DataView, "Game Data");
@@ -29,25 +29,37 @@ namespace HELLION.DataStructures
                     RootNode.Nodes.Add(SaveFile.RootNode);
                 }
                 else
-                    MessageBox.Show("prob here");
+                    throw new Exception("SaveFile RootNode was null");
             }
 
             if (StaticDataFolderInfo != null && StaticDataFolderInfo.Exists)
             {
-                StaticData = new HEStaticDataFileCollection(StaticDataFolderInfo);
+                StaticData = new HEStaticDataFileCollection(StaticDataFolderInfo, autoPopulateTree: true);
                 if (StaticData.RootNode != null)
                 {
                     RootNode.Nodes.Add(StaticData.RootNode);
                 }
                 else
-                    MessageBox.Show("prob here 2");
+                    throw new Exception("StaticData RootNode was null");
 
             }
-
-
         }
+        public bool Close()
+        {
+            bool closeSuccess = true;
+            RootNode = null;
 
+            if (SaveFile.Close())
+                SaveFile = null;
+            else
+                closeSuccess = false;
 
+            if (StaticData.Close())
+                StaticData = null;
+            else
+                closeSuccess = false;
 
+            return closeSuccess;
+        }
     }
 }

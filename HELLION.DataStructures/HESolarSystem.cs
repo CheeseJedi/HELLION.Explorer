@@ -1,66 +1,70 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
-using System.Collections.Generic; // for IEnumerable
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
-using System.Windows.Forms;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.HEUtilities;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace HELLION.DataStructures
 {
-    public class HEnewDocumentWorkspace
+    public class HESolarSystem
     {
-        // Definition for a HELLION Save (.save) JSON file
-        // Includes methods for loading a save and assocaited data files in to memory, building a 
-        // custom treenode tree representing the orbital objects and retrieving data from the tree
-        // to populate the dynamic list and full data from the source.
-        // Eventually will include modifying and saving out the data.
+        // Implements the Solar System view node tree
+        public HEOrbitalObjTreeNode RootNode { get; set; } = null;
+        public HEGameData GameData { get; set; } = null;
 
-        public bool IsFileReady { get; private set; }
-        public bool LoadError { get; private set; }
-        public bool IsFileDirty { get; private set; }
-        public bool LogToDebug { get; set; }
-        public bool UseScenes { get; set; } // all the scenes stuff is defunct and unless it can be reused, removed
-        // Define a custom tree node to become the root node for the Nav Tree
-        public HEOrbitalObjTreeNode NavRootNode { get; private set; }
-        // Define a custom tree node to become the root node for the Solar System tree
-        public HEOrbitalObjTreeNode SolarSystemRootNode { get; private set; }
-        // Define a custom tree node to become the root node for the Data tree
-        public HETreeNode GameDataRootNode { get; private set; }
-        public HETreeNode DataFilesRootNode { get; private set; }
-        public HETreeNode SaveFileRootNode { get; private set; }
-
-
-        // Define a custom tree node to become the root node for the Search Results tree
-        public HETreeNode SearchResultsRootNode { get; private set; }
-        // Define the HEJsonFile object that holds the .save data file
-        public HEJsonGameFile MainFile { get; set; }
-
-
-        public HEnewDocumentWorkspace()
+        public HESolarSystem(HEGameData gameData)
         {
             // Basic constructor
-            //FileName = "";
-            IsFileReady = false;
-            LoadError = false;
-            IsFileDirty = false;
-            LogToDebug = false;
-            UseScenes = false;
 
-            SolarSystemRootNode = null;
+            RootNode = new HEOrbitalObjTreeNode("SOLARSYSTEMVIEW", HETreeNodeType.SolarSystemView, "Solar System")
+            {
+                GUID = -1 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to the Solar System root node
+            };
 
-            MainFile = new HEJsonGameFile();
+            if (gameData != null)
+            {
+                // Store a reference to the GameData object
+                GameData = gameData;
+
+                // Create Solar System hierarchical structure from the Celestial Bodies
+                BuildSolarSystem();
+
+            }
+            else throw new Exception();
 
         }
 
-        public void BuildSolarSystem(HEOrbitalObjTreeNode nStartingPoint)
+        public void Close()
         {
-            // Builds a tree of nodes representing the solar system and attaches it to the Starting Point on an existing node tree
-            //AddCBTreeNodesRecursively(DataFileCelestialBodies.JData, nThisNode: nStartingPoint, lParentGUID: -1, iDepth: 10, bLogToDebug: LogToDebug);
+            RootNode = null;
+        }
+
+        public void BuildSolarSystem()
+        {
+            // Builds a tree of nodes representing the solar system and attaches it to the RootNode, then
+            // calls the PopulateOrbitalObjects helper with types Asteroid, Ship (includes modules), and players
+
+            // Get the CelestialBodies.json data
+
+            if (GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEJsonBaseFile tempJsonBaseFile))
+            {
+                AddCBTreeNodesRecursively((JArray)tempJsonBaseFile.JData, nThisNode: RootNode, lParentGUID: -1, iDepth: 4);
+
+                PopulateOrbitalObjects(HETreeNodeType.Asteroid, bLogToDebug: true);
+                PopulateOrbitalObjects(HETreeNodeType.Ship);
+                RehydrateDockedShips();
+                PopulateOrbitalObjects(HETreeNodeType.Player);
+                RootNode.UpdateCounts();
+
+            }
+            else
+            {
+                throw new Exception();
+            }
 
         } // End of BuildSolarSystem()
 
@@ -127,69 +131,32 @@ namespace HELLION.DataStructures
                             LongitudeOfAscendingNode = (double)cbChild["LongitudeOfAscendingNode"]
                         };
 
-                        // Set up a new custom TreeNode which will be added to the node tree
-                        HEOrbitalObjTreeNode nChildNode = new HEOrbitalObjTreeNode()
-                        {
-                            Name = (string)cbChild["Name"], // GUID.ToString();
-                            NodeType = HETreeNodeType.CelestialBody,
-                            GUID = (long)cbChild["GUID"],
+                        // Figure out whether this is the star, a planet, or a moon
 
+                        HETreeNodeType newNodeType = HETreeNodeType.SolSysMoon; // Default to a moon
+                        if (Data.ParentGUID == -1) // It's the star
+                            newNodeType = HETreeNodeType.SolSysStar;
+                        else if (Data.ParentGUID == 1) // It's parent is the star, it's a planet
+                            newNodeType = HETreeNodeType.SolSysPlanet;
+
+                        // Set up a new custom TreeNode which will be added to the node tree
+                        HEOrbitalObjTreeNode nChildNode = new HEOrbitalObjTreeNode((string)cbChild["Name"], newNodeType)
+                        {
+                            //Name = (string)cbChild["Name"], // GUID.ToString();
+                            //NodeType = HETreeNodeType.CelestialBody,
+                            GUID = (long)cbChild["GUID"],
 
                             ParentGUID = (long)cbChild["ParentGUID"],
                             SemiMajorAxis = (double)cbChild["SemiMajorAxis"],
                             Inclination = (double)cbChild["Inclination"],
                             OrbitData = Data,
 
-
-                            //OrbitData
-                            Text = (string)cbChild["Name"],
                             Tag = cbChild,
-                            ImageIndex = HEUtilities.GetImageIndexByNodeType(HETreeNodeType.CelestialBody),
-                            SelectedImageIndex = HEUtilities.GetImageIndexByNodeType(HETreeNodeType.CelestialBody)
                         };
 
-
-                        // maybe more changes needed here \/  \/  \/
-
-
-                        //Check to see if nThisNode is null and lParentGUI is -1 representing a root node which gets handled differently
-                        if (nThisNode == null && lParentGUID == -1) // <<<<< Possibly defunct
-                        {
-                            // nThisNode was null, create root node, should only happen once  
-                            if (bLogToDebug)
-                            {
-                                Debug.Print("Creating ROOT Star node");
-                                nChildNode.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
-                                nChildNode.SelectedImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
-                                SolarSystemRootNode = nChildNode;
-                            }
-                        }
-                        else if (nThisNode != null)
-                        {
-                            // nThisNode was not null, create child node, normal method of operation
-
-                            // Check if it's the star rather than other planets
-                            if (lParentGUID == -1)
-                            {
-                                // The HELLION solar system root is the star, Hellion, and has a ParentGUID of -1
-                                // Create Star with different icon
-                                if (bLogToDebug)
-                                {
-                                    Debug.Print("Creating Star node");
-                                }
-                                nChildNode.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
-                                nChildNode.SelectedImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
-
-                            }
-                            else if (bLogToDebug)
-                            {
-                                Debug.Print("Creating CHILD node");
-                            }
-
-                            // Add the node
+                        // Add the node
+                        if (nThisNode != null)
                             nThisNode.Nodes.Add(nChildNode);
-
-                        }
 
                         // Recursive call here
                         if (bLogToDebug)
@@ -215,7 +182,8 @@ namespace HELLION.DataStructures
             }
         } // end of AddCBTreeNodesRecursively
 
-        public void PopulateOrbitalObjects(HETreeNodeType ntAddNodesOfType, bool bAddScenes, bool bLogToDebug = false)
+
+        public void PopulateOrbitalObjects(HETreeNodeType ntAddNodesOfType, bool bAddScenes = false, bool bLogToDebug = false)
         {
             // Populates a given node tree with objects of a given type from the .save file
 
@@ -247,15 +215,16 @@ namespace HELLION.DataStructures
 
                     // We've got a valid section name, proceed with selection of objects of specified type
 
-                    IOrderedEnumerable<JToken> ioFilteredObjects = from s in MainFile.JData[sSectionName]
+                    IOrderedEnumerable<JToken> ioFilteredObjects = from s in GameData.SaveFile.JData[sSectionName]
                                                                    orderby (long)s["OrbitData"]["ParentGUID"], (long)s["OrbitData"]["SemiMajorAxis"]
+                                                                   //(long)s["DockedToShipGUID"] != null ? (long)s["DockedToShipGUID"] : 0
                                                                    select s;
 
-                    foreach (var jtFiltObj in ioFilteredObjects)
+                    //iShipCount 
+                    int a = ioFilteredObjects.Count<JToken>();
+                    if (bLogToDebug)
                     {
-                        iShipCount++;
-
-                        if (bLogToDebug)
+                        foreach (var jtFiltObj in ioFilteredObjects)
                         {
                             StringBuilder sb = new StringBuilder();
 
@@ -287,16 +256,17 @@ namespace HELLION.DataStructures
                     }
 
 
+
                     // start traversing the node tree recursively, starting from the root and adding children depth-first as it progresses
-                    AddOrbitalObjTreeNodesRecursively(ioFilteredObjects, SolarSystemRootNode, ntAddNodesOfType, bAddScenes, iMaxRecursionDepth, LogToDebug, iLogIndentLevel: 1);
+                    AddOrbitalObjTreeNodesRecursively(ioFilteredObjects, RootNode, ntAddNodesOfType, bAddScenes, iMaxRecursionDepth, bLogToDebug: bLogToDebug, iLogIndentLevel: 1);
 
                     // Parses the tree of nodes looking for ships/modules that have a DockedToShipGUID value that's not null/empty
-                    // and re-parents them to the appropriate node with the 
+                    // and re-parents them to the appropriate node
 
                     if (ntAddNodesOfType == HETreeNodeType.Ship)
                     {
                         // Call the routine to collapse docked stations
-                        //FlattenDockedShipNodesRecursively(SolarSystemRootNode, iMaxRecursionDepth, true, iLogIndentLevel: 1);
+                        //FlattenDockedShipNodesRecursively(RootNode, iMaxRecursionDepth, false, iLogIndentLevel: 1);
                     }
 
 
@@ -308,7 +278,7 @@ namespace HELLION.DataStructures
 
                     // We are dealing with player objects which are handled slightly differently
 
-                    IOrderedEnumerable<JToken> ioPlayerObjects = from s in MainFile.JData[sSectionName]
+                    IOrderedEnumerable<JToken> ioPlayerObjects = from s in GameData.SaveFile.JData[sSectionName]
                                                                  orderby (long)s["ParentGUID"] ///, (long)s["OrbitData"]["SemiMajorAxis"]
                                                                  select s;
 
@@ -319,7 +289,7 @@ namespace HELLION.DataStructures
                     }
 
                     // start traversing the node tree recursively, starting from the root and adding children depth-first as it progresses
-                    AddOrbitalObjTreeNodesRecursively(ioPlayerObjects, SolarSystemRootNode, ntAddNodesOfType, bAddScenes, iMaxRecursionDepth, LogToDebug, iLogIndentLevel: 1);
+                    AddOrbitalObjTreeNodesRecursively(ioPlayerObjects, RootNode, ntAddNodesOfType, bAddScenes, iMaxRecursionDepth, bLogToDebug: bLogToDebug);
 
 
                     break;
@@ -331,13 +301,13 @@ namespace HELLION.DataStructures
         } // End of PopulateOrbitalObjects
 
         public void AddOrbitalObjTreeNodesRecursively(
-            IOrderedEnumerable<JToken> openFileData,
-            HEOrbitalObjTreeNode nThisNode,
-            HETreeNodeType ntAddNodesOfType,
-            bool bAddScenes,
-            int iDepth,
-            bool bLogToDebug = false,
-            int iLogIndentLevel = 0)
+        IOrderedEnumerable<JToken> JData,
+        HEOrbitalObjTreeNode nThisNode,
+        HETreeNodeType ntAddNodesOfType,
+        bool bAddScenes,
+        int iDepth,
+        bool bLogToDebug = false,
+        int iLogIndentLevel = 0)
         {
             // Primary recursive function for adding game objects (but not celestial bodies) as nodes to the Nav Tree.
 
@@ -345,7 +315,7 @@ namespace HELLION.DataStructures
             string sIndent = String.Join("| ", new String[iLogIndentLevel]);
 
             // Get the index of the image associated with this node type
-            int iImageIndex = HEUtilities.GetImageIndexByNodeType(ntAddNodesOfType);
+            //int iImageIndex = HEUtilities.GetImageIndexByNodeType(ntAddNodesOfType);
 
             // nThisNode prepresents the point at which this function starts from
             //Check and only continue if nThisNode is not null
@@ -381,26 +351,36 @@ namespace HELLION.DataStructures
                     }
 
                     // Define an IEnumerable object to hold this node's children
-                    IEnumerable<HEOrbitalObjTreeNode> IThisNodesChildren = null;
+                    IEnumerable<HEOrbitalObjTreeNode> thisNodesChildren = null;
 
                     if (ntAddNodesOfType == HETreeNodeType.Player)
                     {
                         // Get all nodes as we're adding a player object
-                        IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>();
+                        thisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>();
                     }
                     else
                     {
                         // Get the child nodes that are Celestial Bodies
-                        IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => p.NodeType == HETreeNodeType.CelestialBody);
+                        thisNodesChildren = nThisNode.Nodes
+                            .Cast<HEOrbitalObjTreeNode>().Where(p =>
+                            p.NodeType == HETreeNodeType.SolarSystemView ||
+                            p.NodeType == HETreeNodeType.SolSysStar ||
+                            p.NodeType == HETreeNodeType.SolSysPlanet ||
+                            p.NodeType == HETreeNodeType.SolSysMoon);
+                    }
+
+                    if (bLogToDebug)
+                    {
+                        Debug.Print(sIndent + "{0} child nodes were celestial bodies", thisNodesChildren.Count());
                     }
 
                     // Check for child nodes and recurse to each in turn - this is done before creating objects at this level
-                    if (IThisNodesChildren.Count() > 0)
+                    if (thisNodesChildren.Count() > 0)
                     {
                         // There are child nodes (celcetial bodies) to process
 
                         // Loop through each child body in the iCelestialBodies list and RECURSE
-                        foreach (HEOrbitalObjTreeNode nChildNode in IThisNodesChildren)
+                        foreach (HEOrbitalObjTreeNode nChildNode in thisNodesChildren)
                         {
                             if (bLogToDebug)
                             {
@@ -421,7 +401,7 @@ namespace HELLION.DataStructures
                                 Debug.Print(sIndent + ">> Call: AddOrbitalObjTreeNodesRecursively with GUID: " + nChildNode.GUID);
                                 Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                             }
-                            AddOrbitalObjTreeNodesRecursively(openFileData, nChildNode, ntAddNodesOfType, bAddScenes, iDepth - 1, bLogToDebug, iLogIndentLevel + 1);
+                            AddOrbitalObjTreeNodesRecursively(JData, nChildNode, ntAddNodesOfType, bAddScenes, iDepth - 1, bLogToDebug, iLogIndentLevel + 1);
 
                             if (bLogToDebug)
                             {
@@ -443,9 +423,10 @@ namespace HELLION.DataStructures
                         case HETreeNodeType.Ship:
                             {
                                 // Process Ships and Asteroids similarly
+                                Debug.Print("GOT HERE 1");
 
                                 // Find the OrbitalObjects for this ParentGUID
-                                IOrderedEnumerable<JToken> ioOrbitalObjects = from s in openFileData
+                                IOrderedEnumerable<JToken> ioOrbitalObjects = from s in JData
                                                                               where (long)s["OrbitData"]["ParentGUID"] == nThisNode.GUID
                                                                               orderby (long)s["OrbitData"]["SemiMajorAxis"]
                                                                               select s;
@@ -470,7 +451,7 @@ namespace HELLION.DataStructures
                                         LongitudeOfAscendingNode = (double)jtOrbitalObject["OrbitData"]["LongitudeOfAscendingNode"]
                                     };
 
-                                    string sObjectName;
+                                    string sObjectName; // = HEJsonBaseFile.GenerateDisplayName((JObject)jtOrbitalObject);
                                     // Build the node names for ships differently
                                     if (ntAddNodesOfType == HETreeNodeType.Ship)
                                     {
@@ -481,20 +462,17 @@ namespace HELLION.DataStructures
                                         sObjectName = (string)jtOrbitalObject["Name"];
                                     }
 
+                                    Debug.Print("GOT HERE 2 " + sObjectName);
+
                                     // Create a new TreeNode representing the object we're adding
-                                    HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
+                                    HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode(sObjectName, ntAddNodesOfType)
                                     {
-                                        Name = sObjectName,
-                                        NodeType = ntAddNodesOfType,
-                                        Text = sObjectName,
                                         GUID = (long)jtOrbitalObject["GUID"],
                                         ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
                                         SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
                                         Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"],
                                         // Generate the foreground colour
                                         //ForeColor = ConvertStringToColor((string)jtOrbitalObject["Name"]),
-                                        ImageIndex = iImageIndex,
-                                        SelectedImageIndex = iImageIndex,
                                         SceneID = (int)jtOrbitalObject["SceneID"],
                                         Type = (int)jtOrbitalObject["Type"],
                                         OrbitData = OrbitalObjectData,
@@ -513,104 +491,10 @@ namespace HELLION.DataStructures
                                     if (testToken != null)
                                         nodeOrbitalObject.DockedToPortID = (int)jtOrbitalObject["DockedToPortID"];
 
+                                    Debug.Print("GOT HERE 3 {0}-{1}-{2}", nodeOrbitalObject.Name, nodeOrbitalObject.GUID, nodeOrbitalObject.ParentGUID);
 
-                                    // Set Image index for the node we're adding
-                                    switch (ntAddNodesOfType)
-                                    {
-                                        //case HETreeNodeType.Asteroid:
-                                        //nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
-                                        //nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
-                                        //break;
-                                        case HETreeNodeType.Ship:
-                                            //nodeOrbitalObject.ImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
-                                            //nodeOrbitalObject.SelectedImageIndex = (int)HEObjectTypesImageList.AzureLogicApp_16x;
-
-                                            if ((string)jtOrbitalObject["OrbitData"]["VesselID"] != "")
-                                            {
-                                                //OrbitalObjectData.VesselID = (long)jtOrbitalObject["OrbitData"]["VesselID"];
-                                            }
-
-                                            if ((string)jtOrbitalObject["OrbitData"]["VesselType"] != "")
-                                            {
-                                                //OrbitalObjectData.VesselType = (long)jtOrbitalObject["OrbitData"]["VesselType"];
-                                            }
-
-                                            break;
-
-                                    };
-
-                                    // Define a node to represent where we're adding the new node to
-                                    // This also becomes the Scene node if we're creating one
-                                    HEOrbitalObjTreeNode nodeMountPoint = null;
-
-                                    // Branching logic determining whether we're adding a node to a scene or a celestial body
-                                    if (bAddScenes)
-                                    {
-
-                                        //Find out if a Scene node exists for this jtOrbitalObject
-
-                                        // Get the child nodes that are Scenes, if any, and filter by SceneID
-                                        IEnumerable<HEOrbitalObjTreeNode> IThisNodesScenes = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>()
-                                            .Where(p => (p.NodeType == HETreeNodeType.Scene) & (p.SceneID == (int)jtOrbitalObject["SceneID"]));
-
-                                        if (IThisNodesScenes.Count() > 0)
-                                        {
-                                            // We found a match, scene node already exists, select it
-                                            nodeMountPoint = IThisNodesScenes.First();
-
-                                            if (bLogToDebug)
-                                            {
-                                                Debug.Print(sIndent + "Using existing scene node SceneID {0}", nodeMountPoint.Text);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // No match found, create a Scene node to hold the jtOrbitalObject
-
-                                            int iSceneImageIndex = HEUtilities.GetImageIndexByNodeType(HETreeNodeType.Scene);
-
-
-                                            // Set up a new TreeNode for the scene which will be added to the node tree ahead of the object node
-                                            nodeMountPoint = new HEOrbitalObjTreeNode()
-                                            {
-                                                Name = "SceneID_" + (string)jtOrbitalObject["SceneID"],
-                                                NodeType = HETreeNodeType.Scene,
-                                                Text = "Scene " + (string)jtOrbitalObject["SceneID"],
-                                                //GUID = (long)jtOrbitalObject["GUID"],
-                                                ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
-                                                SemiMajorAxis = (double)jtOrbitalObject["OrbitData"]["SemiMajorAxis"],
-                                                Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"],
-                                                // Generate the foreground colour
-                                                ForeColor = ConvertStringToColor("SceneID_" + (string)jtOrbitalObject["Name"]),
-                                                SceneID = (int)jtOrbitalObject["SceneID"],
-                                                Type = (int)jtOrbitalObject["Type"],
-                                                OrbitData = OrbitalObjectData.Clone(), // use the custom Clone method to clone the OrbitalData object instead of redefining
-                                                ImageIndex = iSceneImageIndex,
-                                                SelectedImageIndex = iSceneImageIndex
-
-                                                //Tag = jtOrbitalObject
-                                            };
-
-                                            if (bLogToDebug)
-                                            {
-                                                Debug.Print(sIndent + "Creating new scene node SceneID {0}", nodeMountPoint.Text);
-                                            }
-
-                                            // Add the nodeScene node to the nThisNode.Nodes collection
-                                            nThisNode.Nodes.Add(nodeMountPoint);
-
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // We're not adding objects by scenes so set the mount point to the parent
-                                        nodeMountPoint = nThisNode;
-                                    }
-
-
-                                    // Continue processing the Orbital Object
                                     // add the node
-                                    nodeMountPoint.Nodes.Add(nodeOrbitalObject);
+                                    nThisNode.Nodes.Add(nodeOrbitalObject);
 
                                 } // End of foreach (var jtOrbitalObject in ioOrbitalObjects)
 
@@ -627,7 +511,7 @@ namespace HELLION.DataStructures
                                     //
 
                                     // Find the OrbitalObjects for this ParentGUID
-                                    IOrderedEnumerable<JToken> ioPlayerObjects = from s in openFileData
+                                    IOrderedEnumerable<JToken> ioPlayerObjects = from s in JData
                                                                                  where (long)s["ParentGUID"] == nThisNode.GUID
                                                                                  orderby (long)s["GUID"]
                                                                                  select s;
@@ -641,16 +525,16 @@ namespace HELLION.DataStructures
                                         }
 
                                         // Set up a new TreeNode which will be added to the node tree
-                                        HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode()
+                                        HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode((string)jtPlayerObject["Name"], ntAddNodesOfType)
                                         {
-                                            Name = (string)jtPlayerObject["Name"],
-                                            NodeType = ntAddNodesOfType,
-                                            Text = (string)jtPlayerObject["Name"],
+                                            //Name = (string)jtPlayerObject["Name"],
+                                            //NodeType = ntAddNodesOfType,
+                                            //Text = (string)jtPlayerObject["Name"],
                                             GUID = (long)jtPlayerObject["GUID"],
                                             //ParentGUID = (long)jtPlayerObject["ParentGUID"],
                                             Tag = jtPlayerObject,
-                                            ImageIndex = (int)HEObjectTypesImageList.Actor_16x,
-                                            SelectedImageIndex = (int)HEObjectTypesImageList.Actor_16x
+                                            //ImageIndex = (int)HEObjectTypesImageList.Actor_16x,
+                                            //SelectedImageIndex = (int)HEObjectTypesImageList.Actor_16x
                                         };
 
                                         //Check and only continue if nThisNode is not null
@@ -705,13 +589,53 @@ namespace HELLION.DataStructures
         } // end of AddOrbitalObjTreeNodesRecursively
 
 
+        public void RehydrateDockedShips()
+        {
+            // Although this particular function is non-recursive, recursive calls are made
+            // when calling the HETreeNode.GetAllNodes() to get sub-nodes
+
+            Debug.Print("Commencing rehydration of docked ships...");
+            IEnumerable<HEOrbitalObjTreeNode> shipsToBeReparented = RootNode.GetAllNodes()
+                .Cast<HEOrbitalObjTreeNode>()
+                .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
+
+            foreach (HEOrbitalObjTreeNode node in shipsToBeReparented)
+            {
+                Debug.Print(node.Text);
+
+                if (node.DockedToShipGUID != 0)
+                {
+                    // This node has a non-zero value for DockedToShipGUID, so it's going to process it
+
+                    // Find the node that has the GUID matching the DockedToShipGUID of this node
+                    HEOrbitalObjTreeNode newParentNode = RootNode.GetAllNodes()
+                        .Cast<HEOrbitalObjTreeNode>()
+                        .Where(p => p.GUID == node.DockedToShipGUID)
+                        .Single();
+
+                    // Remove the ship to be re-parented from it's parent node collection
+                    node.Parent.Nodes.Remove(node);
+                    // Add the ship being re-parented to the parent's node collection
+                    newParentNode.Nodes.Add(node);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
+            }
+
+
+        }
+
+
         public void FlattenDockedShipNodesRecursively(
             HEOrbitalObjTreeNode nThisNode,
-            int iDepth,
+            int iDepth = 20,
             bool bLogToDebug = false,
             int iLogIndentLevel = 0)
         {
-            // Breadth-first recursive function for implemening flattening of docked ship groups
+            // Breadth-first recursive function for implementing flattening of docked ship groups
 
             // Set up indenting for this level
             string sIndent = String.Join("| ", new String[iLogIndentLevel]);
@@ -748,18 +672,19 @@ namespace HELLION.DataStructures
                     }
 
                     // Define an IEnumerable object to hold this node's children
-                    IEnumerable<HEOrbitalObjTreeNode> IThisNodesChildren = null;
-
-                    // Get the child nodes that are Celestial Bodies
-                    IThisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => p.NodeType == HETreeNodeType.CelestialBody);
+                    IEnumerable<HEOrbitalObjTreeNode> thisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p =>
+                            p.NodeType == HETreeNodeType.SolarSystemView ||
+                            p.NodeType == HETreeNodeType.SolSysStar ||
+                            p.NodeType == HETreeNodeType.SolSysPlanet ||
+                            p.NodeType == HETreeNodeType.SolSysMoon);
 
                     // Check for child nodes and recurse to each in turn - this is done before processing objects at this level
-                    if (IThisNodesChildren.Count() > 0)
+                    if (thisNodesChildren.Count() > 0)
                     {
                         // There are child nodes (celcetial bodies) to process
 
                         // Loop through each child body in the iCelestialBodies list and RECURSE
-                        foreach (HEOrbitalObjTreeNode nChildNode in IThisNodesChildren)
+                        foreach (HEOrbitalObjTreeNode nChildNode in thisNodesChildren)
                         {
                             if (bLogToDebug)
                             {
@@ -789,12 +714,8 @@ namespace HELLION.DataStructures
 
                     // Process this node's ships
 
-                    // Define an IEnumerable object to hold this node's children
-                    IEnumerable<HEOrbitalObjTreeNode> IShipsToReParent = null;
-
-                    // Get the child nodes that are Ships and have a DockedToShipGUID
-                    IShipsToReParent = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>()
-                        .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
+                    // Define an IEnumerable object to hold this node's children that are Ships and have a DockedToShipGUID
+                    IEnumerable<HEOrbitalObjTreeNode> IShipsToReParent = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
 
                     // Check for child nodes and recurse to each in turn - this is done before processing objects at this level
                     if (IShipsToReParent.Count() > 0)
@@ -806,13 +727,20 @@ namespace HELLION.DataStructures
                         // Loop through each child body in the iCelestialBodies list and RECURSE
                         foreach (HEOrbitalObjTreeNode nShipToReparent in IShipsToReParent)
                         {
-                            DockingParents = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(n => n.GUID == nShipToReparent.DockedToShipGUID);
-                            foreach (HEOrbitalObjTreeNode DockingParent in DockingParents)
+                            if (nShipToReparent.DockedToShipGUID > 0)
                             {
-                                // Only process the first, there should only be one match anyway
-                                // Add the ship being re-parented to the parent's node collection
-                                DockingParent.Nodes.Add(nShipToReparent);
+
+                                DockingParents = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(n => n.GUID == nShipToReparent.DockedToShipGUID);
+                                foreach (HEOrbitalObjTreeNode DockingParent in DockingParents)
+                                {
+                                    // Only process the first, there should only be one match anyway
+                                    // Remove the ship to be re-parented from it's parent node collection
+                                    nShipToReparent.Parent.Nodes.Remove(nShipToReparent);
+                                    // Add the ship being re-parented to the parent's node collection
+                                    DockingParent.Nodes.Add(nShipToReparent);
+                                }
                             }
+
                         }
 
 
@@ -842,196 +770,8 @@ namespace HELLION.DataStructures
         } // end of FlattenDockedShipNodesRecursively
 
 
-        public ListView.ListViewItemCollection PopulateJsonListViewItemCollection(JContainer JData)
-        {
-            // Handler routine for deserialising JSON data to a ListViewItemCollection to be
-            // passed back to the listview control.
-
-            // Define a collection of ListViewItems - this is what gets filled and returned
-            ListView.ListViewItemCollection collection = null;
-
-            // Set up a temporary ListView to act as the parent for the collection
-            using (ListView tempListView = new ListView())
-            {
-                // Create the new collection, parented on the temporary ListView
-                collection = new ListView.ListViewItemCollection(tempListView);
-
-                // Call the recursive routine to start adding items to the collection recursively
-                // AddListViewItemsToParentRecursively(JData, collection, iDepth: 0, bLogToDebug: true);
-            }
-            return collection;
-        } // End of PopulateJsonListViewItemCollection
-
-        public bool LoadFile()
-        {
-            // Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
-            // Returns true if there was a loading error
-
-            if (MainFile.File.Exists)
-            {
-                // old - Apply the LogToDebug setting to all HEJsonFile objects
-                // old - recurse and apply the LogToDebug to objects
-                
-                MainFile.LogToDebug = LogToDebug;
-                //Load Main File
-                MainFile.LoadFile();
+        
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                // Load supplementary data files.
-                // The Celestial Bodies file is CRITICAL - it provides the framework for the all orbital objects in the save file
-
-                // new code in here
-
-
-
-                // Boolean OR the load errors to catch if a LoadError was detected
-
-                // Report on errors if LogToDebug is true
-                if (LoadError && LogToDebug)
-                {
-                }
-                
-
-                IsFileReady = true;
-
-                // need to change mouse cursor here
-
-                string noDataMessageTag = "{" + Environment.NewLine + "  \"Message\": \"No data available for this view\"" + Environment.NewLine + "}";
-
-
-                // Set up a new custom TreeNode which will be added to the node tree
-                SolarSystemRootNode = new HEOrbitalObjTreeNode()
-                {
-                    Name = "NAV_SolarSystem",
-                    NodeType = HETreeNodeType.SystemNAV,
-                    //GUID = (long)cbChild["GUID"],
-
-                    Text = "Solar System",
-                    Tag = noDataMessageTag,
-                    ImageIndex = (int)HEObjectTypesImageList.Share_16x,
-                    SelectedImageIndex = (int)HEObjectTypesImageList.Share_16x
-                };
-
-                // Build master node tree - the celestial bodies
-                BuildSolarSystem(SolarSystemRootNode);
-
-                // Add other orbital objects
-                PopulateOrbitalObjects(HETreeNodeType.Asteroid, bAddScenes: false, bLogToDebug: LogToDebug);
-                PopulateOrbitalObjects(HETreeNodeType.Ship, bAddScenes: false, bLogToDebug: LogToDebug);
-                PopulateOrbitalObjects(HETreeNodeType.Player, bAddScenes: false, bLogToDebug: LogToDebug);
-
-                // Update counts of nodes
-                SolarSystemRootNode.UpdateCounts();
-
-                // Define an int to represent the Document_16x ison, used by the FileData nodes
-                int iFileIconIndex = (int)HEObjectTypesImageList.Document_16x;
-
-                // Add Entry point for the game data tree
-                GameDataRootNode = new HETreeNode()
-                {
-                    Name = "NAV_GameData",
-                    Text = "Game Data",
-                    NodeType = HETreeNodeType.SystemNAV,
-                    Tag = noDataMessageTag,
-                    ImageIndex = iFileIconIndex,
-                    SelectedImageIndex = iFileIconIndex
-                };
-                //GameDataRootNode.Expand();
-
-                // Add Entry points for the data files
-                DataFilesRootNode = new HETreeNode()
-                {
-                    Name = "NAV_DataFiles",
-                    Text = "Data Files",
-                    NodeType = HETreeNodeType.SystemNAV,
-                    Tag = noDataMessageTag,
-                    ImageIndex = iFileIconIndex,
-                    SelectedImageIndex = iFileIconIndex
-                };
-                GameDataRootNode.Nodes.Add(DataFilesRootNode);
-
-                // Add Entry points for the save file
-                SaveFileRootNode = new HETreeNode()
-                {
-                    Name = "NAV_SaveFile",
-                    Text = "Save File",
-                    NodeType = HETreeNodeType.SystemNAV,
-                    Tag = noDataMessageTag,
-                    ImageIndex = iFileIconIndex,
-                    SelectedImageIndex = iFileIconIndex
-                };
-                GameDataRootNode.Nodes.Add(SaveFileRootNode);
-
-
-
-                //spawn rules defs etc need to be added here
-
-                // Add the nodes
-
-                // Add data from the save file
-
-                string mainFileTag = "{" + Environment.NewLine + "  \"File Path\": \"" + MainFile.File.Name + "\"" + Environment.NewLine + "}";
-
-
-
-
-                // Add the entry for search results
-                // Set up a new custom TreeNode which will be added to the node tree
-                SearchResultsRootNode = new HETreeNode()
-                {
-                    Name = "NAV_SearchResults",
-                    NodeType = HETreeNodeType.SystemNAV,
-                    //GUID = (long)cbChild["GUID"],
-
-                    //ParentGUID = (long)cbChild["ParentGUID"],
-                    //SemiMajorAxis = (double)cbChild["SemiMajorAxis"],
-                    //Inclination = (double)cbChild["Inclination"],
-                    //OrbitData = Data,
-                    //OrbitData
-                    Text = "Search Results",
-                    Tag = noDataMessageTag,
-                    ImageIndex = (int)HEObjectTypesImageList.FindResults_16x,
-                    SelectedImageIndex = (int)HEObjectTypesImageList.FindResults_16x
-                };
-            }
-            else
-            {
-                // Invalid file name
-                LoadError = true;
-
-                if (LogToDebug) Debug.Print("Invalid file name passed to HEDocumentWorkspace");
-
-            }
-
-            // Return the value of LoadError
-            return LoadError;
-        } // End of LoadFile()
-
-        public void CloseFile()
-        {
-            // Not yet implemented
-        }
-
-    } // End of class HEDocumentWorkspace
-} // End of namespace HELLION
+    }
+}

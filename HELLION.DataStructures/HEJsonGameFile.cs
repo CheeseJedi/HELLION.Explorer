@@ -15,33 +15,12 @@ namespace HELLION.DataStructures
 
     public class HEJsonGameFile : HEJsonBaseFile
     {
-        // Derived from the Base class for a generic JSON data file, but extended to encompass the functionality of
-        // the save file, plus the Static Data stored in the Data folder
-        
-        public HEJsonGameFile()
-        {
-            // Basic Constructor, calls the base class constructor
-            File = null;
-            JData = null;
-            IsFileLoaded = false;
-            IsFileWritable = false;
-            LoadError = false;
-            LogToDebug = false;
-            SkipLoading = false;
-            RootNode = new HETreeNode("DATAFILE", HETreeNodeType.SaveFile);
-        }
+        // Derived from the Base class for a generic JSON data file, but tweaked to encompass the functionality of
+        // the save file, plus the Static Data stored in the Data folder - primarily in how the data display is built
 
         public HEJsonGameFile(FileInfo PassedFileInfo)
         {
-            // Constructor that allows the file name to be set and triggers the load            
-            File = null;
-            JData = null;
-            IsFileLoaded = false;
-            IsFileWritable = false;
-            LoadError = false;
-            LogToDebug = false;
-            SkipLoading = false;
-            RootNode = null;
+            // Constructor that allows the file name to be set and triggers the load
             if (PassedFileInfo != null)
             {
                 File = PassedFileInfo;
@@ -52,7 +31,7 @@ namespace HELLION.DataStructures
             }
         }
 
-        
+        /*
         public new void LoadFile()
         {
             // Placeholder load routine for the this class
@@ -72,7 +51,7 @@ namespace HELLION.DataStructures
             base.SaveFile();
             // Run POST operations after here
         }
-        
+        */
 
         public new void PopulateNodeTree()
         {
@@ -80,8 +59,6 @@ namespace HELLION.DataStructures
             HETreeNode tn = BuildHETreeNodeTreeFromJson(JData, maxDepth: 5, collapseJArrays: false);
             RootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
         }
-
-
 
 
     } // End of class HEGameFile

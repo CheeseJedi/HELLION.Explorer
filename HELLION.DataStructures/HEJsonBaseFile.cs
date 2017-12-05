@@ -19,39 +19,30 @@ namespace HELLION.DataStructures
 
     public class HEJsonBaseFile
     {
-        // Base class for a generic JSON data file
-        public FileInfo File { get; set; }
-        public JToken JData { get; set; }
-        public HETreeNode RootNode { get; set; }
-        public bool IsFileLoaded { get; set; }
-        public bool IsFileWritable { get; set; }
-        public bool LoadError { get; set; }
-        public bool SkipLoading { get; set; }
-        public bool LogToDebug { get; set; }
-        
-        public HEJsonBaseFile()
-        {
-            // Basic Constructor
-            File = null;
-            JData = null;
-            IsFileLoaded = false;
-            IsFileWritable = false;
-            LoadError = false;
-            SkipLoading = false;
-            LogToDebug = false;
+        // Base class for a generic JSON data file - used directly in the HEStaticDataFileCollection
+        public FileInfo File { get; set; } = null;
+        public JToken JData { get; set; } = null;// this will probably need a custom getter + setter once we get in to saving data
+        public HETreeNode RootNode { get; set; } = null;
+        public bool IsLoaded { get; set; } = false;
+        public bool IsFileWritable { get; set; } = false;
+        public bool IsDirty { get; set; } = false;
+        public bool LoadError { get; set; } = false;
+        public bool SkipLoading { get; set; } = false;
+        public bool LogToDebug { get; set; } = false;
 
-            RootNode = null; // new HETreeNode("DATAFILE", HETreeNodeType.DataFile);
-        }
-        
+        public HEJsonBaseFile()
+        { }
+
         public HEJsonBaseFile(FileInfo PassedFileInfo)
         {
             // Constructor that allows the FileInfo to be passed
+            /*
             JData = null;
-            IsFileLoaded = false;
+            IsLoaded = false;
             LoadError = false;
             SkipLoading = false;
             LogToDebug = false;
-
+            */
             if (PassedFileInfo != null)
             {
                 File = PassedFileInfo;
@@ -113,8 +104,8 @@ namespace HELLION.DataStructures
                             else
                                 Debug.Print("ERROR: JData is detected as neither an ARRAY or OBJECT!");
                         }
-                        // Set the IsFileLoaded flag to true
-                        IsFileLoaded = true;
+                        // Set the IsLoaded flag to true
+                        IsLoaded = true;
                     }
                 }
                 else
@@ -174,17 +165,37 @@ namespace HELLION.DataStructures
             else
             {
                 // We should have some data in the array
-                IsFileDirty = false;
+                IsDirty = false;
             }
 
             */
 
         } // End of SaveFile()
 
+        public bool Close()
+        {
+            // Handles closing of this file, and de-allocation of it's objects
+
+            if (IsDirty)
+            {
+                return false; // indicates a problem and can't close
+            }
+            else
+            {
+                // Not dirty, ok to close everything
+                IsLoaded = false;
+                File = null;
+                JData = null;
+                RootNode = null;
+                return true;
+            }
+        }
+
+
         public void MakeReadWrite()
         {
             // Changes the IsFileWritable to true - may need some additional checks here though
-            if (IsFileLoaded && !LoadError)
+            if (IsLoaded && !LoadError)
             {
                 IsFileWritable = true;
             }
@@ -226,7 +237,7 @@ namespace HELLION.DataStructures
 
             HETreeNodeType typeOfNode = HETreeNodeType.ExpansionAvailable;
 
-            if (IsFileLoaded && !LoadError)
+            if (IsLoaded && !LoadError)
             {
 
                 int iImageIndex = 0;
@@ -779,16 +790,14 @@ namespace HELLION.DataStructures
                                 newNodeName = GenerateDisplayName(tmpJObject).Trim();
                                 if (newNodeName == "")
                                 {
-                                    newNodeName = "Unnamed Object";
+                                    newNodeName = "Object";
                                 }
                                 
                             }
                             newNode = new HETreeNode(newNodeName, HETreeNodeType.JsonObject);
-                            
-
 
                             // Set the node's tag to the JObject
-                            //newNode.Tag = tmpJObject;
+                            newNode.Tag = tmpJObject;
 
                             // Process any child tokens - actually JProperties in the case of a JObject
                             // Count children
@@ -864,7 +873,7 @@ namespace HELLION.DataStructures
                                 }
                             }
                             // Set the node's tag to the JArray
-                            //newNode.Tag = tmpJArray;
+                            newNode.Tag = tmpJArray;
 
                             // Process any child tokens
                             int numChildTokens = json.Count<JToken>();
@@ -943,7 +952,7 @@ namespace HELLION.DataStructures
                                     }
                                 }
                                 // Set the node's tag to the JObject
-                                newNode.Tag = tmpJProperty ?? null;
+                                newNode.Tag = tmpJProperty;
 
                                 // Process value
 
@@ -1063,7 +1072,7 @@ namespace HELLION.DataStructures
         public void PopulateNodeTree()
         {
             // Populates the RootNode using the build function
-            HETreeNode tn = BuildHETreeNodeTreeFromJson(JData, maxDepth: 10, collapseJArrays: false);
+            HETreeNode tn = BuildHETreeNodeTreeFromJson(JData, maxDepth: 1, collapseJArrays: false);
             RootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
         }
 
@@ -1072,8 +1081,7 @@ namespace HELLION.DataStructures
             // Attempts to build a user-friendly name from available data in a JObject
             StringBuilder sb = new StringBuilder();
 
-            sb.Append((string)obj["Registration"] + " ");
-            sb.Append((string)obj["Name"]);
+            sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
             sb.Append((string)obj["GameName"]);
             sb.Append((string)obj["CategoryName"]);
             sb.Append((string)obj["name"]);
@@ -1083,6 +1091,7 @@ namespace HELLION.DataStructures
             sb.Append((string)obj["RuleName"]);
             sb.Append((string)obj["TierName"]);
             sb.Append((string)obj["GroupName"]);
+            if (sb.Length > 0) sb.Append(" ");
             sb.Append((string)obj["ItemID"]);
             return sb.ToString() ?? null;
         }

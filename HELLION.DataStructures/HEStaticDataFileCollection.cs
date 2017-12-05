@@ -10,92 +10,74 @@ namespace HELLION.DataStructures
 {
     public class HEStaticDataFileCollection
     {
-        // Defines a class to hold a collection of HEJsonBaseFiles representing the Static Data
-        public IEnumerable<HEJsonBaseFile> StaticData { get; set; } // The collection of static data files
-        public DirectoryInfo StaticDataFolder { get; set; } // The object representing the static Data folder
-        public bool IsCollectionLoaded { get; private set; }
-        public bool LoadError { get; private set; }
-        public HETreeNode RootNode { get; set; }
-
+        // Defines a class to hold a dictionary of HEJsonBaseFiles representing the Static Data
+        public Dictionary<string, HEJsonBaseFile> DataDictionary { get; set; } = null;// The collection of static data files
+        public DirectoryInfo StaticDataDirectoryInfo { get; set; } = null;// The object representing the static Data folder
+        public HETreeNode RootNode { get; set; } = null;
+        public bool IsLoaded { get; private set; } = false;
+        public bool LoadError { get; private set; } = false;
+        public bool IsDirty { get; set; } = false;
+        /*
         public HEStaticDataFileCollection()
         {
             // Basic constructor
-            StaticData = null;
-            StaticDataFolder = null;
-            IsCollectionLoaded = false;
+            DataDictionary = null;
+            StaticDataDirectoryInfo = null;
+            IsLoaded = false;
             RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder");
             
         }
-        /*
-        public HEStaticDataFileCollection(string passedFolderName)
-        {
-            // Constructor that takes a folder name
-            StaticData = null;
-            StaticDataFolder = null;
-            IsCollectionLoaded = false;
-            RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, "Data Folder");
-
-            // Check validity and if good load the data set
-            if (passedFolderName != "")
-            {
-                StaticDataFolder = new DirectoryInfo(passedFolderName);
-
-                if (StaticDataFolder.Exists)
-                    PopulateNodeTree();
-            }
-        }
         */
-        public HEStaticDataFileCollection(DirectoryInfo passedFolderInfo)
+        public HEStaticDataFileCollection(DirectoryInfo passedDirectoryInfo, bool autoPopulateTree = false)
         {
             // Constructor that takes a DirectoryInfo and loads
-            StaticData = null;
-            StaticDataFolder = null;
-            IsCollectionLoaded = false;
-            RootNode = null; ;
+            DataDictionary = new Dictionary<string, HEJsonBaseFile>();
 
             // Check validity and if good load the data set
-            if (passedFolderInfo != null)
+            if (passedDirectoryInfo != null && passedDirectoryInfo.Exists)
             {
-                StaticDataFolder = passedFolderInfo;
+                StaticDataDirectoryInfo = passedDirectoryInfo;
+                RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, nodeText: StaticDataDirectoryInfo.Name, nodeToolTipText: StaticDataDirectoryInfo.FullName);
 
-                if (StaticDataFolder.Exists)
-                {
-                    RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, nodeText: StaticDataFolder.Name, nodeToolTipText: StaticDataFolder.FullName);
-                    PopulateNodeTree();
-
-                }
+                Load(PopulateNodeTrees: autoPopulateTree);
+            }
+            else
+            {
+                RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, nodeText: StaticDataDirectoryInfo.Name + " [ERROR]", nodeToolTipText: StaticDataDirectoryInfo.FullName);
             }
         }
 
-
-
-        public /*async*/ void PopulateNodeTree()
+        public /*async*/ bool Load(bool PopulateNodeTrees = false)
         {
             // Loads the static data and builds the trees representing the data files
-            if (StaticDataFolder.Exists)
+            if (StaticDataDirectoryInfo.Exists)
             {
+                //RootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, nodeText: StaticDataDirectoryInfo.Name, nodeToolTipText: StaticDataDirectoryInfo.FullName);
+
                 // Set up a list to monitor tasks running asynchronously
-                List<Task> tasks = new List<Task>();
+                //List<Task> tasks = new List<Task>();
 
-
-
-
-                foreach (FileInfo dataFile in StaticDataFolder.GetFiles("*.json").Reverse())
+                foreach (FileInfo dataFile in StaticDataDirectoryInfo.GetFiles("*.json").Reverse())
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
-                    //HETreeNode tempNode = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: dataFile.Name, nodeToolTipText: dataFile.FullName);
-
                     // Create a new HEJsonBaseFile, populate the path and check validity before creating a new task
                     HEJsonBaseFile tempFile = new HEJsonBaseFile(dataFile);
-                    if (tempFile.IsFileLoaded && !LoadError)
+                    // Add the file to the DataDictionary List
+                    DataDictionary.Add(dataFile.Name, tempFile);
+
+                    if (tempFile.IsLoaded && !LoadError)
                     {
                         // Create and run new task to build the node tree asynchronously
                         //Task t = Task.Run(() => 
 
-                        tempFile.PopulateNodeTree();
+                        if (PopulateNodeTrees)
+                            tempFile.PopulateNodeTree();
+
                         if (tempFile.RootNode != null)
                             RootNode.Nodes.Add(tempFile.RootNode);
+                        else
+                            throw new Exception();
 
                         //HETreeNode tn = tempFile.BuildHETreeNodeTreeFromJson(tempFile.JData, maxDepth:10, collapseJArrays: false);
                         //if (tn != null)
@@ -106,6 +88,9 @@ namespace HELLION.DataStructures
                         // Add the task to the list so it can be monitored
                         //tasks.Add(t);
                     }
+                    else
+                        throw new Exception();
+
 
                     // Add tree node representing this file
                     //RootNode.Nodes.Add(tempNode);
@@ -114,11 +99,63 @@ namespace HELLION.DataStructures
 
                 //Task.WaitAll(tasks.ToArray());
                 //foreach (Task t in tasks)
-                    //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
+                //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
+                return true;
 
             }
+            else
+            {
+                return false;
+                throw new Exception();
+            }
+
+
         }
 
+        public bool Close()
+        {
+            // Handles closing of this collection of files, and de-allocation of it's objects
+
+            if (IsDirty)
+            {
+                return false; // indicates a problem and can't close
+            }
+            else
+            {
+                // Not dirty, ok to close everything
+                IsLoaded = false;
+                bool subFileCloseSuccess = true;
+
+                if (DataDictionary != null)
+                {
+                    foreach (KeyValuePair<string, HEJsonBaseFile> keyValuePair in DataDictionary)
+                    {
+                        HEJsonBaseFile jsonBaseFile = keyValuePair.Value;
+
+                        if (jsonBaseFile != null)
+                        {
+                            bool resultOk = jsonBaseFile.Close();
+                            if (!resultOk)
+                            {
+                                subFileCloseSuccess = false;
+                            }
+                            else
+                            {
+                                jsonBaseFile = null;
+                                // remove the jsonBaseFile from the list
+                                //DataDictionary.Remove(keyValuePair.Key);
+                            }
+                        }
+                    }
+                }
+                else
+                    DataDictionary = null;
+
+                StaticDataDirectoryInfo = null;
+                RootNode = null;
+                return subFileCloseSuccess;
+            }
+        }
 
 
     }

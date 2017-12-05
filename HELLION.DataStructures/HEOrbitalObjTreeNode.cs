@@ -8,33 +8,26 @@ namespace HELLION.DataStructures
 {
     public class HEOrbitalObjTreeNode : HETreeNode
     {
-        public string RealName { get; set; }
-        public long GUID { get; set; }
-        public long ParentGUID { get; set; }
-        public int SceneID { get; set; }
-        public int Type { get; set; }
-        public double SemiMajorAxis { get; set; }
-        public double Inclination { get; set; }
-        public HEOrbitalData OrbitData { get; set; }
-        public long DockedToShipGUID { get; set; }
-        public int DockedPortID { get; set; }
-        public int DockedToPortID { get; set; }
+        public string RealName { get; set; } = "";
+        public long GUID { get; set; } = 0;
+        public long ParentGUID { get; set; } = 0;
+        public int SceneID { get; set; } = 0;
+        public int Type { get; set; } = 0;
+        public double SemiMajorAxis { get; set; } = 0;
+        public double Inclination { get; set; } = 0;
+        public HEOrbitalData OrbitData { get; set; } = null;
+        public long DockedToShipGUID { get; set; } = 0;
+        public int DockedPortID { get; set; } = 0;
+        public int DockedToPortID { get; set; } = 0;
 
-        public HEOrbitalObjTreeNode()
+
+        // Constructor that takes a minimum of a name, but also optionally a type and text (display name) - calls the base constructor
+        public HEOrbitalObjTreeNode(string nodeName, HETreeNodeType nodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
+            : base(nodeName, nodeType, nodeText, nodeToolTipText)
         {
-            // Default constructor
-            NodeType = HETreeNodeType.Unknown;
-            RealName = "";
-            GUID = 0;
-            ParentGUID = 0;
-            SceneID = 0;
-            Type = 0;
-            SemiMajorAxis = 0;
-            Inclination = 0;
             OrbitData = new HEOrbitalData();
-            DockedToShipGUID = 0;
-            DockedPortID = 0;
-            DockedToPortID = 0;
         }
+
+
     } // End of class HETreeNode
 } // End of namespace HELLION.DataStructures

@@ -36,6 +36,8 @@ namespace HELLION.Explorer
         internal static bool bViewShowNavigationPane = true;
         internal static bool bViewShowDynamicList = true;
         internal static bool bViewShowInfoPane = true;
+        internal static DirectoryInfo dataDirectoryInfo = null;
+        internal static FileInfo saveFileInfo = null;
 
         internal static void CheckForUpdates()
         {
@@ -44,7 +46,7 @@ namespace HELLION.Explorer
 
             sb.Append(Environment.NewLine);
 
-            sb.Append("You're currently running version:");
+            sb.Append("Currently running version:");
             sb.Append(Environment.NewLine);
             sb.Append("v" + Application.ProductVersion);
             sb.Append(Environment.NewLine);
@@ -241,6 +243,15 @@ namespace HELLION.Explorer
         internal static void FileOpen(string sFileName = "")
         {
             // Loads a save file in to memory and processes it
+            // Make a note of the starting time
+            DateTime StartingTime = DateTime.Now;
+
+
+            // Check for an existing document and close it if necesary
+            if (docCurrent != null)
+            {
+                FileClose();
+            }
 
             // If the sFileName is set, check the file exists otherwise prompt the user to select a file
             if (sFileName == "")
@@ -249,7 +260,7 @@ namespace HELLION.Explorer
                 var openFileDialog1 = new OpenFileDialog()
                 {
                     Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
-                    Title = "Open file",
+                    Title = "Open .save file",
                     CheckFileExists = true
                 };
 
@@ -261,19 +272,26 @@ namespace HELLION.Explorer
             }
             else
             {
-                // We were passed a file name, check to see if it's actually there
+                // We were passed a file name from the command line, check to see if it's actually there
                 if (!System.IO.File.Exists(sFileName))
                 {
                     // The file name passed doesn't exist
-                    MessageBox.Show(String.Format("Error opening file:{0}{1}{0} from command line - file doesn't exist.", Environment.NewLine, sFileName));
+                    MessageBox.Show(String.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, sFileName));
                     
                     return;
                 }
             }
 
-            { 
+            saveFileInfo = new FileInfo(sFileName);
+            dataDirectoryInfo = new DirectoryInfo(Properties.HELLIONExplorer.Default.sGameDataFolder);
+
+            if (saveFileInfo.Exists && dataDirectoryInfo.Exists)
+            {
+                // Set the status strip message
+                frmMainForm.toolStripStatusLabel1.Text = ("Loading file: " + saveFileInfo.FullName);
+
                 // Update the main window's title text to reflect the filename selected
-                RefreshMainFormTitleText();
+                RefreshMainFormTitleText(saveFileInfo.FullName);
 
                 //Application.UseWaitCursor = true;
                 frmMainForm.Cursor = Cursors.WaitCursor;
@@ -284,22 +302,7 @@ namespace HELLION.Explorer
                 // Clear any existing nodes
                 //frmMainForm.treeView1.Nodes.Clear();
 
-                // Check for an existing document and close it if necesary
-                if (docCurrent != null)
-                {
-                    // Clear the existing document
-                    FileClose();
-                }
-
-                // Create a new DocumentWorkspace
-                docCurrent = new HEDocumentWorkspace()
-                {
-                    // Activates LogToDebug for docCurrent
-                    LogToDebug = bLogToDebug
-                };
-
-
-
+                /*
                 // Check that the Data folder path has been defined and the expected files are there
                 if (!IsGameDataFolderValid())
                 {
@@ -310,90 +313,29 @@ namespace HELLION.Explorer
                     frmMainForm.Cursor = Cursors.Default;
                     return;
                 }
-
+                */
 
                 // Grab the Game Data Folder from Properties
-                string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
+                //string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
 
-                docCurrent.MainFile.FileName = sFileName;
-                frmMainForm.toolStripStatusLabel1.Text = ("Loading file: " + docCurrent.MainFile.FileName);
+                //docCurrent.MainFile.FileName = sFileName;
 
-                if (Properties.HELLIONExplorer.Default.bLoadCelestialBodiesFile)
+                // Create a new DocumentWorkspace
+                docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo)
                 {
-                    docCurrent.DataFileCelestialBodies.FileName = (sGameDataFolder + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName);
-                }
-                else
-                {
-                    docCurrent.DataFileCelestialBodies.SkipLoading = true;
+                    // Activates LogToDebug for docCurrent
+                    //LogToDebug = bLogToDebug
+                };
 
-                }
+                frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
+                frmMainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
 
-                if (Properties.HELLIONExplorer.Default.bLoadAsteroidsFile)
-                {
-                    docCurrent.DataFileAsteroids.FileName = (sGameDataFolder + Properties.HELLIONExplorer.Default.sAsteroidsFileName);
-                }
-                else
-                {
-                    docCurrent.DataFileAsteroids.SkipLoading = true;
-                }
 
-                if (Properties.HELLIONExplorer.Default.bLoadStructuresFile)
-                {
-                    docCurrent.DataFileStructures.FileName = (sGameDataFolder + Properties.HELLIONExplorer.Default.sStructuresFileName);
-                }
-                else
-                {
-                    docCurrent.DataFileStructures.SkipLoading = true;
-                }
 
-                if (Properties.HELLIONExplorer.Default.bLoadDynamicObjectsFile)
-                {
-                    docCurrent.DataFileDynamicObjects.FileName = (sGameDataFolder + Properties.HELLIONExplorer.Default.sDynamicObjectsFile);
-                }
-                else
-                {
-                    docCurrent.DataFileDynamicObjects.SkipLoading = true;
-                }
+                // DO SOME OTHER STUFF HERE?
 
-                if (Properties.HELLIONExplorer.Default.bLoadModulesFile)
-                {
-                    docCurrent.DataFileModules.FileName = (sGameDataFolder + Properties.HELLIONExplorer.Default.sModulesFileName);
-                }
-                else
-                {
-                    docCurrent.DataFileModules.SkipLoading = true;
-                }
 
-                if (Properties.HELLIONExplorer.Default.bLoadStationsFile)
-                { 
-                    docCurrent.DataFileStations.FileName = (sGameDataFolder + Properties.HELLIONExplorer.Default.sStationsFileName);
-                }
-                else
-                {
-                    docCurrent.DataFileStations.SkipLoading = true;
-                }
 
-                docCurrent.LoadFile();
-
-                // Attach the document's root node to the node tree
-                if (docCurrent.SolarSystemRootNode != null)
-                {
-                    // Add the SolarSystemRoot and SearchResultsRoot nodes to the treeview 
-                    frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystemRootNode);
-                    frmMainForm.treeView1.Nodes.Add(docCurrent.GameDataRootNode);
-                    
-                    // Search results node - currently not enabled
-                    //frmMainForm.treeView1.Nodes.Add(docCurrent.SearchResultsRootNode);
-
-                    frmMainForm.treeView1.SelectedNode = docCurrent.SolarSystemRootNode;
-                    frmMainForm.treeView1.SelectedNode.Expand();
-                    frmMainForm.toolStripStatusLabel1.Text = ("Ready");
-                }
-                else
-                {
-                    MessageBox.Show("Error: SolarSystemRootNode was null");
-                }
-                    
                     
                 // Begin repainting the TreeView.
                 frmMainForm.treeView1.EndUpdate();
@@ -402,11 +344,20 @@ namespace HELLION.Explorer
                 frmMainForm.Cursor = Cursors.Default;
 
                 RefreshMainFormTitleText();
-                RefreshSelectedObjectSummaryText(docCurrent.SolarSystemRootNode);
+                //RefreshSelectedObjectSummaryText(docCurrent.SolarSystemRootNode);
+
+                frmMainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - StartingTime);
 
                 frmMainForm.closeToolStripMenuItem.Enabled = true;
 
+
+
             }
+
+
+
+
+
         } // End of FileOpen()
 
         internal static void FileClose()
@@ -414,10 +365,10 @@ namespace HELLION.Explorer
             // Handles closing of files
 
             // isFileDirty check before exiting
-            if (docCurrent.IsFileDirty)
+            if (docCurrent.IsDirty)
             {
                 // Unsaved changes, prompt user to save
-                string sMessage = docCurrent.MainFile.FileName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
+                string sMessage = docCurrent.SaveFileInfo.FullName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
                 const string sCaption = "Unsaved Changes";
                 var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
@@ -444,7 +395,7 @@ namespace HELLION.Explorer
             if (docCurrent != null)
             {
                 // Clear the existing document
-                docCurrent.CloseFile();
+                docCurrent.Close();
                 docCurrent = null;
             }
 
@@ -480,7 +431,7 @@ namespace HELLION.Explorer
             sb.Append(sNL);
 
             // Add version information for HELLION.DataStructures.dll
-            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEDocumentWorkspace)).GetName();
+            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEUtilities)).GetName();
             sb.Append(anHELLIONDataStructures.Name);
             sb.Append("   Version ");
             sb.Append(anHELLIONDataStructures.Version);
@@ -495,7 +446,7 @@ namespace HELLION.Explorer
             sb.Append(sNL);
 
             // Add an estimate of current memory usage from the garbage collector
-            sb.Append(String.Format("Memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
+            sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
             sb.Append(sNL);
             sb.Append(sNL);
             sb.Append(sNL);
@@ -691,7 +642,7 @@ namespace HELLION.Explorer
             }
         } // End of DefineGameFilder()
 
-        internal static void RefreshMainFormTitleText()
+        internal static void RefreshMainFormTitleText(string FullFileNameHint = "")
         {
             // Regenerates and sets the application's main window title text
             StringBuilder sb = new StringBuilder();
@@ -699,18 +650,18 @@ namespace HELLION.Explorer
             // Add the product name
             sb.Append(Application.ProductName);
 
-            if (docCurrent != null && docCurrent.IsFileReady)
+            if (FullFileNameHint != "")
             {
-                sb.Append(" [");
-                sb.Append(docCurrent.MainFile.FileName);
-                sb.Append("] ");
+                sb.Append(" [" + FullFileNameHint + "] ");
+            }
+            else if (docCurrent != null && docCurrent.IsFileReady)
+            {
+                sb.Append(" [" + docCurrent.SaveFileInfo.FullName + "] ");
 
-                if (docCurrent.IsFileDirty) sb.Append("*");
+                if (docCurrent.IsDirty) sb.Append("*");
             }
 
             frmMainForm.Text = sb.ToString();
-                
-
         } // End of RefreshMainFormTitleText
 
         internal static void RefreshSelectedOjectPathBarText(TreeNode nSelectedNode)
@@ -865,8 +816,7 @@ namespace HELLION.Explorer
                 sb1.Append(Environment.NewLine);
                 sb1.Append(Environment.NewLine);
 
-/*
-                if (false) //nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody || nSelectedHETNNode.NodeType == HETreeNodeType.Ship || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
+                if (nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody || nSelectedHETNNode.NodeType == HETreeNodeType.Ship || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
                 {
 
                     HEOrbitalObjTreeNode nSelectedOrbitalObjNode = (HEOrbitalObjTreeNode)nSelectedNode;
@@ -900,12 +850,11 @@ namespace HELLION.Explorer
                     sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedOrbitalObjNode.OrbitData.SolarSystemPeriapsisTime.ToString());
                     sb1.Append(Environment.NewLine);
                 }
-*/
 
-                if (false) //nSelectedNode.NodeType != HETreeNodeType.SystemNAV) // temp addition
+                if (nSelectedHETNNode.NodeType != HETreeNodeType.SystemNAV) // temp addition
                 {
                     // Get the count of the child nodes contained in the selected node
-                    decimal iTotalNodeCount = docCurrent.SolarSystemRootNode.CountOfAllChildNodes;
+                    decimal iTotalNodeCount = docCurrent.SolarSystem.RootNode.CountOfAllChildNodes;
                     int iThisNodeCount = nSelectedHETNNode.CountOfChildNodes;
                     int iThisNodeAndSubsCount = nSelectedHETNNode.CountOfAllChildNodes;
 
@@ -1097,77 +1046,22 @@ namespace HELLION.Explorer
             // Scratchpad area for testing new stuff out - has corresponding menu item
             // Make a note of the starting time
             DateTime StartingTime = DateTime.Now;
-            HETreeNode tempLoadingIndicatorNode = new HETreeNode("Loading...", HETreeNodeType.ExpansionAvailable);
-            HEViewGameData GameDataView = null;
-
-            frmMainForm.treeView1.Nodes.Add(tempLoadingIndicatorNode);
-
-            FileInfo fileInfo = new FileInfo(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
-
-            DirectoryInfo directoryInfo = new DirectoryInfo(Properties.HELLIONExplorer.Default.sGameDataFolder);
-
-            if (fileInfo != null && fileInfo.Exists && directoryInfo != null && directoryInfo.Exists)
-            {
-                GameDataView = new HEViewGameData(fileInfo, directoryInfo);
-            }
-
-            if (GameDataView != null)
-            {
-                frmMainForm.treeView1.Nodes.Add(GameDataView.RootNode);
-            }
-            else
-            {
-                MessageBox.Show("Loading error");
-            }
-
-
-
-
-
-            // Grab a data file path Properties
-
-            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\MegaBaseSave\ServerSave_2017-11-23-22-21-56.save");
-            //HEJsonGameFile testDataFile = new HEJsonGameFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
-            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\CelestialBodies.json");
-            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(Properties.HELLIONExplorer.Default.sGameDataFolder + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName);
-            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Downloads\ServerSave_2017-11-15-18-00-57\ServerSave_2017-11-15-18-00-57.save");
-            //HEJsonBaseFile testDataFile = new HEJsonBaseFile(@"C:\Users\James\Desktop\Data\New folder\arraywith2objects.json");
-
-            //testDataFile.LogToDebug = false;
-            //testDataFile.LoadFile();
-
-            //int numRuns = 0;
 
             // Some async test stuff
-
-            //HETreeNode nodeSaveFile = new HETreeNode("SAVEFILE", HETreeNodeType.SaveFile, nodeText: testDataFile.File.Name, nodeToolTipText: testDataFile.File.FullName);
-
-
 
             // Task to run asynchronously
             //List<Task> tasks = new List<Task>();
             //Task t1 = Task.Run(() => 
 
-            //testDataFile.BuildBasicNodeTreeFromJson(testDataFile.JData, nodeSaveFile, maxDepth: 2, logToDebug: true);
-
-            //tempParent.Nodes.Add(testDataFile.BuildHETreeNodeTreeFromJson(json: testDataFile.JData, maxDepth: 6) ?? new HETreeNode("LOADING ERROR!",HETreeNodeType.DataFileError));
-
-
             //tasks.Add(t1);
-
-            //testDataFile.BuildNodeTreesFromJson(testDataFile.JData, tempParent, numRuns);
-
             //HEStaticDataFileCollection testDataFileCollection = null;
 
             //if (Properties.HELLIONExplorer.Default.sGameDataFolder != "")
             {
 
-                //Task t2 = Task.Run(() => 
-                //testDataFileCollection = new HEStaticDataFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
+                //Task t2 = Task.Run(() => //testDataFileCollection = new HEStaticDataFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
                 //tasks.Add(t2);
-
             }
-
 
             // Wait for tasks to complete
             //Task.WaitAll(tasks.ToArray());
@@ -1176,17 +1070,15 @@ namespace HELLION.Explorer
 
             //tempParent.Nodes.Add(nodeSaveFile);
 
-            frmMainForm.treeView1.Nodes.Remove(tempLoadingIndicatorNode);
 
             //foreach (Task t in tasks)
                 //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
-            Debug.Print("Process completed in {0}", DateTime.Now - StartingTime);
+            Debug.Print("Process completed in {0:mm}m{0:ss}s", DateTime.Now - StartingTime);
 
             
             //tempParent.UpdateCounts();
             GC.Collect();
     }
-
 
     /// <summary>
     /// The main entry point for the application.
@@ -1195,6 +1087,14 @@ namespace HELLION.Explorer
     [STAThread]
         static void Main(string[] args)
         {
+            Console.WriteLine(Application.ProductName + " - " + Application.ProductVersion);
+
+#if DEBUG
+            Console.WriteLine("Mode=Debug");
+#else
+            Console.WriteLine("Mode=Release"); 
+#endif
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
