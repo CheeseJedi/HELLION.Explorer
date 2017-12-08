@@ -10,12 +10,18 @@ using System.Windows.Forms;
 
 namespace HELLION.DataStructures
 {
+    /// <summary>
+    /// Implements the Solar System view node tree.
+    /// </summary>
     public class HESolarSystem
     {
-        // Implements the Solar System view node tree
         public HEOrbitalObjTreeNode RootNode { get; set; } = null;
         public HEGameData GameData { get; set; } = null;
 
+        /// <summary>
+        /// Constructor that takes an HEGameData object and uses this as it's data source.
+        /// </summary>
+        /// <param name="gameData"></param>
         public HESolarSystem(HEGameData gameData)
         {
             // Basic constructor
@@ -42,11 +48,13 @@ namespace HELLION.DataStructures
         {
             RootNode = null;
         }
-
+        
+        /// <summary>
+        /// Builds a tree of nodes representing the solar system and attaches it to the RootNode, then
+        /// calls the PopulateOrbitalObjects helper with types Asteroid, Ship(includes modules), and players.
+        /// </summary>
         public void BuildSolarSystem()
         {
-            // Builds a tree of nodes representing the solar system and attaches it to the RootNode, then
-            // calls the PopulateOrbitalObjects helper with types Asteroid, Ship (includes modules), and players
 
             // Get the CelestialBodies.json data
 
@@ -506,7 +514,7 @@ namespace HELLION.DataStructures
                                 // Players get handled differently
 
                                 // We (currently) only add players to Ship objects
-                                if (nThisNode.NodeType == HETreeNodeType.Ship)
+                                if (true) //(nThisNode.NodeType == HETreeNodeType.Ship)
                                 {
                                     //
 
@@ -588,47 +596,46 @@ namespace HELLION.DataStructures
 
         } // end of AddOrbitalObjTreeNodesRecursively
 
-
+        /// <summary>
+        /// Re-arranges (rehydrates) existing ship nodes bu their DockedToShipGUID forming a tree where the
+        /// root node is the parent vessel of the docked ships (and is what shows up on radar in-game).
+        /// </summary>
+        /// <remarks>
+        /// Although this particular function is non-recursive, recursive calls are made when calling
+        /// the HETreeNode.GetAllNodes() to get sub-nodes.
+        /// </remarks>
         public void RehydrateDockedShips()
         {
-            // Although this particular function is non-recursive, recursive calls are made
-            // when calling the HETreeNode.GetAllNodes() to get sub-nodes
-
-            Debug.Print("Commencing rehydration of docked ships...");
-            IEnumerable<HEOrbitalObjTreeNode> shipsToBeReparented = RootNode.GetAllNodes()
+            IEnumerable<HEOrbitalObjTreeNode> shipsToBeReparented = RootNode.ListOfAllChildNodes
                 .Cast<HEOrbitalObjTreeNode>()
                 .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
 
             foreach (HEOrbitalObjTreeNode node in shipsToBeReparented)
             {
-                Debug.Print(node.Text);
-
+                // If fhis node has a non-zero value for DockedToShipGUID, process it.
                 if (node.DockedToShipGUID != 0)
                 {
-                    // This node has a non-zero value for DockedToShipGUID, so it's going to process it
-
-                    // Find the node that has the GUID matching the DockedToShipGUID of this node
-                    HEOrbitalObjTreeNode newParentNode = RootNode.GetAllNodes()
+                    // Find the node that has the GUID matching the DockedToShipGUID of this node.
+                    HEOrbitalObjTreeNode newParentNode = RootNode.ListOfAllChildNodes
                         .Cast<HEOrbitalObjTreeNode>()
                         .Where(p => p.GUID == node.DockedToShipGUID)
                         .Single();
 
-                    // Remove the ship to be re-parented from it's parent node collection
+                    // Remove the ship to be re-parented from it's current parent's node collection.
                     node.Parent.Nodes.Remove(node);
-                    // Add the ship being re-parented to the parent's node collection
+                    // Add the ship being re-parented to the new parent's node collection.
                     newParentNode.Nodes.Add(node);
+                    // As the new parent's node collection has changed, clear it's cache to force regeneration.
+                    newParentNode.ClearCachedData();
                 }
                 else
                 {
-                    throw new Exception();
+                    throw new InvalidOperationException();
                 }
-
             }
-
-
         }
 
-
+        /*
         public void FlattenDockedShipNodesRecursively(
             HEOrbitalObjTreeNode nThisNode,
             int iDepth = 20,
@@ -768,10 +775,7 @@ namespace HELLION.DataStructures
             }
 
         } // end of FlattenDockedShipNodesRecursively
-
-
-        
-
+        */
 
     }
 }

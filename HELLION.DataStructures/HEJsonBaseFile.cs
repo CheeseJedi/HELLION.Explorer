@@ -12,11 +12,14 @@ using System.Text;
 
 namespace HELLION.DataStructures
 {
-    // Defines a class to load and hold data from a JSON file and associated metadata
-
-    // This is a re-write intended to encapsulate more of the functionality of building
-    // node trees of the correct type and enabling (delayable) expansion of objects
-
+    /// <summary>
+    /// Defines a class to load and hold data from a JSON file and associated metadata.
+    /// </summary>
+    /// <remarks>
+    /// Used directly in the HEStaticDataFileCollection and derived from for the HEJsonGameFile class.
+    /// This is a re-write intended to encapsulate more of the functionality of building node trees
+    /// of the correct type and enabling lazy population of node tree branches.
+    /// </remarks>
     public class HEJsonBaseFile
     {
         // Base class for a generic JSON data file - used directly in the HEStaticDataFileCollection
@@ -33,16 +36,12 @@ namespace HELLION.DataStructures
         public HEJsonBaseFile()
         { }
 
+        /// <summary>
+        /// Constructor that allows the FileInfo to be passed and triggers loading.
+        /// </summary>
+        /// <param name="PassedFileInfo"></param>
         public HEJsonBaseFile(FileInfo PassedFileInfo)
         {
-            // Constructor that allows the FileInfo to be passed
-            /*
-            JData = null;
-            IsLoaded = false;
-            LoadError = false;
-            SkipLoading = false;
-            LogToDebug = false;
-            */
             if (PassedFileInfo != null)
             {
                 File = PassedFileInfo;
@@ -54,10 +53,12 @@ namespace HELLION.DataStructures
             }
         }
 
+        /// <summary>
+        /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
+        /// </summary>
+        /// <returns>Returns true if there was a loading error</returns>
         public bool LoadFile()
         {
-            // Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
-            // Returns true if there was a loading error
             if (!SkipLoading)
             {
                 if (File.Exists)

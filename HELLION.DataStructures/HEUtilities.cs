@@ -13,9 +13,11 @@ using System.Reflection;
 
 namespace HELLION.DataStructures
 {
+    /// <summary>
+    /// A class to hold utility functions.
+    /// </summary>
     public static class HEUtilities
     {
-        // A class to hold utility functions
 
         public static string FindLatestRelease(string sGithubUsername, string sRepositoryName)
         {
@@ -180,41 +182,6 @@ namespace HELLION.DataStructures
                 "Toolbox_16x.png",
                 "TreeView_16x.png",
             };
-            /* old list
-                "3DCameraOrbit_16x.png",
-                "3DExtrude_16x.png",
-                "3DScene_16x.png",
-                "Actor_16x.png",
-                "Assembly_16x.png",
-                "AzureLogicApp_16x.png",
-                "AzureLogicApp_color_16x.png",
-                "ButtonIcon_16x.png",
-                "CheckDot_16x.png",
-                "Checkerboard_16x.png",
-                "Component_16x.png",
-                "Contrast_16x.png",
-                "CSWorkflowDiagram_16x.png",
-                "DarkTheme_16x.png",
-                "Diagnose_16x.png",
-                "Document_16x.png",
-                "DomainType_16x.png",
-                "Driver_16x.png",
-                "Ellipsis_16x.png",
-                "Event_16x.png",
-                "ExplodedPieChart_16x.png",
-                "Filter_16x.png",
-                "FindResults_16x.png",
-                "Flag_16x.png",
-                "Gauge_16x.png",
-                "HotSpot_16x.png",
-                "Hub_16x.png",
-                "PieChart_16x.png",
-                "Property_16x.png",
-                "Settings_16x.png",
-                "Shader_16x.png",
-                "Share_16x.png",
-                "TreeView_16x.png"
-            */
 
             // Use System.Reflection to get a list of all resource names
             string[] embeddedResources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
@@ -233,6 +200,7 @@ namespace HELLION.DataStructures
                 else
                 {
                     // not an image reference
+                    throw new InvalidDataException();
                 }
             }
                 
@@ -332,29 +300,37 @@ namespace HELLION.DataStructures
             }
         }
 
-        // Not currently used, will need to have similar version that find nodes by other parameters
-        public static TreeNode GetNodeByName(TreeNode nCurrentNode, string key)
+        public static TreeNode GetChildNodeByName(TreeNode nCurrentNode, string key)
         {
             // Gets the first node that matches the given key in the current nodes children
             TreeNode[] nodes = nCurrentNode.Nodes.Find(key, searchAllChildren: true);
             return nodes.Length > 0 ? nodes[0] : null;
         }
 
+        /// <summary>
+        /// Enum utility class.
+        /// </summary>
         public static class EnumUtil
         {
-            // Returns the values of an enum of given type T
-            // usage: var values = EnumUtil.GetValues<Foos>();
-
+            /// <summary>
+            /// Returns the values of an enum of given type T
+            /// usage: var values = EnumUtil.GetValues<Foos>();
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns></returns>
             public static IEnumerable<T> GetValues<T>()
             {
                 return Enum.GetValues(typeof(T)).Cast<T>();
             }
         }
 
+        /// <summary>
+        /// Returns a System.Drawing.Color object for a given string, computed from the hash of the string.
+        /// </summary>
+        /// <param name="sInputString">String to generate a colour for</param>
+        /// <returns></returns>
         public static Color ConvertStringToColor(string sInputString)
         {
-            // Returns a System.Drawing.Color object for a given string, computed from the hash of the string
-
             int iHue = (Math.Abs(sInputString.GetHashCode()) % 24) * 10;
             // Debug.Print("iHue: {0}", iHue.ToString());
 
@@ -362,10 +338,43 @@ namespace HELLION.DataStructures
             return hslColor;
         }
 
+        
+        // 3rd party code
 
+        /// <summary>
+        /// Based on an example from https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
+        /// </summary>
+        public static class Prompt
+        {
+            public static string ShowDialog(string text, string caption)
+            {
+                Form prompt = new Form()
+                {
+                    Width = 500,
+                    Height = 150,
+                    FormBorderStyle = FormBorderStyle.FixedSingle,
+                    MinimizeBox = false,
+                    MaximizeBox = false,
+                    Text = caption,
+                    StartPosition = FormStartPosition.CenterScreen
+                };
+                Label textLabel = new Label() { Left = 50, Top = 20, Width = 400, Text = text };
+                TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+                Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
+                confirmation.Click += (sender, e) => { prompt.Close(); };
+                prompt.Controls.Add(textBox);
+                prompt.Controls.Add(confirmation);
+                prompt.Controls.Add(textLabel);
+                prompt.AcceptButton = confirmation;
 
-        // HSLColor Class by Rich Newman
-        // https://richnewman.wordpress.com/about/code-listings-and-diagrams/hslcolor-class/
+                return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+            }
+        }
+
+        /// <summary>
+        /// HSLColor Class by Rich Newman
+        /// https://richnewman.wordpress.com/about/code-listings-and-diagrams/hslcolor-class/
+        /// </summary>
         public class HSLColor
         {
             // Private data members below are on scale 0-1
@@ -501,7 +510,12 @@ namespace HELLION.DataStructures
 
         } // End of HSLColor
 
-        // from http://joelabrahamsson.com/syntax-highlighting-json-with-c/
+        /// <summary>
+        /// SyntaxHighlightJson class by Joel Abrahmsson.
+        /// from http://joelabrahamsson.com/syntax-highlighting-json-with-c/
+        /// </summary>
+        /// <param name="original"></param>
+        /// <returns></returns>
         public static string SyntaxHighlightJson(string original)
         {
             return Regex.Replace(
@@ -530,74 +544,6 @@ namespace HELLION.DataStructures
                   }
                   return "<span class=\"" + cls + "\">" + match + "</span>";
               });
-        }
-
-        /*
-        // adapted from https://stackoverflow.com/questions/18769634/creating-tree-view-dynamically-according-to-json-text-in-winforms
-        public static TreeNode Json2Tree(JArray root, string rootName = "", string nodeName = "")
-        {
-            TreeNode parent = new TreeNode(rootName);
-            int index = 0;
-
-            foreach (JToken obj in root)
-            {
-                TreeNode child = new TreeNode(string.Format("{0}[{1}]", nodeName, index++));
-                foreach (KeyValuePair<string, JToken> token in (JObject)obj)
-                {
-                    switch (token.Value.Type)
-                    {
-                        case JTokenType.Array:
-                        case JTokenType.Object:
-                            child.Nodes.Add(Json2Tree((JObject)token.Value, token.Key));
-                            break;
-                        default:
-                            child.Nodes.Add(GetChild(token));
-                            break;
-                    }
-                }
-                parent.Nodes.Add(child);
-            }
-
-            return parent;
-        }
-
-        public static TreeNode Json2Tree(JObject root, string text = "")
-        {
-            TreeNode parent = new TreeNode(text);
-
-            foreach (KeyValuePair<string, JToken> token in root)
-            {
-
-                switch (token.Value.Type)
-                {
-                    case JTokenType.Object:
-                        parent.Nodes.Add(Json2Tree((JObject)token.Value, token.Key));
-                        break;
-                    case JTokenType.Array:
-                        int index = 0;
-                        foreach (JToken element in (JArray)token.Value)
-                        {
-                            parent.Nodes.Add(Json2Tree((JObject)element, string.Format("{0}[{1}]", token.Key, index++)));
-                        }
-
-                        if (index == 0) parent.Nodes.Add(string.Format("{0}[ ]", token.Key)); //to handle empty arrays
-                        break;
-                    default:
-                        parent.Nodes.Add(GetChild(token));
-                        break;
-                }
-            }
-
-            return parent;
-        }
-
-        */
-
-        private static TreeNode GetChild(KeyValuePair<string, JToken> token)
-        {
-            TreeNode child = new TreeNode(token.Key);
-            child.Nodes.Add(string.IsNullOrEmpty(token.Value.ToString()) ? "n/a" : token.Value.ToString());
-            return child;
         }
 
     }

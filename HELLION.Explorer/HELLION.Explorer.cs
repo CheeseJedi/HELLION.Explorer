@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using HELLION.DataStructures;
 using System.Drawing;
 using System.Reflection;
 using System.Diagnostics;
@@ -12,19 +9,19 @@ using System.IO;
 using System.Configuration;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using HELLION.DataStructures;
 
 namespace HELLION.Explorer
 {
+    /// <summary>
+    /// This is the main class that implements the HELLION Explorer program.
+    /// Most of the work is done by the HEDocumentWorkspace object however this
+    /// assembly is responsible for building the output for the ListView control
+    /// </summary>
     static class Program
     {
-        // This is the main class that implements the HELLION Explorer program.
-        // Most of the work is done by the HEDocumentWorkspace object however this
-        // assembly is responsible for building the output for the ListView control
-
         // Define the main form object
         internal static MainForm frmMainForm { get; private set; }
         // Define an object to hold the current open document
@@ -38,6 +35,10 @@ namespace HELLION.Explorer
         internal static bool bViewShowInfoPane = true;
         internal static DirectoryInfo dataDirectoryInfo = null;
         internal static FileInfo saveFileInfo = null;
+        /// <summary>
+        /// Holds a list of the JsonDataViewForm windows that have been created
+        /// </summary>
+        internal static List<JsonDataViewForm> jsonDataViews = new List<JsonDataViewForm>();
 
         internal static void CheckForUpdates()
         {
@@ -84,162 +85,7 @@ namespace HELLION.Explorer
             }
             */
         } // End of ControlledExit()
-        /*
-        internal static ImageList BuildObjectTypesImageList()
-        {
-            // Create a new ImageList to hold images used as icons in the tree and list views
-            ImageList ilObjectTypesImageList = new ImageList();
 
-            // there must be a better way of doing this, perhaps read from JSON file ;) 
-            string[] sListOfImages1 = new string[] {
-                "3DCameraOrbit_16x.png",
-                "3DExtrude_16x.png",
-                "3DScene_16x.png",
-                "Actor_16x.png",
-                "Add_grey_16x.png",
-                "Alert_16x.png",
-                "Aserif_16x.png",
-                "Assembly_16x.png",
-                "Attribute_16x.png",
-                "AzureDefaultResource_16x.png",
-                "AzureLogicApp_16x.png",
-                "AzureLogicApp_color_16x.png",
-                "AzureResourceGroup_16x.png",
-                "AzureResourceTypeView_16x.png",
-                "AzureVirtualMachineExtension_16x.png",
-                "BalanceBrace_16x.png",
-                "BatchFile_16x.png",
-                "BehaviorAction_16x.png",
-                "Binary_16x.png",
-                "Bios_16x.png",
-                "BlankFile_16x.png",
-                "Bolt_16x.png",
-                "BranchRelationshipChild_16x.png",
-                "BranchRelationshipCousin_16x.png",
-                "BranchRelationshipGroup_16x.png",
-                "BranchRelationshipParent_16x.png",
-                "BranchRelationshipSibling_16x.png",
-                "BranchRelationship_16x.png",
-                "Branch_16x.png",
-                "Brightness_16x.png",
-                "BubbleChart_16x.png",
-                "Bug_16x.png",
-                "Builder_16x.png",
-                "BulletList_16x.png",
-                "ButtonIcon_16x.png",
-                "Callout_16x.png",
-                "CheckDot_16x.png",
-                "Checkerboard_16x.png",
-                "Collection_16x.png",
-                "ComponentDiagram_16x.png",
-                "Component_16x.png",
-                "Contrast_16x.png",
-                "CordovaMultidevice_16x.png",
-                "CSWorkflowDiagram_16x.png",
-                "DarkTheme_16x.png",
-                "DateTimeAxis_16x.png",
-                "Diagnose_16x.png",
-                "Dictionary_16x.png",
-                "Document_16x.png",
-                "DomainType_16x.png",
-                "Driver_16x.png",
-                "Ellipsis_16x.png",
-                "EndpointComponent_16x.png",
-                "Event_16x.png",
-                "Expander_16x.png",
-                "ExplodedPieChart_16x.png",
-                "FeedbackBubble_16x.png",
-                "FeedbackSad_16x.png",
-                "FeedbackSmile_16x.png",
-                "FileCollection_16x.png",
-                "FileError_16x.png",
-                "FileGroupError_16x.png",
-                "FileGroupWarning_16x.png",
-                "FileGroup_16x.png",
-                "FileOK_16x.png",
-                "FileWarning_16x.png",
-                "Filter_16x.png",
-                "FindResults_16x.png",
-                "Flag_16x.png",
-                "FolderError_16x.png",
-                "older_16x.png",
-                "Gauge_16x.png",
-                "HotSpot_16x.png",
-                "Hub_16x.png",
-                "JS_16x.png",
-                "Label_16x.png",
-                "ListFolder_16x.png",
-                "Marquee_16x.png",
-                "Numeric_16x.png",
-                "PermissionFile_16x.png",
-                "PieChart_16x.png",
-                "Property_16x.png",
-                "Rename_16x.png",
-                "SemanticZoom_16x.png",
-                "Settings_16x.png",
-                "Shader_16x.png",
-                "Share_16x.png",
-                "String_16x.png",
-                "Toolbox_16x.png",
-                "TreeView_16x.png",
-            };
-
-            /* old list
-                "3DCameraOrbit_16x.png",
-                "3DExtrude_16x.png",
-                "3DScene_16x.png",
-                "Actor_16x.png",
-                "Assembly_16x.png",
-                "AzureLogicApp_16x.png",
-                "AzureLogicApp_color_16x.png",
-                "ButtonIcon_16x.png",
-                "CheckDot_16x.png",
-                "Checkerboard_16x.png",
-                "Component_16x.png",
-                "Contrast_16x.png",
-                "CSWorkflowDiagram_16x.png",
-                "DarkTheme_16x.png",
-                "Diagnose_16x.png",
-                "Document_16x.png",
-                "DomainType_16x.png",
-                "Driver_16x.png",
-                "Ellipsis_16x.png",
-                "Event_16x.png",
-                "ExplodedPieChart_16x.png",
-                "Filter_16x.png",
-                "FindResults_16x.png",
-                "Flag_16x.png",
-                "Gauge_16x.png",
-                "HotSpot_16x.png",
-                "Hub_16x.png",
-                "PieChart_16x.png",
-                "Property_16x.png",
-                "Settings_16x.png",
-                "Shader_16x.png",
-                "Share_16x.png",
-                "TreeView_16x.png"
-            */
-            /*
-            // Use System.Reflection to get a list of all resource names
-            string[] sListOfImages = Assembly.GetEntryAssembly().GetManifestResourceNames();
-
-            // Get the currently executing assembly name
-            string sEntryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
-            //MessageBox.Show(sEntryAssemblyName);
-
-            // Process string array of resource names (this includes the namespace name)
-            foreach (string sImageName in sListOfImages)
-            {
-                if (sImageName.Contains(sEntryAssemblyName + ".Images."))
-                {
-                    ilObjectTypesImageList.Images.Add(Image.FromStream(Assembly.GetEntryAssembly().GetManifestResourceStream(sImageName)));   
-                   }
-            }
-
-            // Return the image list
-            return ilObjectTypesImageList;
-        } // End of BuildObjectTypesImageList()
-        */
         internal static void FileOpen(string sFileName = "")
         {
             // Loads a save file in to memory and processes it
@@ -370,7 +216,7 @@ namespace HELLION.Explorer
                 // Unsaved changes, prompt user to save
                 string sMessage = docCurrent.SaveFileInfo.FullName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
                 const string sCaption = "Unsaved Changes";
-                var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
                 // If the yes button was pressed ...
                 if (result == DialogResult.Yes)
@@ -412,6 +258,23 @@ namespace HELLION.Explorer
             GC.Collect();
         } // End of FileClose()
 
+        internal static void FindNodeByName()
+        {
+            string searchKey = HEUtilities.Prompt.ShowDialog("Enter exact name of node to find (case insensitive):", "Find node by name");
+
+            TreeNode result = HEUtilities.GetChildNodeByName(Program.frmMainForm.treeView1.SelectedNode, searchKey);
+
+            if (result != null)
+            {
+                // Select the node in the tree
+                Program.frmMainForm.treeView1.SelectedNode = result;
+            }
+            else
+            {
+                MessageBox.Show("No results for search term " + searchKey);
+            }
+        }
+
         internal static string GenerateAboutBoxText()
         {
             // Define a StringBuilder to hold the string to be sent to the dalog box
@@ -443,7 +306,15 @@ namespace HELLION.Explorer
             sb.Append("   Version ");
             sb.Append(anNewtonsoftJson.Version);
             sb.Append(sNL);
+
+            // Add verison information for FastColoredTextBox.dll
+            var anFastColoredTextBox = System.Reflection.Assembly.GetAssembly(typeof(FastColoredTextBoxNS.FastColoredTextBox)).GetName();
+            sb.Append(anFastColoredTextBox.Name);
+            sb.Append("   Version ");
+            sb.Append(anFastColoredTextBox.Version);
             sb.Append(sNL);
+            sb.Append(sNL);
+
 
             // Add an estimate of current memory usage from the garbage collector
             sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
@@ -455,6 +326,12 @@ namespace HELLION.Explorer
             sb.Append("Uses the Newtonsoft JSON library. http://www.newtonsoft.com/json");
             sb.Append(sNL);
             sb.Append(sNL);
+
+            // Credit
+            sb.Append("Uses the FastColoredTextBox library. https://github.com/PavelTorgashov/FastColoredTextBox");
+            sb.Append(sNL);
+            sb.Append(sNL);
+
 
             // Credit
             sb.Append("HELLION trademarks, content and materials are property of Zero Gravity Games or it's licensors. http://www.zerogravitygames.com");
@@ -790,9 +667,6 @@ namespace HELLION.Explorer
 
             StringBuilder sb1 = new StringBuilder();
             StringBuilder sb2 = new StringBuilder();
-            StringBuilder sb3 = new StringBuilder();
-            StringBuilder sb4 = new StringBuilder();
-
 
             if (nSelectedNode != null) //  && docCurrent != null && docCurrent.IsFileReady) // temp change to allow for tree use without a doc loaded
             {
@@ -802,6 +676,11 @@ namespace HELLION.Explorer
                 sb1.Append("Node Tree Data");
                 sb1.Append(Environment.NewLine);
                 sb1.Append("Name: " + nSelectedHETNNode.Name);
+                sb1.Append(Environment.NewLine);
+                sb1.Append("Text: " + nSelectedHETNNode.Text);
+                sb1.Append(Environment.NewLine);
+                sb1.Append("ToolTipText: " + nSelectedHETNNode.ToolTipText);
+
                 sb1.Append(Environment.NewLine);
                 sb1.Append("NodeType: " + nSelectedHETNNode.NodeType.ToString());
                 sb1.Append(Environment.NewLine);
@@ -820,8 +699,6 @@ namespace HELLION.Explorer
                 {
 
                     HEOrbitalObjTreeNode nSelectedOrbitalObjNode = (HEOrbitalObjTreeNode)nSelectedNode;
-
-
 
                     sb1.Append(Environment.NewLine);
                     sb1.Append("ORBITAL DATA");
@@ -877,140 +754,46 @@ namespace HELLION.Explorer
                     sb2.Append(Environment.NewLine);
                     sb2.Append(string.Format(" {0:###.##}% of total ({1})", dThisNodeAndSubsCountAsPercentage, iTotalNodeCount));
                 }
-
-                sb4.Append("<!DOCTYPE html><html><head><style>"
-                    + "body { margin: 0em; padding: 0em; } "
-                    + "body div { white-space: pre-wrap; font-family:Courier; font-size: 0.9em } " 
-                    + ".container { counter-reset: line; "
-                    + "  .ln:before { counter-increment: line; content: counter(line); display: inline - block; border - right: 1px solid #ddd; padding: 0 .5em; margin - right: .5em; color: #888 } "
-                    + "} "                    
-                    + ".number { color: orange; } "
-                    + ".key { color: crimson; } "
-                    + ".string { color: darkgreen; } "
-                    + ".boolean { color: blue; } "
-                    + ".null { color: black; } "
-                    + "</style></head><body><div class='container'><div class='ln'>");
-
-                // Create JSON data for selected node
-                if (nSelectedNode.Tag != null)
-                {
-                    sb3.Append((JValue)nSelectedNode.Tag.ToString());
-
-                    sb4.Append(HEUtilities.SyntaxHighlightJson(sb3.ToString().Replace("  ", "&emsp;").Replace("\n", "</div><div class='ln'>")));
-                    //MessageBox.Show(sb4.ToString());
-
-                }
-                sb4.Append("</div></div></body></html>");
-
-                /*
-                if (nSelectedHETNNode.NodeType == HETreeNodeType.CelestialBody) // || nSelectedHETNNode.NodeType == HETreeNodeType.SystemNAV)
-                {
-                    DataTable myObjectDT = JsonConvert.DeserializeObject<DataTable>("[" + (nSelectedNode.Tag).ToString() + "]"); // (JValue)
-                    frmMainForm.dataGridView1.DataSource = myObjectDT;
-
-
-                    //frmMainForm.dataGridView1.DataBindings.
-                }
-                else
-                {
-                    frmMainForm.dataGridView1.DataSource = null;
-                }
-                string jsonString = sb3.ToString();
-
-                frmMainForm.treeView2.Nodes.Clear();
-                if (jsonString != "")
-                {
-
-                    string rootName = "root", nodeName = "node";
-                    JContainer json;
-                    try
-                    {
-                        if (jsonString.StartsWith("["))
-                        {
-                            json = JArray.Parse(jsonString);
-                            frmMainForm.treeView2.Nodes.Add(HEUtilities.Json2Tree((JArray)json, rootName, nodeName));
-                        }
-                        else
-                        {
-                            json = JObject.Parse(jsonString);
-                            frmMainForm.treeView2.Nodes.Add(HEUtilities.Json2Tree((JObject)json, "text"));
-                        }
-                    }
-                    catch (JsonReaderException jre)
-                    {
-                        MessageBox.Show("Invalid Json." + Environment.NewLine + jre.ToString() + Environment.NewLine + jsonString);
-                    }
-                }
-                */
-                /*
-                switch (nSelectedNode.NodeType)
-                {
-                    case HETreeNodeType.CelestialBody:
-                        // It's a Celestial Body!
-
-                        break;
-                    case HETreeNodeType.Asteroid:
-                        // It's an Asteroid!
-
-                        break;
-                    case HETreeNodeType.Ship:
-                        // It's a ship!
-
-                        // Filter down the ships list from openFileData by matching GUID and list them all
-                        IOrderedEnumerable<JToken> ioShips = from s in openFileData["Ships"]
-                                                                where (long)s["GUID"] == lGUID
-                                                                orderby (long)s["GUID"]
-                                                                select s;
-                        int iIndex = 0;
-                        foreach (var jtShip in ioShips)
-                        {
-                            iIndex++;
-                            sb.Append(Environment.NewLine);
-                            sb.Append("IndexNo: " + iIndex.ToString());
-                            sb.Append(Environment.NewLine);
-                            sb.Append("Ship data from file");
-                            sb.Append(Environment.NewLine);
-                            sb.Append("Name: " + (string)jtShip["Name"]);
-                            sb.Append(Environment.NewLine);
-                            sb.Append("GUID: " + (string)jtShip["GUID"]);
-                            sb.Append(Environment.NewLine);
-                            sb.Append("ParentGUID: " + (string)jtShip["OrbitData"]["ParentGUID"]);
-                            sb.Append(Environment.NewLine);
-                            sb.Append("SemiMajorAxis: " + (string)jtShip["OrbitData"]["SemiMajorAxis"]);
-                            sb.Append(Environment.NewLine);
-                            sb.Append(Environment.NewLine);
-                            sb.Append(Environment.NewLine);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                */
             }
 
             // Pass results to various textboxes
             frmMainForm.textBox1.Text = sb1.ToString();
             frmMainForm.textBox2.Text = sb2.ToString();
-            frmMainForm.textBox3.Text = sb3.ToString();
-
-            //frmMainForm.webBrowser1.DocumentText = sb4.ToString();
-            //frmMainForm.webBrowser1.Refresh();
-
-            frmMainForm.webBrowser1.Navigate("about:blank");
-            if (frmMainForm.webBrowser1.Document != null)
-            {
-                frmMainForm.webBrowser1.Document.Write(string.Empty);
-            }
-            frmMainForm.webBrowser1.DocumentText = sb4.ToString();
-
-
-
-
-            // 
-
 
 
         } // End of RefreshObjectSummaryText()
+
+        internal static void CreateNewJsonDataView(TreeNode nSelectedNode)
+        {
+            // Opens up the data view for the selected (HE)TreeNode
+
+            
+            if (nSelectedNode != null && nSelectedNode.Tag != null)
+            {
+
+                Debug.Print("passed node type {0}", nSelectedNode.GetType());
+
+                // define a new window here but somehow make it not static?
+                JsonDataViewForm newDataView = new JsonDataViewForm();
+                newDataView.Text = nSelectedNode.FullPath;
+                //newDataView.label1.Text = nSelectedNode.FullPath;
+
+                // Add the form to the jsonDataViews list so we can work with it later
+                jsonDataViews.Add(newDataView);
+
+                // set some FastColouredTextBox properties
+                newDataView.fastColoredTextBox1.Language = FastColoredTextBoxNS.Language.JS;
+
+                // fill the data
+                newDataView.fastColoredTextBox1.Text = nSelectedNode.Tag.ToString();
+
+                // Show the new form
+                newDataView.Show();
+
+            }
+
+
+        } // End of CreateNewJsonDataView()
 
         internal static void InitialiseTreeView(TreeView tvCurrent)
         {
@@ -1019,7 +802,7 @@ namespace HELLION.Explorer
             tvCurrent.ImageList = ilObjectTypesImageList;
             tvCurrent.ImageIndex = (int)HEObjectTypesImageList.Flag_16x;
             tvCurrent.SelectedImageIndex = (int)HEObjectTypesImageList.Flag_16x;
-            tvCurrent.TreeViewNodeSorter = new HETreeNodeSorter();
+            tvCurrent.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
             tvCurrent.ShowNodeToolTips = true;
 
         } // End of InitialiseTreeView
@@ -1080,10 +863,10 @@ namespace HELLION.Explorer
             GC.Collect();
     }
 
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        /// <param name="args"></param>
     [STAThread]
         static void Main(string[] args)
         {
