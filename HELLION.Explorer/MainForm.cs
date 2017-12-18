@@ -23,6 +23,9 @@ namespace HELLION.Explorer
     {
         //int iSearchButtonPadding = 5;
 
+        /// <summary>
+        /// Default constructor - calls InitializeComponent.
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
@@ -66,7 +69,7 @@ namespace HELLION.Explorer
                 if (node == null)
                 {
                     // We get two updates, the first one has no data as it's the 
-                    // deselction event, in this case we do nothing
+                    // deselection event, in this case we do nothing
                 }
                 else
                 {
@@ -96,7 +99,7 @@ namespace HELLION.Explorer
                     node = (TreeNode)item.Tag;
                     break;
                 }
-                // Null check - the ListView fires off two events when the selected imdex is changed the
+                // Null check - the ListView fires off two events when the selected index is changed the
                 // first is the deselection of whatever was selected prior and as the ListView control is
                 // configured to only allow a single item to be selected this returns null
                 // The second firing of the event usually contains the selected item passed
@@ -142,7 +145,7 @@ namespace HELLION.Explorer
 
         private void dynamicListPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Show/hide the Dynamic list (listview control)
+            // Show/hide the Dynamic list (list view control)
 
             Program.bViewShowDynamicList = !Program.bViewShowDynamicList;
 
@@ -180,7 +183,7 @@ namespace HELLION.Explorer
 
         private void updatecheckToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.CheckForUpdates();
+            Program.hEUpdateChecker.CheckForUpdates();
         }
 
         private void verifyDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -316,9 +319,6 @@ namespace HELLION.Explorer
                 Debug.Print("{0} was called but there was no SelectedNode", this );
             }
 
-
-            
-
         }
 
         private void searchToolStripMenuItem_Click(object sender, EventArgs e)
@@ -329,12 +329,11 @@ namespace HELLION.Explorer
         private void jsonDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-
         }
 
         private void findToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Program.FindNodeByName();
+            Program.FindNodeByName(treeView1);
         }
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)

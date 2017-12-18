@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+//using System.Runtime.CompilerServices;
+using System.Text;
+//using System.Threading.Tasks;
+//using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Threading.Tasks;
-using System.Text;
+using static HELLION.DataStructures.HEImageList;
 
 namespace HELLION.DataStructures
 {
@@ -16,40 +17,290 @@ namespace HELLION.DataStructures
     /// Defines a class to load and hold data from a JSON file and associated metadata.
     /// </summary>
     /// <remarks>
-    /// Used directly in the HEStaticDataFileCollection and derived from for the HEJsonGameFile class.
+    /// Used directly in the HEStaticDataFileCollection and is also inherited by the HEJsonGameFile class.
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEJsonBaseFile
+    public class HEJsonBaseFile : IHENotificationSender
     {
-        // Base class for a generic JSON data file - used directly in the HEStaticDataFileCollection
+        /// <summary>
+        /// Public property to access the parent object, if set through the constructor.
+        /// </summary>
+        public IHENotificationReceiver Parent { get { return parent; } }
+        
+        /// <summary>
+        /// Public property to get and set the FileInfo object that represents
+        /// the file to be worked with.
+        /// </summary>
         public FileInfo File { get; set; } = null;
-        public JToken JData { get; set; } = null;// this will probably need a custom getter + setter once we get in to saving data
-        public HETreeNode RootNode { get; set; } = null;
-        public bool IsLoaded { get; set; } = false;
-        public bool IsFileWritable { get; set; } = false;
-        public bool IsDirty { get; set; } = false;
-        public bool LoadError { get; set; } = false;
-        public bool SkipLoading { get; set; } = false;
-        public bool LogToDebug { get; set; } = false;
+        
+        /// <summary>
+        /// Public property to get and set the JToken that was loaded from the file.
+        /// </summary>
+        public JToken JData
+        {
+            get
+            {
+                // Check the file is loaded
+                if (!isLoaded) return null;
+                // Check there wasn't a load error
+                if (LoadError) return null;
+                return jData;
+            }
+            set
+            {
+                // Nothing special here right now, this will need to be fleshed out
+                if (value != null)
+                {
+                    // This is temporary and to detect data changes
+                    throw new Exception("Attempted JData change :)");
 
+                    IsDirty = true;
+                    // jData = value;
+                }
+                else throw new InvalidOperationException();
+            }
+        }
+        
+        /// <summary>
+        /// Public property for read-only access to the root node of the tree.
+        /// </summary>
+        public HETreeNode RootNode { get { return rootNode; } }
+        
+        /// <summary>
+        /// Used to determine whether the file is loaded; read only.
+        /// </summary>
+        public bool IsLoaded { get { return isLoaded; } }
+
+        /// <summary>
+        /// Used to determine whether there was an error on load.
+        /// </summary>
+        public bool LoadError
+        {
+            get
+            {
+                return loadError;
+            }
+            private set
+            {
+                if (value)
+                {
+                    if (!loadError)
+                    {
+                        // Set the load error flag
+                        loadError = true;
+                        // Change the node type so that the icon changes to the error type
+                        rootNode.NodeType = HETreeNodeType.DataFileError;
+                        /*
+                        // Fire the event
+                        OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Load Error in file {0}", File.FullName)));
+                        */
+                    }
+                }
+                else
+                {
+                    loadError = value;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Determines whether the file is writeable and can attempt to set it to writeable
+        /// if the necessary conditions have been met.
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get
+            {
+                // Check the file is loaded
+                if (!isLoaded) return true;
+                // Check there wasn't a load error
+                if (LoadError) return true;
+                // Is the file read-only in the file system?
+                if (File.IsReadOnly) return true;
+                // None of the above applied, return the value of the override
+                return readOnlyOverride;
+            }
+            set
+            {
+
+                // Attempts to set the file state to writeable.
+                if (value && isLoaded && !LoadError && !File.IsReadOnly)
+                {
+                    readOnlyOverride = true;
+                }
+                else
+                {
+                    readOnlyOverride = false;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Used to determine whether the jData object has been modified, and will trigger a prompt to save.
+        /// </summary>
+        public bool IsDirty
+        {
+            get
+            {
+                return isDirty;
+            }
+            private set
+            {
+                if (value)
+                {
+                    if (!isDirty)
+                    {
+                        // Set the isDirty flag
+                        isDirty = true;
+                        
+                        /*
+                        // Fire the event
+                        OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Changes detected in file {0}", File.FullName)));
+                        */
+                    }
+                }
+                else
+                {
+                    isDirty = value;
+                }
+
+            }
+        }
+
+        /*
+        
+        /// <summary>
+        /// Declare the event handler for notifying the parent object about changes using EventHandler<T>
+        /// </summary>
+        public event EventHandler<HEJsonBaseFileEventArgs> RaiseCustomEvent;
+
+        /// <summary>
+        /// This event invocation is wrapped inside a protected virtual method
+        /// to allow derived classes to override the event invocation behaviour
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnRaiseCustomEvent(HEJsonBaseFileEventArgs e)
+        {
+            // Make a temporary copy of the event to avoid possibility of
+            // a race condition if the last subscriber unsubscribes
+            // immediately after the null check and before the event is raised.
+            EventHandler<HEJsonBaseFileEventArgs> handler = RaiseCustomEvent;
+
+            // Event will be null if there are no subscribers
+            if (handler != null)
+            {
+                // Format the string to send inside the CustomEventArgs parameter
+                e.Message += String.Format(" at {0}", DateTime.Now.ToString());
+
+                // Use the () operator to raise the event.
+                handler(this, e);
+            }
+        }
+
+        */
+
+        /// <summary>
+        /// Stores a reference to the parent object, if set using the constructor.
+        /// </summary>
+        protected IHENotificationReceiver parent = null;
+
+        /// <summary>
+        /// The JToken that was loaded from the file, if load was successful.
+        /// </summary>
+        protected JToken jData = null;
+
+        /// <summary>
+        /// The root node of the file - top level will be a node representing the file and
+        /// any sub objects will be children of this.
+        /// </summary>
+        protected HETreeNode rootNode = null;
+
+        /// <summary>
+        /// Determines whether the file has been loaded.
+        /// </summary>
+        protected bool isLoaded = false;
+
+        /// <summary>
+        /// Tracks whether there was an error encountered during load - only used by the 
+        /// LoadError property to prevent re-triggering events.
+        /// </summary>
+        protected bool loadError = false;
+
+        /// <summary>
+        /// This flag is set when the jData is modified - only used by the 
+        /// IsDirty property to prevent re-triggering events.
+        /// </summary>
+        protected bool isDirty = false;
+
+        /// <summary>
+        /// Used to determine whether the file is forced to read-only or whether the other
+        /// constraints alone determine whether the file can be modified.
+        /// </summary>
+        protected bool readOnlyOverride = true;
+
+        /// <summary>
+        /// Used to activate extended logging to the Debug window in VS.
+        /// </summary>
+        protected bool logToDebug = false;
+
+        /// <summary>
+        /// Default constructor, not used but required by the derived class for some reason.
+        /// </summary>
         public HEJsonBaseFile()
         { }
 
         /// <summary>
-        /// Constructor that allows the FileInfo to be passed and triggers loading.
+        /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
-        /// <param name="PassedFileInfo"></param>
-        public HEJsonBaseFile(FileInfo PassedFileInfo)
+        /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
+        public HEJsonBaseFile(FileInfo passedFileInfo, object passedParentObject)
         {
-            if (PassedFileInfo != null)
+            if (passedParentObject != null)
             {
-                File = PassedFileInfo;
+                parent = (IHENotificationReceiver)passedParentObject;
+
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (passedFileInfo != null)
+            {
+                File = passedFileInfo;
                 if (File.Exists)
                 {
-                    RootNode = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: File.Name, nodeToolTipText: File.FullName);
+
+                    rootNode = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: File.Name, nodeToolTipText: File.FullName);
                     LoadFile();
                 }
+                else
+                {
+                    throw new FileNotFoundException();
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        /// <summary>
+        /// Implements sending of simple child-to-parent messages.
+        /// </summary>
+        /// <param name="type">The type of message.</param>
+        /// <param name="msg">Message text (optional).</param>
+        void IHENotificationSender.SendNotification(HENotificationType type, string msg)
+        {
+            if (Parent != null)
+            {
+                Parent.ReceiveNotification((IHENotificationSender)this, type, msg);
+            }
+            else
+            {
+                Debug.Print("@@@ ALERT @@@ " + this.File.Name + " .SendNotification was called but parent was null.");
+                //throw new InvalidOperationException();
             }
         }
 
@@ -57,75 +308,88 @@ namespace HELLION.DataStructures
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
         /// </summary>
         /// <returns>Returns true if there was a loading error</returns>
-        public bool LoadFile()
-        {
-            if (!SkipLoading)
+        protected bool LoadFile()
+        {           
+            if (File.Exists)
             {
-                if (File.Exists)
+                try
                 {
-                    try
+                    using (StreamReader sr = File.OpenText())
                     {
-                        using (StreamReader sr = File.OpenText())
+                        // Process the stream with the JSON Text Reader in to a JToken
+                        using (JsonTextReader jtr = new JsonTextReader(sr))
                         {
-                            // Process the stream with the JSON Text Reader in to a JToken
-                            // this was previously using Array; was previously an IOrderedEnumerable<JToken> JObject
-                            using (JsonTextReader jtr = new JsonTextReader(sr))
-                            {
-                                JData  = JToken.ReadFrom(jtr);
-                            }
+                            jData  = JToken.ReadFrom(jtr);
                         }
                     }
-                    catch (Exception e)
-                    {
-                        // Some error handling to be implemented here
-                        LoadError = true;
-                        if (LogToDebug) Debug.Print("Exception caught during StreamReader or JsonTextReader while processing " + File.Name
-                            + Environment.NewLine + e);
-                    }
+                }
+                catch (Exception e)
+                {
+                    // Some error handling to be implemented here
+                    LoadError = true;
+                    if (logToDebug) Debug.Print("Exception caught during StreamReader or JsonTextReader while processing " + File.Name
+                        + Environment.NewLine + e);
+                }
 
-                    if (JData == null)                   
-                    {
-                        // The data didn't load
-                        LoadError = true;
-                        if (LogToDebug) Debug.Print("JData is null or empty: " + File.Name);
-                    }
-                    else
-                    {
-                        // We should have some data
-
-                        if (LogToDebug)
-                        {
-                            int numObj = 0;
-                            Debug.Print("Token Type: " + JData.Type.ToString());
-                            if (JData.Type == JTokenType.Array || JData.Type == JTokenType.Object)
-                            {
-                                numObj = JData.Count();
-                                Debug.Print(File.Name + " loading and is detected as an " + JData.Type.ToString() + ", " + numObj.ToString() + " JTokens loaded.");
-                            }
-                            else
-                                Debug.Print("ERROR: JData is detected as neither an ARRAY or OBJECT!");
-                        }
-                        // Set the IsLoaded flag to true
-                        IsLoaded = true;
-                    }
+                if (jData == null)                   
+                {
+                    // The data didn't load
+                    LoadError = true;
+                    if (logToDebug) Debug.Print("JData is null or empty: " + File.Name);
                 }
                 else
                 {
-                    // Invalid file name
-                    LoadError = true;
-                    if (LogToDebug) Debug.Print("Invalid file name passed: " + File.Name);
+                    // We should have some data
+
+                    if (logToDebug)
+                    {
+                        int numObj = 0;
+                        Debug.Print("Token Type: " + jData.Type.ToString());
+                        if (jData.Type == JTokenType.Array || jData.Type == JTokenType.Object)
+                        {
+                            numObj = jData.Count();
+                            Debug.Print(File.Name + " loading and is detected as an " + jData.Type.ToString() + ", " + numObj.ToString() + " JTokens loaded.");
+                        }
+                        else
+                        {
+                            LoadError = true;
+                            Debug.Print("ERROR: JData is detected as neither an ARRAY or OBJECT!");
+                        }
+                    }
+                    // Set the IsLoaded flag to true
+                    isLoaded = true;
                 }
             }
             else
             {
-                if (LogToDebug) Debug.Print("Skipping file: " + File.Name);
-            } // End of SkipLoading check
+                // File does not exist.
+                LoadError = true;
+                throw new FileNotFoundException();
+
+            }
+
+            //OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Loading Complete in file {0}", File.FullName)));
+
+            IHENotificationSender tmp = (IHENotificationSender)this;
+            if (LoadError)
+            {
+                tmp.SendNotification(HENotificationType.FileLoadError, "(" + File.Name + ")");
+            }
+            else
+            {
+                tmp.SendNotification(HENotificationType.FileLoadComplete, "(" + File.Name + ")");
+            }
+
 
             // Return the value of LoadError
             return LoadError;
         } // End of LoadFile()
 
-        public void SaveFile()
+        /// <summary>
+        /// Save the file data.
+        /// </summary>
+        /// <returns></returns>
+        protected bool SaveFile()
         {
             // Will save this file (not yet implemented)
 
@@ -134,7 +398,7 @@ namespace HELLION.DataStructures
                 //
             }
             /*
-            // Check to see if this fle already exists
+            // Check to see if this file already exists
             if (MainFile.Exists(FileName))
             {
                 // MainFile already exists, create a backup copy (.save.bak)
@@ -170,47 +434,29 @@ namespace HELLION.DataStructures
             }
 
             */
-
+            return false;
         } // End of SaveFile()
 
+        /// <summary>
+        /// Handles closing of this file, and de-allocation of it's objects
+        /// </summary>
+        /// <returns></returns>
         public bool Close()
         {
-            // Handles closing of this file, and de-allocation of it's objects
-
             if (IsDirty)
             {
                 return false; // indicates a problem and can't close
             }
             else
             {
-                // Not dirty, ok to close everything
-                IsLoaded = false;
+                // Not dirty, OK to close everything
+                isLoaded = false;
                 File = null;
-                JData = null;
-                RootNode = null;
+                jData = null;
+                rootNode = null;
                 return true;
             }
         }
-
-
-        public void MakeReadWrite()
-        {
-            // Changes the IsFileWritable to true - may need some additional checks here though
-            if (IsLoaded && !LoadError)
-            {
-                IsFileWritable = true;
-            }
-            else
-            {
-                IsFileWritable = false;
-            }
-        } // End of MakeReadWrite()
-
-        public void MakeReadOnly()
-        {
-            // Changes the IsFileWritable to false
-            IsFileWritable = false;
-        } // End of MakeReadOnly()
 
         /*
         public HETreeNode BuildNodeCollection(HETreeNodeType dummy, [CallerMemberName] string callerName = "")
@@ -220,7 +466,7 @@ namespace HELLION.DataStructures
             // Returns null instead of an empty collection
         
 
-            if (LogToDebug)
+            if (logToDebug)
             {
                 foreach (var method in new StackTrace().GetFrames())
                 {
@@ -243,7 +489,7 @@ namespace HELLION.DataStructures
 
                 int iImageIndex = 0;
 
-                if (LogToDebug)
+                if (logToDebug)
                     Debug.Print("JData type: " + JData.GetType());
 
                 foreach (JToken dataItem in JData.Reverse()) // seems to come in backwards, hence the .Reverse()
@@ -264,7 +510,7 @@ namespace HELLION.DataStructures
                         JProperty thisProperty = (JProperty)dataItem;
                         PropertyName = thisProperty.Name;
                         PropertyValue = thisProperty.Value;
-                        if (LogToDebug)
+                        if (logToDebug)
                             Debug.Print("Property name " + PropertyName + " added");
 
 
@@ -297,7 +543,7 @@ namespace HELLION.DataStructures
                             || PropertyValue.Type == JTokenType.Uri
                             )
                         {
-                            if (LogToDebug)
+                            if (logToDebug)
                                 Debug.Print("The property value contains a value");
 
                             nodeDataItem.NodeType = HETreeNodeType.JsonValue;
@@ -309,7 +555,7 @@ namespace HELLION.DataStructures
 
                         if (PropertyValue.Type == JTokenType.Array)
                         {
-                            if (LogToDebug)
+                            if (logToDebug)
                                 Debug.Print("The property value contains an array, evaluating ");
 
                             nodeDataItem.NodeType = HETreeNodeType.JsonArray;
@@ -344,7 +590,7 @@ namespace HELLION.DataStructures
 
                         if (PropertyValue.Type == JTokenType.Object)
                         {
-                            if (LogToDebug)
+                            if (logToDebug)
                                 Debug.Print("The property value contains an object, evaluating");
                             nodeDataItem.NodeType = HETreeNodeType.JsonObject;
                             nodeDataItem.ImageIndex = nodeDataItem.SelectedImageIndex = HEUtilities.GetImageIndexByNodeType(nodeDataItem.NodeType);
@@ -358,7 +604,7 @@ namespace HELLION.DataStructures
                                 JProperty thisSubProperty = (JProperty)thing;
                                 SubPropertyName = thisSubProperty.Name;
                                 SubPropertyValue = thisSubProperty.Value;
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("Property name " + PropertyName + " added");
 
 
@@ -391,14 +637,14 @@ namespace HELLION.DataStructures
 
                     else if (dataItem.Type == JTokenType.Object)
                     {
-                        if (LogToDebug)
+                        if (logToDebug)
                             Debug.Print("It's an object");
 
                     }
 
                     else
                     {
-                        if (LogToDebug)
+                        if (logToDebug)
                             Debug.Print("Not a property or an object!");
                     }
 
@@ -425,7 +671,7 @@ namespace HELLION.DataStructures
             // Set up indenting for this level
             string thisLevelIndent = String.Join("| ", new String[currentDepth]);
 
-            if (LogToDebug)
+            if (logToDebug)
             {
                 foreach (var method in new StackTrace().GetFrames())
                 {
@@ -440,7 +686,7 @@ namespace HELLION.DataStructures
             }
 
             // Builds a section of node tree and recurses if necessary
-            if (json != null) // prob needs more tests that this
+            if (json != null) // probably needs more tests that this
             {
                 HETreeNode newNode;
                 //JToken token = (JToken)json.Reverse();
@@ -462,7 +708,7 @@ namespace HELLION.DataStructures
                                 if (numChildTokens > 0)
                                 {
                                     // attach a single expansion node to the tree - this will be removed when the actual tree is generated
-                                    if (LogToDebug)
+                                    if (logToDebug)
                                         Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding (obj) expansion node", DateTime.Now, thisLevelIndent, currentDepth, maxDepth);
 
                                     HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + "nodes...", HETreeNodeType.ExpansionAvailable);
@@ -498,13 +744,13 @@ namespace HELLION.DataStructures
                                     numChildProperties++;
                                     if (maxDepth >= 2)
                                     {
-                                        if (LogToDebug)
+                                        if (logToDebug)
                                             Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                                         BuildBasicNodeTreeFromJson(token, newNode, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
-                                        if (LogToDebug)
+                                        if (logToDebug)
                                             Debug.Print("{0} :{1} BuildTree depth {2}({3}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                                         // Add the node
-                                        if (LogToDebug)
+                                        if (logToDebug)
                                             Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
                                         nodeParent.Nodes.Add(newNode);
                                     }
@@ -515,7 +761,7 @@ namespace HELLION.DataStructures
                         else
                         {
                             // We shouldn't be here!
-                            if (LogToDebug)
+                            if (logToDebug)
                                 Debug.Print("{0} :{1} BuildTree depth {2}({3}) tmpJObject was null", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                         }
                         break;
@@ -535,7 +781,7 @@ namespace HELLION.DataStructures
                                 if (numChildTokens > 0)
                                 {
                                     // attach a single expansion node to the tree - this will be removed when the actual tree is generated
-                                    if (LogToDebug)
+                                    if (logToDebug)
                                         Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding expansion node", DateTime.Now, thisLevelIndent, currentDepth, maxDepth);
 
                                     HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + " nodes...", HETreeNodeType.ExpansionAvailable);
@@ -567,18 +813,18 @@ namespace HELLION.DataStructures
                                 // Process child tokens - actually JProperties in the case of a JObject
                                 foreach (JToken token in json) // .Children<JToken>()
                                 {
-                                    if (LogToDebug)
+                                    if (logToDebug)
                                         Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
-                                    // collapsearrays mounts members of the array to the parent rather than creating a distinct node for the array. Defaults to off.
+                                    // collapse arrays mounts members of the array to the parent rather than creating a distinct node for the array. Defaults to off.
                                     if (collapseJArrays)
                                     {
                                         // Adjust parent node instead of using the generated node
-                                        // Changes the nodetype to represent an array
+                                        // Changes the node type to represent an array
                                         //nodeParent.NodeType = HETreeNodeType.JsonArray; // HETreeNodeType.JsonArray;
                                         //nodeParent.UpdateImageIndeces();
                                         // Recursive call
                                         BuildBasicNodeTreeFromJson(token, nodeParent, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
-                                        if (LogToDebug)
+                                        if (logToDebug)
                                             Debug.Print("{0} :{1} BuildTree depth{1}({2}) CollapseArrays using parent {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, nodeParent.Name);
 
                                 }
@@ -586,12 +832,12 @@ namespace HELLION.DataStructures
                                     {
                                         BuildBasicNodeTreeFromJson(token, newNode, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
                                         // Add the node
-                                        if (LogToDebug)
+                                        if (logToDebug)
                                             Debug.Print("{0} :{1} BuildTree depth{1}({2}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
 
                                         nodeParent.Nodes.Add(newNode);
                                         }
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth{1}({2}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
                                 
@@ -606,7 +852,7 @@ namespace HELLION.DataStructures
                         //}
                         break;
 
-                    case JTokenType.Property: // Ity's a JProperty, similar to a key value pair
+                    case JTokenType.Property: // It's a JProperty, similar to a key value pair
                         //
 
                         // Depth and null check, if valid, create this node
@@ -637,22 +883,22 @@ namespace HELLION.DataStructures
 
                                 // Process value
 
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
                                 BuildBasicNodeTreeFromJson(tmpJProperty.Value, newNode, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
 
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {4}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
                                 // Add the node
                                 nodeParent.Nodes.Add(newNode);
                             }
                             else
                             {
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Max Depth reached", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                             }
                         }
@@ -677,7 +923,7 @@ namespace HELLION.DataStructures
                             switch (json.Type)
                             {
                                 case JTokenType.Boolean:
-                                    // Bool (checkdot)
+                                    // Bool (CheckDot)
                                     newNodeImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
                                     break;
                                 case JTokenType.Bytes:
@@ -709,16 +955,16 @@ namespace HELLION.DataStructures
 
 
 
-                            if (LogToDebug) Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
+                            if (logToDebug) Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
 
                             newNode = new HETreeNode(tmpJValue.Value.ToString(), HETreeNodeType.JsonValue)
                             {
                                 Tag = tmpJValue,
-                                // Update the imageindex and selectedimageindex directly - we're overriding the standard icons
+                                // Update the ImageIndex and SelectedImageIndex directly - we're overriding the standard icons
                                 ImageIndex = newNodeImageIndex,
                                 SelectedImageIndex = newNodeImageIndex,
                             };
-                            if (LogToDebug)
+                            if (logToDebug)
                                 Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
 
                             nodeParent.Nodes.Add(newNode);
@@ -728,7 +974,7 @@ namespace HELLION.DataStructures
 
                     default:
                         //
-                        if (LogToDebug)
+                        if (logToDebug)
                         {
                             Debug.Print("BNTFJ {0} VALUE, type: {1} - NO ACTION TAKEN!", currentDepth, json.Type);
                             Debug.Print(json.ToString());
@@ -738,15 +984,24 @@ namespace HELLION.DataStructures
             }
             else
             {
-                if (LogToDebug)
+                if (logToDebug)
                     Debug.Print("{0} : BuildTree depth {1}({2}) JToken was null", DateTime.Now.ToString(), currentDepth, maxDepth);
             }
 
-            if (LogToDebug)
+            if (logToDebug)
                 Debug.Print("{0} : BuildTree depth {1}({2}) EXITING", DateTime.Now.ToString(), currentDepth, maxDepth);
         } // End of BuildBasicNodeTreeFromJson
         */
 
+        /// <summary>
+        /// Builds a section of node tree and recurses if necessary - can return null
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="maxDepth">Defaults to 10</param>
+        /// <param name="currentDepth">Used internally</param>
+        /// <param name="nameHint">Used to provide a hint to name an object instead of generating it</param>
+        /// <param name="collapseJArrays">Non-functional</param>
+        /// <returns>Returns an HETreeNode that is the root of the built tree.</returns>
         public HETreeNode BuildHETreeNodeTreeFromJson(
             JToken json,
             int maxDepth = 10,
@@ -754,19 +1009,17 @@ namespace HELLION.DataStructures
             string nameHint = "",
             bool collapseJArrays = false)
         {
-            // Builds a section of node tree and recurses if necessary - can return null
-
             // Set up indenting for this level
             string thisLevelIndent = String.Join("| ", new String[currentDepth]);
             HETreeNode newNode = null; // node to represent this level of recursion - this is returned once children are populated recursively
 
-            if (LogToDebug)
+            if (logToDebug)
             {
                 Debug.Print("{0} :{1} BuildTree depth {2}({3}) ENTERED with type: {4}", DateTime.Now, thisLevelIndent, currentDepth, maxDepth, json.Type);
                 Debug.Print(json.ToString());
             }
 
-            if (json != null) // prob needs more tests that this
+            if (json != null) // probably needs more tests that this
             {
                 //JToken token = (JToken)json.Reverse();
 
@@ -807,11 +1060,11 @@ namespace HELLION.DataStructures
                             {
                                 if ((currentDepth + 1) > maxDepth)
                                 {
-                                    // It has child tokens, but we're at the max depth already
+                                    // It has child tokens, but we're at the maximum depth already
                                     // attach a single expansion node to the tree - this will be removed when the actual tree is generated
 
                                     HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + " nodes...", HETreeNodeType.ExpansionAvailable);
-                                    if (LogToDebug)
+                                    if (logToDebug)
                                         Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding (obj) expansion node", DateTime.Now, thisLevelIndent, currentDepth, maxDepth);
                                     // Add the  expansion node
                                     newNode.Nodes.Add(tempExpansionNode);
@@ -825,14 +1078,14 @@ namespace HELLION.DataStructures
                                         numChildProperties++;
                                         if (maxDepth >= 2)
                                         {
-                                            if (LogToDebug) Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
+                                            if (logToDebug) Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                                             HETreeNode temp = BuildHETreeNodeTreeFromJson(token, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
-                                            if (LogToDebug) Debug.Print("{0} :{1} BuildTree depth {2}({3}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
+                                            if (logToDebug) Debug.Print("{0} :{1} BuildTree depth {2}({3}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
                                             if (temp != null)
                                             {
                                                 // Add the node
-                                                if (LogToDebug)
+                                                if (logToDebug)
                                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
                                                 newNode.Nodes.Add(temp);
                                             }
@@ -845,7 +1098,7 @@ namespace HELLION.DataStructures
                         else
                         {
                             // We shouldn't be here!
-                            if (LogToDebug)
+                            if (logToDebug)
                                 Debug.Print("{0} :{1} BuildTree depth {2}({3}) tmpJObject was null", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                         }
                         break;
@@ -882,11 +1135,11 @@ namespace HELLION.DataStructures
                             {
                                 if ((currentDepth + 1) > maxDepth)
                                 {
-                                    // It has child tokens, but we're at the max depth already
+                                    // It has child tokens, but we're at the maximum depth already
                                     // attach a single expansion node to the tree - this will be removed when the actual tree is generated
 
                                     HETreeNode tempExpansionNode = new HETreeNode("Click to expand " + numChildTokens.ToString() + " nodes...", HETreeNodeType.ExpansionAvailable);
-                                    if (LogToDebug)
+                                    if (logToDebug)
                                         Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding (arr) expansion node", DateTime.Now, thisLevelIndent, currentDepth, maxDepth);
                                     // Add the  expansion node
                                     newNode.Nodes.Add(tempExpansionNode);
@@ -896,13 +1149,13 @@ namespace HELLION.DataStructures
                                     // Process child tokens - actually JProperties in the case of a JObject
                                     foreach (JToken token in tmpJArray.Children<JToken>().Reverse<JToken>())
                                     {
-                                        // collapsearrays mounts members of the array to the parent rather than creating a distinct node for the array. Defaults to off.
+                                        // Collapse Arrays mounts members of the array to the parent rather than creating a distinct node for the array. Defaults to off.
                                         if (collapseJArrays)
                                         {
                                             // Adjust parent node instead of using the generated node, or at least it used to - this needs re-doing in light of recent changes
                                             // Recursive call
                                             BuildHETreeNodeTreeFromJson(token, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
-                                            if (LogToDebug)
+                                            if (logToDebug)
                                             {
                                                 Debug.Print("FINDME in collapseArrays!!!!");
                                                 //Debug.Print("{0} :{1} BuildTree depth{1}({2}) CollapseArrays using parent {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, nodeParent.Name);
@@ -912,17 +1165,17 @@ namespace HELLION.DataStructures
                                         else
                                         {
                                             // Add the node
-                                            if (LogToDebug) Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
+                                            if (logToDebug) Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
                                             newNode.Nodes.Add(BuildHETreeNodeTreeFromJson(token, maxDepth: maxDepth, currentDepth: currentDepth + 1));
 
-                                            if (LogToDebug) Debug.Print("{0} :{1} BuildTree depth{1}({2}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
+                                            if (logToDebug) Debug.Print("{0} :{1} BuildTree depth{1}({2}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                                         }
                                     } // End of foreach (token)
                                 }
                             }
                         }
-                        if (LogToDebug)
+                        if (logToDebug)
                         Debug.Print("{0} :{1} BuildTree depth{1}({2}) Returning Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
                         break;
 
@@ -957,22 +1210,22 @@ namespace HELLION.DataStructures
 
                                 // Process value
 
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Calling recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
                                 HETreeNode temp = BuildHETreeNodeTreeFromJson(tmpJProperty.Value, maxDepth: maxDepth - 1, currentDepth: currentDepth + 1);
 
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Returning from recursion", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
 
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {4}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
                                 // Add the node
                                 newNode.Nodes.Add(temp ?? new HETreeNode("null",HETreeNodeType.Unknown));
                             }
                             else
                             {
-                                if (LogToDebug)
+                                if (logToDebug)
                                     Debug.Print("{0} :{1} BuildTree depth {2}({3}) Max Depth reached", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth);
                             }
                         }
@@ -997,7 +1250,7 @@ namespace HELLION.DataStructures
                             switch (json.Type)
                             {
                                 case JTokenType.Boolean:
-                                    // Bool (checkdot)
+                                    // Bool (CheckDot)
                                     newNodeImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
                                     break;
                                 case JTokenType.Bytes:
@@ -1027,16 +1280,16 @@ namespace HELLION.DataStructures
                                     break;
                             }
 
-                            if (LogToDebug) Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
+                            if (logToDebug) Debug.Print("::Value " + Environment.NewLine + "{0}", tmpJValue.Value);
 
                             newNode = new HETreeNode(tmpJValue.Value.ToString(), HETreeNodeType.JsonValue)
                             {
                                 Tag = tmpJValue,
-                                // Update the imageindex and selectedimageindex directly - we're overriding the standard icons
+                                // Update the ImageIndex and SelectedImageIndex directly - we're overriding the standard icons
                                 ImageIndex = newNodeImageIndex,
                                 SelectedImageIndex = newNodeImageIndex,
                             };
-                            if (LogToDebug)
+                            if (logToDebug)
                                 Debug.Print("{0} :{1} BuildTree depth {2}({3}) Adding Node {3}", DateTime.Now.ToString(), thisLevelIndent, currentDepth, maxDepth, newNode.Text);
 
                             //nodeParent.Nodes.Add(newNode);
@@ -1046,7 +1299,7 @@ namespace HELLION.DataStructures
 
                     default:
                         //
-                        if (LogToDebug)
+                        if (logToDebug)
                         {
                             Debug.Print("BNTFJ {0} VALUE, type: {1} - NO ACTION TAKEN!", currentDepth, json.Type);
                             Debug.Print(json.ToString());
@@ -1056,13 +1309,13 @@ namespace HELLION.DataStructures
             }
             else
             {
-                if (LogToDebug)
+                if (logToDebug)
                     Debug.Print("{0} : BuildTree depth {1}({2}) JToken was null", DateTime.Now.ToString(), currentDepth, maxDepth);
 
                 return null;
             }
 
-            if (LogToDebug)
+            if (logToDebug)
                 Debug.Print("{0} : BuildTree depth {1}({2}) EXITING", DateTime.Now.ToString(), currentDepth, maxDepth);
 
             // Return the newNode
@@ -1070,16 +1323,24 @@ namespace HELLION.DataStructures
             return newNode;
         } // End of BuildBasicNodeTreeFromJson
 
+        /// <summary>
+        /// Populates the node tree from the jData
+        /// </summary>
         public void PopulateNodeTree()
         {
-            // Populates the RootNode using the build function
+            // Populates the rootNode using the build function
             HETreeNode tn = BuildHETreeNodeTreeFromJson(JData, maxDepth: 1, collapseJArrays: false);
-            RootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
+            rootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
         }
 
+        /// <summary>
+        /// Attempts to build a user-friendly name from available data in a JObject
+        /// </summary>
+        /// <param name="obj">Takes a JObject and attempts to generate a name from expected fields</param>
+        /// <returns></returns>
         public string GenerateDisplayName (JObject obj)
         {
-            // Attempts to build a user-friendly name from available data in a JObject
+            // 
             StringBuilder sb = new StringBuilder();
 
             sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
@@ -1097,8 +1358,5 @@ namespace HELLION.DataStructures
             return sb.ToString() ?? null;
         }
 
-
-
-
     } // End of class HEjsonFile
-} // End of namespace HELLION.DataStructures
+}

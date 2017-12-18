@@ -62,7 +62,7 @@ namespace HELLION.DataStructures
             {
                 AddCBTreeNodesRecursively((JArray)tempJsonBaseFile.JData, nThisNode: RootNode, lParentGUID: -1, iDepth: 4);
 
-                PopulateOrbitalObjects(HETreeNodeType.Asteroid, bLogToDebug: true);
+                PopulateOrbitalObjects(HETreeNodeType.Asteroid);
                 PopulateOrbitalObjects(HETreeNodeType.Ship);
                 RehydrateDockedShips();
                 PopulateOrbitalObjects(HETreeNodeType.Player);
@@ -92,7 +92,7 @@ namespace HELLION.DataStructures
                 Debug.Print("iDepth: " + iDepth.ToString());
             }
 
-            // Check to see if we've reached the max depth
+            // Check to see if we've reached the maximum depth
             if (iDepth < 1)
             {
                 // Max depth reached, don't continue at this level
@@ -190,12 +190,11 @@ namespace HELLION.DataStructures
             }
         } // end of AddCBTreeNodesRecursively
 
-
         public void PopulateOrbitalObjects(HETreeNodeType ntAddNodesOfType, bool bAddScenes = false, bool bLogToDebug = false)
         {
             // Populates a given node tree with objects of a given type from the .save file
 
-            // TODO add variable nStartingPoint rather than starting at an arbirtary place
+            // TODO add variable nStartingPoint rather than starting at an arbitrary place
 
             // Controls the maximum recursion depth to prevent runaway recursion
             int iMaxRecursionDepth = 10;
@@ -317,7 +316,7 @@ namespace HELLION.DataStructures
         bool bLogToDebug = false,
         int iLogIndentLevel = 0)
         {
-            // Primary recursive function for adding game objects (but not celestial bodies) as nodes to the Nav Tree.
+            // Primary recursive function for adding game objects (but not celestial bodies) as nodes to the Navigation Tree.
 
             // Set up indenting for this level
             string sIndent = String.Join("| ", new String[iLogIndentLevel]);
@@ -325,7 +324,7 @@ namespace HELLION.DataStructures
             // Get the index of the image associated with this node type
             //int iImageIndex = HEUtilities.GetImageIndexByNodeType(ntAddNodesOfType);
 
-            // nThisNode prepresents the point at which this function starts from
+            // nThisNode represents the point at which this function starts from
             //Check and only continue if nThisNode is not null
             if (nThisNode != null)
             {
@@ -340,7 +339,7 @@ namespace HELLION.DataStructures
                     //Debug.Print()
                 }
 
-                // Check to see if we've reached the max depth - used to prevent runaway recursion on deep structures
+                // Check to see if we've reached the maximum depth - used to prevent runaway recursion on deep structures
                 if (!(iDepth > 0))
                 {
                     // Max depth reached, don't continue at this level
@@ -385,7 +384,7 @@ namespace HELLION.DataStructures
                     // Check for child nodes and recurse to each in turn - this is done before creating objects at this level
                     if (thisNodesChildren.Count() > 0)
                     {
-                        // There are child nodes (celcetial bodies) to process
+                        // There are child nodes (celestial bodies) to process
 
                         // Loop through each child body in the iCelestialBodies list and RECURSE
                         foreach (HEOrbitalObjTreeNode nChildNode in thisNodesChildren)
@@ -395,7 +394,7 @@ namespace HELLION.DataStructures
                                 Debug.Print(sIndent + "Preparing to recurse using Orbital Body: " + nChildNode.Name);
                             }
 
-                            // Find the correct node in the Nav Tree for this cbChild
+                            // Find the correct node in the Navigation Tree for this cbChild
 
                             if (bLogToDebug)
                             {
@@ -431,7 +430,6 @@ namespace HELLION.DataStructures
                         case HETreeNodeType.Ship:
                             {
                                 // Process Ships and Asteroids similarly
-                                Debug.Print("GOT HERE 1");
 
                                 // Find the OrbitalObjects for this ParentGUID
                                 IOrderedEnumerable<JToken> ioOrbitalObjects = from s in JData
@@ -470,7 +468,7 @@ namespace HELLION.DataStructures
                                         sObjectName = (string)jtOrbitalObject["Name"];
                                     }
 
-                                    Debug.Print("GOT HERE 2 " + sObjectName);
+                                    //Debug.Print("GOT HERE 2 " + sObjectName);
 
                                     // Create a new TreeNode representing the object we're adding
                                     HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode(sObjectName, ntAddNodesOfType)
@@ -481,7 +479,7 @@ namespace HELLION.DataStructures
                                         Inclination = (double)jtOrbitalObject["OrbitData"]["Inclination"],
                                         // Generate the foreground colour
                                         //ForeColor = ConvertStringToColor((string)jtOrbitalObject["Name"]),
-                                        SceneID = (int)jtOrbitalObject["SceneID"],
+                                        //SceneID = (int)jtOrbitalObject["SceneID"],
                                         Type = (int)jtOrbitalObject["Type"],
                                         OrbitData = OrbitalObjectData,
                                         Tag = jtOrbitalObject
@@ -499,7 +497,7 @@ namespace HELLION.DataStructures
                                     if (testToken != null)
                                         nodeOrbitalObject.DockedToPortID = (int)jtOrbitalObject["DockedToPortID"];
 
-                                    Debug.Print("GOT HERE 3 {0}-{1}-{2}", nodeOrbitalObject.Name, nodeOrbitalObject.GUID, nodeOrbitalObject.ParentGUID);
+                                    //Debug.Print("GOT HERE 3 {0}-{1}-{2}", nodeOrbitalObject.Name, nodeOrbitalObject.GUID, nodeOrbitalObject.ParentGUID);
 
                                     // add the node
                                     nThisNode.Nodes.Add(nodeOrbitalObject);
@@ -597,7 +595,7 @@ namespace HELLION.DataStructures
         } // end of AddOrbitalObjTreeNodesRecursively
 
         /// <summary>
-        /// Re-arranges (rehydrates) existing ship nodes bu their DockedToShipGUID forming a tree where the
+        /// Re-arranges (rehydrates) existing ship nodes by their DockedToShipGUID forming a tree where the
         /// root node is the parent vessel of the docked ships (and is what shows up on radar in-game).
         /// </summary>
         /// <remarks>
@@ -612,7 +610,7 @@ namespace HELLION.DataStructures
 
             foreach (HEOrbitalObjTreeNode node in shipsToBeReparented)
             {
-                // If fhis node has a non-zero value for DockedToShipGUID, process it.
+                // If this node has a non-zero value for DockedToShipGUID, process it.
                 if (node.DockedToShipGUID != 0)
                 {
                     // Find the node that has the GUID matching the DockedToShipGUID of this node.
@@ -647,7 +645,7 @@ namespace HELLION.DataStructures
             // Set up indenting for this level
             string sIndent = String.Join("| ", new String[iLogIndentLevel]);
 
-            // nThisNode prepresents the point at which this function starts from
+            // nThisNode represents the point at which this function starts from
             //Check and only continue if nThisNode is not null
             if (nThisNode != null)
             {
@@ -660,7 +658,7 @@ namespace HELLION.DataStructures
                     //Debug.Print()
                 }
 
-                // Check to see if we've reached the max depth - used to prevent runaway recursion on deep structures
+                // Check to see if we've reached the maximum depth - used to prevent runaway recursion on deep structures
                 if (!(iDepth > 0))
                 {
                     // Max depth reached, don't continue at this level
@@ -688,7 +686,7 @@ namespace HELLION.DataStructures
                     // Check for child nodes and recurse to each in turn - this is done before processing objects at this level
                     if (thisNodesChildren.Count() > 0)
                     {
-                        // There are child nodes (celcetial bodies) to process
+                        // There are child nodes (celestial bodies) to process
 
                         // Loop through each child body in the iCelestialBodies list and RECURSE
                         foreach (HEOrbitalObjTreeNode nChildNode in thisNodesChildren)
@@ -701,7 +699,7 @@ namespace HELLION.DataStructures
                                 Debug.Print(sIndent + ">> : nChildNode GetNodeCount: " + nChildNode.GetNodeCount(includeSubTrees: false).ToString());
                                 Debug.Print(sIndent + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                             }
-                            // Find the correct node in the Nav Tree for this cbChild
+                            // Find the correct node in the Navigation Tree for this cbChild
 
                             // *** Recursive call here ***
                             FlattenDockedShipNodesRecursively(nChildNode, iDepth - 1, bLogToDebug, iLogIndentLevel + 1);

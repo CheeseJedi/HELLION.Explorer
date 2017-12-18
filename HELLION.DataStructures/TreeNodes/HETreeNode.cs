@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using static HELLION.DataStructures.HEImageList;
 
 /// <summary>
 /// Defines a derived HETreeNode to handle objects in the Game Data view.
@@ -15,10 +16,29 @@ namespace HELLION.DataStructures
     /// </summary>
     public class HETreeNode : TreeNode
     {
+        /// <summary>
+        /// The type of the HETreeNode
+        /// </summary>
         private HETreeNodeType nodeType = HETreeNodeType.Unknown;
+
+        /// <summary>
+        /// The cached count of direct child nodes. -1 means no data is cached.
+        /// </summary>
         private int countOfChildNodes = -1;
+
+        /// <summary>
+        /// The cached count of all child nodes (including sub nodes). -1 means no data is cached.
+        /// </summary>
         private int countOfAllChildNodes = -1;
+
+        /// <summary>
+        /// The cached list of direct child nodes. A value of null means no data is cached.
+        /// </summary>
         private List<HETreeNode> listOfChildNodes = null;
+
+        /// <summary>
+        /// The cached list of all child nodes (including sub nodes). A value of null means no data is cached.
+        /// </summary>
         private List<HETreeNode> listOfAllChildNodes = null;
 
         /// <summary>
@@ -28,7 +48,7 @@ namespace HELLION.DataStructures
         /// <param name="nodeType">Type of the new node (HETreeNodeType enum)</param>
         /// <param name="nodeText">Text of the new node (Display Name). If not specified this defaults to the node's name.</param>
         /// <param name="nodeToolTipText">Tool tip text of the new node. If not specified this defaults to the node's text.</param>
-        public HETreeNode(string nodeName, HETreeNodeType nodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
+        public HETreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
         {
             if (nodeName != null && nodeName != "") Name = nodeName;
             else Name = "node " + DateTime.Now.ToString();
@@ -36,10 +56,10 @@ namespace HELLION.DataStructures
             if (nodeText == "") Text = nodeName;
             else Text = nodeText;
 
-            if (nodeToolTipText == "") ToolTipText = nodeName + "(" + nodeType.ToString() + ")";
+            if (nodeToolTipText == "") ToolTipText = nodeName + " (" + newNodeType.ToString() + ")";
             else ToolTipText = nodeToolTipText;
 
-            NodeType = nodeType;
+            NodeType = newNodeType;
         }
 
         /// <summary>
@@ -51,11 +71,11 @@ namespace HELLION.DataStructures
             get { return nodeType; }
             set
             {
-                // Only update the nodeType if it is different.
+                // Only update the newNodeType if it is different.
                 if (value != nodeType)
                 {
                     nodeType = value;
-                    ImageIndex = HEUtilities.GetImageIndexByNodeType(nodeType);
+                    ImageIndex = GetImageIndexByNodeType(nodeType);
                     SelectedImageIndex = ImageIndex;
                 }
             }
@@ -107,7 +127,7 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Returns a list of all child nodes via a seperate recursive function
+        /// Returns a list of all child nodes via a separate recursive function
         /// </summary>
         /// <returns></returns>
         public List<HETreeNode> ListOfAllChildNodes
@@ -123,7 +143,7 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Updates the counts of subnodes for this child (recursive).
+        /// Updates the counts of sub nodes for this child (recursive).
         /// </summary>
         public void UpdateCounts()
         {
@@ -155,7 +175,7 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Returns a List(HETreeNode) of nodes containing this node plus all descendents.
+        /// Returns a List(HETreeNode) of nodes containing this node plus all descendants.
         /// </summary>
         /// <returns></returns>
         private List<HETreeNode> GetAllNodes()
@@ -168,62 +188,5 @@ namespace HELLION.DataStructures
             }
             return result;
         }
-
-        /*
-
-        private List<HETreeNode> GetDirectNodes()
-        {
-            List<HETreeNode> result = new List<HETreeNode>();
-            result.Add(this);
-            foreach (HETreeNode child in Nodes)
-            {
-                result.Add(child);
-            }
-            return result;
-        }
-        */
-
-    } // End of class HETreeNode
-
-    /// <summary>
-    /// Defines an enum of HETreeNode types
-    /// </summary>
-    public enum HETreeNodeType
-    {
-        Unknown = 0,        // Default for new nodes
-        SolarSystemView,    // Node type for the root of the solar system view tree
-        DataView,           // Node type for the root of the data view tree
-        SearchResultsView,  // Nore type for the root of the search results view tree
-        SystemNAV,          // Node type for a system navigation tree item
-        Scene,              // Node type for a Scene item
-        CelestialBody,      // Node type for Celestial Bodies (data usually loaded from CelestialBodies.json)
-        Asteroid,           // Node type for Ateroids (loaded from save file, data usually loaded from Asteroids.json)
-        Ship,               // Node type for Ships including modules (loaded from save file, data usually loaded from Structures.json)
-        Player,             // Node type for player characters, probably includes corpses yet to despawn
-        DynamicObject,      // Node type for Dynamic Objects (loaded from save file, data usually loaded from DynamicObjects.json)
-        DefCelestialBody,   // Node type for a defintion of a celestial body
-        DefAsteroid,        // Node type for a definition of an asteroid
-        DefStructure,       // Node type for a definition of a structure (ship/module)
-        DefDynamicObject,   // Node type for a definition of a dynamic object
-        RespawnObject,      // Node type for a respawn object - these seem to be deprecated now
-        SpawnPoint,         // Node type for a spawn point
-        ArenaController,    // Node type for an arena controller - these also seem to be deprecated now
-        DoomControllerData, // Node type for the doomed station controller data
-        SpawnManagerData,   // Node type for the SpawnManager data
-        ExpansionAvailable, // Node type used temporarily to indicate that an item can be evaluated further on-demand, replaced by real data
-        JsonArray,          // Node type for a json Array
-        JsonObject,         // Node type for a json Object
-        JsonProperty,       // Node type for a json Property
-        JsonValue,          // Node type for a json Value
-        SaveFile,           // Node type for the save file as represented in the node tree
-        SaveFileError,      // Node type for the save file in error state as represented in the node tree
-        DataFolder,         // Node type for the data folder
-        DataFolderError,    // Node type for the data folder
-        DataFile,           // Node type for a data file
-        DataFileError,      // Node type for a data file
-        SolSysStar,         // Node type for the star in the Solar System view (guid of the star)
-        SolSysPlanet,       // Node type for a planet (parent guid of the star)
-        SolSysMoon,         // Node type for a moon (not the star, or orbiting it directly)
-    }; // End of enum HETreeNodeType
-
-} // End of namespace HELLION.DataStructures
+    }
+}
