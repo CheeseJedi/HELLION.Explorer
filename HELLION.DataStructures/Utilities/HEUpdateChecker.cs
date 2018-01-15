@@ -32,7 +32,7 @@ namespace HELLION.DataStructures
             }
             else
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("One or more zero-length string(s) representing GitHub Username/Repo passed to constructor.");
             }
         }
 
@@ -51,23 +51,6 @@ namespace HELLION.DataStructures
         /// Set when using the constructor.
         /// </remarks>
         public string RepositoryName { get; private set; } = "";
-
-        /// <summary>
-        /// Public read-only property to access the latestRelease field and trigger the generation
-        /// of the data if it doesn't already exist.
-        /// </summary>
-        public string LatestRelease
-        {
-            get
-            {
-                if (latestRelease == "")
-                {
-                    // Generate the latest release info
-                    FindLatestRelease();
-                }
-                return latestRelease;
-            }
-        }
 
         /// <summary>
         /// Checks current build number against the latest release on GitHub repository and 
@@ -93,30 +76,53 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
+        /// Public read-only property to access the latestRelease field and trigger the generation
+        /// of the data if it doesn't already exist.
+        /// </summary>
+        public string LatestRelease
+        {
+            get
+            {
+                if (latestRelease == "")
+                {
+                    // Generate the latest release info
+                    latestRelease = FindLatestRelease();
+                }
+                return latestRelease;
+            }
+        }
+
+        /// <summary>
         /// Private field to cache the latest release version to prevent repeated web requests
         /// per session.
         /// </summary>
         private string latestRelease = "";
 
         /// <summary>
-        /// The private array of all releases for the repo as specified when the object was created
-        /// using the constructor.
+        /// Private field for the AllReleases Property
         /// </summary>
-        private JArray allReleases
+        private JArray _allReleases = null;
+
+
+        /// <summary>
+        /// The private property for the array of all releases for the repo as specified when 
+        /// the object was created using the constructor.
+        /// </summary>
+        private JArray AllReleases
         {
             get
             {
-                if (allReleases == null)
+                if (_allReleases == null)
                 {
-                    allReleases = FindAllGitHubReleases();
+                    _allReleases = FindAllGitHubReleases();
                 }
-                return allReleases;
+                return _allReleases;
             }
             set
             {
                 if (value != null)
                 {
-                    allReleases = value;
+                    _allReleases = value;
                 }
             }
         }
@@ -128,7 +134,7 @@ namespace HELLION.DataStructures
         private string FindLatestRelease()
         {
             // http request GET /repos/owner/repo/releases
-            IOrderedEnumerable<JToken> orderedReleases = from s in allReleases
+            IOrderedEnumerable<JToken> orderedReleases = from s in AllReleases
                                                          orderby (string)s["published_at"] descending
                                                          select s;
             string potentialLatestRelease = "";

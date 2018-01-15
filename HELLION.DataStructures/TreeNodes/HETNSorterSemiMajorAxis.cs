@@ -22,8 +22,8 @@ namespace HELLION.DataStructures
         /// <returns></returns>
         public int Compare(object x, object y)
         {
-            HEOrbitalObjTreeNode nodeX = x as HEOrbitalObjTreeNode;
-            HEOrbitalObjTreeNode nodeY = y as HEOrbitalObjTreeNode;
+            HESolarSystemTreeNode nodeX = x as HESolarSystemTreeNode;
+            HESolarSystemTreeNode nodeY = y as HESolarSystemTreeNode;
 
             // int iResult = Comparer<double>.Default.Compare(nodeX.SemiMajorAxis, nodeY.SemiMajorAxis);
 

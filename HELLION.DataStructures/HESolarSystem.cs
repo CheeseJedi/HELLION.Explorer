@@ -15,7 +15,7 @@ namespace HELLION.DataStructures
     /// </summary>
     public class HESolarSystem
     {
-        public HEOrbitalObjTreeNode RootNode { get; set; } = null;
+        public HESolarSystemTreeNode RootNode { get; set; } = null;
         public HEGameData GameData { get; set; } = null;
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace HELLION.DataStructures
         {
             // Basic constructor
 
-            RootNode = new HEOrbitalObjTreeNode("SOLARSYSTEMVIEW", HETreeNodeType.SolarSystemView, "Solar System")
+            RootNode = new HESolarSystemTreeNode("SOLARSYSTEMVIEW", HETreeNodeType.SolarSystemView, "Solar System")
             {
                 GUID = -1 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to the Solar System root node
             };
@@ -78,7 +78,7 @@ namespace HELLION.DataStructures
 
         public void AddCBTreeNodesRecursively(
             JArray iCelestialBodies,
-            HEOrbitalObjTreeNode nThisNode,
+            HESolarSystemTreeNode nThisNode,
             long lParentGUID,
             int iDepth,
             bool bLogToDebug = false)
@@ -148,7 +148,7 @@ namespace HELLION.DataStructures
                             newNodeType = HETreeNodeType.SolSysPlanet;
 
                         // Set up a new custom TreeNode which will be added to the node tree
-                        HEOrbitalObjTreeNode nChildNode = new HEOrbitalObjTreeNode((string)cbChild["Name"], newNodeType)
+                        HESolarSystemTreeNode nChildNode = new HESolarSystemTreeNode((string)cbChild["Name"], newNodeType)
                         {
                             //Name = (string)cbChild["Name"], // GUID.ToString();
                             //NodeType = HETreeNodeType.CelestialBody,
@@ -309,7 +309,7 @@ namespace HELLION.DataStructures
 
         public void AddOrbitalObjTreeNodesRecursively(
         IOrderedEnumerable<JToken> JData,
-        HEOrbitalObjTreeNode nThisNode,
+        HESolarSystemTreeNode nThisNode,
         HETreeNodeType ntAddNodesOfType,
         bool bAddScenes,
         int iDepth,
@@ -358,18 +358,18 @@ namespace HELLION.DataStructures
                     }
 
                     // Define an IEnumerable object to hold this node's children
-                    IEnumerable<HEOrbitalObjTreeNode> thisNodesChildren = null;
+                    IEnumerable<HESolarSystemTreeNode> thisNodesChildren = null;
 
                     if (ntAddNodesOfType == HETreeNodeType.Player)
                     {
                         // Get all nodes as we're adding a player object
-                        thisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>();
+                        thisNodesChildren = nThisNode.Nodes.Cast<HESolarSystemTreeNode>();
                     }
                     else
                     {
                         // Get the child nodes that are Celestial Bodies
                         thisNodesChildren = nThisNode.Nodes
-                            .Cast<HEOrbitalObjTreeNode>().Where(p =>
+                            .Cast<HESolarSystemTreeNode>().Where(p =>
                             p.NodeType == HETreeNodeType.SolarSystemView ||
                             p.NodeType == HETreeNodeType.SolSysStar ||
                             p.NodeType == HETreeNodeType.SolSysPlanet ||
@@ -387,7 +387,7 @@ namespace HELLION.DataStructures
                         // There are child nodes (celestial bodies) to process
 
                         // Loop through each child body in the iCelestialBodies list and RECURSE
-                        foreach (HEOrbitalObjTreeNode nChildNode in thisNodesChildren)
+                        foreach (HESolarSystemTreeNode nChildNode in thisNodesChildren)
                         {
                             if (bLogToDebug)
                             {
@@ -471,7 +471,7 @@ namespace HELLION.DataStructures
                                     //Debug.Print("GOT HERE 2 " + sObjectName);
 
                                     // Create a new TreeNode representing the object we're adding
-                                    HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode(sObjectName, ntAddNodesOfType)
+                                    HESolarSystemTreeNode nodeOrbitalObject = new HESolarSystemTreeNode(sObjectName, ntAddNodesOfType)
                                     {
                                         GUID = (long)jtOrbitalObject["GUID"],
                                         ParentGUID = (long)jtOrbitalObject["OrbitData"]["ParentGUID"],
@@ -531,7 +531,7 @@ namespace HELLION.DataStructures
                                         }
 
                                         // Set up a new TreeNode which will be added to the node tree
-                                        HEOrbitalObjTreeNode nodeOrbitalObject = new HEOrbitalObjTreeNode((string)jtPlayerObject["Name"], ntAddNodesOfType)
+                                        HESolarSystemTreeNode nodeOrbitalObject = new HESolarSystemTreeNode((string)jtPlayerObject["Name"], ntAddNodesOfType)
                                         {
                                             //Name = (string)jtPlayerObject["Name"],
                                             //NodeType = ntAddNodesOfType,
@@ -604,18 +604,18 @@ namespace HELLION.DataStructures
         /// </remarks>
         public void RehydrateDockedShips()
         {
-            IEnumerable<HEOrbitalObjTreeNode> shipsToBeReparented = RootNode.ListOfAllChildNodes
-                .Cast<HEOrbitalObjTreeNode>()
+            IEnumerable<HESolarSystemTreeNode> shipsToBeReparented = RootNode.ListOfAllChildNodes
+                .Cast<HESolarSystemTreeNode>()
                 .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
 
-            foreach (HEOrbitalObjTreeNode node in shipsToBeReparented)
+            foreach (HESolarSystemTreeNode node in shipsToBeReparented)
             {
                 // If this node has a non-zero value for DockedToShipGUID, process it.
                 if (node.DockedToShipGUID != 0)
                 {
                     // Find the node that has the GUID matching the DockedToShipGUID of this node.
-                    HEOrbitalObjTreeNode newParentNode = RootNode.ListOfAllChildNodes
-                        .Cast<HEOrbitalObjTreeNode>()
+                    HESolarSystemTreeNode newParentNode = RootNode.ListOfAllChildNodes
+                        .Cast<HESolarSystemTreeNode>()
                         .Where(p => p.GUID == node.DockedToShipGUID)
                         .Single();
 
@@ -635,7 +635,7 @@ namespace HELLION.DataStructures
 
         /*
         public void FlattenDockedShipNodesRecursively(
-            HEOrbitalObjTreeNode nThisNode,
+            HESolarSystemTreeNode nThisNode,
             int iDepth = 20,
             bool bLogToDebug = false,
             int iLogIndentLevel = 0)
@@ -677,7 +677,7 @@ namespace HELLION.DataStructures
                     }
 
                     // Define an IEnumerable object to hold this node's children
-                    IEnumerable<HEOrbitalObjTreeNode> thisNodesChildren = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p =>
+                    IEnumerable<HESolarSystemTreeNode> thisNodesChildren = nThisNode.Nodes.Cast<HESolarSystemTreeNode>().Where(p =>
                             p.NodeType == HETreeNodeType.SolarSystemView ||
                             p.NodeType == HETreeNodeType.SolSysStar ||
                             p.NodeType == HETreeNodeType.SolSysPlanet ||
@@ -689,7 +689,7 @@ namespace HELLION.DataStructures
                         // There are child nodes (celestial bodies) to process
 
                         // Loop through each child body in the iCelestialBodies list and RECURSE
-                        foreach (HEOrbitalObjTreeNode nChildNode in thisNodesChildren)
+                        foreach (HESolarSystemTreeNode nChildNode in thisNodesChildren)
                         {
                             if (bLogToDebug)
                             {
@@ -720,23 +720,23 @@ namespace HELLION.DataStructures
                     // Process this node's ships
 
                     // Define an IEnumerable object to hold this node's children that are Ships and have a DockedToShipGUID
-                    IEnumerable<HEOrbitalObjTreeNode> IShipsToReParent = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
+                    IEnumerable<HESolarSystemTreeNode> IShipsToReParent = nThisNode.Nodes.Cast<HESolarSystemTreeNode>().Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
 
                     // Check for child nodes and recurse to each in turn - this is done before processing objects at this level
                     if (IShipsToReParent.Count() > 0)
                     {
                         // There are nodes to process
 
-                        IEnumerable<HEOrbitalObjTreeNode> DockingParents = null;
+                        IEnumerable<HESolarSystemTreeNode> DockingParents = null;
 
                         // Loop through each child body in the iCelestialBodies list and RECURSE
-                        foreach (HEOrbitalObjTreeNode nShipToReparent in IShipsToReParent)
+                        foreach (HESolarSystemTreeNode nShipToReparent in IShipsToReParent)
                         {
                             if (nShipToReparent.DockedToShipGUID > 0)
                             {
 
-                                DockingParents = nThisNode.Nodes.Cast<HEOrbitalObjTreeNode>().Where(n => n.GUID == nShipToReparent.DockedToShipGUID);
-                                foreach (HEOrbitalObjTreeNode DockingParent in DockingParents)
+                                DockingParents = nThisNode.Nodes.Cast<HESolarSystemTreeNode>().Where(n => n.GUID == nShipToReparent.DockedToShipGUID);
+                                foreach (HESolarSystemTreeNode DockingParent in DockingParents)
                                 {
                                     // Only process the first, there should only be one match anyway
                                     // Remove the ship to be re-parented from it's parent node collection

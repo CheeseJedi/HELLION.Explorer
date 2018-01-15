@@ -164,8 +164,9 @@ namespace HELLION.DataStructures
                         // Create and run new task to build the node tree asynchronously
                         //Task t = Task.Run(() => 
 
-                        if (PopulateNodeTrees)
-                            tempFile.PopulateNodeTree();
+                        // FINDME Population of node trees temporarily disabled
+                        //if (PopulateNodeTrees)
+                            //tempFile.PopulateNodeTree();
 
                         if (tempFile.RootNode != null)
                             RootNode.Nodes.Add(tempFile.RootNode);

@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using System.Windows.Forms;
 
 namespace HELLION.DataStructures
 {
@@ -62,7 +57,9 @@ namespace HELLION.DataStructures
                 Debug.Print("File evaluated {0}", SaveFileInfo.Name);
 
                 saveFile = new HEJsonGameFile(SaveFileInfo, this);
-                saveFile.PopulateNodeTree();
+
+                // FINDME Population of node trees temporarily disabled
+                //saveFile.PopulateNodeTree();
 
                 if (saveFile.RootNode != null)
                 {
@@ -82,7 +79,6 @@ namespace HELLION.DataStructures
                 }
                 else
                     throw new Exception("StaticData rootNode was null");
-
             }
         }
 

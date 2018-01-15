@@ -28,7 +28,6 @@ namespace HELLION.Explorer
             // Remove the current JsonDataViewForm from the jsonDataViews list
             Program.jsonDataViews.Remove(this);
             GC.Collect();
-
         }
 
         private void fastColoredTextBox1_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
@@ -48,6 +47,8 @@ namespace HELLION.Explorer
 
         }
 
+        #region menuStrip1
+
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -62,5 +63,7 @@ namespace HELLION.Explorer
         {
             fastColoredTextBox1.ShowReplaceDialog();
         }
+
+        #endregion
     }
 }

@@ -17,9 +17,18 @@ namespace HELLION.Explorer
 {
     /// <summary>
     /// This is the main class that implements the HELLION Explorer program.
-    /// Most of the work is done by the HEDocumentWorkspace object however this
-    /// assembly is responsible for building the output for the ListView control
     /// </summary>
+    /// <remarks>
+    /// The primary object of note is the HEDocumentWorkspace, of which there is only a single
+    /// instance at a time, created during a File Open operation.
+    /// BROAD ACHITECTURE OVERVIEW -- The HEDocumentWorkspace creates two main objects: 
+    /// 1. An HEGameDataobject which is responsible for both loading the .save file, all the
+    /// Static Data files, and generating the HETreeNode trees representing the data.
+    /// 2. An HESolarSystem object which is responsible for generating the Solar System view of
+    /// hierarchical objects, representing the orbital structure of the objects in the game. In
+    /// addition it represents docked ships (includes modules) in their hierarchical structure
+    /// as these are represented as trees within the Dedicated Server.
+    /// </remarks>
     static class Program
     {
         /// <summary>
@@ -39,7 +48,7 @@ namespace HELLION.Explorer
         internal static HEImageList hEImageList = new HEImageList();
         
         /// <summary>
-        /// Defines an ImageList and fill it from the HEImageList
+        /// Defines an ImageList and set it to the HEImageList
         /// </summary>
         internal static ImageList ilObjectTypesImageList = hEImageList.ImageList;
 
@@ -131,11 +140,16 @@ namespace HELLION.Explorer
             // Make a note of the starting time
             DateTime StartingTime = DateTime.Now;
 
-
-            // Check for an existing document and close it if necessary
-            if (docCurrent != null)
+            // Check that the Data folder path has been defined and the expected files are there
+            if (!IsGameDataFolderValid())
             {
-                FileClose();
+                // The checks failed, throw up an error message and cancel the load
+                MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu"); // this needs to be massively improved!
+                // Begin repainting the TreeView.
+                frmMainForm.treeView1.EndUpdate();
+                // Restore mouse cursor
+                frmMainForm.Cursor = Cursors.Default;
+                return;
             }
 
             // If the sFileName is set, check the file exists otherwise prompt the user to select a file
@@ -149,9 +163,20 @@ namespace HELLION.Explorer
                     CheckFileExists = true
                 };
 
+                // Show the dialog.
+                DialogResult dialogResult = openFileDialog1.ShowDialog();
+
+                // Exit if the user clicked Cancel
+                if (dialogResult == DialogResult.Cancel) return;
+
                 // Check that the file exists when the user clicked OK
-                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                if (dialogResult == DialogResult.OK)
                 {
+                    // Check for an existing document and close it if necessary
+                    if (docCurrent != null)
+                    {
+                        FileClose();
+                    }
                     sFileName = openFileDialog1.FileName;
                 }
             }
@@ -187,19 +212,6 @@ namespace HELLION.Explorer
                 // Clear any existing nodes
                 //frmMainForm.treeView1.Nodes.Clear();
 
-                /*
-                // Check that the Data folder path has been defined and the expected files are there
-                if (!IsGameDataFolderValid())
-                {
-                    // The checks failed, throw up an error message and cancel the load
-                    MessageBox.Show("There was a problem with the Data Folder - use Set Data Folder option in Tools menu :)"); // this needs to be massively improved!
-                                                                                                                               
-                    // Restore mouse cursor and return
-                    frmMainForm.Cursor = Cursors.Default;
-                    return;
-                }
-                */
-
                 // Grab the Game Data Folder from Properties
                 //string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
 
@@ -215,13 +227,18 @@ namespace HELLION.Explorer
                 frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 frmMainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
 
+                // Display prettying - set the star as the selected node and expand it, and the solar system root node.
 
+                // Expand the Solar System root node.
+                docCurrent.SolarSystem.RootNode.Expand();
+                // Expand the star node, Hellion.
+                docCurrent.SolarSystem.RootNode.FirstNode.Expand();
+                // Set the star node as the selected node.
+                frmMainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
 
                 // DO SOME OTHER STUFF HERE?
 
 
-
-                    
                 // Begin repainting the TreeView.
                 frmMainForm.treeView1.EndUpdate();
 
@@ -235,13 +252,7 @@ namespace HELLION.Explorer
 
                 frmMainForm.closeToolStripMenuItem.Enabled = true;
 
-
-
             }
-
-
-
-
 
         }
 
@@ -508,7 +519,7 @@ namespace HELLION.Explorer
         /// Checks that the Static Data folder is valid. Called by menu option on the main
         /// form and Is interactive and will prompt the user to set a valid folder.
         /// </summary>
-        internal static void VerifyGameDataFolder()
+        internal static void VerifyGameDataFolder(bool NotifySuccess = true)
         {
             // Check that the Data folder path has been defined and there's stuff there
             if (!IsGameDataFolderValid())
@@ -519,7 +530,7 @@ namespace HELLION.Explorer
             }
             else
             {
-                MessageBox.Show("Game Data folder seems valid.");
+                if (NotifySuccess) MessageBox.Show("Game Data folder seems valid.");
             }
         }
 
@@ -568,7 +579,7 @@ namespace HELLION.Explorer
             {
                 sb.Append(" [" + FullFileNameHint + "] ");
             }
-            else if (docCurrent != null && docCurrent.IsWorkspaceReady)
+            else if (docCurrent != null && docCurrent.SaveFileInfo != null) // && docCurrent.IsWorkspaceReady)
             {
                 sb.Append(" [" + docCurrent.SaveFileInfo.FullName + "] ");
 
@@ -744,7 +755,7 @@ namespace HELLION.Explorer
                     || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
                 {
 
-                    HEOrbitalObjTreeNode nSelectedOrbitalObjNode = (HEOrbitalObjTreeNode)nSelectedNode;
+                    HESolarSystemTreeNode nSelectedOrbitalObjNode = (HESolarSystemTreeNode)nSelectedNode;
 
                     sb1.Append(Environment.NewLine);
                     sb1.Append("ORBITAL DATA");

@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.HEImageList;
 
 /// <summary>
@@ -41,6 +46,22 @@ namespace HELLION.DataStructures
         /// </summary>
         private List<HETreeNode> listOfAllChildNodes = null;
 
+        /*
+        /// <summary>
+        /// Determines whether the node has data for child nodes that weren't yet added to the
+        /// tree. Once all direct child nodes are added this gets set to false.
+        /// </summary>
+        private bool lazyLoadAvailable = false;
+        */
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public HETreeNode()
+        {
+
+        }
+
         /// <summary>
         /// Constructor that takes a minimum of a name, but also optionally a type and text (display name).
         /// </summary>
@@ -71,7 +92,7 @@ namespace HELLION.DataStructures
             get { return nodeType; }
             set
             {
-                // Only update the newNodeType if it is different.
+                // Only update the nodeType if it is different.
                 if (value != nodeType)
                 {
                     nodeType = value;
@@ -115,8 +136,10 @@ namespace HELLION.DataStructures
             {
                 if (listOfChildNodes == null)
                 {
-                    listOfChildNodes = new List<HETreeNode>();
-                    listOfChildNodes.Add(this);
+                    listOfChildNodes = new List<HETreeNode>
+                    {
+                        this
+                    };
                     foreach (HETreeNode child in Nodes)
                     {
                         listOfChildNodes.Add(child);
@@ -142,23 +165,34 @@ namespace HELLION.DataStructures
             }
         }
 
+        /*
         /// <summary>
-        /// Updates the counts of sub nodes for this child (recursive).
+        /// Public property to return the status of whether the node can lazy load it's data.
         /// </summary>
-        public void UpdateCounts()
+        /// <remarks>
+        /// The Set function is only intended to be used 
+        /// </remarks>
+        public bool LazyLoadAvailable
         {
-            countOfChildNodes = GetNodeCount(includeSubTrees: false);
-            countOfAllChildNodes = GetNodeCount(includeSubTrees: true);
-
-            if (CountOfChildNodes > 0)
+            get
             {
-                // This node has child nodes, recursively process them
-                foreach (HETreeNode nChildNode in Nodes)
+                return lazyLoadAvailable;
+            }
+            set
+            {
+                if (value && !lazyLoadAvailable)
                 {
-                    nChildNode.UpdateCounts();
+                    lazyLoadAvailable = value;
                 }
             }
         }
+
+        public void LazyLoad()
+        {
+            //HEJsonBaseFile.LazyPopulateNodeTree(this, 1);
+        }
+        */
+
 
         /// <summary>
         /// Used to reset the counts and lists back to uninitialised state.
@@ -175,13 +209,36 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
+        /// Updates the counts of sub nodes for this child (recursive).
+        /// </summary>
+        /// <remarks>
+        /// As this is recursive it can take a while on large trees.
+        /// </remarks>
+        public void UpdateCounts()
+        {
+            countOfChildNodes = GetNodeCount(includeSubTrees: false);
+            countOfAllChildNodes = GetNodeCount(includeSubTrees: true);
+
+            if (CountOfChildNodes > 0)
+            {
+                // This node has child nodes, recursively process them
+                foreach (HETreeNode nChildNode in Nodes)
+                {
+                    nChildNode.UpdateCounts();
+                }
+            }
+        }
+
+        /// <summary>
         /// Returns a List(HETreeNode) of nodes containing this node plus all descendants.
         /// </summary>
         /// <returns></returns>
         private List<HETreeNode> GetAllNodes()
         {
-            List<HETreeNode> result = new List<HETreeNode>();
-            result.Add(this);
+            List<HETreeNode> result = new List<HETreeNode>
+            {
+                this
+            };
             foreach (HETreeNode child in Nodes)
             {
                 result.AddRange(child.GetAllNodes());

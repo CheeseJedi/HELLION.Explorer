@@ -39,11 +39,12 @@ namespace HELLION.DataStructures
             if (PassedFileInfo != null)
             {
                 File = PassedFileInfo;
-                rootNode = new HETreeNode("DATAFILE", HETreeNodeType.SaveFile, nodeText: File.Name, nodeToolTipText: File.FullName);
+                rootNode = new HEGameDataTreeNode("SAVEFILE", HETreeNodeType.SaveFile, nodeText: File.Name, nodeToolTipText: File.FullName);
 
                 if (File.Exists)
                 {
                     LoadFile();
+                    rootNode.Tag = jData;
                 }
                 else
                 {

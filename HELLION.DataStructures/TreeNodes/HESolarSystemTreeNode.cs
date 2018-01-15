@@ -9,7 +9,7 @@ namespace HELLION.DataStructures
     /// Defines a sub-derived TreeNode class to hold some additional parameters used to speed up working
     /// with the nodes by storing frequently used values.
     /// </summary>
-    public class HEOrbitalObjTreeNode : HETreeNode
+    public class HESolarSystemTreeNode : HETreeNode
     {
         /// <summary>
         /// The GUID for this object.
@@ -72,7 +72,7 @@ namespace HELLION.DataStructures
         /// <param name="nodeType">HETreeNodeType of the new node; defaults to Unknown.</param>
         /// <param name="nodeText">The Text (DisplayName) of the node - uses the Name if omitted.</param>
         /// <param name="nodeToolTipText">The ToolTip text displayed; defaults to the nodeText if omitted.</param>
-        public HEOrbitalObjTreeNode(string nodeName, HETreeNodeType nodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
+        public HESolarSystemTreeNode(string nodeName, HETreeNodeType nodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
             : base(nodeName, nodeType, nodeText, nodeToolTipText)
         {
             OrbitData = new HEOrbitalData();

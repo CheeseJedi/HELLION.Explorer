@@ -1,11 +1,11 @@
 ﻿using System;
-//using System.Drawing;
 using System.IO;
+using System.Diagnostics;
+using System.Windows.Forms;
+//using System.Drawing;
 //using System.Collections.Generic; // for IEnumerable
 //using System.Linq;
 //using System.Text;
-using System.Diagnostics;
-using System.Windows.Forms;
 //using Newtonsoft.Json;
 //using Newtonsoft.Json.Linq;
 //using static HELLION.DataStructures.HEUtilities;
@@ -124,6 +124,7 @@ namespace HELLION.DataStructures
                 InitialiseTreeView(mainFormTreeView, mainProgramHEImageList.ImageList);
                 InitialiseListView(mainFormListView, mainProgramHEImageList.ImageList);
 
+                IsWorkspaceReady = true;
             }
             else
             {

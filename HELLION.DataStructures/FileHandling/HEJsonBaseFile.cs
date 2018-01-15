@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-//using System.Runtime.CompilerServices;
 using System.Text;
-//using System.Threading.Tasks;
-//using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.HEImageList;
+//using System.Runtime.CompilerServices;
+//using System.Threading.Tasks;
+//using System.Windows.Forms;
 
 namespace HELLION.DataStructures
 {
@@ -65,7 +65,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Public property for read-only access to the root node of the tree.
         /// </summary>
-        public HETreeNode RootNode { get { return rootNode; } }
+        public HEGameDataTreeNode RootNode { get { return rootNode; } }
         
         /// <summary>
         /// Used to determine whether the file is loaded; read only.
@@ -214,7 +214,7 @@ namespace HELLION.DataStructures
         /// The root node of the file - top level will be a node representing the file and
         /// any sub objects will be children of this.
         /// </summary>
-        protected HETreeNode rootNode = null;
+        protected HEGameDataTreeNode rootNode = null;
 
         /// <summary>
         /// Determines whether the file has been loaded.
@@ -259,7 +259,6 @@ namespace HELLION.DataStructures
             if (passedParentObject != null)
             {
                 parent = (IHENotificationReceiver)passedParentObject;
-
             }
             else
             {
@@ -269,11 +268,13 @@ namespace HELLION.DataStructures
             if (passedFileInfo != null)
             {
                 File = passedFileInfo;
+                rootNode = new HEGameDataTreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: File.Name, nodeToolTipText: File.FullName);
+
                 if (File.Exists)
                 {
-
-                    rootNode = new HETreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: File.Name, nodeToolTipText: File.FullName);
                     LoadFile();
+                    rootNode.Tag = jData;
+                    //rootNode.
                 }
                 else
                 {
@@ -1048,10 +1049,11 @@ namespace HELLION.DataStructures
                                 }
                                 
                             }
-                            newNode = new HETreeNode(newNodeName, HETreeNodeType.JsonObject);
-
-                            // Set the node's tag to the JObject
-                            newNode.Tag = tmpJObject;
+                            newNode = new HETreeNode(newNodeName, HETreeNodeType.JsonObject)
+                            {
+                                // Set the node's tag to the JObject
+                                Tag = tmpJObject
+                            };
 
                             // Process any child tokens - actually JProperties in the case of a JObject
                             // Count children
@@ -1321,7 +1323,7 @@ namespace HELLION.DataStructures
             // Return the newNode
             if (newNode == null) Debug.Print("newNode was null");
             return newNode;
-        } // End of BuildBasicNodeTreeFromJson
+        }
 
         /// <summary>
         /// Populates the node tree from the jData
@@ -1333,6 +1335,29 @@ namespace HELLION.DataStructures
             rootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
         }
 
+        /*
+        /// <summary>
+        /// Performs the lazy population of tree nodes from the JToken in the Tag field.
+        /// </summary>
+        /// <param name="passedNode"></param>
+        /// <param name="maxDepth"></param>
+        public void LazyPopulateNodeTree(HETreeNode passedNode, int maxDepth)
+        {
+            if (passedNode != null && passedNode.LazyLoadAvailable)
+            {
+                // Build the node tree from the Tag data
+                HETreeNode tn = BuildHETreeNodeTreeFromJson((JToken)passedNode.Tag, maxDepth: maxDepth, collapseJArrays: false);
+
+                // Add any child nodes to the passedNodes Nodes collection
+                foreach (HETreeNode node in tn.Nodes)
+                    passedNode.Nodes.Add(node);
+
+                // Set the LazyLoadAvailable to false
+                passedNode.LazyLoadAvailable = false;
+            }
+        }
+        */
+
         /// <summary>
         /// Attempts to build a user-friendly name from available data in a JObject
         /// </summary>
@@ -1340,9 +1365,7 @@ namespace HELLION.DataStructures
         /// <returns></returns>
         public string GenerateDisplayName (JObject obj)
         {
-            // 
             StringBuilder sb = new StringBuilder();
-
             sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
             sb.Append((string)obj["GameName"]);
             sb.Append((string)obj["CategoryName"]);

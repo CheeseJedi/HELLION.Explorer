@@ -1,0 +1,31 @@
+{
+  "ParentGUID": <GUID of the target ship, must be a Mule/Arg>,
+  "ParentType": 2,
+  "LocalPosition": [
+	-0.094124145805835724,
+	1.8314067125320435,
+	18.421442031860352
+  ],
+  "LocalRotation": [
+	0.0,
+	-1.6292068494294654E-07,
+	0.0,
+	-1.0
+  ],
+  "Gravity": [
+	0.0,
+	-9.81,
+	0.0
+  ],
+  "Velocity": [
+	0.0,
+	0.0,
+	0.0
+  ],
+  "AngularVelocity": [
+	0.0,
+	0.0,
+	0.0
+  ],
+  "CurrentRoomID": 952
+}
