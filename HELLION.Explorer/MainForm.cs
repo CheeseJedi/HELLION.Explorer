@@ -156,14 +156,13 @@ namespace HELLION.Explorer
                 {
 
                     // Select the node the user has clicked.
-                    // The node appears selected until the menu is displayed on the screen.
-                    //m_OldSelectNode = (HETreeNode)treeView1.SelectedNode;
                     treeView1.SelectedNode = node;
-
                     
-                    // Find the appropriate ContextMenu depending on the selected node.
+                    // Configure the ContextMenu depending on the selected node status.
                     switch (node.NodeType)
                     {
+                        // The following node types are enabled for load on demand and require 
+                        // additional options on the context menu that are usually not visible.
                         case HETreeNodeType.SaveFile:
                         case HETreeNodeType.DataFile:
                         case HETreeNodeType.JsonArray:
@@ -172,6 +171,8 @@ namespace HELLION.Explorer
                         case HETreeNodeType.JsonValue:
                             // Enable the 'load' sub-node options
                             loadNextLevelToolStripMenuItem.Visible = true;
+                            loadAllLevelsToolStripMenuItem.Visible = true;
+                            toolStripSeparator9.Visible = true;
 
                             HEGameDataTreeNode tempNode = (HEGameDataTreeNode)node;
                             if (tempNode.ChildNodesLoaded)
@@ -179,13 +180,11 @@ namespace HELLION.Explorer
                             else
                                 loadNextLevelToolStripMenuItem.Enabled = true;
                             tempNode = null;
-
-                            loadAllLevelsToolStripMenuItem.Visible = true;
-
                             break;
                         default:
                             loadNextLevelToolStripMenuItem.Visible = false;
                             loadAllLevelsToolStripMenuItem.Visible = false;
+                            toolStripSeparator9.Visible = false;
                             break;
                     }
                     
@@ -355,11 +354,13 @@ namespace HELLION.Explorer
             Program.frmMainForm.treeView1.SelectedNode.Collapse();
         }
 
+        /*
         private void updateCountsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HETreeNode tempNode = (HETreeNode)Program.frmMainForm.treeView1.SelectedNode;
             tempNode.UpdateCounts();
         }
+        */
 
         private void jTokenLengthToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -376,10 +377,12 @@ namespace HELLION.Explorer
             }
         }
 
+        /*
         private void findToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             Program.FindNodeByName(treeView1);
         }
+        */
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -391,9 +394,6 @@ namespace HELLION.Explorer
             // This item is currently disabled but will be enabled for editable items.
         }
 
-
-        #endregion
-
         private void findToolStripMenuItem2_Click(object sender, EventArgs e)
         {
             Program.FindNodeByName(treeView1);
@@ -404,5 +404,7 @@ namespace HELLION.Explorer
             HETreeNode tempNode = (HETreeNode)Program.frmMainForm.treeView1.SelectedNode;
             tempNode.UpdateCounts();
         }
+
+        #endregion
     }
 } // End of namespace HELLION.Explorer

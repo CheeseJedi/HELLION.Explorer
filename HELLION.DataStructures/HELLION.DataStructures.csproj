@@ -90,26 +90,6 @@
     <Compile Include="Utilities\HEUpdateChecker.cs" />
     <Compile Include="Utilities\HEUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="ZeroGravity.Data-Enums\AttachPointType.cs" />
-    <None Include="ZeroGravity.Data-Enums\AuthorizedPersonRank.cs" />
-    <None Include="ZeroGravity.Data-Enums\CargoCompartmentType.cs" />
-    <None Include="ZeroGravity.Data-Enums\CelestialBodyGUID.cs" />
-    <None Include="ZeroGravity.Data-Enums\ColliderDataType.cs" />
-    <None Include="ZeroGravity.Data-Enums\DistressType.cs" />
-    <None Include="ZeroGravity.Data-Enums\GenericItemSubType.cs" />
-    <None Include="ZeroGravity.Data-Enums\ItemType.cs" />
-    <None Include="ZeroGravity.Data-Enums\LogItemTypes.cs" />
-    <None Include="ZeroGravity.Data-Enums\MachineryPartSlotScope.cs" />
-    <None Include="ZeroGravity.Data-Enums\MachineryPartType.cs" />
-    <None Include="ZeroGravity.Data-Enums\RepairPointDamageType.cs" />
-    <None Include="ZeroGravity.Data-Enums\ResourceType.cs" />
-    <None Include="ZeroGravity.Data-Enums\SpawnPointState.cs" />
-    <None Include="ZeroGravity.Data-Enums\SpawnPointType.cs" />
-    <None Include="ZeroGravity.Data-Enums\SpawnSettingsCase.cs" />
-    <None Include="ZeroGravity.Data-Enums\SubSystemAuxDataType.cs" />
-    <None Include="ZeroGravity.Data-Enums\TagAction.cs" />
-    <None Include="ZeroGravity.Data-Enums\TypeOfDamage.cs" />
-    <None Include="ZeroGravity.Data-Enums\VesselComponentType.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="_EmbeddedImages\3DCameraOrbit_16x.png" />

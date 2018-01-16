@@ -227,7 +227,7 @@ namespace HELLION.Explorer
                 frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 frmMainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
 
-                // Display prettying - set the star as the selected node and expand it, and the solar system root node.
+                // Display prettying - set the star as the selected node and expand it and the solar system root node.
 
                 // Expand the Solar System root node.
                 docCurrent.SolarSystem.RootNode.Expand();
@@ -579,9 +579,9 @@ namespace HELLION.Explorer
             {
                 sb.Append(" [" + FullFileNameHint + "] ");
             }
-            else if (docCurrent != null && docCurrent.SaveFileInfo != null) // && docCurrent.IsWorkspaceReady)
+            else if (docCurrent != null && docCurrent.GameData.SaveFile.File != null && docCurrent.IsWorkspaceReady)
             {
-                sb.Append(" [" + docCurrent.SaveFileInfo.FullName + "] ");
+                sb.Append(" [" + docCurrent.GameData.SaveFile.File.FullName + "] ");
 
                 if (docCurrent.IsDirty) sb.Append("*");
             }

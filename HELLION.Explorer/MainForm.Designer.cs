@@ -603,7 +603,7 @@
             this.expandAllToolStripMenuItem,
             this.collapseAllToolStripMenuItem});
             this.subNodesToolStripMenuItem.Name = "subNodesToolStripMenuItem";
-            this.subNodesToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.subNodesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.subNodesToolStripMenuItem.Text = "Sub Nodes";
             // 
             // expandAllToolStripMenuItem

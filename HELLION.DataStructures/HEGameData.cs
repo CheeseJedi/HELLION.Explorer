@@ -59,7 +59,7 @@ namespace HELLION.DataStructures
                 saveFile = new HEJsonGameFile(SaveFileInfo, this);
 
                 // FINDME Population of node trees temporarily disabled
-                //saveFile.PopulateNodeTree();
+                saveFile.RootNode.CreateChildNodesFromjData(3);
 
                 if (saveFile.RootNode != null)
                 {
