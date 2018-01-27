@@ -1,0 +1,8 @@
+{  
+  "StabilizeToTargetGUID": <GUID of the target ship>,
+  "StabilizeToTargetPosition": [
+    0.0,
+    0.0,
+    150.0
+  ]
+}
