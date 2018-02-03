@@ -12,7 +12,9 @@ namespace HELLION.DataStructures
         Unknown = 0,        // Default for new nodes
         SolarSystemView,    // Node type for the root of the solar system view tree
         DataView,           // Node type for the root of the data view tree
-        SearchResultsView,  // Node type for the root of the search results view tree
+        SearchResultsView,  // Node type for the root of the search results view tree, parent to all SearchHandlers
+        SearchHandler,      // Node type for a SearchHandler (and the FindHandler)
+        SearchResultsSet,   // Node type for a search results set, part of a SearchHandler
         Asteroid,           // Node type for Asteroids (loaded from save file, data usually loaded from Asteroids.json)
         Ship,               // Node type for Ships including modules (loaded from save file, data usually loaded from Structures.json)
         Player,             // Node type for player characters, probably includes corpses yet to de-spawn
@@ -28,8 +30,8 @@ namespace HELLION.DataStructures
         DataFolderError,    // Node type for the data folder
         DataFile,           // Node type for a data file
         DataFileError,      // Node type for a data file
-        SolSysStar,         // Node type for the star in the Solar System view (GUID of the star)
-        SolSysPlanet,       // Node type for a planet (parent GUID of the star)
-        SolSysMoon,         // Node type for a moon (not the star, or orbiting it directly)
+        Star,               // Node type for the star in the Solar System view (GUID of the star)
+        Planet,             // Node type for a planet (parent GUID of the star)
+        Moon,         // Node type for a moon (not the star, or orbiting it directly)
     };
 }

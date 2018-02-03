@@ -35,6 +35,11 @@ namespace HELLION.DataStructures
         public HESolarSystem SolarSystem { get; private set; } = null;
 
         /// <summary>
+        /// The HESearchHandler object that implements search.
+        /// </summary>
+        public HESearchHandler SearchHandler { get; private set; } = null;
+
+        /// <summary>
         /// The HESearch object that will be responsible for implementing find/search functionality.
         /// </summary>
         /// <remarks>
@@ -98,11 +103,12 @@ namespace HELLION.DataStructures
         /// <param name="passedImageList"></param>
         public HEDocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo, TreeView passedTreeView, ListView passedListView, HEImageList passedHEImageList)
         {
-            // Initialise the GameData and SolarSystem objects.
+            // Initialise the GameData, SolarSystem and SearchHandler objects.
             if (passedFileInfo != null && passedDirectoryInfo != null && passedFileInfo.Exists && passedDirectoryInfo.Exists)
             {
                 GameData = new HEGameData(passedFileInfo, passedDirectoryInfo);
                 SolarSystem = new HESolarSystem(GameData);
+                SearchHandler = new HESearchHandler(GameData, SolarSystem);
 
                 // Add the (currently) optional parameters.
                 if (passedTreeView != null)

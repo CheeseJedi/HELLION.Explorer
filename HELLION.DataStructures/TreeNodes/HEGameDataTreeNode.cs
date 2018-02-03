@@ -13,7 +13,7 @@ namespace HELLION.DataStructures
     /// Derives an HETreeNode for use in the Game Data that can self-build child nodes
     /// based on the JToken stored in the node's Tag field.
     /// </summary>
-    public class HEGameDataTreeNode : HETreeNode
+    public partial class HEGameDataTreeNode : HETreeNode
     {
         public bool ChildNodesLoaded => childNodesLoaded;
 
@@ -210,7 +210,7 @@ namespace HELLION.DataStructures
             {
                 if (!childNodesLoaded) // <-- check this
                 {
-                    foreach (JToken childToken in jData)
+                    foreach (JToken childToken in jData.Reverse<JToken>())
                     {
                         HEGameDataTreeNode newNode = new HEGameDataTreeNode(childToken);
                         Nodes.Add(newNode);
@@ -228,7 +228,6 @@ namespace HELLION.DataStructures
 
             }
         }
-
 
         /*
         /// <summary>

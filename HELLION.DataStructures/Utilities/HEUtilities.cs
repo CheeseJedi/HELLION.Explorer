@@ -13,6 +13,8 @@ namespace HELLION.DataStructures
     /// </summary>
     public static class HEUtilities
     {
+
+        /*
         /// <summary>
         /// Gets the first node that matches the given key in the current nodes children.
         /// </summary>
@@ -24,6 +26,10 @@ namespace HELLION.DataStructures
             TreeNode[] nodes = nCurrentNode.Nodes.Find(key, searchAllChildren: true);
             return nodes.Length > 0 ? nodes[0] : null;
         }
+        */
+
+
+
 
         /// <summary>
         /// Enum utility class.
@@ -64,7 +70,7 @@ namespace HELLION.DataStructures
         /// </summary>
         public static class Prompt
         {
-            public static string ShowDialog(string text, string caption)
+            public static string ShowDialog(string text, string caption, Icon icon = null)
             {
                 Form prompt = new Form()
                 {
@@ -76,6 +82,10 @@ namespace HELLION.DataStructures
                     Text = caption,
                     StartPosition = FormStartPosition.CenterScreen
                 };
+
+                // Set the form icon if one has been passed.
+                if (icon != null) prompt.Icon = icon;
+
                 Label textLabel = new Label() { Left = 50, Top = 20, Width = 400, Text = text };
                 TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
                 Button confirmation = new Button() { Text = "OK", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
@@ -228,45 +238,21 @@ namespace HELLION.DataStructures
 
         } // End of HSLColor
 
-        /// <summary>
-        /// SyntaxHighlightJson class by Joel Abrahmsson.
-        /// from http://joelabrahamsson.com/syntax-highlighting-json-with-c/
-        /// </summary>
-        /// <param name="original"></param>
-        /// <returns></returns>
-        public static string SyntaxHighlightJson(string original)
-        {
-            return Regex.Replace(
-              original,
-              @"(¤(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\¤])*¤(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)".Replace('¤', '"'),
-              match => {
-                  var cls = "number";
-                  if (Regex.IsMatch(match.Value, @"^¤".Replace('¤', '"')))
-                  {
-                      if (Regex.IsMatch(match.Value, ":$"))
-                      {
-                          cls = "key";
-                      }
-                      else
-                      {
-                          cls = "string";
-                      }
-                  }
-                  else if (Regex.IsMatch(match.Value, "true|false"))
-                  {
-                      cls = "boolean";
-                  }
-                  else if (Regex.IsMatch(match.Value, "null"))
-                  {
-                      cls = "null";
-                  }
-                  return "<span class=\"" + cls + "\">" + match + "</span>";
-              });
-        }
-
         // End of 3rd party code.
         #endregion 3rdPartyCode
     }
+
+
+    public static class StringExtensions
+    {
+        public static bool Contains(this string str1, string str2, StringComparison compType)
+        {
+            return str1?.IndexOf(str2, compType) >= 0;
+        }
+    }
+
+
+
 
     #region Interface Definitions
     /// <summary>

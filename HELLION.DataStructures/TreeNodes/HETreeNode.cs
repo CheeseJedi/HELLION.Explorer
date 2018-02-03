@@ -46,14 +46,6 @@ namespace HELLION.DataStructures
         /// </summary>
         private List<HETreeNode> listOfAllChildNodes = null;
 
-        /*
-        /// <summary>
-        /// Determines whether the node has data for child nodes that weren't yet added to the
-        /// tree. Once all direct child nodes are added this gets set to false.
-        /// </summary>
-        private bool lazyLoadAvailable = false;
-        */
-
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -127,6 +119,22 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
+        /// Gets the first node that matches the given key in the current nodes children.
+        /// </summary>
+        /// <param name="nCurrentNode"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public HETreeNode GetFirstChildNodeByName(string key)
+        {
+            TreeNode[] nodes = Nodes.Find(key, searchAllChildren: true);
+            return nodes.Length > 0 ? (HETreeNode)nodes[0] : null;
+        }
+
+
+
+
+
+        /// <summary>
         /// Returns a list of direct descendants
         /// </summary>
         /// <returns>List<HETreeNode></HETreeNode></returns>
@@ -164,35 +172,6 @@ namespace HELLION.DataStructures
                 return listOfAllChildNodes;
             }
         }
-
-        /*
-        /// <summary>
-        /// Public property to return the status of whether the node can lazy load it's data.
-        /// </summary>
-        /// <remarks>
-        /// The Set function is only intended to be used 
-        /// </remarks>
-        public bool LazyLoadAvailable
-        {
-            get
-            {
-                return lazyLoadAvailable;
-            }
-            set
-            {
-                if (value && !lazyLoadAvailable)
-                {
-                    lazyLoadAvailable = value;
-                }
-            }
-        }
-
-        public void LazyLoad()
-        {
-            //HEJsonBaseFile.LazyPopulateNodeTree(this, 1);
-        }
-        */
-
 
         /// <summary>
         /// Used to reset the counts and lists back to uninitialised state.

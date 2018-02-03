@@ -57,6 +57,7 @@ namespace HELLION.DataStructures
             }
         }
 
+        /*
         /// <summary>
         /// Populates the node tree from the jData
         /// </summary>
@@ -66,6 +67,7 @@ namespace HELLION.DataStructures
             HETreeNode tn = BuildHETreeNodeTreeFromJson(jData, maxDepth: 5, collapseJArrays: false);
             rootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
         }
+        */
 
     } // End of class HEJsonGameFile
 }

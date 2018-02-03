@@ -133,19 +133,21 @@ namespace HELLION.DataStructures
                     return (int)HEObjectTypesImageList.ListFolder_16x;
 
                 case HETreeNodeType.SearchResultsView:
+                case HETreeNodeType.SearchHandler:
+                case HETreeNodeType.SearchResultsSet:
                     return (int)HEObjectTypesImageList.FindResults_16x;
 
                 //case HETreeNodeType.CelestialBody:
                 //case HETreeNodeType.DefCelestialBody:
                 //    return (int)HEObjectTypesImageList.Shader_16x;
 
-                case HETreeNodeType.SolSysStar:
+                case HETreeNodeType.Star:
                     return (int)HEObjectTypesImageList.Brightness_16x;
 
-                case HETreeNodeType.SolSysPlanet:
+                case HETreeNodeType.Planet:
                     return (int)HEObjectTypesImageList.Contrast_16x;
 
-                case HETreeNodeType.SolSysMoon:
+                case HETreeNodeType.Moon:
                     return (int)HEObjectTypesImageList.DarkTheme_16x;
 
                 case HETreeNodeType.Asteroid:

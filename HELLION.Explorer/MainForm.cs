@@ -55,6 +55,11 @@ namespace HELLION.Explorer
             Program.FileOpen();
         }
 
+        private void revertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.FileRevert();
+        }
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show About Dialog Box
@@ -124,6 +129,16 @@ namespace HELLION.Explorer
             Program.TestOption1();
         }
 
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.EditFind();
+        }
+
+        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.EditFindNext();
+        }
+
         #endregion
 
         #region treeView1
@@ -138,56 +153,136 @@ namespace HELLION.Explorer
             // Update the object path + name + Tag in the object identifier bar
             Program.RefreshSelectedOjectPathBarText(e.Node);
             Program.RefreshListView(e.Node);
-
             Program.RefreshSelectedObjectSummaryText(e.Node);
-
-
 
             // Show menu only if the right mouse button is clicked.
             if (e.Button == MouseButtons.Right)
             {
-                // Point where the mouse is clicked.
-                //Point p = new Point(e.X, e.Y);
-
                 HETreeNode node = (HETreeNode)e.Node;
                 // Get the node that the user has clicked.
-                //TreeNode node = treeView1.GetNodeAt(p);
                 if (node != null)
                 {
-
                     // Select the node the user has clicked.
                     treeView1.SelectedNode = node;
                     
-                    // Configure the ContextMenu depending on the selected node status.
-                    switch (node.NodeType)
+                    // Determine node type and activate appropriate jump to menu items.
+                    Type t = node.GetType();
+                    if (t.Equals(typeof(HEGameDataTreeNode)))
                     {
-                        // The following node types are enabled for load on demand and require 
-                        // additional options on the context menu that are usually not visible.
-                        case HETreeNodeType.SaveFile:
-                        case HETreeNodeType.DataFile:
-                        case HETreeNodeType.JsonArray:
-                        case HETreeNodeType.JsonObject:
-                        case HETreeNodeType.JsonProperty:
-                        case HETreeNodeType.JsonValue:
-                            // Enable the 'load' sub-node options
-                            loadNextLevelToolStripMenuItem.Visible = true;
-                            loadAllLevelsToolStripMenuItem.Visible = true;
-                            toolStripSeparator9.Visible = true;
+                        // We're working with a GAME DATA node
 
-                            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)node;
-                            if (tempNode.ChildNodesLoaded)
-                                loadNextLevelToolStripMenuItem.Enabled = false;
-                            else
-                                loadNextLevelToolStripMenuItem.Enabled = true;
-                            tempNode = null;
-                            break;
-                        default:
-                            loadNextLevelToolStripMenuItem.Visible = false;
-                            loadAllLevelsToolStripMenuItem.Visible = false;
-                            toolStripSeparator9.Visible = false;
-                            break;
+                        // Enable the Json Data View
+                        jsonDataViewToolStripMenuItem.Enabled = true;
+
+                        // Enable the Jump to sub-menu
+                        jumpToToolStripMenuItem.Enabled = true;
+
+                        // GD nodes always have load items visible, even if enabled
+                        loadNextLevelToolStripMenuItem.Visible = true;
+                        loadAllLevelsToolStripMenuItem.Visible = true;
+                        toolStripSeparator9.Visible = true;
+
+                        // We're in the Game Data already, so disable selection of it
+                        thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                        thisObjectInGameDataViewToolStripMenuItem.Checked = true;
+
+                        // Disable these two as they're Solar System related
+                        rootOfDockingTreeToolStripMenuItem.Enabled = false;
+                        parentCelestialBodyToolStripMenuItem.Enabled = false;
+
+                        // Cast the node to an HEGameDataTreeNode type
+                        HEGameDataTreeNode gDnode = (HEGameDataTreeNode)treeView1.SelectedNode;
+
+                        // Disable the LoadNextLevel item if it's already been loaded.
+                        if (gDnode.ChildNodesLoaded) loadNextLevelToolStripMenuItem.Enabled = false;
+                        else loadNextLevelToolStripMenuItem.Enabled = true;
+
+                        if (gDnode.LinkedSolarSystemNode != null)
+                        {
+                            // It's a Game Data node that has a linked Solar System node 
+                            // Enable the Jump to menu item
+                            thisObjectInSolarSystemViewToolStripMenuItem.Enabled = true;
+                            thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+                        }
+                        else
+                        {
+                            thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                            thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+                        }
                     }
-                    
+                    else if (t.Equals(typeof(HESolarSystemTreeNode)))
+                    {
+                        // We're working with a SOLAR SYSTEM node
+
+                        // Disable the Json Data View option.
+                        jsonDataViewToolStripMenuItem.Enabled = false;
+
+                        // Solar System nodes never have load options
+                        loadNextLevelToolStripMenuItem.Visible = false;
+                        loadAllLevelsToolStripMenuItem.Visible = false;
+                        toolStripSeparator9.Visible = false;
+
+                        // We're in the Solar System already, so disable selection of it
+                        thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = true;
+
+                        // Cast the node as an HESolarSystemTreeNode type
+                        HESolarSystemTreeNode sSnode = (HESolarSystemTreeNode)treeView1.SelectedNode;
+
+                        if (sSnode.GUID == -1 || sSnode.NodeType == HETreeNodeType.SolarSystemView)
+                        {
+                            // We're dealing with the Solar System Root Node, special case.
+
+                            jumpToToolStripMenuItem.Enabled = false;
+                            thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                            thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+                        }
+                        else
+                        {
+                            if (sSnode.LinkedGameDataNode == null) throw new NullReferenceException("sNode.LinkedGameDataNode was null.");
+                            else
+                            {
+                                thisObjectInGameDataViewToolStripMenuItem.Enabled = true;
+                                thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+                            }
+                            // Enable the Jump to sub-menu unless it's the Solar System root node
+                            if (sSnode.GUID != -1) jumpToToolStripMenuItem.Enabled = true;
+                            else jumpToToolStripMenuItem.Enabled = false;
+
+                            // Enable the Root of Docking Tree option only if the node's parent type
+                            // is a ship, indicating it is docked to something (rather than something
+                            // being docked *to* this node i.e. child nodes).
+                            rootOfDockingTreeToolStripMenuItem.Enabled = sSnode.IsDockedToParent();
+                        }
+                    }
+                    else
+                    {
+                        // Disable the Json Data View
+                        jsonDataViewToolStripMenuItem.Enabled = false;
+
+                        // Disable the Jump to sub-menu
+                        jumpToToolStripMenuItem.Enabled = false;
+
+                        // Disable the Solar System Jump to option
+                        thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+
+                        // Disable the Game Data Jump to option
+                        thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                        thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+
+                        // Disable these two as they're Solar System related
+                        rootOfDockingTreeToolStripMenuItem.Enabled = false;
+                        parentCelestialBodyToolStripMenuItem.Enabled = false;
+
+                        // Disable the load options
+                        loadNextLevelToolStripMenuItem.Visible = false;
+                        loadAllLevelsToolStripMenuItem.Visible = false;
+                        toolStripSeparator9.Visible = false;
+                    }
+
+                    // throw new InvalidOperationException("Unexpected node type " + t.ToString());
+
                     contextMenuStrip1.Show(treeView1, e.Location);
 
                     // Re-select the previously selected node.
@@ -272,7 +367,8 @@ namespace HELLION.Explorer
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // Drill down on double click
-            if (Program.docCurrent != null) // && Program.docCurrent.IsFileReady)
+            if (Program.docCurrent == null) throw new NullReferenceException("docCurrent was null.");
+            else
             {
                 // Create a node to represent the currently selected item
                 TreeNode node = null;
@@ -298,14 +394,15 @@ namespace HELLION.Explorer
                 }
                 else
                 {
-                    if (node.Nodes.Count > 0)
+                    //if (node.Nodes.Count > 0)
                     {
                         // Expand the currently selected node
                         treeView1.SelectedNode = node;
-                        treeView1.SelectedNode.Expand();
+                        treeView1.Focus();
+                        //.SelectedNode.Expand();
                     }
                 }
-            } // End of if (Program.docCurrent.IsFileReady)
+            }
 
         }
 
@@ -318,34 +415,22 @@ namespace HELLION.Explorer
             // Load next level
             HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.frmMainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 1);
-
-
-
             //tempNode.UpdateCounts();
-            //tempNode.Expand();
-
-            //tempNode = null;
-
-
         }
 
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Load all levels (up to internal maximum)
+            // Load all levels (up to depth of 15)
             HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.frmMainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 15);
             //tempNode.UpdateCounts();
             tempNode.Expand();
-
-            //tempNode = null;
-
         }
 
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Tell the node to expand all child items
             Program.frmMainForm.treeView1.SelectedNode.ExpandAll();
-
         }
 
         private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -353,14 +438,6 @@ namespace HELLION.Explorer
             // Tell the node to expand all child items
             Program.frmMainForm.treeView1.SelectedNode.Collapse();
         }
-
-        /*
-        private void updateCountsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            HETreeNode tempNode = (HETreeNode)Program.frmMainForm.treeView1.SelectedNode;
-            tempNode.UpdateCounts();
-        }
-        */
 
         private void jTokenLengthToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -377,13 +454,6 @@ namespace HELLION.Explorer
             }
         }
 
-        /*
-        private void findToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Program.FindNodeByName(treeView1);
-        }
-        */
-
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.CreateNewJsonDataView(Program.frmMainForm.treeView1.SelectedNode);
@@ -394,17 +464,87 @@ namespace HELLION.Explorer
             // This item is currently disabled but will be enabled for editable items.
         }
 
-        private void findToolStripMenuItem2_Click(object sender, EventArgs e)
-        {
-            Program.FindNodeByName(treeView1);
-        }
-
         private void updateCountsToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             HETreeNode tempNode = (HETreeNode)Program.frmMainForm.treeView1.SelectedNode;
             tempNode.UpdateCounts();
         }
 
+        private void thisObjectInSolarSystemViewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.SelectedNode == null) throw new NullReferenceException("SelectedNode was null.");
+            else
+            {
+                Type t = treeView1.SelectedNode.GetType();
+                if (t.Equals(typeof(HEGameDataTreeNode)))
+                {
+                    HEGameDataTreeNode node = (HEGameDataTreeNode)treeView1.SelectedNode;
+                    treeView1.SelectedNode = node.LinkedSolarSystemNode;
+
+                    // Trigger refresh
+                    Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+                    Program.RefreshListView(treeView1.SelectedNode);
+                    Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                }
+                else throw new InvalidOperationException("Unexpected node type " + t.ToString());
+            }
+        }
+
+        private void thisObjectInGameDataViewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.SelectedNode == null) throw new NullReferenceException("SelectedNode was null.");
+            else
+            {
+                Type t = treeView1.SelectedNode.GetType();
+                if (t.Equals(typeof(HESolarSystemTreeNode)))
+                {
+                    HESolarSystemTreeNode node = (HESolarSystemTreeNode)treeView1.SelectedNode;
+                    treeView1.SelectedNode = node.LinkedGameDataNode;
+
+                    // Trigger refresh
+                    Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+                    Program.RefreshListView(treeView1.SelectedNode);
+                    Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                }
+                else throw new InvalidOperationException("Unexpected node type " + t.ToString());
+            }
+        }
+
+        private void parentCelestialBodyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // This is only applicable in the Solar System View
+            HESolarSystemTreeNode node = (HESolarSystemTreeNode)treeView1.SelectedNode;
+            treeView1.SelectedNode = node.GetParentCelestialBody();
+
+            // Trigger refresh
+            Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+            Program.RefreshListView(treeView1.SelectedNode);
+            Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+        }
+
+        private void rootOfDockingTreeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // This is only applicable in the Solar System View
+            HESolarSystemTreeNode node = (HESolarSystemTreeNode)treeView1.SelectedNode;
+            treeView1.SelectedNode = node.GetRootOfDockingTree();
+
+            // Trigger refresh
+            Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+            Program.RefreshListView(treeView1.SelectedNode);
+            Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+        }
+
         #endregion
+
+        private void addResultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            HESearchHandlerTreeNode node = (HESearchHandlerTreeNode)Program.frmMainForm.treeView1.SelectedNode;
+            if (node == null) throw new NullReferenceException("node was null.");
+            else
+            {
+                node.AddResult();
+
+            }
+        }
     }
 } // End of namespace HELLION.Explorer

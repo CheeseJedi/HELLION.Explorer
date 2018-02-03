@@ -70,8 +70,11 @@ namespace HELLION.DataStructures
             sb.Append(Environment.NewLine);
             sb.Append("Latest GitHub release version:");
             sb.Append(Environment.NewLine);
-            sb.Append(LatestRelease);
-
+            foreach (var release in AllReleases)
+            {
+                sb.Append(release["tag_name"] + Environment.NewLine); break;
+            }
+            
             MessageBox.Show(sb.ToString(), "Version update check", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -133,7 +136,6 @@ namespace HELLION.DataStructures
         /// <returns></returns>
         private string FindLatestRelease()
         {
-            // http request GET /repos/owner/repo/releases
             IOrderedEnumerable<JToken> orderedReleases = from s in AllReleases
                                                          orderby (string)s["published_at"] descending
                                                          select s;
@@ -157,6 +159,8 @@ namespace HELLION.DataStructures
         private JArray FindAllGitHubReleases()
         {
             // Set the URL for the request
+            // http request GET /repos/owner/repo/releases
+
             string sURL = "https://api.github.com/repos/" + GitHubUserName + "/" + RepositoryName + "/releases";
 
             JArray jData = null;

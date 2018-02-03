@@ -21,6 +21,7 @@ namespace HELLION.Explorer
         public JsonDataViewForm()
         {
             InitializeComponent();
+            Icon = Program.frmMainForm.Icon;
         }
 
         private void JsonDataViewForm_FormClosing(object sender, FormClosingEventArgs e)

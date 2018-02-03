@@ -52,11 +52,11 @@ namespace HELLION.DataStructures
                 // Nothing special here right now, this will need to be fleshed out
                 if (value != null)
                 {
-                    // This is temporary and to detect data changes
-                    throw new Exception("Attempted JData change :)");
-
                     IsDirty = true;
                     // jData = value;
+
+                    // This is temporary and to detect data changes
+                    throw new Exception("Attempted JData change :)");
                 }
                 else throw new InvalidOperationException();
             }
@@ -320,7 +320,7 @@ namespace HELLION.DataStructures
                         // Process the stream with the JSON Text Reader in to a JToken
                         using (JsonTextReader jtr = new JsonTextReader(sr))
                         {
-                            jData  = JToken.ReadFrom(jtr);
+                            jData = JToken.ReadFrom(jtr);
                         }
                     }
                 }
@@ -994,6 +994,7 @@ namespace HELLION.DataStructures
         } // End of BuildBasicNodeTreeFromJson
         */
 
+        /*
         /// <summary>
         /// Builds a section of node tree and recurses if necessary - can return null
         /// </summary>
@@ -1334,6 +1335,7 @@ namespace HELLION.DataStructures
             HETreeNode tn = BuildHETreeNodeTreeFromJson(JData, maxDepth: 1, collapseJArrays: false);
             rootNode.Nodes.Add(tn ?? new HETreeNode("LOADING ERROR!", HETreeNodeType.DataFileError));
         }
+        */
 
         /*
         /// <summary>
