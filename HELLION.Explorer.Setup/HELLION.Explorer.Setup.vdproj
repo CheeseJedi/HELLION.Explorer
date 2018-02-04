@@ -266,7 +266,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.0.5.108, Culture=neutral, processorArchitecture=AMD64"
+            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.0.5.109, Culture=neutral, processorArchitecture=AMD64"
                 "ScatterAssemblies"
                 {
                     "_74733222869EF8F28FA730D2E187D481"
@@ -327,6 +327,29 @@
         }
         "FileType"
         {
+            "{5EB83D71-FA18-4901-BE56-DE22E13CC478}:_E8556C45CA0243AD95A93D36FC66E7EB"
+            {
+            "Name" = "8:HELLION Dedicated Server Save File"
+            "Description" = "8:Save file from the HELLION Dedicated Server by Zero Gravity Games."
+            "Extensions" = "8:.save"
+            "MIME" = "8:application/json"
+            "Icon" = "8:_18119A1531594708AF2906D76735C170"
+            "IconIndex" = "3:0"
+                "Command"
+                {
+                "Command" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+                }
+                "Verbs"
+                {
+                    "{95C0C507-CBF0-42B8-B119-07219E384A4A}:_C14B2DCE193D40368A5F6FF49684652D"
+                    {
+                    "Command" = "8:&Open"
+                    "Verb" = "8:open"
+                    "Arguments" = "8:\"%1\""
+                    "Order" = "3:0"
+                    }
+                }
+            }
         }
         "Folder"
         {
@@ -393,7 +416,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:HELLION.Explorer"
         "ProductCode" = "8:{88B11E6D-5129-4499-AB88-6CA04F5673C0}"
-        "PackageCode" = "8:{7F4008E5-0008-47A7-941A-85375B67E0B1}"
+        "PackageCode" = "8:{DAD4E075-722A-4804-83CE-F7B8A607069B}"
         "UpgradeCode" = "8:{F183209F-F0D2-48DA-A90A-31E212313BD9}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -513,6 +536,34 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_7A377BB6EA554226B1338BB0CA0EC3AF"
+            {
+            "Name" = "8:HELLION.Explorer"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+            "Folder" = "8:_FB0676C07F544113A9869E423A0066CB"
+            "WorkingFolder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
+            "Icon" = "8:_18119A1531594708AF2906D76735C170"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E2818ED86F534CC6B17421BE8B0CE219"
+            {
+            "Name" = "8:HELLION.Explorer"
+            "Arguments" = "8:"
+            "Description" = "8:Launches HELLION.Explorer."
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+            "Folder" = "8:_B3E744336FAC48DB866FC0879B5DB9C8"
+            "WorkingFolder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
+            "Icon" = "8:_18119A1531594708AF2906D76735C170"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
