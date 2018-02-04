@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentWorkspace\HEBlueprints.cs" />
     <Compile Include="DocumentWorkspace\HEDocumentWorkspace.cs" />
     <Compile Include="DocumentWorkspace\HEGameData.cs" />
     <Compile Include="DocumentWorkspace\HESearchHandler.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="FileHandling\HEStaticDataFileCollection.cs" />
     <Compile Include="FileHandling\HEJsonBaseFile.cs" />
     <Compile Include="FileHandling\HEJsonGameFile.cs" />
+    <Compile Include="TreeNodes\HEBlueprintTreeNode.cs" />
     <Compile Include="TreeNodes\HEGameDataTreeNode.cs" />
     <Compile Include="TreeNodes\HEOrbitalData.cs" />
     <Compile Include="TreeNodes\HESearchHandlerTreeNode.cs" />

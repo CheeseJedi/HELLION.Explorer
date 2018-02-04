@@ -40,6 +40,11 @@ namespace HELLION.DataStructures
         public HESearchHandler SearchHandler { get; private set; } = null;
 
         /// <summary>
+        /// The HEBlueprints object that handles loading and displaying blueprints.
+        /// </summary>
+        public HEBlueprints Blueprints { get; private set; } = null;
+
+        /// <summary>
         /// The HESearch object that will be responsible for implementing find/search functionality.
         /// </summary>
         /// <remarks>
@@ -109,6 +114,7 @@ namespace HELLION.DataStructures
                 GameData = new HEGameData(passedFileInfo, passedDirectoryInfo);
                 SolarSystem = new HESolarSystem(GameData);
                 SearchHandler = new HESearchHandler(GameData, SolarSystem);
+                Blueprints = new HEBlueprints();
 
                 // Add the (currently) optional parameters.
                 if (passedTreeView != null)

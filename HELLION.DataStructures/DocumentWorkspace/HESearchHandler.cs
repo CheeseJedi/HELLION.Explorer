@@ -12,7 +12,6 @@ namespace HELLION.DataStructures
     /// </summary>
     public class HESearchHandler
     {
-
         /// <summary>
         /// Public property for the root node of the Search Handler tree.
         /// </summary>
@@ -66,29 +65,6 @@ namespace HELLION.DataStructures
             // searchOperators.Add(findOperator);
 
         }
-
-        /*
-        /// <summary>
-        /// Handles a very basic find-by-name of a node in the tree view control's currently
-        /// selected node's Nodes collection.
-        /// </summary>
-        public static void FindNodeByName(TreeView passedTreeView)
-        {
-            string searchKey = HEUtilities.Prompt.ShowDialog("Enter exact name of node to find (case insensitive):", "Find node by name", frmMainForm.Icon);
-
-            TreeNode result = HEUtilities.GetChildNodeByName(passedTreeView.SelectedNode, searchKey);
-
-            if (result != null)
-            {
-                // Select the node in the tree
-                passedTreeView.SelectedNode = result;
-            }
-            else
-            {
-                MessageBox.Show("No results for search term " + searchKey);
-            }
-        }
-        */
 
         /// <summary>
         /// Implements a search operator that can execute a query and populate a results set.

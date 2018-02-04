@@ -225,6 +225,7 @@ namespace HELLION.Explorer
 
                 frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 frmMainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
+                frmMainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
                 frmMainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
 
                 // Display prettying - set the star as the selected node and expand it and the solar system root node.

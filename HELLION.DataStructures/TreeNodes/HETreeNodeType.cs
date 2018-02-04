@@ -18,8 +18,7 @@ namespace HELLION.DataStructures
         Asteroid,           // Node type for Asteroids (loaded from save file, data usually loaded from Asteroids.json)
         Ship,               // Node type for Ships including modules (loaded from save file, data usually loaded from Structures.json)
         Player,             // Node type for player characters, probably includes corpses yet to de-spawn
-        //DynamicObject,      // Node type for Dynamic Objects (loaded from save file, data usually loaded from DynamicObjects.json) - MAY BE REDUNDANT
-        ExpansionAvailable, // Node type used temporarily to indicate that an item can be evaluated further on-demand, replaced by real data
+        //ExpansionAvailable, // Node type used temporarily to indicate that an item can be evaluated further on-demand, replaced by real data
         JsonArray,          // Node type for a json Array
         JsonObject,         // Node type for a json Object
         JsonProperty,       // Node type for a json Property
@@ -32,6 +31,8 @@ namespace HELLION.DataStructures
         DataFileError,      // Node type for a data file
         Star,               // Node type for the star in the Solar System view (GUID of the star)
         Planet,             // Node type for a planet (parent GUID of the star)
-        Moon,         // Node type for a moon (not the star, or orbiting it directly)
+        Moon,               // Node type for a moon (not the star, or orbiting it directly)
+        BlueprintsView,     //
+        Blueprint,          //
     };
 }
