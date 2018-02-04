@@ -570,7 +570,6 @@ namespace HELLION.DataStructures
         /// <param name="obj">Takes a JObject and attempts to generate a name from expected fields</param>
         /// <returns></returns>
         public string GenerateDisplayName(JObject obj)
-
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
@@ -585,7 +584,7 @@ namespace HELLION.DataStructures
             sb.Append((string)obj["GroupName"]);
             if (sb.Length > 0) sb.Append(" ");
             sb.Append((string)obj["ItemID"]);
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
 
     }

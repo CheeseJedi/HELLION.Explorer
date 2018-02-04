@@ -199,7 +199,7 @@ namespace HELLION.DataStructures
             passedListView.Columns.Add("Type", 120, HorizontalAlignment.Left);
             passedListView.Columns.Add("Count", 50, HorizontalAlignment.Left);
             passedListView.Columns.Add("TotalCount", 60, HorizontalAlignment.Left);
-            passedListView.Columns.Add("SemiMajorAxis", 80, HorizontalAlignment.Left);
+            passedListView.Columns.Add("FullPath", 120, HorizontalAlignment.Left);
             passedListView.Columns.Add("GUID", 50, HorizontalAlignment.Right);
             passedListView.Columns.Add("SceneID", 30, HorizontalAlignment.Right);
         }

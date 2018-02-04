@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using System.Text;
 using System.Drawing;
-using System.Reflection;
 using System.Diagnostics;
 using System.Data;
 using System.IO;
@@ -239,6 +238,10 @@ namespace HELLION.Explorer
 
                 // DO SOME OTHER STUFF HERE?
 
+                // Enable the Edit menu and the Find option, leaving the FindNext disabled
+                // frmMainForm.editToolStripMenuItem.Enabled = true;
+                frmMainForm.findToolStripMenuItem.Enabled = true;
+                frmMainForm.findNextToolStripMenuItem.Enabled = false;
 
                 // Begin repainting the TreeView.
                 frmMainForm.treeView1.EndUpdate();
@@ -284,6 +287,14 @@ namespace HELLION.Explorer
                     MessageBox.Show("Saving is not yet implemented.");
                 }
             }
+
+
+            // Enable the Find option, leaving the FindNext disabled
+            // frmMainForm.editToolStripMenuItem.Enabled = false;
+            frmMainForm.findToolStripMenuItem.Enabled = false;
+            frmMainForm.findNextToolStripMenuItem.Enabled = false;
+
+
 
             // Clear any existing nodes from the tree view
             frmMainForm.treeView1.Nodes.Clear();
@@ -345,14 +356,18 @@ namespace HELLION.Explorer
             docCurrent.SearchHandler.FindOperator.StartingNode = findStartingNode;
 
             // Execute the query, which updates the results list.
-            docCurrent.SearchHandler.FindOperator.Execute();
+            if (docCurrent.SearchHandler.FindOperator.Execute())
+            {
+                // Get a reference to the Results list enumerator.
+                findEnumerator = docCurrent.SearchHandler.FindOperator.Results.GetEnumerator();
 
-            // Get a reference to the Results list enumerator.
-            findEnumerator = docCurrent.SearchHandler.FindOperator.Results.GetEnumerator();
-
-            if (docCurrent.SearchHandler.FindOperator.Results.Count > 0) EditFindNext();
-            else MessageBox.Show("No results for search term " + findSearchKey);
-
+                frmMainForm.findNextToolStripMenuItem.Enabled = true;
+                EditFindNext();
+            }
+            else
+            {
+                MessageBox.Show("No results for search term " + findSearchKey);
+            }
         }
 
         /// <summary>
@@ -363,26 +378,7 @@ namespace HELLION.Explorer
         internal static void EditFindNext()
         {
             // Most of this code needs to be migrated to the FindHandler
-            /*
-            StringBuilder sb = new StringBuilder();
-            sb.Append("Find Next activated:" + Environment.NewLine);
-            sb.Append("Search term: " + findSearchKey + Environment.NewLine);
-            sb.Append("Starting Node: " + findStartingNode.Text + "(" + findStartingNode.Name + ")" + Environment.NewLine);
-            sb.Append("FindOperator.Results.Count = " + docCurrent.SearchHandler.FindOperator.Results.Count + Environment.NewLine);
-            sb.Append("treeView1.SelectedNode = ");
-
-            if (frmMainForm.treeView1.SelectedNode != null)
-            {
-                sb.Append(frmMainForm.treeView1.SelectedNode.Text + "(" + frmMainForm.treeView1.SelectedNode.Name + ")" + Environment.NewLine);
-            }
-            else
-            {
-                sb.Append("null (no node is currently selected)");
-            }
-            sb.Append(Environment.NewLine);
-            MessageBox.Show(sb.ToString());
-            */
-            if (docCurrent.SearchHandler.FindOperator.Results.Count > 0)
+            if (docCurrent.SearchHandler.FindOperator.Results.Count > 0 )
             {
                 if (findEnumerator.MoveNext())
                 {
@@ -399,8 +395,6 @@ namespace HELLION.Explorer
                 MessageBox.Show("Results count was zero :(");
             }
         }
-
-
 
         /// <summary>
         /// Generates the About dialog text, to be returned to the user by the program in a
@@ -757,7 +751,7 @@ namespace HELLION.Explorer
                             arr[1] = listItem.NodeType.ToString();
                             arr[2] = listItem.CountOfChildNodes.ToString();
                             arr[3] = listItem.CountOfAllChildNodes.ToString();
-                            arr[4] = ""; // listItem.OrbitData.SemiMajorAxis.ToString();
+                            arr[4] = listItem.Path();
                             arr[5] = ""; // listItem.GUID.ToString();
                             arr[6] = ""; // nodeChild.SceneID.ToString();
 
@@ -767,16 +761,8 @@ namespace HELLION.Explorer
                                 Text = listItem.Text,
                                 Tag = listItem
                             };
-                            /*
-                            if ((nodeChild.OrbitData.ParentGUID == -1) && (nodeChild.NodeType == HETreeNodeType.CelestialBody))
-                            {
-                                // It's the star, a special case
-                                liNewItem.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
-                            }
-                            else */
-                            {
-                                liNewItem.ImageIndex = HEImageList.GetImageIndexByNodeType(listItem.NodeType);
-                            }
+
+                            liNewItem.ImageIndex = HEImageList.GetImageIndexByNodeType(listItem.NodeType);
 
                             // Add the item
                             frmMainForm.listView1.Items.Add(liNewItem);
@@ -792,7 +778,7 @@ namespace HELLION.Explorer
                         arr[1] = nodeChild.NodeType.ToString();
                         arr[2] = nodeChild.CountOfChildNodes.ToString();
                         arr[3] = nodeChild.CountOfAllChildNodes.ToString();
-                        arr[4] = ""; // nodeChild.OrbitData.SemiMajorAxis.ToString();
+                        arr[4] = nodeChild.Path();
                         arr[5] = ""; // nodeChild.GUID.ToString();
                         arr[6] = ""; // nodeChild.SceneID.ToString();
 
@@ -802,16 +788,8 @@ namespace HELLION.Explorer
                             Text = nodeChild.Text,
                             Tag = nodeChild
                         };
-                        /*
-                        if ((nodeChild.OrbitData.ParentGUID == -1) && (nodeChild.NodeType == HETreeNodeType.CelestialBody))
-                        {
-                            // It's the star, a special case
-                            liNewItem.ImageIndex = (int)HEObjectTypesImageList.ButtonIcon_16x;
-                        }
-                        else */
-                        {
-                            liNewItem.ImageIndex = HEImageList.GetImageIndexByNodeType(nodeChild.NodeType);
-                        }
+
+                        liNewItem.ImageIndex = HEImageList.GetImageIndexByNodeType(nodeChild.NodeType);
 
                         // Add the item
                         frmMainForm.listView1.Items.Add(liNewItem);
@@ -887,8 +865,8 @@ namespace HELLION.Explorer
                         }
                     }
                     else throw new InvalidOperationException("tempNodes array length not greater than zero.");
+                    */
                     sb1.Append(Environment.NewLine);
-
                     sb1.Append("DockedPortID: " + nSelectedOrbitalObjNode.DockedPortID.ToString());
                     sb1.Append(Environment.NewLine);
                     sb1.Append("DockedToPortID: " + nSelectedOrbitalObjNode.DockedToPortID.ToString());
@@ -897,7 +875,7 @@ namespace HELLION.Explorer
                     sb1.Append("ORBITAL DATA");
                     sb1.Append(Environment.NewLine);
                     sb1.Append("ParentGUID: " + nSelectedOrbitalObjNode.OrbitData.ParentGUID.ToString());
-
+                    /*
                     tempNodes = null;
                     tempNode = null;
                     tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(nSelectedOrbitalObjNode.OrbitData.ParentGUID.ToString(), searchAllChildren: true);
@@ -906,8 +884,9 @@ namespace HELLION.Explorer
                     {
                         sb1.Append(" (" + tempNode.Text + ")");
                     }
-                    sb1.Append(Environment.NewLine);
                     */
+                    sb1.Append(Environment.NewLine);
+                    
 
                     sb1.Append("SemiMajorAxis: " + nSelectedOrbitalObjNode.OrbitData.SemiMajorAxis.ToString());
                     sb1.Append(Environment.NewLine);

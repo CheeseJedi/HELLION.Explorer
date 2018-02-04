@@ -131,7 +131,14 @@ namespace HELLION.DataStructures
         }
 
 
-
+        public string Path()
+        {
+            string fullPath = FullPath;
+            int lastIndex = fullPath.LastIndexOf(TreeView.PathSeparator);
+            // Ensure the lastIndex is not -1
+            lastIndex = lastIndex != -1 ? lastIndex : 0;
+            return fullPath.Substring(0, lastIndex);
+        }
 
 
         /// <summary>

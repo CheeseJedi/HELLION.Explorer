@@ -102,10 +102,17 @@ namespace HELLION.DataStructures
             public HESearchOperator(HESearchHandler passedParent)
             {
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
-                rootNode = new HESearchHandlerTreeNode(this, "SEARCHRESULTFIND", HETreeNodeType.SearchResultsSet, "Search Results");
+                rootNode = new HESearchHandlerTreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName);
                 parent.rootNode.Nodes.Add(rootNode);
                 parent.searchOperators.Add(this);
             }
+
+            /// <summary>
+            /// Defines the base display name of an object, to which additional info will
+            /// be appended to once the operator has been executed to generate the new 
+            /// display name (the node's .Text field).
+            /// </summary>
+            protected string baseDisplayName = "Search Results";
 
             /// <summary>
             /// Public property for the root node of the Search Handler tree.
@@ -144,6 +151,26 @@ namespace HELLION.DataStructures
             protected List<HETreeNode> results = null;
 
             /// <summary>
+            /// Determines whether the results set has members.
+            /// </summary>
+            /// <returns></returns>
+            public bool HasResults()
+            {
+                if (results == null || results.Count() < 1 ) return false;
+                else return true;
+            }
+
+            protected virtual string GenerateResultSetDisplayName()
+            {
+                string postfix = "";
+                if (query != null)
+                {
+                    postfix = " " + query + " (" + results.Count().ToString() + ")";
+                }
+                return baseDisplayName + postfix;
+            }
+
+            /// <summary>
             /// Public property to access the Query.
             /// </summary>
             /// <remarks>
@@ -172,6 +199,10 @@ namespace HELLION.DataStructures
 
             protected HETreeNode startingNode = null;
 
+            /// <summary>
+            /// Executes the query.
+            /// </summary>
+            /// <returns>Returns true if the result set has more than zero members.</returns>
             public bool Execute()
             {
                 if (query == null) return false;
@@ -182,8 +213,8 @@ namespace HELLION.DataStructures
                             || f.Text.Contains(query, StringComparison.OrdinalIgnoreCase)
                             || f.NodeType.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
                         .ToList<HETreeNode>();
-                    
-                    return true;
+                    rootNode.Text = GenerateResultSetDisplayName();
+                    return results.Count() > 0 ? true : false;
                 }
             }
         }
@@ -192,8 +223,35 @@ namespace HELLION.DataStructures
         {
             public HEFindOperator(HESearchHandler passedParent) : base(passedParent)
             {
+                rootNode.NodeType = HETreeNodeType.SearchResultsSet;
+                rootNode.Name = "FINDOPERATORRESULTS";
+                rootNode.Text =  "Find Results";
+
                 // Will need to set itself to undeletable.
             }
-        }
+
+            /// <summary>
+            /// Defines the base display name of an object, to which additional info will
+            /// be appended to once the operator has been executed to generate the new 
+            /// display name (the node's .Text field).
+            /// </summary>
+            protected new string baseDisplayName = "Find: ";
+
+            protected override string GenerateResultSetDisplayName()
+
+            {
+                string postfix = "";
+                if (query != null)
+                {
+                    postfix = " '" + query + "' (" + results.Count().ToString() + ")";
+                }
+                return baseDisplayName + postfix;
+            }
+
+
+
+
+
+}
     }
 }
