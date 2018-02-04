@@ -204,6 +204,12 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.DataFolderError:
                     return (int)HEObjectTypesImageList.FolderError_16x;
 
+                case HETreeNodeType.BlueprintsView:
+                    return (int)HEObjectTypesImageList.ListFolder_16x;
+
+                case HETreeNodeType.Blueprint:
+                    return (int)HEObjectTypesImageList.CSWorkflowDiagram_16x;
+
                 default:
                     return (int)HEObjectTypesImageList.Checkerboard_16x;
             }
