@@ -61,24 +61,15 @@ namespace HELLION.DataStructures
                 // Pre-load in several levels of node.
                 saveFile.RootNode.CreateChildNodesFromjData(3);
 
-                if (saveFile.RootNode != null)
-                {
-                    RootNode.Nodes.Add(saveFile.RootNode);
-                }
-                else
-                    throw new Exception("SaveFile rootNode was null");
+                if (saveFile.RootNode == null) throw new Exception("SaveFile rootNode was null");
+                else RootNode.Nodes.Add(saveFile.RootNode);
             }
 
             if (StaticDataFolderInfo != null && StaticDataFolderInfo.Exists)
             {
-                IHENotificationReceiver tmp = this;
                 staticData = new HEStaticDataFileCollection(StaticDataFolderInfo, this, autoPopulateTree: true);
-                if (staticData.RootNode != null)
-                {
-                    RootNode.Nodes.Add(staticData.RootNode);
-                }
-                else
-                    throw new Exception("StaticData rootNode was null");
+                if (staticData.RootNode == null) throw new Exception("StaticData rootNode was null");
+                else RootNode.Nodes.Add(staticData.RootNode);
             }
         }
 

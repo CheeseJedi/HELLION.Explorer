@@ -582,6 +582,11 @@ namespace HELLION.DataStructures
             sb.Append((string)obj["RuleName"]);
             sb.Append((string)obj["TierName"]);
             sb.Append((string)obj["GroupName"]);
+
+            // The following two are to support the Hellion Station Blueprint Format
+            sb.Append((string)obj["StructureType"]);
+            sb.Append((string)obj["PortName"]);
+
             if (sb.Length > 0) sb.Append(" ");
             sb.Append((string)obj["ItemID"]);
             return sb.ToString().Trim();

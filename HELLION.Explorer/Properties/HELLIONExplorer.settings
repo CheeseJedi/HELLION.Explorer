@@ -5,65 +5,8 @@
     <Setting Name="sGameDataFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="bLoadCelestialBodiesFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="sCelestialBodiesFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">CelestialBodies.json</Value>
-    </Setting>
-    <Setting Name="bLoadAsteroidsFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="sAsteroidsFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Asteroids.json</Value>
-    </Setting>
-    <Setting Name="bLoadStructuresFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="sStructuresFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Structures.json</Value>
-    </Setting>
-    <Setting Name="bLoadDynamicObjectsFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="sDynamicObjectsFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">DynamicObjects.json</Value>
-    </Setting>
-    <Setting Name="bLoadModulesFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="sModulesFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Modules,json</Value>
-    </Setting>
-    <Setting Name="bLoadStationsFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="sStationsFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Stations.json</Value>
-    </Setting>
-    <Setting Name="bLoadLootCategoriesFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="sLootCategoriesFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">LootCategories.json</Value>
-    </Setting>
-    <Setting Name="bLoadSpawnRulesFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="sSpawnRulesFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">SpawnRules.json</Value>
-    </Setting>
-    <Setting Name="bLoadItemRecipiesFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="sItemRecipiesFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ItemRecipies.json</Value>
-    </Setting>
-    <Setting Name="bLoadGlossaryFile" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="sGlossaryFileName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Glossery.json</Value>
+    <Setting Name="sBlueprintsFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>

@@ -34,18 +34,33 @@ namespace HELLION.DataStructures
         /// <summary>
         /// 
         /// </summary>
-        private DirectoryInfo StaticDataFolderInfo = null;
+        private DirectoryInfo blueprintCollectionFolderInfo = null;
 
         public HEBlueprints()
         {
-            rootNode = new HEBlueprintTreeNode("BLUEPRINTSVIEW", HETreeNodeType.DataFolderError, "Blueprints (not set up)", "You must set a blueprints directory first");
+            rootNode = new HEBlueprintTreeNode("BLUEPRINTSVIEW", HETreeNodeType.Blueprint, "Blueprints", "Hellion Station Blueprints");
+
+            blueprintCollectionFolderInfo = new DirectoryInfo(@"C:\Users\James\Documents\HE_Blueprints");
+
+            Initialise();
 
 
-            // var a = new HEStaticDataFileCollection(StaticDataFolderInfo, this, autoPopulateTree: true);
 
         }
 
+        public void Initialise()
+        {
 
+            if (blueprintCollectionFolderInfo != null && blueprintCollectionFolderInfo.Exists)
+            {
+                blueprintCollection = new HEStaticDataFileCollection(blueprintCollectionFolderInfo, this, autoPopulateTree: true);
+                if (blueprintCollection.RootNode == null) throw new Exception("StaticData rootNode was null");
+                else RootNode.Nodes.Add(blueprintCollection.RootNode);
+            }
+
+
+
+        }
 
 
 

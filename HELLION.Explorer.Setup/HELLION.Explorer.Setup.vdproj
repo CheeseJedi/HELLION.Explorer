@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_07F3B2B8D21DC71C68E5A88D1AF2DD19"
+        "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_13278B24993817D8EA0D912C893B01A2"
         "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
         "MsmSig" = "8:_UNDEFINED"
@@ -28,7 +34,7 @@
         "Entry"
         {
         "MsmKey" = "8:_72C57A9A7B1D096EFF1A36E2AF184140"
-        "OwnerKey" = "8:_74733222869EF8F28FA730D2E187D481"
+        "OwnerKey" = "8:_C3752FB98C65D3B6DA01B9F748BB3008"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -39,7 +45,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_74733222869EF8F28FA730D2E187D481"
+        "MsmKey" = "8:_C3752FB98C65D3B6DA01B9F748BB3008"
         "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -47,18 +53,6 @@
         {
         "MsmKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D4378EAA518EFC6E8731E6E9832B172B"
-        "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D4378EAA518EFC6E8731E6E9832B172B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -76,13 +70,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_74733222869EF8F28FA730D2E187D481"
+        "OwnerKey" = "8:_C3752FB98C65D3B6DA01B9F748BB3008"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_72C57A9A7B1D096EFF1A36E2AF184140"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_07F3B2B8D21DC71C68E5A88D1AF2DD19"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -180,6 +180,37 @@
         }
         "File"
         {
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_07F3B2B8D21DC71C68E5A88D1AF2DD19"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+                "ScatterAssemblies"
+                {
+                    "_07F3B2B8D21DC71C68E5A88D1AF2DD19"
+                    {
+                    "Name" = "8:System.Net.Http.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.Net.Http.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_13278B24993817D8EA0D912C893B01A2"
             {
             "AssemblyRegister" = "3:1"
@@ -262,14 +293,14 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_74733222869EF8F28FA730D2E187D481"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C3752FB98C65D3B6DA01B9F748BB3008"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.0.5.109, Culture=neutral, processorArchitecture=AMD64"
+            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.0.5.110, Culture=neutral, processorArchitecture=AMD64"
                 "ScatterAssemblies"
                 {
-                    "_74733222869EF8F28FA730D2E187D481"
+                    "_C3752FB98C65D3B6DA01B9F748BB3008"
                     {
                     "Name" = "8:HELLION.DataStructures.dll"
                     "Attributes" = "3:512"
@@ -293,44 +324,13 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D4378EAA518EFC6E8731E6E9832B172B"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-                "ScatterAssemblies"
-                {
-                    "_D4378EAA518EFC6E8731E6E9832B172B"
-                    {
-                    "Name" = "8:System.Net.Http.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Net.Http.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
         }
         "FileType"
         {
             "{5EB83D71-FA18-4901-BE56-DE22E13CC478}:_E8556C45CA0243AD95A93D36FC66E7EB"
             {
-            "Name" = "8:HELLION Dedicated Server Save File"
-            "Description" = "8:Save file from the HELLION Dedicated Server by Zero Gravity Games."
+            "Name" = "8:HELLION DS Save File"
+            "Description" = "8:HELLION DS Save File"
             "Extensions" = "8:.save"
             "MIME" = "8:application/json"
             "Icon" = "8:_18119A1531594708AF2906D76735C170"
@@ -416,7 +416,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:HELLION.Explorer"
         "ProductCode" = "8:{88B11E6D-5129-4499-AB88-6CA04F5673C0}"
-        "PackageCode" = "8:{DAD4E075-722A-4804-83CE-F7B8A607069B}"
+        "PackageCode" = "8:{C92055A9-8871-45C9-8CBB-8AD4663D0105}"
         "UpgradeCode" = "8:{F183209F-F0D2-48DA-A90A-31E212313BD9}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"

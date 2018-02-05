@@ -490,93 +490,22 @@ namespace HELLION.Explorer
             string StoredDataFolderPath = Properties.HELLIONExplorer.Default.sGameDataFolder.Trim();
 
             // Check GameDataFolder path in settings is not null or empty
-            if (StoredDataFolderPath == null || StoredDataFolderPath == "") 
-                return false;
+            if (StoredDataFolderPath == null || StoredDataFolderPath == "") return false;
 
             // Check the folder exists
-            if (!Directory.Exists(StoredDataFolderPath))
-                return false;
+            if (!Directory.Exists(StoredDataFolderPath)) return false;
 
             // Check the Celestial Bodies file - this one is particularly critical
-            if (Properties.HELLIONExplorer.Default.bLoadCelestialBodiesFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sCelestialBodiesFileName.Trim()))
-                    return false;
-            }
+            if (!File.Exists(StoredDataFolderPath + "\\CelestialBodies.json")) return false;
 
             // Check the Asteroids file
-            if (Properties.HELLIONExplorer.Default.bLoadAsteroidsFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sAsteroidsFileName.Trim()))
-                    return false;
-            }
+            if (!File.Exists(StoredDataFolderPath + "\\Asteroids.json")) return false;
 
             // Check the Structures file
-            if (Properties.HELLIONExplorer.Default.bLoadStructuresFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sStructuresFileName.Trim()))
-                    return false;
-            }
+            if (!File.Exists(StoredDataFolderPath + "\\Structures.json")) return false;
 
             // Check the Dynamic Objects file
-            if (Properties.HELLIONExplorer.Default.bLoadDynamicObjectsFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sDynamicObjectsFile.Trim()))
-                    return false;
-            }
-            /*
-            // Check the Modules file
-            if (Properties.HELLIONExplorer.Default.bLoadModulesFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sModulesFileName.Trim()))
-                    return false;
-            }
-
-            // Check the Stations file
-            if (Properties.HELLIONExplorer.Default.bLoadStationsFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sStationsFileName.Trim()))
-                    return false;
-            }
-
-            // Check the Loot Categories file
-            if (Properties.HELLIONExplorer.Default.bLoadLootCategoriesFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sLootCategoriesFileName.Trim()))
-                    return false;
-            }
-
-            // Check the Spawn Rules file
-            if (Properties.HELLIONExplorer.Default.bLoadSpawnRulesFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sSpawnRulesFileName.Trim()))
-                    return false;
-            }
-
-            // Check the Item Recipes file
-            if (Properties.HELLIONExplorer.Default.bLoadItemRecipiesFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sItemRecipiesFileName.Trim()))
-                    return false;
-            }
-
-            // Check the Glossary file
-            if (Properties.HELLIONExplorer.Default.bLoadGlossaryFile)
-            {
-                if (!File.Exists(StoredDataFolderPath + "\\" + Properties.HELLIONExplorer.Default.sGlossaryFileName.Trim()))
-                    return false;
-            }
-
-            /*
-            // Some test code for enumerating the settings - potentially less code changes needed in future if this could be dynamic
-            string result = "Settings ";
-            foreach (SettingsProperty currentProperty in Properties.HELLIONExplorer.Default.Properties)
-            {
-                result += currentProperty.Name.ToString() + ": " + Properties.HELLIONExplorer.Default[currentProperty.Name].ToString() + Environment.NewLine;
-            }
-            MessageBox.Show(result);
-            */
-            
+            if (!File.Exists(StoredDataFolderPath + "\\DynamicObjects.json")) return false;
 
             // No checks failed, assume folder is OK
             return true;
