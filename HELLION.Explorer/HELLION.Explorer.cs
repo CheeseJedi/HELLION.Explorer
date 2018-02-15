@@ -217,12 +217,17 @@ namespace HELLION.Explorer
                 //docCurrent.MainFile.FileName = sFileName;
 
                 // Create a new DocumentWorkspace
-                docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo, frmMainForm.treeView1, frmMainForm.listView1, hEImageList)
-                {
-                    // Activates logToDebug for docCurrent
-                    //logToDebug = bLogToDebug
-                };
+                docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo, frmMainForm.treeView1, frmMainForm.listView1, hEImageList);
 
+                // Set up the GuidManager
+                HEGuidManager.ClearObservedGuidsList();
+                if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEJsonBaseFile celestialBodiesJsonBaseFile))
+                {
+                    HEGuidManager.PopulateObservedGuidsList(celestialBodiesJsonBaseFile.JData);
+                }
+                HEGuidManager.PopulateObservedGuidsList(docCurrent.GameData.SaveFile.JData);
+
+                // Add the nodes to the TreeView control.
                 frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 frmMainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
                 frmMainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
@@ -268,6 +273,9 @@ namespace HELLION.Explorer
         internal static void FileClose()
         {
             // Handles closing of files and cleanup of the document workspace.
+
+            // Clear the GuidManager observed GUIDs list
+            HEGuidManager.ClearObservedGuidsList();
 
             // Close down any jsonDataView windows.
             while (jsonDataViews.Count > 0 ) jsonDataViews[0].Close();

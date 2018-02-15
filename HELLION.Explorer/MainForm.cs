@@ -546,5 +546,16 @@ namespace HELLION.Explorer
 
             }
         }
+
+        private void generateGUIDToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("GUID MANAGER - OBSERVED GUIDS" + Environment.NewLine);
+            foreach (long guid in HEGuidManager.ObservedGuids)
+                sb.Append(guid + Environment.NewLine);
+            
+            textBox1.Text = sb.ToString();
+            MessageBox.Show("GUID Manager has seen " + HEGuidManager.ObservedGuids.Count + " unique GUIDs.","Observed GUIDs", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 } // End of namespace HELLION.Explorer

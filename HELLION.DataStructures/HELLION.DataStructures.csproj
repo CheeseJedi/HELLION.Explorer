@@ -91,6 +91,7 @@
     <Compile Include="TreeNodes\HETNSorterSemiMajorAxis.cs" />
     <Compile Include="TreeNodes\HETreeNode.cs" />
     <Compile Include="TreeNodes\HETreeNodeType.cs" />
+    <Compile Include="DocumentWorkspace\HEGuidManager.cs" />
     <Compile Include="Utilities\HEImageList.cs" />
     <Compile Include="Utilities\HEUpdateChecker.cs" />
     <Compile Include="Utilities\HEUtilities.cs" />

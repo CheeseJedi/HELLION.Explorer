@@ -40,11 +40,11 @@ namespace HELLION.DataStructures
         {
             rootNode = new HEBlueprintTreeNode("BLUEPRINTSVIEW", HETreeNodeType.Blueprint, "Blueprints", "Hellion Station Blueprints");
 
-            blueprintCollectionFolderInfo = new DirectoryInfo(@"C:\Users\James\Documents\HE_Blueprints");
+            blueprintCollectionFolderInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\HELLION.Explorer\Blueprints");
 
             Initialise();
 
-
+            
 
         }
 
