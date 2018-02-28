@@ -25,7 +25,7 @@ namespace HELLION.DataStructures
         /// Public property to get the StaticData object as this is not settable outside
         /// of the HEGameData class. Set at object creation through the constructor.
         /// </summary>
-        public HEStaticDataFileCollection StaticData { get { return staticData; } }
+        public HEJsonFileCollection StaticData { get { return staticData; } }
 
         /// <summary>
         /// The root node of the Game Data tree.
@@ -41,7 +41,7 @@ namespace HELLION.DataStructures
         /// the StaticDataFileCollection object which enumerates the Data folder and builds  
         /// node trees to a preconfigured depth of each of the .json files in that folder.
         /// </summary>
-        private HEStaticDataFileCollection staticData = null;
+        private HEJsonFileCollection staticData = null;
 
         /// <summary>
         /// Constructor that takes a FileInfo and a DirectoryInfo representing the save file
@@ -56,7 +56,8 @@ namespace HELLION.DataStructures
             {
                 Debug.Print("File evaluated {0}", SaveFileInfo.Name);
 
-                saveFile = new HEJsonGameFile(SaveFileInfo, this);
+                // FINDME
+                saveFile = new HEJsonGameFile(SaveFileInfo, this, populateNodeTreeDepth: 5);
 
                 // Pre-load in several levels of node.
                 saveFile.RootNode.CreateChildNodesFromjData(3);
@@ -67,7 +68,7 @@ namespace HELLION.DataStructures
 
             if (StaticDataFolderInfo != null && StaticDataFolderInfo.Exists)
             {
-                staticData = new HEStaticDataFileCollection(StaticDataFolderInfo, this, autoPopulateTree: true);
+                staticData = new HEJsonFileCollection(StaticDataFolderInfo, HEJsonFileCollectionType.StaticDataFolder, this, autoPopulateTreeDepth: 1);
                 if (staticData.RootNode == null) throw new Exception("StaticData rootNode was null");
                 else RootNode.Nodes.Add(staticData.RootNode);
             }

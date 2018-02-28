@@ -40,8 +40,7 @@ namespace HELLION.DataStructures
         /// <param name=""></param>
         public HEOrbitalData(JObject orbitData)
         {
-            if (orbitData == null) throw new NullReferenceException("Passed JObject was null.");
-            else
+            if (orbitData != null)
             {
                 ParentGUID = (long)orbitData["ParentGUID"];
                 SemiMajorAxis = (double)orbitData["SemiMajorAxis"];
@@ -65,7 +64,6 @@ namespace HELLION.DataStructures
                     SolarSystemPeriapsisTime = (double)orbitData["SolarSystemPeriapsisTime"];
                 }
                 else SolarSystemPeriapsisTime = -1;
-
             }
         }
 

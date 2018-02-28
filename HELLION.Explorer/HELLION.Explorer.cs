@@ -924,12 +924,12 @@ namespace HELLION.Explorer
             //Task t1 = Task.Run(() => 
 
             //tasks.Add(t1);
-            //HEStaticDataFileCollection testDataFileCollection = null;
+            //HEJsonFileCollection testDataFileCollection = null;
 
             //if (Properties.HELLIONExplorer.Default.sGameDataFolder != "")
             {
 
-                //Task t2 = Task.Run(() => //testDataFileCollection = new HEStaticDataFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
+                //Task t2 = Task.Run(() => //testDataFileCollection = new HEJsonFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
                 //tasks.Add(t2);
             }
 

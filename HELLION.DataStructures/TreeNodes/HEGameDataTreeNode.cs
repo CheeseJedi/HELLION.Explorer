@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.HEImageList;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace HELLION.DataStructures
 {
@@ -31,6 +32,8 @@ namespace HELLION.DataStructures
         public HEGameDataTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "") 
             : base(nodeName, newNodeType, nodeText, nodeToolTipText)
         {
+            NodeFont = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Italic);
+
             childNodesLoaded = false;
         }
 
@@ -216,6 +219,7 @@ namespace HELLION.DataStructures
                         Nodes.Add(newNode);
                     }
                     childNodesLoaded = true;
+                    NodeFont = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Regular);
                 }
 
                 if (maxDepth > 1)

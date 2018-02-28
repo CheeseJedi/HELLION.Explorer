@@ -23,13 +23,13 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Public getter for the Blueprint Collection
         /// </summary>
-        public HEStaticDataFileCollection Blueprintcollection => blueprintCollection;
+        public HEJsonFileCollection Blueprintcollection => blueprintCollection;
 
         /// <summary>
         /// the StaticDataFileCollection object which enumerates the Blueprints folder and builds  
         /// node trees to a preconfigured depth of each of the .json files in that folder.
         /// </summary>
-        private HEStaticDataFileCollection blueprintCollection = null;
+        private HEJsonFileCollection blueprintCollection = null;
 
         /// <summary>
         /// 
@@ -53,7 +53,7 @@ namespace HELLION.DataStructures
 
             if (blueprintCollectionFolderInfo != null && blueprintCollectionFolderInfo.Exists)
             {
-                blueprintCollection = new HEStaticDataFileCollection(blueprintCollectionFolderInfo, this, autoPopulateTree: true);
+                blueprintCollection = new HEJsonFileCollection(blueprintCollectionFolderInfo, HEJsonFileCollectionType.BlueprintsFolder, this, autoPopulateTreeDepth: 8);
                 if (blueprintCollection.RootNode == null) throw new Exception("StaticData rootNode was null");
                 else RootNode.Nodes.Add(blueprintCollection.RootNode);
             }
@@ -79,4 +79,5 @@ namespace HELLION.DataStructures
 
 
     }
+
 }

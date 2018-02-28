@@ -45,14 +45,6 @@ namespace HELLION.DataStructures
         public HEBlueprints Blueprints { get; private set; } = null;
 
         /// <summary>
-        /// The HESearch object that will be responsible for implementing find/search functionality.
-        /// </summary>
-        /// <remarks>
-        /// TODO: This doesn't exist yet but will hook in here.
-        /// </remarks>
-        // public HESearchResults SearchResults { get; set; } = null;
-
-        /// <summary>
         /// The .save file that is being opened.
         /// </summary>
         public FileInfo SaveFileInfo { get; private set; } = null;

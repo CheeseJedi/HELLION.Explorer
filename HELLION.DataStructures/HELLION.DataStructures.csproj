@@ -80,8 +80,9 @@
     <Compile Include="DocumentWorkspace\HEGameData.cs" />
     <Compile Include="DocumentWorkspace\HESearchHandler.cs" />
     <Compile Include="DocumentWorkspace\HESolarSystem.cs" />
-    <Compile Include="FileHandling\HEStaticDataFileCollection.cs" />
+    <Compile Include="FileHandling\HEJsonBlueprintFile.cs" />
     <Compile Include="FileHandling\HEJsonBaseFile.cs" />
+    <Compile Include="FileHandling\HEJsonFileCollection.cs" />
     <Compile Include="FileHandling\HEJsonGameFile.cs" />
     <Compile Include="TreeNodes\HEBlueprintTreeNode.cs" />
     <Compile Include="TreeNodes\HEGameDataTreeNode.cs" />
