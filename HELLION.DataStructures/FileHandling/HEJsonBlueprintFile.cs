@@ -44,18 +44,11 @@ namespace HELLION.DataStructures
                 {
                     LoadFile();
                     dataViewRootNode.Tag = jData;
-                    //dataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
+                    dataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
                 }
 
-                //BuildSolarSystem();
-
-
+                BuildSolarSystem();
             }
-
-
-            // rootNode = new 
-
-
         }
 
         public new HEBlueprintTreeNode RootNode => rootNode;
@@ -138,7 +131,7 @@ namespace HELLION.DataStructures
                 }
 
                 HESolarSystemTreeNode newNode = node.CreateLinkedSolarSystemNode(HETreeNodeType.Ship);
-                RootNode.Nodes.Add(newNode);
+                hierarchyViewRootNode.Nodes.Add(newNode);
             }
         }
 
