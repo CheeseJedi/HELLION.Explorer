@@ -229,9 +229,11 @@ namespace HELLION.Explorer
                         // Cast the node as an HESolarSystemTreeNode type
                         HESolarSystemTreeNode sSnode = (HESolarSystemTreeNode)treeView1.SelectedNode;
 
-                        if (sSnode.GUID == -1 || sSnode.NodeType == HETreeNodeType.SolarSystemView)
+                        if (sSnode.GUID == -1 || sSnode.NodeType == HETreeNodeType.SolarSystemView
+                            || sSnode.NodeType == HETreeNodeType.BlueprintHierarchyView)
                         {
-                            // We're dealing with the Solar System Root Node, special case.
+                            // We're dealing with the Solar System Root Node or a Blueprint Hierarchy
+                            // View node, special cases.
 
                             jumpToToolStripMenuItem.Enabled = false;
                             thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
@@ -239,7 +241,11 @@ namespace HELLION.Explorer
                         }
                         else
                         {
-                            if (sSnode.LinkedGameDataNode == null) throw new NullReferenceException("sNode.LinkedGameDataNode was null.");
+                            if (sSnode.LinkedGameDataNode == null) // throw new NullReferenceException("sNode.LinkedGameDataNode was null.");
+                            {
+                                thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                                thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+                            }
                             else
                             {
                                 thisObjectInGameDataViewToolStripMenuItem.Enabled = true;

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 //using System.Runtime.CompilerServices;
 
@@ -31,10 +32,10 @@ namespace HELLION.DataStructures
                 fileInfo = passedFileInfo;
 
                 rootNode = new HEBlueprintTreeNode("BLUEPRINT", HETreeNodeType.Blueprint, nodeText: File.Name, nodeToolTipText: File.FullName);
-
                 dataViewRootNode = new HEGameDataTreeNode("BLUEPRINTDATAVIEW", HETreeNodeType.DataView, nodeText: "Data View", nodeToolTipText: "");
+                hierarchyViewRootNode = new HESolarSystemTreeNode("HIERARCHYVIEW", HETreeNodeType.BlueprintHierarchyView, nodeText: "Hierarchy View", nodeToolTipText: "");
 
-                hierarchyViewRootNode = new HESolarSystemTreeNode("HIERARCHYVIEW", HETreeNodeType.SolarSystemView, nodeText: "Hierarchy View", nodeToolTipText: "");
+                //blueprintObject = new HEBlueprint();
 
                 rootNode.Nodes.Add(dataViewRootNode);
                 rootNode.Nodes.Add(hierarchyViewRootNode);
@@ -43,11 +44,13 @@ namespace HELLION.DataStructures
                 else
                 {
                     LoadFile();
+                    DeserialiseToBlueprintObject();
                     dataViewRootNode.Tag = jData;
                     dataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
                 }
 
                 BuildSolarSystem();
+
             }
         }
 
@@ -63,6 +66,8 @@ namespace HELLION.DataStructures
         protected HEGameDataTreeNode dataViewRootNode = null;
 
         protected HESolarSystemTreeNode hierarchyViewRootNode = null;
+
+        protected HEBlueprint blueprintObject = null;
 
 
         /// <summary>
@@ -177,7 +182,13 @@ namespace HELLION.DataStructures
         }
 
 
+        public void DeserialiseToBlueprintObject()
+        {
 
+            blueprintObject = jData.ToObject<HEBlueprint>();
+            blueprintObject.ConnectTheDots();
+
+        }
 
     }
 

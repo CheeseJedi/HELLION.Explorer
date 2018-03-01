@@ -28,6 +28,9 @@ namespace HELLION.DataStructures
         }
         */
 
+        // Fonts in .Forms TreeViews are BROKEN! Memory leaks aplenty
+        // public static Font fntRegular = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Regular);
+        // public static Font fntItalic = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Italic);
 
 
 
@@ -250,7 +253,6 @@ namespace HELLION.DataStructures
             return str1?.IndexOf(str2, compType) >= 0;
         }
     }
-
 
 
 

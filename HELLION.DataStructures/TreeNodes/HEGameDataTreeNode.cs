@@ -23,10 +23,6 @@ namespace HELLION.DataStructures
         
         private int numChildTokens = 0;
 
-        // private var fntRegular = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Regular);
-
-        // private Font fntItalic = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Italic);
-
         /// <summary>
         /// Constructor that takes a minimum of a name, but also optionally a type and text (display name).
         /// </summary>
@@ -37,8 +33,6 @@ namespace HELLION.DataStructures
         public HEGameDataTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "") 
             : base(nodeName, newNodeType, nodeText, nodeToolTipText)
         {
-            // NodeFont = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Italic);
-
             childNodesLoaded = false;
         }
 
@@ -224,9 +218,7 @@ namespace HELLION.DataStructures
                         Nodes.Add(newNode);
                     }
                     childNodesLoaded = true;
-                    // NodeFont = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Regular);
                 }
-
                 if (maxDepth > 1)
                 {
                     foreach (HEGameDataTreeNode childNode in Nodes)
@@ -234,7 +226,6 @@ namespace HELLION.DataStructures
                         childNode.CreateChildNodesFromjData(maxDepth - 1);
                     }
                 }
-
             }
         }
 

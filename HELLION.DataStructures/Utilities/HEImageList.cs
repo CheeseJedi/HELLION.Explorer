@@ -210,6 +210,9 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.Blueprint:
                     return (int)HEObjectTypesImageList.CSWorkflowDiagram_16x;
 
+                case HETreeNodeType.BlueprintHierarchyView:
+                    return (int)HEObjectTypesImageList.Hub_16x;
+
                 default:
                     return (int)HEObjectTypesImageList.Checkerboard_16x;
             }
