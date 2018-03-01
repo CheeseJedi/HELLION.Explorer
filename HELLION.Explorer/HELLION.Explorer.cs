@@ -242,8 +242,6 @@ namespace HELLION.Explorer
                 // Set the star node as the selected node.
                 frmMainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
 
-                // DO SOME OTHER STUFF HERE?
-
                 // Enable the Edit menu and the Find option, leaving the FindNext disabled
                 // frmMainForm.editToolStripMenuItem.Enabled = true;
                 frmMainForm.findToolStripMenuItem.Enabled = true;
@@ -262,6 +260,27 @@ namespace HELLION.Explorer
 
                 frmMainForm.closeToolStripMenuItem.Enabled = true;
                 frmMainForm.revertToolStripMenuItem.Enabled = true;
+
+                // Blueprint test hook-in
+                foreach (HEJsonBlueprintFile entry in docCurrent.Blueprints.Blueprintcollection.DataDictionary.Values)
+                {
+                    Debug.Print(entry.BlueprintObject.Name);
+                    foreach (HEBlueprint.HEBlueprintStructure structure in entry.BlueprintObject.Structures)
+                    {
+                        Debug.Print("  " + structure.StructureID + " " + structure.StructureType);
+
+                        foreach (HEBlueprint.HEBlueprintDockingPort port in structure.DockingPorts)
+                        {
+                            Debug.Print("    " + port.PortName);
+                            Debug.Print("      Docked to " + port.DockedStructureID + ":" + port.DockedPortName);
+
+                        }
+
+                    }
+
+                }
+
+
 
             }
 

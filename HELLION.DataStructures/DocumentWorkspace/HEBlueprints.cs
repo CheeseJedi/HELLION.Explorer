@@ -45,16 +45,12 @@ namespace HELLION.DataStructures
 
         public void Initialise()
         {
-
             if (blueprintCollectionFolderInfo != null && blueprintCollectionFolderInfo.Exists)
             {
                 blueprintCollection = new HEJsonFileCollection(blueprintCollectionFolderInfo, HEJsonFileCollectionType.BlueprintsFolder, this, autoPopulateTreeDepth: 8);
                 if (blueprintCollection.RootNode == null) throw new Exception("StaticData rootNode was null");
                 else RootNode.Nodes.Add(blueprintCollection.RootNode);
             }
-
-
-
         }
 
         /// <summary>
@@ -69,7 +65,6 @@ namespace HELLION.DataStructures
         }
 
     }
-
 
     public enum HEDockingPortNames
     {
@@ -89,8 +84,6 @@ namespace HELLION.DataStructures
         CargoDock  // Dockable Cargo module
     }
 
-
-
     public class HEBlueprint
     {
         public string __ObjectType = null;
@@ -104,20 +97,15 @@ namespace HELLION.DataStructures
         {
             Parent = passedParent;
             Structures = new List<HEBlueprintStructure>();
-            Debug.Print("New HEBlueprint Created");
         }
 
         public void ConnectTheDots()
         {
-            Debug.Print("Connecting blueprint " + Name);
-
             foreach (HEBlueprintStructure structure in Structures)
             {
-                Debug.Print("Connecting structure " + structure.StructureType);
                 structure.Parent = this;
                 foreach (HEBlueprintDockingPort port in structure.DockingPorts)
                 {
-                    Debug.Print("Connecting port " + port.PortName);
                     port.Parent = structure;
                 }
 
@@ -136,7 +124,6 @@ namespace HELLION.DataStructures
             {
                 Parent = passedParent;
                 DockingPorts = new List<HEBlueprintDockingPort>();
-                Debug.Print("New HEBlueprintStructure Created");
             }
 
         }
@@ -152,7 +139,6 @@ namespace HELLION.DataStructures
             public HEBlueprintDockingPort(HEBlueprintStructure passedParent = null)
             {
                 Parent = passedParent;
-                Debug.Print("New HEBlueprintDockingPort Created");
             }
         }
 

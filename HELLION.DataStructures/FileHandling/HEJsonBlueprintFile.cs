@@ -35,8 +35,6 @@ namespace HELLION.DataStructures
                 dataViewRootNode = new HEGameDataTreeNode("BLUEPRINTDATAVIEW", HETreeNodeType.DataView, nodeText: "Data View", nodeToolTipText: "");
                 hierarchyViewRootNode = new HESolarSystemTreeNode("HIERARCHYVIEW", HETreeNodeType.BlueprintHierarchyView, nodeText: "Hierarchy View", nodeToolTipText: "");
 
-                //blueprintObject = new HEBlueprint();
-
                 rootNode.Nodes.Add(dataViewRootNode);
                 rootNode.Nodes.Add(hierarchyViewRootNode);
 
@@ -49,7 +47,7 @@ namespace HELLION.DataStructures
                     dataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
                 }
 
-                BuildSolarSystem();
+                BuildHierarchyView();
 
             }
         }
@@ -67,29 +65,21 @@ namespace HELLION.DataStructures
 
         protected HESolarSystemTreeNode hierarchyViewRootNode = null;
 
+        public HEBlueprint BlueprintObject => blueprintObject;
+
         protected HEBlueprint blueprintObject = null;
 
 
         /// <summary>
         /// Builds tree nodes from the GameData nodes, with cross-references
         /// </summary>
-        public void BuildSolarSystem()
+        public void BuildHierarchyView()
         {
             // Basic operation
             //
-            // The following types of HESolarSystemTreeNodes to be created as child nodes of the
-            // Solar System root node, then the hierarchy will be applied and nodes re-parented
-            // to the appropriate place.
-
-
             // 3. Create Ship nodes from GameData - save file
             AddSolarSystemObjects();
 
-            // 6. Rehydrate docked ship/module structure.
-            // RehydrateDockedShips();
-
-            // 7. Trigger the root node to recursively update the node counts.
-            // RootNode.UpdateCounts();
 
         }
 
