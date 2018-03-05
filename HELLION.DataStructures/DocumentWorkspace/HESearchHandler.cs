@@ -42,6 +42,11 @@ namespace HELLION.DataStructures
         /// </summary>
         private HEFindOperator findOperator = null;
 
+        public HEFindNodeByPathOperator FindNodeByPathOperator => findNodeByPathOperator;
+
+        private HEFindNodeByPathOperator findNodeByPathOperator = null;
+
+
         private List<HESearchOperator> searchOperators = null;
 
         /// <summary>
@@ -54,15 +59,15 @@ namespace HELLION.DataStructures
             gameData = passedGameData ?? throw new NullReferenceException("passedGameData was null.");
             solarSystem = passedSolarSystem ?? throw new NullReferenceException("passedSolarSystem was null.");
             
-            rootNode = new HESearchHandlerTreeNode("SEARCHHANDLERVIEW", HETreeNodeType.SearchHandler, "Search");
-
+            rootNode = new HESearchHandlerTreeNode("Search", HETreeNodeType.SearchHandler);
+            
             searchOperators = new List<HESearchOperator>();
 
+            // Initialise the FindNodeByPathOperator
+            findNodeByPathOperator = new HEFindNodeByPathOperator(this);
 
             // Initialise the FindOperator.
             findOperator = new HEFindOperator(this);
-            
-            // searchOperators.Add(findOperator);
 
         }
 
@@ -171,8 +176,7 @@ namespace HELLION.DataStructures
                 get => startingNode;
                 set => startingNode = value ?? throw new NullReferenceException("StartingNode was null.");
             }
-
-
+            
             protected HETreeNode startingNode = null;
 
             /// <summary>
@@ -200,7 +204,7 @@ namespace HELLION.DataStructures
             public HEFindOperator(HESearchHandler passedParent) : base(passedParent)
             {
                 rootNode.NodeType = HETreeNodeType.SearchResultsSet;
-                rootNode.Name = "FINDOPERATORRESULTS";
+                rootNode.Name = "Find Results";
                 rootNode.Text =  "Find Results";
 
                 // Will need to set itself to undeletable.
@@ -224,10 +228,92 @@ namespace HELLION.DataStructures
                 return baseDisplayName + postfix;
             }
 
+        }
+
+        public class HEFindNodeByPathOperator : HESearchOperator
+        {
+            public HEFindNodeByPathOperator(HESearchHandler passedParent) : base(passedParent)
+            {
+                rootNode.NodeType = HETreeNodeType.SearchResultsSet;
+                rootNode.Name = "Find Path Results";
+                rootNode.Text = "Find Path Results";
+
+                // Will need to set itself to undeletable.
+            }
+
+            /// <summary>
+            /// Defines the base display name of an object, to which additional info will
+            /// be appended to once the operator has been executed to generate the new 
+            /// display name (the node's .Text field).
+            /// </summary>
+            protected new string baseDisplayName = "Path: ";
+
+            /// <summary>
+            /// Executes the query.
+            /// </summary>
+            /// <returns>Returns true if the result set has more than zero members.</returns>
+            public new bool Execute()
+            {
+                if (query == null) return false;
+                else
+                {
+                    results = startingNode.ListOfAllChildNodes
+                        .Where<HETreeNode>(f => f.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
+                            || f.Text.Contains(query, StringComparison.OrdinalIgnoreCase)
+                            || f.NodeType.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
+                        .ToList<HETreeNode>();
+                    rootNode.Text = GenerateResultSetDisplayName();
+                    return results.Count() > 0 ? true : false;
+                }
+            }
+
+            /// <summary>
+            /// Returns a single TreeNode with a given path - TRANSPLANTED HERE FROM HELLION.Explorer.cs
+            /// </summary>
+            /// <param name="tv"></param>
+            /// <param name="passedPath"></param>
+            /// <returns></returns>
+            internal static TreeNode GetNodeByPath(TreeView tv, string passedPath)
+            {
+                List<string> pathTokens = new List<string>(passedPath.Split('>'));
+
+                TreeNode previousNode = null;
+
+                TreeNode[] currentNodeArray = tv.Nodes.Find(pathTokens[0], false);
 
 
+                if (currentNodeArray.Length > 0)
+                {
+                    TreeNode currentNode = currentNodeArray[0];
+
+                    // Setting the current node was successful, remove it from the list and continue.
+                    // From here on in we're working with TreeNode's .Nodes collections instead of 
+                    // the TreeView control itself.
+                    pathTokens.RemoveAt(0);
+                    foreach (string token in pathTokens)
+                    {
+                        previousNode = currentNode;
+
+                        currentNodeArray = currentNode.Nodes.Find(token, false);
+
+                        if (currentNodeArray.Length > 0) currentNode = currentNodeArray[0];
+                        else
+                        {
+                            MessageBox.Show("Node not found: " + token);
+                        }
+
+                        if (currentNode == null) throw new NullReferenceException("currentNode is null.");
+                    }
+                    return currentNode;
+                }
+                else
+                {
+                    // No results, return null.
+                    return null;
+                }
+            }
 
 
-}
+        }
     }
 }

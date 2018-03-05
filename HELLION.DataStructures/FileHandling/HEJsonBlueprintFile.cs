@@ -31,9 +31,13 @@ namespace HELLION.DataStructures
             {
                 fileInfo = passedFileInfo;
 
-                rootNode = new HEBlueprintTreeNode("BLUEPRINT", HETreeNodeType.Blueprint, nodeText: File.Name, nodeToolTipText: File.FullName);
-                dataViewRootNode = new HEGameDataTreeNode("BLUEPRINTDATAVIEW", HETreeNodeType.DataView, nodeText: "Data View", nodeToolTipText: "");
-                hierarchyViewRootNode = new HESolarSystemTreeNode("HIERARCHYVIEW", HETreeNodeType.BlueprintHierarchyView, nodeText: "Hierarchy View", nodeToolTipText: "");
+                rootNode = new HEBlueprintTreeNode(File.Name, HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
+
+                dataViewRootNode = new HEGameDataTreeNode("Data View", HETreeNodeType.DataView, 
+                    nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
+
+                hierarchyViewRootNode = new HESolarSystemTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView, 
+                    nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
 
                 rootNode.Nodes.Add(dataViewRootNode);
                 rootNode.Nodes.Add(hierarchyViewRootNode);
@@ -48,7 +52,6 @@ namespace HELLION.DataStructures
                 }
 
                 BuildHierarchyView();
-
             }
         }
 
@@ -68,7 +71,6 @@ namespace HELLION.DataStructures
         public HEBlueprint BlueprintObject => blueprintObject;
 
         protected HEBlueprint blueprintObject = null;
-
 
         /// <summary>
         /// Builds tree nodes from the GameData nodes, with cross-references
@@ -171,13 +173,10 @@ namespace HELLION.DataStructures
             }
         }
 
-
         public void DeserialiseToBlueprintObject()
         {
-
             blueprintObject = jData.ToObject<HEBlueprint>();
             blueprintObject.ConnectTheDots();
-
         }
 
     }

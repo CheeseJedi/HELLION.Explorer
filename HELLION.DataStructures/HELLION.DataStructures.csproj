@@ -18,7 +18,7 @@
     <AssemblyVersionSettings>None.None.IncrementOnDemandWithReset.Increment</AssemblyVersionSettings>
     <AssemblyFileVersionSettings>None.None.IncrementOnDemandWithReset.Increment</AssemblyFileVersionSettings>
     <TargetFrameworkProfile />
-    <ApplicationVersion>0.0.5.201</ApplicationVersion>
+    <ApplicationVersion>0.0.5.203</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,7 +76,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentWorkspace\HEBlueprint.cs" />
     <Compile Include="DocumentWorkspace\HEBlueprints.cs" />
+    <Compile Include="DocumentWorkspace\HEBlueprintStructureDefinitions.cs" />
     <Compile Include="DocumentWorkspace\HEDocumentWorkspace.cs" />
     <Compile Include="DocumentWorkspace\HEGameData.cs" />
     <Compile Include="DocumentWorkspace\HESearchHandler.cs" />

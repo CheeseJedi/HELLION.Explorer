@@ -91,11 +91,16 @@ namespace HELLION.DataStructures
 
                 Label textLabel = new Label() { Left = 50, Top = 20, Width = 400, Text = text };
                 TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+                CheckBox checkBox = new CheckBox() { Left = 50, Top = 70, Width = 15 };
+                Label textLabel2 = new Label() { Left = 70, Top = 75, Width = 200, Text = "Other search function" };
                 Button confirmation = new Button() { Text = "OK", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
                 confirmation.Click += (sender, e) => { prompt.Close(); };
                 prompt.Controls.Add(textBox);
                 prompt.Controls.Add(confirmation);
                 prompt.Controls.Add(textLabel);
+                prompt.Controls.Add(checkBox);
+                prompt.Controls.Add(textLabel2);
+
                 prompt.AcceptButton = confirmation;
 
                 return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";

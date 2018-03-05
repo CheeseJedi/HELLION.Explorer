@@ -270,7 +270,7 @@ namespace HELLION.DataStructures
             else
             {
                 fileInfo = passedFileInfo;
-                rootNode = new HEGameDataTreeNode("DATAFILE", HETreeNodeType.DataFile, nodeText: File.Name, nodeToolTipText: File.FullName);
+                rootNode = new HEGameDataTreeNode(File.Name, HETreeNodeType.DataFile, nodeToolTipText: File.FullName); // nodeText: File.Name,
 
                 if (!File.Exists) throw new FileNotFoundException();
                 else

@@ -171,23 +171,23 @@ namespace HELLION.DataStructures
                 switch (passedCollectionType)
                 {
                     case HEJsonFileCollectionType.StaticDataFolder:
-                        rootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolder, nodeText: dataDirectoryInfo.Name, nodeToolTipText: dataDirectoryInfo.FullName);
+                        rootNode = new HETreeNode(dataDirectoryInfo.Name, HETreeNodeType.DataFolder, nodeToolTipText: dataDirectoryInfo.FullName);
                         break;
 
                     case HEJsonFileCollectionType.BlueprintsFolder:
-                        rootNode = new HETreeNode("BLUEPRINTSFOLDER", HETreeNodeType.DataFolder, nodeText: "Blueprints", nodeToolTipText: dataDirectoryInfo.FullName);
+                        rootNode = new HETreeNode("Blueprints", HETreeNodeType.DataFolder, nodeToolTipText: dataDirectoryInfo.FullName);
                         targetFileExtension = "*.hsbp.json";
                         break;
 
                     default:
-                        rootNode = new HETreeNode("UNKNOWN", HETreeNodeType.DataFolderError, nodeText: dataDirectoryInfo.Name, nodeToolTipText: dataDirectoryInfo.FullName);
+                        rootNode = new HETreeNode(dataDirectoryInfo.Name, HETreeNodeType.DataFolderError, nodeToolTipText: dataDirectoryInfo.FullName);
                         break;
                 }
                 Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
             }
             else
             {
-                rootNode = new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, nodeText: dataDirectoryInfo.Name + " [ERROR]", nodeToolTipText: dataDirectoryInfo.FullName);
+                rootNode = new HETreeNode(dataDirectoryInfo.Name + " [ERROR]", HETreeNodeType.DataFolderError, nodeToolTipText: dataDirectoryInfo.FullName);
             }
         }
 

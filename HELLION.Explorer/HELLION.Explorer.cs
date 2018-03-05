@@ -376,7 +376,7 @@ namespace HELLION.Explorer
         /// <param name="next"></param>
         internal static void EditFind()
         {
-            findSearchKey = HEUtilities.Prompt.ShowDialog("Enter search term to find (case sensitive):", "Find Node from: " 
+            findSearchKey = HEUtilities.Prompt.ShowDialog("Enter search term to find (not case sensitive):", "Find Node from: " 
                 + frmMainForm.treeView1.SelectedNode.Text, frmMainForm.Icon);
             findStartingNode = (HETreeNode)frmMainForm.treeView1.SelectedNode;
 
@@ -783,6 +783,8 @@ namespace HELLION.Explorer
                 sb1.Append(Environment.NewLine);
                 sb1.Append("Text: " + nSelectedHETNNode.Text);
                 sb1.Append(Environment.NewLine);
+                sb1.Append("FullPath: " + nSelectedHETNNode.FullPath);
+                sb1.Append(Environment.NewLine);
                 sb1.Append("ToolTipText:" + Environment.NewLine + nSelectedHETNNode.ToolTipText);
                 sb1.Append(Environment.NewLine);
                 //sb1.Append("SceneID: " + nSelectedNode.SceneID.ToString());
@@ -928,11 +930,77 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
+        /// Returns a single TreeNode with a given path.
+        /// </summary>
+        /// <param name="tv"></param>
+        /// <param name="passedPath"></param>
+        /// <returns></returns>
+        internal static TreeNode GetNodeByPath(TreeView tv, string passedPath)
+        {
+            List<string> pathTokens = new List<string>(passedPath.Split('>'));
+
+            TreeNode previousNode = null;
+
+            TreeNode[] currentNodeArray = tv.Nodes.Find(pathTokens[0], false);
+
+
+            if (currentNodeArray.Length > 0)
+            {
+                TreeNode currentNode = currentNodeArray[0];
+
+                // Setting the current node was successful, remove it from the list and continue.
+                // From here on in we're working with TreeNode's .Nodes collections instead of 
+                // the TreeView control itself.
+                pathTokens.RemoveAt(0);
+                foreach (string token in pathTokens)
+                {
+                    previousNode = currentNode;
+
+                    currentNodeArray = currentNode.Nodes.Find(token, false);
+
+                    if (currentNodeArray.Length > 0) currentNode = currentNodeArray[0];
+                    else
+                    {
+                        MessageBox.Show("Node not found: " + token);
+                    }
+
+                    if (currentNode == null) throw new NullReferenceException("currentNode is null.");
+                }
+                return currentNode;
+            }
+            else
+            {
+                // No results, return null.
+                return null;
+            }
+        }
+
+
+
+        internal static void NodePathSearch()
+        {
+            string nodePathSearchKey = HEUtilities.Prompt.ShowDialog("Enter PATH search term to find:", "Find Node from: entered path", frmMainForm.Icon);
+
+            TreeNode result = GetNodeByPath(frmMainForm.treeView1, nodePathSearchKey);
+
+            if (result == null) MessageBox.Show("No results for search term " + nodePathSearchKey);
+            else
+            {
+                MessageBox.Show("Result found: " + result.Text);
+                frmMainForm.treeView1.SelectedNode = result;
+            }
+
+
+
+        }
+
+
+        /// <summary>
         /// Temporary test option, called from the temp menu item.
         /// </summary>
         internal static void TestOption1()
         {
-            // Scratch-pad area for testing new stuff out - has corresponding menu item
+            // Scratch-pad area for testing new stuff out 
             // Make a note of the starting time
             DateTime StartingTime = DateTime.Now;
 
