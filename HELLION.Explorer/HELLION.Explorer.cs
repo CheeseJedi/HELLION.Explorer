@@ -45,7 +45,7 @@ namespace HELLION.Explorer
         /// list view controls, plus anywhere else the images may be used.
         /// </summary>
         internal static HEImageList hEImageList = new HEImageList();
-        
+
         /// <summary>
         /// Defines an ImageList and set it to the HEImageList
         /// </summary>
@@ -95,7 +95,7 @@ namespace HELLION.Explorer
         /// The FileInfo object that represents the currently open file when one is set.
         /// </summary>
         internal static FileInfo saveFileInfo = null;
-        
+
         /// <summary>
         /// Holds a list of the JsonDataViewForm windows that have been created
         /// </summary>
@@ -112,7 +112,7 @@ namespace HELLION.Explorer
                 // Looks like there was a document open, call the FileClose method.
                 FileClose();
             }
-           
+
             Application.Exit();
 
             /*
@@ -186,7 +186,7 @@ namespace HELLION.Explorer
                 {
                     // The file name passed doesn't exist
                     MessageBox.Show(String.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, sFileName));
-                    
+
                     return;
                 }
             }
@@ -297,7 +297,7 @@ namespace HELLION.Explorer
             HEGuidManager.ClearObservedGuidsList();
 
             // Close down any jsonDataView windows.
-            while (jsonDataViews.Count > 0 ) jsonDataViews[0].Close();
+            while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
 
             // isFileDirty check before exiting
             if (docCurrent.IsDirty)
@@ -376,18 +376,34 @@ namespace HELLION.Explorer
         /// <param name="next"></param>
         internal static void EditFind()
         {
-            findSearchKey = HEUtilities.Prompt.ShowDialog("Enter search term to find (not case sensitive):", "Find Node from: " 
+            findSearchKey = HEUtilities.Prompt.ShowDialog("Enter search term to find (not case sensitive):", "Find Node from: "
                 + frmMainForm.treeView1.SelectedNode.Text, frmMainForm.Icon);
-            findStartingNode = (HETreeNode)frmMainForm.treeView1.SelectedNode;
 
-            docCurrent.SearchHandler.FindOperator.Query = findSearchKey;
-            docCurrent.SearchHandler.FindOperator.StartingNode = findStartingNode;
+            HESearchHandler.HESearchOperatorType searchType = HESearchHandler.HESearchOperatorType.Unknown;
+
+            if (true)
+            {
+                searchType = HESearchHandler.HESearchOperatorType.Find;
+                findStartingNode = (HETreeNode)frmMainForm.treeView1.SelectedNode;
+            }
+            else
+            {
+                searchType = HESearchHandler.HESearchOperatorType.FindNodesByPath;
+
+            }
+
+
+            docCurrent.SearchHandler.CreateSearchOperator(searchType);
+            if (docCurrent.SearchHandler.CurrentOperator == null) throw new NullReferenceException("CurrentOperator was null.");
+
+            docCurrent.SearchHandler.CurrentOperator.Query = findSearchKey;
+            docCurrent.SearchHandler.CurrentOperator.StartingNode = findStartingNode;
 
             // Execute the query, which updates the results list.
-            if (docCurrent.SearchHandler.FindOperator.Execute())
+            if (docCurrent.SearchHandler.CurrentOperator.Execute())
             {
                 // Get a reference to the Results list enumerator.
-                findEnumerator = docCurrent.SearchHandler.FindOperator.Results.GetEnumerator();
+                findEnumerator = docCurrent.SearchHandler.CurrentOperator.Results.GetEnumerator();
 
                 frmMainForm.findNextToolStripMenuItem.Enabled = true;
                 EditFindNext();
@@ -406,7 +422,7 @@ namespace HELLION.Explorer
         internal static void EditFindNext()
         {
             // Most of this code needs to be migrated to the FindHandler
-            if (docCurrent.SearchHandler.FindOperator.Results.Count > 0 )
+            if (docCurrent.SearchHandler.CurrentOperator.Results.Count > 0)
             {
                 if (findEnumerator.MoveNext())
                 {
@@ -700,7 +716,7 @@ namespace HELLION.Explorer
                     HESearchHandlerTreeNode nSelectedHESearchHandlerNode = (HESearchHandlerTreeNode)nSelectedNode;
 
                     if (nSelectedHESearchHandlerNode.ParentSearchOperator.Results != null)
-                    { 
+                    {
                         foreach (HETreeNode listItem in nSelectedHESearchHandlerNode.ParentSearchOperator.Results)
                         {
                             string[] arr = new string[7];
@@ -727,7 +743,7 @@ namespace HELLION.Explorer
                     }
                 }
                 else
-                { 
+                {
                     foreach (HETreeNode nodeChild in nSelectedNode.Nodes)
                     {
                         string[] arr = new string[7];
@@ -796,7 +812,7 @@ namespace HELLION.Explorer
                 if (nSelectedHETNNode.NodeType == HETreeNodeType.Star
                     || nSelectedHETNNode.NodeType == HETreeNodeType.Planet
                     || nSelectedHETNNode.NodeType == HETreeNodeType.Moon
-                    || nSelectedHETNNode.NodeType == HETreeNodeType.Ship 
+                    || nSelectedHETNNode.NodeType == HETreeNodeType.Ship
                     || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
                 {
 
@@ -845,7 +861,7 @@ namespace HELLION.Explorer
                     }
                     */
                     sb1.Append(Environment.NewLine);
-                    
+
 
                     sb1.Append("SemiMajorAxis: " + nSelectedOrbitalObjNode.OrbitData.SemiMajorAxis.ToString());
                     sb1.Append(Environment.NewLine);
@@ -976,8 +992,8 @@ namespace HELLION.Explorer
         }
 
 
-
-        internal static void NodePathSearch()
+        /*
+        internal static void NodePathSearch2()
         {
             string nodePathSearchKey = HEUtilities.Prompt.ShowDialog("Enter PATH search term to find:", "Find Node from: entered path", frmMainForm.Icon);
 
@@ -989,10 +1005,43 @@ namespace HELLION.Explorer
                 MessageBox.Show("Result found: " + result.Text);
                 frmMainForm.treeView1.SelectedNode = result;
             }
-
-
-
         }
+        */
+
+        /*
+        internal static void NodePathSearch()
+        {
+            string nodePathSearchKey = HEUtilities.Prompt.ShowDialog("Enter PATH search term to find:", "Find Node from: entered path", frmMainForm.Icon);
+
+            docCurrent.SearchHandler.FindNodeByPathOperator.Query = nodePathSearchKey;
+
+            // Execute the query, which updates the results list.
+            if (docCurrent.SearchHandler.FindNodeByPathOperator.Execute())
+            {
+                // Get a reference to the Results list enumerator.
+                findEnumerator = docCurrent.SearchHandler.FindNodeByPathOperator.Results.GetEnumerator();
+
+                //frmMainForm.findNextToolStripMenuItem.Enabled = true;
+                // EditFindNext(); // this needs replacing
+
+                if (findEnumerator.MoveNext())
+                {
+                    // There's a next record
+                    //frmMainForm.treeView1.SelectedNode = findEnumerator.Current;
+                }
+
+
+            }
+            else
+            {
+                MessageBox.Show("No results for search term " + Environment.NewLine + nodePathSearchKey);
+            }
+        }
+        */
+
+
+
+
 
 
         /// <summary>

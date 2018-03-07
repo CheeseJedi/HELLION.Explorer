@@ -566,7 +566,7 @@ namespace HELLION.Explorer
 
         private void nodePathSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.NodePathSearch();
+            // Program.NodePathSearch();
         }
     }
 } // End of namespace HELLION.Explorer
