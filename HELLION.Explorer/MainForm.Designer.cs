@@ -64,6 +64,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.generateGUIDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nodePathSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -101,7 +102,6 @@
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.jTokenLengthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addResultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.nodePathSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -245,7 +245,7 @@
             this.findToolStripMenuItem.Enabled = false;
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.findToolStripMenuItem.Text = "Find...";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
@@ -254,14 +254,14 @@
             this.findNextToolStripMenuItem.Enabled = false;
             this.findNextToolStripMenuItem.Name = "findNextToolStripMenuItem";
             this.findNextToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.findNextToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.findNextToolStripMenuItem.Text = "Find Next";
             this.findNextToolStripMenuItem.Click += new System.EventHandler(this.findNextToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(161, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
             this.toolStripSeparator4.Visible = false;
             // 
             // deleteToolStripMenuItem
@@ -269,7 +269,7 @@
             this.deleteToolStripMenuItem.Enabled = false;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Visible = false;
             // 
@@ -278,7 +278,7 @@
             this.selectAllToolStripMenuItem.Enabled = false;
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Visible = false;
             // 
@@ -416,9 +416,16 @@
             // generateGUIDToolStripMenuItem
             // 
             this.generateGUIDToolStripMenuItem.Name = "generateGUIDToolStripMenuItem";
-            this.generateGUIDToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.generateGUIDToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.generateGUIDToolStripMenuItem.Text = "GenerateGUID";
             this.generateGUIDToolStripMenuItem.Click += new System.EventHandler(this.generateGUIDToolStripMenuItem_Click);
+            // 
+            // nodePathSearchToolStripMenuItem
+            // 
+            this.nodePathSearchToolStripMenuItem.Name = "nodePathSearchToolStripMenuItem";
+            this.nodePathSearchToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.nodePathSearchToolStripMenuItem.Text = "NodePathSearch";
+            this.nodePathSearchToolStripMenuItem.Click += new System.EventHandler(this.nodePathSearchToolStripMenuItem_Click);
             // 
             // openFileDialog1
             // 
@@ -471,6 +478,7 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.treeView1.FullRowSelect = true;
+            this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
             this.treeView1.PathSeparator = ">";
@@ -764,13 +772,6 @@
             this.addResultToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
             this.addResultToolStripMenuItem.Text = "addResult";
             this.addResultToolStripMenuItem.Click += new System.EventHandler(this.addResultToolStripMenuItem_Click);
-            // 
-            // nodePathSearchToolStripMenuItem
-            // 
-            this.nodePathSearchToolStripMenuItem.Name = "nodePathSearchToolStripMenuItem";
-            this.nodePathSearchToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
-            this.nodePathSearchToolStripMenuItem.Text = "NodePathSearch";
-            this.nodePathSearchToolStripMenuItem.Click += new System.EventHandler(this.nodePathSearchToolStripMenuItem_Click);
             // 
             // MainForm
             // 

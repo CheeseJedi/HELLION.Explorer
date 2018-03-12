@@ -36,6 +36,11 @@ namespace HELLION.Explorer
         internal static MainForm frmMainForm { get; private set; }
 
         /// <summary>
+        /// Defines the main form object.
+        /// </summary>
+        internal static FindForm frmFindForm { get; private set; }
+
+        /// <summary>
         /// Defines an object to hold the current open document
         /// </summary>
         internal static HEDocumentWorkspace docCurrent = null;
@@ -370,48 +375,12 @@ namespace HELLION.Explorer
         internal static List<HETreeNode>.Enumerator findEnumerator;
 
         /// <summary>
-        /// Handles Find and Find Next simple searching of a node in the tree view control's 
-        /// currently selected node's Nodes collection.
+        /// Resets and shows the Find form.
         /// </summary>
-        /// <param name="next"></param>
-        internal static void EditFind()
+        internal static void ShowFindForm()
         {
-            findSearchKey = HEUtilities.Prompt.ShowDialog("Enter search term to find (not case sensitive):", "Find Node from: "
-                + frmMainForm.treeView1.SelectedNode.Text, frmMainForm.Icon);
-
-            HESearchHandler.HESearchOperatorType searchType = HESearchHandler.HESearchOperatorType.Unknown;
-
-            if (true)
-            {
-                searchType = HESearchHandler.HESearchOperatorType.Find;
-                findStartingNode = (HETreeNode)frmMainForm.treeView1.SelectedNode;
-            }
-            else
-            {
-                searchType = HESearchHandler.HESearchOperatorType.FindNodesByPath;
-
-            }
-
-
-            docCurrent.SearchHandler.CreateSearchOperator(searchType);
-            if (docCurrent.SearchHandler.CurrentOperator == null) throw new NullReferenceException("CurrentOperator was null.");
-
-            docCurrent.SearchHandler.CurrentOperator.Query = findSearchKey;
-            docCurrent.SearchHandler.CurrentOperator.StartingNode = findStartingNode;
-
-            // Execute the query, which updates the results list.
-            if (docCurrent.SearchHandler.CurrentOperator.Execute())
-            {
-                // Get a reference to the Results list enumerator.
-                findEnumerator = docCurrent.SearchHandler.CurrentOperator.Results.GetEnumerator();
-
-                frmMainForm.findNextToolStripMenuItem.Enabled = true;
-                EditFindNext();
-            }
-            else
-            {
-                MessageBox.Show("No results for search term " + findSearchKey);
-            }
+            frmFindForm.ResetForm();
+            frmFindForm.Show();
         }
 
         /// <summary>
@@ -419,25 +388,75 @@ namespace HELLION.Explorer
         /// currently selected node's Nodes collection.
         /// </summary>
         /// <param name="next"></param>
-        internal static void EditFindNext()
+        internal static void EditFind(bool NewQuery = false, bool JumpToResultsSet = false)
         {
+            Debug.Print("EditFind Called NewQuery:" + NewQuery.ToString() + " JumpToResultSet: " + JumpToResultsSet.ToString());
+
+            if (NewQuery)
+            {
+                HESearchHandler.HESearchOperatorFlags operatorFlags = 0;
+                if (frmFindForm.PathSearchValue) operatorFlags |= HESearchHandler.HESearchOperatorFlags.ByPath;
+                if (frmFindForm.MatchCaseValue)
+                {
+                    Debug.Print("Match Case ON");
+                    operatorFlags |= HESearchHandler.HESearchOperatorFlags.MatchCase;
+                }
+
+                Debug.Print("OPERATOR_FLAGS=" + operatorFlags);
+
+                docCurrent.SearchHandler.CreateSearchOperator(operatorFlags);
+                if (docCurrent.SearchHandler.CurrentOperator == null) throw new NullReferenceException("CurrentOperator was null.");
+
+                docCurrent.SearchHandler.CurrentOperator.Query = frmFindForm.QueryValue;
+                docCurrent.SearchHandler.CurrentOperator.StartingNode = (HETreeNode)frmMainForm.treeView1.SelectedNode;
+
+                // Execute the query, which updates the results list.
+                if (!docCurrent.SearchHandler.CurrentOperator.Execute()) MessageBox.Show("No results for search term " + findSearchKey);
+                else
+                {
+                    // Get a reference to the Results list enumerator.
+                    findEnumerator = docCurrent.SearchHandler.CurrentOperator.Results.GetEnumerator();
+
+                    frmMainForm.findNextToolStripMenuItem.Enabled = true;
+                    //EditFindNext(JumpToResultsSet);
+                }
+            }
+
             // Most of this code needs to be migrated to the FindHandler
-            if (docCurrent.SearchHandler.CurrentOperator.Results.Count > 0)
+            if (!(docCurrent.SearchHandler.CurrentOperator.Results.Count > 0)) MessageBox.Show("Results count was zero :(");
+            else
             {
                 if (findEnumerator.MoveNext())
                 {
                     // There's a next record
-                    frmMainForm.treeView1.SelectedNode = findEnumerator.Current;
+
+                    if (!JumpToResultsSet) frmMainForm.treeView1.SelectedNode = findEnumerator.Current;
+                    else
+                    {
+                        frmMainForm.treeView1.SelectedNode = docCurrent.SearchHandler.CurrentOperator.RootNode;
+                        frmMainForm.treeView1.SelectedNode.Expand();
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("End of results for search term " + findSearchKey);
+                    if (!JumpToResultsSet) MessageBox.Show("End of results for search term " + findSearchKey);
+                    else
+                    {
+                        frmMainForm.treeView1.SelectedNode = docCurrent.SearchHandler.CurrentOperator.RootNode;
+                        frmMainForm.treeView1.SelectedNode.Expand();
+                    }
                 }
             }
-            else
-            {
-                MessageBox.Show("Results count was zero :(");
-            }
+        }
+        
+        /// <summary>
+        /// Handles Find and Find Next simple searching of a node in the tree view control's 
+        /// currently selected node's Nodes collection.
+        /// </summary>
+        /// <param name="next"></param>
+        internal static void EditFindNext(bool JumpToResultsSet = false)
+        {
+            MessageBox.Show("EditFindNext was called!!");
         }
 
         /// <summary>
@@ -446,78 +465,78 @@ namespace HELLION.Explorer
         /// </summary>
         /// <returns></returns>
         internal static string GenerateAboutBoxText()
-        {
-            // Define a StringBuilder to hold the string to be sent to the dialog box
-            StringBuilder sb = new StringBuilder();
+                {
+                    // Define a StringBuilder to hold the string to be sent to the dialog box
+                    StringBuilder sb = new StringBuilder();
 
-            // Create a 'shorthand' for the new line character appropriate for this environment
-            string sNL = Environment.NewLine;
-            string sNL2 = sNL + sNL;
+                    // Create a 'shorthand' for the new line character appropriate for this environment
+                    string sNL = Environment.NewLine;
+                    string sNL2 = sNL + sNL;
 
-            // Assemble the About dialog text
-            sb.Append(sNL);
+                    // Assemble the About dialog text
+                    sb.Append(sNL);
 
-            // Add the product name and version
-            sb.Append(Application.ProductName);
-            sb.Append("   Version ");
-            sb.Append(Application.ProductVersion);
-            sb.Append(sNL2);
+                    // Add the product name and version
+                    sb.Append(Application.ProductName);
+                    sb.Append("   Version ");
+                    sb.Append(Application.ProductVersion);
+                    sb.Append(sNL2);
 
-            // Add version information for HELLION.DataStructures.dll
-            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEUtilities)).GetName();
-            sb.Append(anHELLIONDataStructures.Name);
-            sb.Append("   Version ");
-            sb.Append(anHELLIONDataStructures.Version);
-            sb.Append(sNL);
+                    // Add version information for HELLION.DataStructures.dll
+                    var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEUtilities)).GetName();
+                    sb.Append(anHELLIONDataStructures.Name);
+                    sb.Append("   Version ");
+                    sb.Append(anHELLIONDataStructures.Version);
+                    sb.Append(sNL);
 
-            // Add version information for NewtonsoftJson.dll -  this is inaccurate and only reports v 10.0.0
-            var anNewtonsoftJson = System.Reflection.Assembly.GetAssembly(typeof(JObject)).GetName();
-            sb.Append(anNewtonsoftJson.Name);
-            sb.Append("   Version ");
-            sb.Append(anNewtonsoftJson.Version);
-            sb.Append(sNL);
+                    // Add version information for NewtonsoftJson.dll -  this is inaccurate and only reports v 10.0.0
+                    var anNewtonsoftJson = System.Reflection.Assembly.GetAssembly(typeof(JObject)).GetName();
+                    sb.Append(anNewtonsoftJson.Name);
+                    sb.Append("   Version ");
+                    sb.Append(anNewtonsoftJson.Version);
+                    sb.Append(sNL);
 
-            // Add version information for FastColoredTextBox.dll
-            var anFastColoredTextBox = System.Reflection.Assembly.GetAssembly(typeof(FastColoredTextBoxNS.FastColoredTextBox)).GetName();
-            sb.Append(anFastColoredTextBox.Name);
-            sb.Append("   Version ");
-            sb.Append(anFastColoredTextBox.Version);
-            sb.Append(sNL2);
+                    // Add version information for FastColoredTextBox.dll
+                    var anFastColoredTextBox = System.Reflection.Assembly.GetAssembly(typeof(FastColoredTextBoxNS.FastColoredTextBox)).GetName();
+                    sb.Append(anFastColoredTextBox.Name);
+                    sb.Append("   Version ");
+                    sb.Append(anFastColoredTextBox.Version);
+                    sb.Append(sNL2);
 
-            // Add an estimate of current memory usage from the garbage collector
-            sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
-            sb.Append(sNL2);
-            sb.Append(sNL);
+                    // Add an estimate of current memory usage from the garbage collector
+                    sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
+                    sb.Append(sNL2);
+                    sb.Append(sNL);
 
-            // Credit
-            sb.Append("Uses the Newtonsoft JSON library. http://www.newtonsoft.com/json");
-            sb.Append(sNL2);
+                    // Credit
+                    sb.Append("Uses the Newtonsoft JSON library. http://www.newtonsoft.com/json");
+                    sb.Append(sNL2);
 
-            // Credit
-            sb.Append("Uses the FastColoredTextBox library. https://github.com/PavelTorgashov/FastColoredTextBox");
-            sb.Append(sNL2);
+                    // Credit
+                    sb.Append("Uses the FastColoredTextBox library. https://github.com/PavelTorgashov/FastColoredTextBox");
+                    sb.Append(sNL2);
 
-            // Credit
-            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity Games or it's licensors. http://www.zerogravitygames.com");
-            sb.Append(sNL2);
-            sb.Append(sNL);
+                    // Credit
+                    sb.Append("HELLION trademarks, content and materials are property of Zero Gravity Games or it's licensors. http://www.zerogravitygames.com");
+                    sb.Append(sNL2);
+                    sb.Append(sNL);
 
-            // Thanks
-            sb.Append("Thanks to all who have helped out in testing, and provided advice and feedback.");
-            sb.Append(sNL2);
+                    // Thanks
+                    sb.Append("Thanks to all who have helped out in testing, and provided advice and feedback.");
+                    sb.Append(sNL2);
 
-            // Cheeseware statement
-            sb.Append("This product is 100% certified Cheeseware* and is not dishwasher safe.");
-            sb.Append(sNL2);
+                    // Cheeseware statement
+                    sb.Append("This product is 100% certified Cheeseware* and is not dishwasher safe.");
+                    sb.Append(sNL2);
 
-            // Cheeseware definition ;)
-            sb.Append("* cheeseware (Noun)");
-            sb.Append(sNL);
-            sb.Append("  1. (computing, slang, pejorative) Exceptionally low-quality software.");
-            sb.Append(sNL);
+                    // Cheeseware definition ;)
+                    sb.Append("* cheeseware (Noun)");
+                    sb.Append(sNL);
+                    sb.Append("  1. (computing, slang, pejorative) Exceptionally low-quality software.");
+                    sb.Append(sNL);
 
-            return sb.ToString();
-        }
+                    return sb.ToString();
+                }
 
         /// <summary>
         /// Called indirectly by menu option on the main form, and directly when opening a file, or by other means.
@@ -1106,6 +1125,11 @@ namespace HELLION.Explorer
 
             // Initialise the main form
             frmMainForm = new MainForm();
+
+            // Initialise the find form.
+            frmFindForm = new FindForm(frmMainForm);
+            frmFindForm.Hide();
+
 
             // Set the form's icon
             var exe = System.Reflection.Assembly.GetExecutingAssembly();

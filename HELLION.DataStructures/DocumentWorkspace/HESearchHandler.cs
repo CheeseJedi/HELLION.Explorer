@@ -16,11 +16,14 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Defines the available search operator types.
         /// </summary>
-        public enum HESearchOperatorType
+        /// <remarks>
+        /// The _CI postfix represents Case Insensitivity.
+        /// </remarks>
+        [Flags]
+        public enum HESearchOperatorFlags
         {
-            Unknown = 0,
-            Find,
-            FindNodesByPath
+            MatchCase = 0x1,
+            ByPath = 0x2,
         }
 
         /// <summary>
@@ -97,7 +100,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedOperatorType"></param>
         /// <returns></returns>
-        public HESearchOperator CreateSearchOperator(HESearchOperatorType passedOperatorType)
+        public HESearchOperator CreateSearchOperator(HESearchOperatorFlags passedOperatorType)
         {
             currentOperator = new HESearchOperator(this, passedOperatorType);
             return currentOperator;
@@ -112,10 +115,10 @@ namespace HELLION.DataStructures
             /// Constructor that takes a HESearchHandler reference to it's parent.
             /// </summary>
             /// <param name="passedParent"></param>
-            public HESearchOperator(HESearchHandler passedParent, HESearchOperatorType passedOperatorType)
+            public HESearchOperator(HESearchHandler passedParent, HESearchOperatorFlags passedOperatorFlags)
             {
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
-                operatorType = passedOperatorType;
+                OperatorFlags = passedOperatorFlags;
                 rootNode = new HESearchHandlerTreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName);
                 parent.rootNode.Nodes.Add(rootNode);
                 parent.searchOperators.Add(this);
@@ -164,10 +167,7 @@ namespace HELLION.DataStructures
             /// </summary>
             protected List<HETreeNode> results = null;
 
-            public HESearchOperatorType OperatorType => operatorType;
-
-            protected HESearchOperatorType operatorType = HESearchOperatorType.Unknown;
-
+            public HESearchOperatorFlags OperatorFlags{ get; set; } = 0;
 
             /// <summary>
             /// Determines whether the results set has members.
@@ -179,6 +179,10 @@ namespace HELLION.DataStructures
                 else return true;
             }
 
+            /// <summary>
+            /// Generates a display name for the results set.
+            /// </summary>
+            /// <returns></returns>
             protected virtual string GenerateResultSetDisplayName()
             {
                 string postfix = "";
@@ -190,7 +194,7 @@ namespace HELLION.DataStructures
             }
 
             /// <summary>
-            /// Public property to access the Query.
+            /// Public property to access the Query string.
             /// </summary>
             /// <remarks>
             /// Currently has only null checking on set.
@@ -225,56 +229,65 @@ namespace HELLION.DataStructures
             {
                 if (query == null || query == "") return false;
 
-                switch (operatorType)
+                if ((OperatorFlags & HESearchOperatorFlags.ByPath) == HESearchOperatorFlags.ByPath)
                 {
-                    case HESearchOperatorType.Find:
+                    // It's a path string
+                    string[] pathTokens = query.Split('>'); // This must match the TreeView's path separator.
+
+                    // Locating the first node outside of the recursion is important for two reasons:
+                    // There are multiple root nodes in the TreeView control, and some of them are not
+                    // supported for path-based searching.
+
+                    bool atMaxDepth = pathTokens.Length <= 1 ? true : false;
+
+                    if (pathTokens[0] == parent.gameData.RootNode.Name)
+                    {
+                        // It's a path to a Game Data object.
+                        if (atMaxDepth)  results.Add(parent.gameData.RootNode);
+                        else results = RecursivePathSearch(pathTokens, 1, parent.gameData.RootNode);
+                    }
+                    else if (pathTokens[0] == parent.solarSystem.RootNode.Name)
+                    {
+                        // It's a path to a Solar System object.
+                        if (atMaxDepth)  results.Add(parent.solarSystem.RootNode);
+                        else  results = RecursivePathSearch(pathTokens, 1, parent.solarSystem.RootNode);
+                    }
+                    else
+                    {
+                        // Unrecognised/unsupported first token.
+                        return false;
+                    }
+                    rootNode.Text = GenerateResultSetDisplayName();
+                    return results.Count() > 0 ? true : false;
+                }
+                else
+                {
+                    // It's a regular find operation, not a path.
+                    if ((OperatorFlags & HESearchOperatorFlags.MatchCase) == HESearchOperatorFlags.MatchCase)
+                    {
+                        Debug.Print("Find, Case SENTITIVE");
+
+                        results = startingNode.ListOfAllChildNodes
+                            .Where<HETreeNode>(f => f.Name.Contains(query)
+                            || f.Text.Contains(query)
+                            || f.NodeType.ToString().Contains(query))
+                            .ToList<HETreeNode>();
+                    }
+                    else
+                    {
+                        Debug.Print("Find, Case INsensitive");
+
                         results = startingNode.ListOfAllChildNodes
                             .Where<HETreeNode>(f => f.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
                             || f.Text.Contains(query, StringComparison.OrdinalIgnoreCase)
                             || f.NodeType.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
                             .ToList<HETreeNode>();
-                        rootNode.Text = GenerateResultSetDisplayName();
-                        return results.Count() > 0 ? true : false;
+                    }
 
-                    case HESearchOperatorType.FindNodesByPath:
-
-                        string[] pathTokens = query.Split('>'); // This must match the TreeView's path separator.
-
-                        // Locating the first node outside of the recursion is important for two reasons:
-                        // There are multiple root nodes in the TreeView control, and some of them are not
-                        // supported for path-based searching.
-
-                        bool atMaxDepth = pathTokens.Length <= 1 ? true : false;
-
-                        if (pathTokens[0] == parent.gameData.RootNode.Name)
-                        {
-                            // It's a path to a Game Data object.
-                            if (atMaxDepth)  results.Add(parent.gameData.RootNode);
-                            else results = RecursivePathSearch(pathTokens, 1, parent.gameData.RootNode);
-                        }
-                        else if (pathTokens[0] == parent.solarSystem.RootNode.Name)
-                        {
-                            // It's a path to a Solar System object.
-                            if (atMaxDepth)  results.Add(parent.solarSystem.RootNode);
-                            else  results = RecursivePathSearch(pathTokens, 1, parent.solarSystem.RootNode);
-                        }
-                        else
-                        {
-                            // Unrecognised/supported first token.
-                            return false;
-                        }
-                        rootNode.Text = GenerateResultSetDisplayName();
-                        return results.Count() > 0 ? true : false;
-
-                    case HESearchOperatorType.Unknown:
-                    default:
-                        return false;
+                    rootNode.Text = GenerateResultSetDisplayName();
+                    return results.Count() > 0 ? true : false;
                 }
             }
-
-            
-
-
             
             /// <summary>
             /// 
@@ -288,12 +301,8 @@ namespace HELLION.DataStructures
                 List<HETreeNode> results = new List<HETreeNode>();
                 bool atMaxDepth = currentDepth >= pathTokens.Length - 1 ? true : false;
 
-                //Debug.Print("Recurse - atMaxDepth: " + atMaxDepth);
-                //Debug.Print(pathTokens[currentDepth]);
-
                 if (pathTokens[currentDepth] == "*")
                 {
-                    //Debug.Print("WILDCARD");
                     // We've got a wild-card token - process all nodes in the collection.
                     foreach (HETreeNode node in parentNode.Nodes)
                     {
@@ -311,7 +320,6 @@ namespace HELLION.DataStructures
                 }
                 else
                 {
-                    //Debug.Print("NAME");
                     // It's a regular (name) token we've got.
                     TreeNode[] currentNodeArray = parentNode.Nodes.Find(pathTokens[currentDepth], false);
                     if (currentNodeArray.Length > 0)
@@ -330,8 +338,6 @@ namespace HELLION.DataStructures
                 }
                 return results;
             }
-
-
         }
 
         /*

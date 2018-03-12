@@ -18,6 +18,7 @@ namespace HELLION.Explorer
 {
     public partial class MainForm : Form
     {
+
         #region MainForm
 
         /// <summary>
@@ -131,12 +132,12 @@ namespace HELLION.Explorer
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.EditFind();
+            Program.ShowFindForm();
         }
 
         private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.EditFindNext();
+            Program.frmFindForm.MainFormFindNextActivated();
         }
 
         #endregion
