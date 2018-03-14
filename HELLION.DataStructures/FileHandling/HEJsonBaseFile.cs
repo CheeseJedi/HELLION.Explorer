@@ -130,7 +130,6 @@ namespace HELLION.DataStructures
             }
             set
             {
-
                 // Attempts to set the file state to writeable.
                 if (value && isLoaded && !LoadError && !File.IsReadOnly)
                 {
@@ -169,7 +168,7 @@ namespace HELLION.DataStructures
                 }
                 else
                 {
-                    isDirty = value;
+                    isDirty = false;
                 }
 
             }
@@ -385,51 +384,53 @@ namespace HELLION.DataStructures
         /// Save the file data.
         /// </summary>
         /// <returns></returns>
-        protected bool SaveFile()
+        public bool SaveFile(bool CreateBackup = true)
         {
-            // Will save this file (not yet implemented)
 
-            if (false)
+            Debug.Print("SaveFile Called, CreateBackup="+CreateBackup.ToString());
+
+
+            if (CreateBackup)
             {
-                //
-            }
-            /*
-            // Check to see if this file already exists
-            if (MainFile.Exists(FileName))
-            {
+                // Check to see if the backup file already exists
+                if (System.IO.File.Exists(File.FullName + ".bak"))
+                {
+                    // It does, so remove it.
+                    Debug.Print("Deleting " + File.FullName + ".bak");
+                    System.IO.File.Delete(File.FullName + ".bak");
+                }
                 // MainFile already exists, create a backup copy (.save.bak)
-
-                // do stuff
+                System.IO.File.Move(File.FullName, File.FullName + ".bak");
+            }
+            else
+            {
+                // Remove the existing file
+                File.Delete();
             }
 
-            try
+            //try
             {
-                using (StreamWriter sw = new StreamWriter(FileName))
+                using (StreamWriter sw = new StreamWriter(File.FullName))
                 {
                     // stuff from the load routine for reference only
                     
-                    // Read the contents of the file
-                    String file = sr.ReadToEnd();
-                    // Parse the contents of the file in to the Data JArray
-                    JData = JArray.Parse(file);
+                    // Process the stream with the JSON Text Reader in to a JToken
+                    using (JsonTextWriter jtw = new JsonTextWriter(sw))
+                    {
+                        jtw.Formatting = Formatting.Indented;
+                        jData.WriteTo(jtw);
+                    }
                 }
             }
-            catch (IOException)
+            //catch (IOException)
             {
                 // Some error handling to be implemented here
             }
 
-            if (JData == null || JData.Count == 0)
-            {
-                // The data didn't load
-            }
-            else
-            {
-                // We should have some data in the array
-                IsDirty = false;
-            }
+            // We should have some data in the array
+            IsDirty = false;
 
-            */
+            
             return false;
         }
 

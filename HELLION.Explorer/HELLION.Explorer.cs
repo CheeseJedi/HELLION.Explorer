@@ -456,6 +456,7 @@ namespace HELLION.Explorer
         /// <param name="next"></param>
         internal static void EditFindNext(bool JumpToResultsSet = false)
         {
+            // This method is defunct and should not be called any more.
             MessageBox.Show("EditFindNext was called!!");
         }
 
@@ -660,7 +661,6 @@ namespace HELLION.Explorer
                 // Update the object path + name + Tag in the object summary bar
                 StringBuilder sb = new StringBuilder();
 
-                sb.Append(">> ");
                 sb.Append(nSelectedNode.FullPath);
                 //sb.Append("  (");
                 //sb.Append(nSelectedNode.NodeType.ToString());
@@ -934,33 +934,36 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
-        /// Opens up the Json data view form for the selected (HE)TreeNode
+        /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="nSelectedNode"></param>
-        internal static void CreateNewJsonDataView(TreeNode nSelectedNode)
+        internal static void CreateNewJsonDataView(HEGameDataTreeNode nSelectedNode)
         {
             if (nSelectedNode != null && nSelectedNode.Tag != null)
             {
-                Debug.Print("passed node type {0}", nSelectedNode.GetType());
-
-                // define a new window here but somehow make it not static?
-                JsonDataViewForm newDataView = new JsonDataViewForm
+                // Look for an existing form for this node.
+                JsonDataViewForm newDataView = null;
+                foreach (JsonDataViewForm form in jsonDataViews)
                 {
-                    Text = nSelectedNode.FullPath
-                };
-                //newDataView.label1.Text = nSelectedNode.FullPath;
+                    if (form.SourceNode == nSelectedNode)
+                    {
+                        newDataView = form;
+                        break;
+                    }
+                }
 
-                // Add the form to the jsonDataViews list so we can work with it later
-                jsonDataViews.Add(newDataView);
+                if (newDataView == null)
+                {
+                    // No existing form for this node was found, create a new one.
+                    newDataView = new JsonDataViewForm(nSelectedNode);
 
-                // set some FastColouredTextBox properties
-                newDataView.fastColoredTextBox1.Language = FastColoredTextBoxNS.Language.JS;
+                    // Add the form to the jsonDataViews list.
+                    jsonDataViews.Add(newDataView);
+                }
 
-                // fill the data
-                newDataView.fastColoredTextBox1.Text = nSelectedNode.Tag.ToString();
-
-                // Show the new form
+                // Show the form.
                 newDataView.Show();
+                newDataView.Activate();
             }
         }
 
@@ -1010,7 +1013,6 @@ namespace HELLION.Explorer
             }
         }
 
-
         /*
         internal static void NodePathSearch2()
         {
@@ -1057,11 +1059,6 @@ namespace HELLION.Explorer
             }
         }
         */
-
-
-
-
-
 
         /// <summary>
         /// Temporary test option, called from the temp menu item.

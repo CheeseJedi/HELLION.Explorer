@@ -463,7 +463,7 @@ namespace HELLION.Explorer
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.CreateNewJsonDataView(Program.frmMainForm.treeView1.SelectedNode);
+            Program.CreateNewJsonDataView((HEGameDataTreeNode)Program.frmMainForm.treeView1.SelectedNode);
         }
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -568,6 +568,20 @@ namespace HELLION.Explorer
         private void nodePathSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Program.NodePathSearch();
+        }
+
+        private void saveTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            if (Program.docCurrent != null) //  && Program.docCurrent.IsDirty)
+            {
+                // Currently always returns false
+                bool result = Program.docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+
+
+            }
+            else
+                MessageBox.Show("Something went wrong during SaveFile");
         }
     }
 } // End of namespace HELLION.Explorer
