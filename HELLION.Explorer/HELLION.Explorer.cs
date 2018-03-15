@@ -62,6 +62,11 @@ namespace HELLION.Explorer
         internal static HEUpdateChecker hEUpdateChecker = new HEUpdateChecker("CheeseJedi", "HELLION.Explorer");
 
         /// <summary>
+        /// Reference to the current ObservedGuidsForm, only valid if a document is open.
+        /// </summary>
+        internal static ObservedGuidsForm ObservedGuidsForm = null;
+
+        /// <summary>
         /// Used to trigger debugging comments
         /// </summary>
         internal static bool bLogToDebug = false;
@@ -142,13 +147,13 @@ namespace HELLION.Explorer
         internal static void FileOpen(string sFileName = "")
         {
             // Make a note of the starting time
-            DateTime StartingTime = DateTime.Now;
+            DateTime startingTime = DateTime.Now;
 
             // Check that the Data folder path has been defined and the expected files are there
             if (!IsGameDataFolderValid())
             {
                 // The checks failed, throw up an error message and cancel the load
-                MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu"); // this needs to be massively improved!
+                MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu."); // this needs to be massively improved!
                 // Begin repainting the TreeView.
                 frmMainForm.treeView1.EndUpdate();
                 // Restore mouse cursor
@@ -213,24 +218,21 @@ namespace HELLION.Explorer
                 // Suppress repainting the TreeView until all the objects have been created.
                 frmMainForm.treeView1.BeginUpdate();
 
-                // Clear any existing nodes
-                //frmMainForm.treeView1.Nodes.Clear();
-
-                // Grab the Game Data Folder from Properties
-                //string sGameDataFolder = Properties.HELLIONExplorer.Default.sGameDataFolder + "\\";
-
-                //docCurrent.MainFile.FileName = sFileName;
-
                 // Create a new DocumentWorkspace
                 docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo, frmMainForm.treeView1, frmMainForm.listView1, hEImageList);
 
                 // Set up the GuidManager
                 HEGuidManager.ClearObservedGuidsList();
+                // Add the Celestial Bodies GUIDs.
                 if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEJsonBaseFile celestialBodiesJsonBaseFile))
                 {
                     HEGuidManager.PopulateObservedGuidsList(celestialBodiesJsonBaseFile.JData);
                 }
+                // Add the GUIDs from the save file.
                 HEGuidManager.PopulateObservedGuidsList(docCurrent.GameData.SaveFile.JData);
+
+                ObservedGuidsForm = new ObservedGuidsForm();
+                ObservedGuidsForm.Hide();
 
                 // Add the nodes to the TreeView control.
                 frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
@@ -261,11 +263,12 @@ namespace HELLION.Explorer
                 RefreshMainFormTitleText();
                 //RefreshSelectedObjectSummaryText(docCurrent.SolarSystemRootNode);
 
-                frmMainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - StartingTime);
+                frmMainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
 
                 frmMainForm.closeToolStripMenuItem.Enabled = true;
                 frmMainForm.revertToolStripMenuItem.Enabled = true;
 
+                /*
                 // Blueprint test hook-in
                 foreach (HEJsonBlueprintFile entry in docCurrent.Blueprints.Blueprintcollection.DataDictionary.Values)
                 {
@@ -280,15 +283,10 @@ namespace HELLION.Explorer
                             Debug.Print("      Docked to " + port.DockedStructureID + ":" + port.DockedPortName);
 
                         }
-
                     }
-
                 }
-
-
-
+                */
             }
-
         }
 
         /// <summary>
@@ -298,12 +296,6 @@ namespace HELLION.Explorer
         {
             // Handles closing of files and cleanup of the document workspace.
 
-            // Clear the GuidManager observed GUIDs list
-            HEGuidManager.ClearObservedGuidsList();
-
-            // Close down any jsonDataView windows.
-            while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
-
             // isFileDirty check before exiting
             if (docCurrent.IsDirty)
             {
@@ -311,6 +303,8 @@ namespace HELLION.Explorer
                 string sMessage = docCurrent.SaveFileInfo.FullName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
                 const string sCaption = "Unsaved Changes";
                 var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Cancel) return;
 
                 // If the yes button was pressed ...
                 if (result == DialogResult.Yes)
@@ -321,13 +315,19 @@ namespace HELLION.Explorer
                 }
             }
 
+            // Close and remove the ObservedGuidsForm
+            ObservedGuidsForm.Close();
+            ObservedGuidsForm = null;
+            // Clear the GuidManager observed GUIDs list
+            HEGuidManager.ClearObservedGuidsList();
+
+            // Close down any jsonDataView windows.
+            while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
 
             // Enable the Find option, leaving the FindNext disabled
             // frmMainForm.editToolStripMenuItem.Enabled = false;
             frmMainForm.findToolStripMenuItem.Enabled = false;
             frmMainForm.findNextToolStripMenuItem.Enabled = false;
-
-
 
             // Clear any existing nodes from the tree view
             frmMainForm.treeView1.Nodes.Clear();
@@ -1012,6 +1012,7 @@ namespace HELLION.Explorer
                 return null;
             }
         }
+
 
         /*
         internal static void NodePathSearch2()

@@ -19,9 +19,25 @@ namespace HELLION.Explorer
         //Create style for highlighting
         //TextStyle brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Regular);
 
-        private bool isDirty = false;
+        //private bool isDirty = false;
 
-        public bool IsDirty { get => isDirty; }
+        public bool IsDirty
+        {
+            get { return IsDirty; }
+            private set
+            {
+                if (value)
+                {
+                    // Setting dirty flag.
+                    IsDirty = value;
+
+                }
+                else
+                {
+
+                }
+            }
+        }
 
         private HEGameDataTreeNode sourceNode = null;
 
@@ -39,13 +55,13 @@ namespace HELLION.Explorer
             Text = passedSourceNode.FullPath;
             fastColoredTextBox1.Language = Language.JS;
             fastColoredTextBox1.Text = passedSourceNode.Tag.ToString();
-            isDirty = false;
+            IsDirty = false;
         }
 
         private void JsonDataViewForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             
-            if (isDirty)
+            if (IsDirty)
             {
                 // Unsaved changes, prompt the user to apply them before closing the window.
                 MessageBox.Show("Un-applied changes!");
@@ -57,9 +73,14 @@ namespace HELLION.Explorer
             GC.Collect();
         }
 
+        /// <summary>
+        /// Handles setting folding markers on the FastColoredTextBox and setting the isDirty bool.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void fastColoredTextBox1_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
         {
-            isDirty = true;
+            IsDirty = true;
             Debug.Print("Text Changed called");
 
             //clear previous highlighting
@@ -74,7 +95,6 @@ namespace HELLION.Explorer
             e.ChangedRange.SetFoldingMarkers(Regex.Escape(@"["), Regex.Escape(@"]"));
 
             //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");
-
         }
 
         #region menuStrip1
@@ -94,11 +114,28 @@ namespace HELLION.Explorer
             fastColoredTextBox1.ShowReplaceDialog();
         }
 
-        #endregion
-
         private void applyChangesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            if (ApplyChanges()) IsDirty = false;
         }
+
+        #endregion
+
+        /// <summary>
+        /// De-serialises the text from the FastColoredTextBox and replaces the
+        /// source JToken with the results if the serialisation was successful.
+        /// </summary>
+        /// <returns></returns>
+        private bool ApplyChanges()
+        {
+
+
+
+
+
+            return false;
+        }
+
+
     }
 }

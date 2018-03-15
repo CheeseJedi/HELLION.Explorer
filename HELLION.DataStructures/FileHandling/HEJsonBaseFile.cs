@@ -51,6 +51,7 @@ namespace HELLION.DataStructures
                 if (LoadError) return null;
                 return jData;
             }
+            /*
             set
             {
                 // Nothing special here right now, this will need to be fleshed out
@@ -64,6 +65,7 @@ namespace HELLION.DataStructures
                 }
                 else throw new InvalidOperationException();
             }
+            */
         }
 
         /// <summary>
@@ -380,15 +382,27 @@ namespace HELLION.DataStructures
             return LoadError;
         }
 
+        public void ReplaceJToken(JToken existingToken, JToken newToken)
+        {
+            if (IsReadOnly) throw new InvalidOperationException("Attempted JToken change on non-modifiable file. (IsReadOnly=true)");
+            else
+            {
+                Debug.Print("Replacing token " + existingToken.ToString());
+                Debug.Print("With token " + newToken.ToString());
+
+                existingToken.Replace(newToken);
+                isDirty = true;
+            }
+        }
+
+
         /// <summary>
         /// Save the file data.
         /// </summary>
         /// <returns></returns>
         public bool SaveFile(bool CreateBackup = true)
         {
-
             Debug.Print("SaveFile Called, CreateBackup="+CreateBackup.ToString());
-
 
             if (CreateBackup)
             {
@@ -429,7 +443,6 @@ namespace HELLION.DataStructures
 
             // We should have some data in the array
             IsDirty = false;
-
             
             return false;
         }

@@ -543,33 +543,6 @@ namespace HELLION.Explorer
 
         #endregion
 
-        private void addResultToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            HESearchHandlerTreeNode node = (HESearchHandlerTreeNode)Program.frmMainForm.treeView1.SelectedNode;
-            if (node == null) throw new NullReferenceException("node was null.");
-            else
-            {
-                node.AddResult();
-
-            }
-        }
-
-        private void generateGUIDToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("GUID MANAGER - OBSERVED GUIDS (" + HEGuidManager.ObservedGuids.Count + ")" +  Environment.NewLine);
-            foreach (long guid in HEGuidManager.ObservedGuids)
-                sb.Append(guid + Environment.NewLine);
-            
-            textBox1.Text = sb.ToString();
-            MessageBox.Show("GUID Manager has seen " + HEGuidManager.ObservedGuids.Count + " unique GUIDs.","Observed GUIDs", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void nodePathSearchToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Program.NodePathSearch();
-        }
-
         private void saveTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
@@ -582,6 +555,14 @@ namespace HELLION.Explorer
             }
             else
                 MessageBox.Show("Something went wrong during SaveFile");
+        }
+
+        private void observedGUIDsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.docCurrent != null)
+            {
+                Program.ObservedGuidsForm.Show();
+            }
         }
     }
 } // End of namespace HELLION.Explorer
