@@ -69,7 +69,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Used to trigger debugging comments
         /// </summary>
-        internal static bool bLogToDebug = false;
+        //internal static bool bLogToDebug = false;
 
         /// <summary>
         /// Determines whether the Navigation Pane (the split that contains the tree view control) is visible.
@@ -249,10 +249,16 @@ namespace HELLION.Explorer
                 // Set the star node as the selected node.
                 frmMainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
 
-                // Enable the Edit menu and the Find option, leaving the FindNext disabled
-                // frmMainForm.editToolStripMenuItem.Enabled = true;
+                // Enable the Find option, leaving the FindNext disabled.
                 frmMainForm.findToolStripMenuItem.Enabled = true;
                 frmMainForm.findNextToolStripMenuItem.Enabled = false;
+
+                // Enable the Save and Save As menu items.
+                frmMainForm.saveToolStripMenuItem.Enabled = true;
+                frmMainForm.saveAsToolStripMenuItem.Enabled = true;
+
+                // Enable the Observed GUIDs menu item.
+                frmMainForm.observedGUIDsToolStripMenuItem.Enabled = true;
 
                 // Begin repainting the TreeView.
                 frmMainForm.treeView1.EndUpdate();
@@ -289,6 +295,51 @@ namespace HELLION.Explorer
             }
         }
 
+        internal static void FileSave(string passedFileName = null)
+        {
+            if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
+            else
+            {
+                string newFileName = passedFileName ?? docCurrent.GameData.SaveFile.File.FullName;
+                // Call the docCurrent's save file's .Save() method.
+                //docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+            }
+        }
+
+
+        internal static void FileSaveAs()
+        {
+            if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
+            else
+            {
+
+                // Display Save As dialog, with current file name passed to be used as the
+                // default file name.
+                var saveFileDialog1 = new SaveFileDialog()
+                {
+                    FileName = docCurrent.GameData.SaveFile.File.FullName,
+                    Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
+                    Title = "Save As",
+
+                };
+
+                // Show the dialog.
+                DialogResult dialogResult = saveFileDialog1.ShowDialog();
+
+                // Exit if the user clicked Cancel
+                if (dialogResult == DialogResult.Cancel) return;
+
+                // Check that the file exists when the user clicked Save As.
+                if (dialogResult == DialogResult.OK)
+                {
+                    // Call FileSave with the supplied path + file name.
+                    FileSave(saveFileDialog1.FileName);
+                }
+            }
+        }
+
+
+
         /// <summary>
         /// Closes the current document workspace.
         /// </summary>
@@ -324,10 +375,16 @@ namespace HELLION.Explorer
             // Close down any jsonDataView windows.
             while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
 
-            // Enable the Find option, leaving the FindNext disabled
-            // frmMainForm.editToolStripMenuItem.Enabled = false;
+            // Disable both the Find and FindNext menu items.
             frmMainForm.findToolStripMenuItem.Enabled = false;
             frmMainForm.findNextToolStripMenuItem.Enabled = false;
+
+            // Disable the Save and Save As menu items.
+            frmMainForm.saveToolStripMenuItem.Enabled = false;
+            frmMainForm.saveAsToolStripMenuItem.Enabled = false;
+
+            // Disable the Observed GUIDs menu item.
+            frmMainForm.observedGUIDsToolStripMenuItem.Enabled = false;
 
             // Clear any existing nodes from the tree view
             frmMainForm.treeView1.Nodes.Clear();
@@ -1132,8 +1189,7 @@ namespace HELLION.Explorer
             // Set the form's icon
             var exe = System.Reflection.Assembly.GetExecutingAssembly();
             var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HELLION.Explorer.ico");
-            if (iconStream != null)
-                frmMainForm.Icon = new Icon(iconStream);
+            if (iconStream != null) frmMainForm.Icon = new Icon(iconStream);
 
             // Update the main form's title text - this adds the application name
             RefreshMainFormTitleText();
@@ -1142,20 +1198,19 @@ namespace HELLION.Explorer
             frmMainForm.closeToolStripMenuItem.Enabled = false;
             frmMainForm.revertToolStripMenuItem.Enabled = false;
 
+            // Disable both the Find and FindNext menu items.
+            frmMainForm.findToolStripMenuItem.Enabled = false;
+            frmMainForm.findNextToolStripMenuItem.Enabled = false;
+
+            // Disable the Save and Save As menu items.
+            frmMainForm.saveToolStripMenuItem.Enabled = false;
+            frmMainForm.saveAsToolStripMenuItem.Enabled = false;
+
+            // Disable the Observed GUIDs menu item.
+            frmMainForm.observedGUIDsToolStripMenuItem.Enabled = false;
+
             // Show the main form
             frmMainForm.Show();
-
-            if (bLogToDebug)
-            {
-                // The Length property provides the number of array elements
-               Debug.Print("parameter count = {0}", args.Length);
-
-                //for (int i = 0; i < args.Length; i++)
-                foreach (string s in args)
-                {
-                    Debug.Print(s + " ");
-                }
-            }
 
             // Valid command line options
             //

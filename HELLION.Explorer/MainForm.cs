@@ -56,6 +56,16 @@ namespace HELLION.Explorer
             Program.FileOpen();
         }
 
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.FileSave();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.FileSaveAs();
+        }
+
         private void revertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.FileRevert();
@@ -564,5 +574,6 @@ namespace HELLION.Explorer
                 Program.ObservedGuidsForm.Show();
             }
         }
+
     }
 } // End of namespace HELLION.Explorer

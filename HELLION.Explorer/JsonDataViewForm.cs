@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
 using HELLION.DataStructures;
@@ -19,25 +12,33 @@ namespace HELLION.Explorer
         //Create style for highlighting
         //TextStyle brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Regular);
 
-        //private bool isDirty = false;
-
+        /// <summary>
+        /// Property to get/set the isDirty bool.
+        /// </summary>
         public bool IsDirty
         {
-            get { return IsDirty; }
+            get { return isDirty; }
             private set
             {
-                if (value)
-                {
-                    // Setting dirty flag.
-                    IsDirty = value;
-
-                }
-                else
-                {
-
-                }
+                isDirty = value;
+                // Enable or disable the Apply Changes menu option.
+                applyChangesToolStripMenuItem.Enabled = value;
+                // Update the form name
+                RefreshJsonDataViewFormTitleText();
             }
         }
+
+        /// <summary>
+        /// Field that determines whether the text has been changed.
+        /// </summary>
+        private bool isDirty = false;
+
+        /// <summary>
+        /// Stores a copy of the unmodified text - updated after the apply changes operation.
+        /// </summary>
+        private string AppliedText = null;
+
+        private string FormTitleText = null;
 
         private HEGameDataTreeNode sourceNode = null;
 
@@ -47,16 +48,27 @@ namespace HELLION.Explorer
         {
             InitializeComponent();
             Icon = Program.frmMainForm.Icon;
+            fastColoredTextBox1.Language = Language.JS;
+            applyChangesToolStripMenuItem.Enabled = false;
         }
 
         public JsonDataViewForm(HEGameDataTreeNode passedSourceNode) : this()
         {
             sourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
-            Text = passedSourceNode.FullPath;
-            fastColoredTextBox1.Language = Language.JS;
-            fastColoredTextBox1.Text = passedSourceNode.Tag.ToString();
+            FormTitleText = passedSourceNode.FullPath;
+            Text = FormTitleText;
+            AppliedText = passedSourceNode.Tag.ToString();
+            fastColoredTextBox1.Text = AppliedText;
+            // Required as setting the FastColouredTextBox triggers the isDirty
             IsDirty = false;
         }
+
+        private void RefreshJsonDataViewFormTitleText()
+        {
+            if (IsDirty) Text = FormTitleText + "*";
+            else Text = FormTitleText;
+        }
+
 
         private void JsonDataViewForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -131,7 +143,8 @@ namespace HELLION.Explorer
 
 
 
-
+            // AppliedText = fastColoredTextBox1.Text;
+                
 
             return false;
         }
