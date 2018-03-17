@@ -30,6 +30,11 @@ namespace HELLION.DataStructures
                 if (OrbitData == null) throw new NullReferenceException();
                 else return OrbitData.ParentGUID; 
             }
+            set
+            {
+                if (OrbitData == null) throw new NullReferenceException();
+                else OrbitData.ParentGUID = value;
+            }
         }
 
         /// <summary>

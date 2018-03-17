@@ -147,10 +147,7 @@ namespace HELLION.DataStructures
                             RootNode.Nodes.Add(newNode);
                         }
                     }
-
-
                     break;
-                //
                 case HETreeNodeType.Asteroid:
                 case HETreeNodeType.Ship:
                 case HETreeNodeType.Player:
@@ -174,16 +171,14 @@ namespace HELLION.DataStructures
                     TreeNode[] tmpMatches = GameData.SaveFile.RootNode.Nodes.Find(findKey, searchAllChildren: false);
 
                     HEGameDataTreeNode sectionRootNode = null;
-                    HEGameDataTreeNode arrayRootNode = null;
-
                     foreach (var match in tmpMatches)
                     {
-
                         sectionRootNode = (HEGameDataTreeNode)match;
                         break;
                     }
                     if (sectionRootNode == null) throw new NullReferenceException("sectionRootNode was null.");
 
+                    HEGameDataTreeNode arrayRootNode = null;
                     foreach (var match2 in sectionRootNode.Nodes)
                     {
                         arrayRootNode = (HEGameDataTreeNode)match2;
@@ -191,37 +186,44 @@ namespace HELLION.DataStructures
                     }
                     if (arrayRootNode == null) throw new NullReferenceException("subRootNode was null.");
 
+                    
+
                     foreach (HEGameDataTreeNode node in arrayRootNode.Nodes)
                     {
-                        //HETreeNodeType newNodeType = HETreeNodeType.Asteroid;
-
                         JObject obj = (JObject)node.Tag;
                         long newNodeParentGUID = 0;
+                        long newNodeFakeGUID = 0;
                         JToken testToken = obj["ParentGUID"];
-                        if (testToken != null)
-                        {
-                            newNodeParentGUID = (long)obj["ParentGUID"];
-                        }
+                        if (testToken != null) newNodeParentGUID = (long)obj["ParentGUID"];
+
+
+                        testToken = obj["FakeGUID"];
+                        if (testToken != null) newNodeFakeGUID = (long)obj["FakeGUID"];
 
                         HESolarSystemTreeNode newNode = node.CreateLinkedSolarSystemNode(nodeType);
+                        if (nodeType == HETreeNodeType.Player && newNodeParentGUID == newNodeFakeGUID)
+                        {
+                            Debug.Print("FakeGUID: " + newNodeFakeGUID);
+                            Debug.Print("ParentGUID: " + newNodeParentGUID);
+
+                            newNode.ParentGUID = -1;
+                            // Needs to be greater than zero to place players below the star node.
+                            newNode.OrbitData.SemiMajorAxis = 1; 
+                        }
+
                         RootNode.Nodes.Add(newNode);
                     }
-
-
-
-
                     break;
             }
-
         }
 
         /// <summary>
         /// Rehydrates (rebuilds) the node hierarchy based on GUID and ParentGUID.
         /// </summary>
-        public void RehydrateGUIDHierarchy()
+        public bool RehydrateGUIDHierarchy()
         {
             HESolarSystemTreeNode currentParentNode = null;
-
+            bool errorState = false;
             foreach (HESolarSystemTreeNode node in RootNode.ListOfAllChildNodes)
             {
                 // If this node has a non-zero value for DockedToShipGUID, process it.
@@ -235,26 +237,42 @@ namespace HELLION.DataStructures
                 {
                     // Find the single node that has the GUID matching the DockedToShipGUID of this node.
                     // There can be only one!
-                    HESolarSystemTreeNode newParentNode = RootNode.ListOfAllChildNodes
-                        .Cast<HESolarSystemTreeNode>()
-                        .Where(p => p.GUID == node.ParentGUID)
-                        .Single();
-                    // If the .Single() causes an exception, there's more than one module docked to that port :(
+                    try
+                    {
+                        HESolarSystemTreeNode newParentNode = RootNode.ListOfAllChildNodes
+                            .Cast<HESolarSystemTreeNode>()
+                            .Where(p => p.GUID == node.ParentGUID)
+                            .Single();
+                        // If the .Single() causes an exception, there's more than one module docked to that port, 
+                        // or the GUID that it's docked to can't be found :(
 
-                    // Cast the node.Parent to an HESolarSystemTreeNode (so we can access ClearCachedData)
-                    currentParentNode = (HESolarSystemTreeNode)node.Parent;
+                        // Cast the node.Parent to an HESolarSystemTreeNode (so we can access ClearCachedData)
+                        currentParentNode = (HESolarSystemTreeNode)node.Parent;
 
-                    // Remove the ship to be re-parented from it's current parent's node collection.
-                    currentParentNode.Nodes.Remove(node);
+                        // Remove the ship to be re-parented from it's current parent's node collection.
+                        currentParentNode.Nodes.Remove(node);
 
-                    // Add the ship being re-parented to the new parent's node collection.
-                    newParentNode.Nodes.Add(node);
+                        // Add the ship being re-parented to the new parent's node collection.
+                        newParentNode.Nodes.Add(node);
 
-                    // As both parent's node collections have changed, clear their cache to force regeneration.
-                    currentParentNode.ClearCachedData();
-                    newParentNode.ClearCachedData();
+                        // As both parent's node collections have changed, clear their cache to force regeneration.
+                        currentParentNode.ClearCachedData();
+                        newParentNode.ClearCachedData();
+                    }
+                    catch (Exception e)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("Exception in RehydrateGUIDHierarchy" + Environment.NewLine);
+                        sb.Append("Text: " + node.Text + Environment.NewLine);
+                        sb.Append("GUID: " + node.GUID + Environment.NewLine);
+                        sb.Append("ParentGUID: " + node.ParentGUID + Environment.NewLine);
+                        sb.Append(e.ToString());
+                        Debug.Print(sb.ToString());
+                        errorState = true;
+                    }
                 }
             }
+            return errorState;
         }
 
         /// <summary>
