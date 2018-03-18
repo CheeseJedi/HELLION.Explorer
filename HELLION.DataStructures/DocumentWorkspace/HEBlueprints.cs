@@ -35,10 +35,14 @@ namespace HELLION.DataStructures
         /// </summary>
         private DirectoryInfo blueprintCollectionFolderInfo = null;
 
+        private FileInfo structureDefinitionsFileInfo = null;
+        private HEJsonBaseFile structureDefinitionsFile = null;
+
         public HEBlueprints()
         {
             rootNode = new HEBlueprintTreeNode("BLUEPRINTSVIEW", HETreeNodeType.Blueprint, "Blueprints", "Hellion Station Blueprints");
             blueprintCollectionFolderInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\HELLION.Explorer\Blueprints");
+            structureDefinitionsFileInfo = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\HELLION.Explorer\StructureDefinitions.json");
             Initialise();
         }
 
@@ -47,8 +51,12 @@ namespace HELLION.DataStructures
             if (blueprintCollectionFolderInfo != null && blueprintCollectionFolderInfo.Exists)
             {
                 blueprintCollection = new HEJsonFileCollection(blueprintCollectionFolderInfo, HEJsonFileCollectionType.BlueprintsFolder, this, autoPopulateTreeDepth: 8);
-                if (blueprintCollection.RootNode == null) throw new Exception("StaticData rootNode was null");
+                if (blueprintCollection.RootNode == null) throw new NullReferenceException("StaticData rootNode was null");
                 else RootNode.Nodes.Add(blueprintCollection.RootNode);
+
+                structureDefinitionsFile = new HEJsonBaseFile(structureDefinitionsFileInfo, this, populateNodeTreeDepth: 6);
+                if (structureDefinitionsFile.RootNode == null) throw new NullReferenceException("structureDefinitionsFile rootNode was null");
+                else RootNode.Nodes.Add(structureDefinitionsFile.RootNode);
             }
         }
 
@@ -65,23 +73,6 @@ namespace HELLION.DataStructures
 
     }
 
-    public enum HEDockingPortNames
-    {
-        Unknown = 0,
-        StandardDockingPortA,
-        StandardDockingPortB,
-        StandardDockingPortC,
-        StandardDockingPortD,
-        AirlockDockingPort,
-        Grapple,
-        IndustrialContainerPortA,
-        IndustrialContainerPortB,
-        IndustrialContainerPortC,
-        IndustrialContainerPortD,
-        CargoDockingPortA,
-        CargoDockingPortB,
-        CargoDock  // Dockable Cargo module
-    }
 
 
 

@@ -46,11 +46,13 @@ namespace HELLION.DataStructures
                 else
                 {
                     LoadFile();
+                    // Populate the blueprint object.
                     DeserialiseToBlueprintObject();
+                    // Populate the data view.
                     dataViewRootNode.Tag = jData;
                     dataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
                 }
-
+                // Populate the hierarchy view.
                 BuildHierarchyView();
             }
         }
@@ -70,6 +72,9 @@ namespace HELLION.DataStructures
 
         public HEBlueprint BlueprintObject => blueprintObject;
 
+        /// <summary>
+        /// This is the actual blueprint - serialised and de-serialised from here.
+        /// </summary>
         protected HEBlueprint blueprintObject = null;
 
         /// <summary>
@@ -176,9 +181,13 @@ namespace HELLION.DataStructures
         public void DeserialiseToBlueprintObject()
         {
             blueprintObject = jData.ToObject<HEBlueprint>();
-            blueprintObject.ConnectTheDots();
+            blueprintObject.ReconnectChildParentStructure();
         }
 
+        public void SerialiseFromBlueprintObject()
+        {
+            throw new NotImplementedException("Not implemented yet.");
+        }
     }
 
 
