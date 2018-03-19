@@ -213,6 +213,17 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.BlueprintHierarchyView:
                     return (int)HEObjectTypesImageList.Hub_16x;
 
+                case HETreeNodeType.BlueprintStructureDefinitionView:
+                    return (int)HEObjectTypesImageList.Bios_16x;
+
+                case HETreeNodeType.BlueprintStructure:
+                case HETreeNodeType.BlueprintStructureDefinition:
+                    return (int)HEObjectTypesImageList.Component_16x;
+
+                case HETreeNodeType.BlueprintDockingPort:
+                case HETreeNodeType.BlueprintDockingPortDefinition:
+                    return (int)HEObjectTypesImageList.Bolt_16x;
+
                 default:
                     return (int)HEObjectTypesImageList.Checkerboard_16x;
             }

@@ -468,6 +468,7 @@ namespace HELLION.DataStructures
             }
         }
 
+        /*
         /// <summary>
         /// Attempts to build a user-friendly name from available data in a JObject
         /// </summary>
@@ -477,6 +478,7 @@ namespace HELLION.DataStructures
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
+            sb.Append((string)obj["SanitisedName"]);
             sb.Append((string)obj["GameName"]);
             sb.Append((string)obj["CategoryName"]);
             sb.Append((string)obj["name"]);
@@ -490,6 +492,7 @@ namespace HELLION.DataStructures
             sb.Append((string)obj["ItemID"]);
             return sb.ToString() ?? null;
         }
+        */
 
-    } // End of class HEjsonFile
+    }
 }

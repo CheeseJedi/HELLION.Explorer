@@ -36,7 +36,7 @@ namespace HELLION.DataStructures
         private DirectoryInfo blueprintCollectionFolderInfo = null;
 
         private FileInfo structureDefinitionsFileInfo = null;
-        private HEJsonBaseFile structureDefinitionsFile = null;
+        private HEBlueprintStructureDefinitionsFile structureDefinitionsFile = null;
 
         public HEBlueprints()
         {
@@ -54,7 +54,7 @@ namespace HELLION.DataStructures
                 if (blueprintCollection.RootNode == null) throw new NullReferenceException("StaticData rootNode was null");
                 else RootNode.Nodes.Add(blueprintCollection.RootNode);
 
-                structureDefinitionsFile = new HEJsonBaseFile(structureDefinitionsFileInfo, this, populateNodeTreeDepth: 6);
+                structureDefinitionsFile = new HEBlueprintStructureDefinitionsFile(structureDefinitionsFileInfo, this, populateNodeTreeDepth: 8);
                 if (structureDefinitionsFile.RootNode == null) throw new NullReferenceException("structureDefinitionsFile rootNode was null");
                 else RootNode.Nodes.Add(structureDefinitionsFile.RootNode);
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -36,11 +37,13 @@ namespace HELLION.DataStructures
                 dataViewRootNode = new HEGameDataTreeNode("Data View", HETreeNodeType.DataView, 
                     nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
 
-                hierarchyViewRootNode = new HESolarSystemTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView, 
-                    nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+                //hierarchyViewRootNode = new HESolarSystemTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView, 
+                    //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
 
                 rootNode.Nodes.Add(dataViewRootNode);
-                rootNode.Nodes.Add(hierarchyViewRootNode);
+
+                //rootNode.Nodes.Add(hierarchyViewRootNode);
+
 
                 if (!File.Exists) throw new FileNotFoundException();
                 else
@@ -48,12 +51,17 @@ namespace HELLION.DataStructures
                     LoadFile();
                     // Populate the blueprint object.
                     DeserialiseToBlueprintObject();
+
+                    BlueprintObject.ReassembleDockingStructure();
+                    rootNode.Nodes.Add(BlueprintObject.RootNode);
+
+
                     // Populate the data view.
                     dataViewRootNode.Tag = jData;
                     dataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
                 }
                 // Populate the hierarchy view.
-                BuildHierarchyView();
+                //BuildHierarchyView();
             }
         }
 
@@ -82,10 +90,60 @@ namespace HELLION.DataStructures
         /// </summary>
         public void BuildHierarchyView()
         {
-            // Basic operation
-            //
-            // 3. Create Ship nodes from GameData - save file
-            AddSolarSystemObjects();
+            foreach (HEBlueprint.HEBlueprintStructure structure in blueprintObject.Structures
+                .Reverse<HEBlueprint.HEBlueprintStructure>())
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("StructureType: " + structure.StructureType + Environment.NewLine);
+                sb.Append("StructureID: " + structure.StructureID + Environment.NewLine);
+                sb.Append("DockedStructures: " + Environment.NewLine);
+                foreach (HEBlueprint.HEBlueprintStructure dockedStructure in structure.DockedStructures())
+                {
+                    sb.Append(">" + dockedStructure.StructureType.ToString());
+                    sb.Append(" id: " + dockedStructure.StructureID);
+
+                    // Find the docking port on the docked module that is docked to this structure
+                    HEBlueprint.HEBlueprintDockingPort remotePort = dockedStructure.DockingPorts.Where(f => f.DockedStructureID == structure.StructureID).Single();
+                    sb.Append(" PortsInUse: " + remotePort.DockedPortName + "::" + remotePort.PortName + ":" + dockedStructure.StructureType.ToString());
+                        
+                    sb.Append(Environment.NewLine);
+                }
+
+                HETreeNode newStructNode = new HETreeNode(structure.StructureType.ToString(), HETreeNodeType.BlueprintStructureDefinition,
+                    structure.StructureType.ToString(), sb.ToString());
+
+                hierarchyViewRootNode.Nodes.Add(newStructNode);
+
+                foreach (HEBlueprint.HEBlueprintDockingPort port in structure.DockingPorts
+                    .Reverse<HEBlueprint.HEBlueprintDockingPort>())
+                {
+                    sb.Clear();
+                    sb.Append("PortName: " + port.PortName + Environment.NewLine);
+                    sb.Append("OrderID: " + port.OrderID + Environment.NewLine);
+                    sb.Append("DockedStructureID: " + port.DockedStructureID + Environment.NewLine);
+
+
+                    HEBlueprintStructureTypes? dockedStructureType = HEBlueprintStructureTypes.UNKNOWN;
+                    try
+                    {
+                        dockedStructureType = blueprintObject.GetStructureByID(port.DockedStructureID).StructureType;
+                    }
+                    catch { }
+
+                    sb.Append("DockedStructureType: " + dockedStructureType + Environment.NewLine);
+                    sb.Append("DockedPortName: " + port.DockedPortName + Environment.NewLine);
+
+
+                    HETreeNode newPortNode = new HETreeNode(port.PortName.ToString(), HETreeNodeType.BlueprintDockingPortDefinition,
+                        port.PortName.ToString(), sb.ToString());
+
+                    newStructNode.Nodes.Add(newPortNode);
+                }
+            }
+
+
+
+
 
 
         }
