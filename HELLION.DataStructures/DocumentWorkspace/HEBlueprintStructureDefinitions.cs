@@ -94,15 +94,6 @@ namespace HELLION.DataStructures
             /// a blueprint.
             /// </summary>
             public int? PortID = null;
-
-
-
-
-
         }
-
     }
-
-
-
 }

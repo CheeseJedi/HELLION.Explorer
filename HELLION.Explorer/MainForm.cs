@@ -182,6 +182,9 @@ namespace HELLION.Explorer
                     {
                         // We're working with a GAME DATA node
 
+                        // Hide the Edit menu item.
+                        editToolStripMenuItem1.Visible = false;
+
                         // Enable the Json Data View
                         jsonDataViewToolStripMenuItem.Enabled = true;
 
@@ -224,6 +227,9 @@ namespace HELLION.Explorer
                     else if (t.Equals(typeof(HESolarSystemTreeNode)))
                     {
                         // We're working with a SOLAR SYSTEM node
+
+                        // Hide the Edit menu item.
+                        editToolStripMenuItem1.Visible = false;
 
                         // Disable the Json Data View option.
                         jsonDataViewToolStripMenuItem.Enabled = false;
@@ -272,8 +278,52 @@ namespace HELLION.Explorer
                             rootOfDockingTreeToolStripMenuItem.Enabled = sSnode.IsDockedToParent();
                         }
                     }
+
+                    else if (t.Equals(typeof(HEBlueprintTreeNode)))
+                    {
+
+                        // Some decision making logic needed here
+                        // Show the Edit menu item.
+                        editToolStripMenuItem1.Visible = true;
+
+
+                        // Disable the Json Data View
+                        jsonDataViewToolStripMenuItem.Enabled = false;
+
+                        // Disable the Jump to sub-menu
+                        jumpToToolStripMenuItem.Enabled = false;
+
+                        // Disable the Solar System Jump to option
+                        thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+
+                        // Disable the Game Data Jump to option
+                        thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                        thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+
+                        // Disable these two as they're Solar System related
+                        rootOfDockingTreeToolStripMenuItem.Enabled = false;
+                        parentCelestialBodyToolStripMenuItem.Enabled = false;
+
+                        // Disable the load options
+                        loadNextLevelToolStripMenuItem.Visible = false;
+                        loadAllLevelsToolStripMenuItem.Visible = false;
+                        toolStripSeparator9.Visible = false;
+
+
+
+
+
+
+
+                    }
                     else
                     {
+                        // Hide the Edit menu item.
+                        editToolStripMenuItem1.Visible = false;
+
+
+
                         // Disable the Json Data View
                         jsonDataViewToolStripMenuItem.Enabled = false;
 
@@ -478,7 +528,7 @@ namespace HELLION.Explorer
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            // This item is currently disabled but will be enabled for editable items.
+            Program.CreateNewBlueprintEditor((HEBlueprintTreeNode)Program.frmMainForm.treeView1.SelectedNode);
         }
 
         private void updateCountsToolStripMenuItem1_Click(object sender, EventArgs e)

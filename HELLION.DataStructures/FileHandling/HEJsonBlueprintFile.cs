@@ -32,13 +32,13 @@ namespace HELLION.DataStructures
             {
                 fileInfo = passedFileInfo;
 
-                rootNode = new HEBlueprintTreeNode(File.Name, HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
+                rootNode = new HEBlueprintTreeNode(File.Name, HETreeNodeType.Blueprint, nodeToolTipText: File.FullName, passedOwner: this);
 
                 dataViewRootNode = new HEGameDataTreeNode("Data View", HETreeNodeType.DataView, 
-                    nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
+                    nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.", passedOwner: this);
 
                 //hierarchyViewRootNode = new HESolarSystemTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView, 
-                    //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+                //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.", passedOwner: this);
 
                 rootNode.Nodes.Add(dataViewRootNode);
 
@@ -76,6 +76,8 @@ namespace HELLION.DataStructures
 
         protected HEGameDataTreeNode dataViewRootNode = null;
 
+        public HESolarSystemTreeNode HierarchyViewRootNode => hierarchyViewRootNode;
+
         protected HESolarSystemTreeNode hierarchyViewRootNode = null;
 
         public HEBlueprint BlueprintObject => blueprintObject;
@@ -103,8 +105,10 @@ namespace HELLION.DataStructures
                     sb.Append(" id: " + dockedStructure.StructureID);
 
                     // Find the docking port on the docked module that is docked to this structure
-                    HEBlueprint.HEBlueprintDockingPort remotePort = dockedStructure.DockingPorts.Where(f => f.DockedStructureID == structure.StructureID).Single();
-                    sb.Append(" PortsInUse: " + remotePort.DockedPortName + "::" + remotePort.PortName + ":" + dockedStructure.StructureType.ToString());
+                    HEBlueprint.HEBlueprintDockingPort remotePort = dockedStructure.DockingPorts
+                        .Where(f => f.DockedStructureID == structure.StructureID).Single();
+                    sb.Append(" PortsInUse: " + remotePort.DockedPortName + "::" + remotePort.PortName 
+                        + ":" + dockedStructure.StructureType.ToString());
                         
                     sb.Append(Environment.NewLine);
                 }
@@ -148,6 +152,7 @@ namespace HELLION.DataStructures
 
         }
 
+        /*
         /// <summary>
         /// Adds Solar System nodes of the specified type to the RootNode, generated from the 
         /// Game Data nodes.
@@ -235,6 +240,8 @@ namespace HELLION.DataStructures
                 }
             }
         }
+        */
+
 
         public void DeserialiseToBlueprintObject()
         {

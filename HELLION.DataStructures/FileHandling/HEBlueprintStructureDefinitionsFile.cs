@@ -35,10 +35,10 @@ namespace HELLION.DataStructures
                 rootNode = new HEBlueprintTreeNode(File.Name, HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
 
                 dataViewRootNode = new HEGameDataTreeNode("Data View", HETreeNodeType.DataView,
-                    nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
+                    nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.", passedOwner: this);
 
                 definitionViewRootNode = new HESolarSystemTreeNode("Definition View", HETreeNodeType.BlueprintStructureDefinitionView,
-                    nodeToolTipText: "Shows a representation of each structure definition and its docking ports.");
+                    nodeToolTipText: "Shows a representation of each structure definition and its docking ports.", passedOwner: this);
 
                 rootNode.Nodes.Add(dataViewRootNode);
                 rootNode.Nodes.Add(definitionViewRootNode);
@@ -47,8 +47,8 @@ namespace HELLION.DataStructures
                 else
                 {
                     LoadFile();
-                    // Populate the blueprint object.
-                    DeserialiseToBlueprintObject();
+                    // Populate the BlueprintStructureDefinitions object.
+                    DeserialiseToBlueprintStructureDefinitionsObject();
                     // Populate the data view.
                     dataViewRootNode.Tag = jData;
                     dataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
@@ -113,12 +113,9 @@ namespace HELLION.DataStructures
                     newStructNode.Nodes.Add(newPortNode);
                 }
             }
-
         }
 
-
-
-        public void DeserialiseToBlueprintObject()
+        public void DeserialiseToBlueprintStructureDefinitionsObject()
         {
             blueprintStructureDefinitionsObject = jData.ToObject<HEBlueprintStructureDefinitions>();
             //blueprintStructureDefinitionsObject.ReconnectChildParentStructure();

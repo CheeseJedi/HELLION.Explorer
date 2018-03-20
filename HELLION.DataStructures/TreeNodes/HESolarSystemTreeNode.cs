@@ -108,8 +108,9 @@ namespace HELLION.DataStructures
         /// <param name="nodeType">HETreeNodeType of the new node; defaults to Unknown.</param>
         /// <param name="nodeText">The Text (DisplayName) of the node - uses the Name if omitted.</param>
         /// <param name="nodeToolTipText">The ToolTip text displayed; defaults to the nodeText if omitted.</param>
-        public HESolarSystemTreeNode(string nodeName, HETreeNodeType nodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
-            : base(nodeName, nodeType, nodeText, nodeToolTipText)
+        public HESolarSystemTreeNode(string nodeName, HETreeNodeType nodeType = HETreeNodeType.Unknown, 
+            string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
+            : base(nodeName, nodeType, nodeText, nodeToolTipText, passedOwner)
         {
             OrbitData = new HEOrbitalData();
         }

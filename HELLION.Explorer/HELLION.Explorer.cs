@@ -112,6 +112,11 @@ namespace HELLION.Explorer
         internal static List<JsonDataViewForm> jsonDataViews = new List<JsonDataViewForm>();
 
         /// <summary>
+        /// 
+        /// </summary>
+        internal static List<BlueprintEditorForm> blueprintEditorForms = new List<BlueprintEditorForm>();
+        
+        /// <summary>
         /// Exits the program in a controlled manner - closes an open document etc.
         /// </summary>
         internal static void ControlledExit()
@@ -307,7 +312,6 @@ namespace HELLION.Explorer
             }
         }
 
-
         internal static void FileSaveAs()
         {
             if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
@@ -338,8 +342,6 @@ namespace HELLION.Explorer
                 }
             }
         }
-
-
 
         /// <summary>
         /// Closes the current document workspace.
@@ -1022,6 +1024,40 @@ namespace HELLION.Explorer
                 // Show the form.
                 newDataView.Show();
                 newDataView.Activate();
+            }
+        }
+
+        /// <summary>
+        /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
+        /// </summary>
+        /// <param name="selectedNode"></param>
+        internal static void CreateNewBlueprintEditor(HEBlueprintTreeNode selectedNode)
+        {
+            if (selectedNode != null)
+            {
+                // Look for an existing form for this node.
+                BlueprintEditorForm newBlueprintEditorForm = null;
+                foreach (BlueprintEditorForm form in blueprintEditorForms)
+                {
+                    if (form.SourceNode == selectedNode)
+                    {
+                        newBlueprintEditorForm = form;
+                        break;
+                    }
+                }
+
+                if (newBlueprintEditorForm == null)
+                {
+                    // No existing form for this node was found, create a new one.
+                    newBlueprintEditorForm = new BlueprintEditorForm(selectedNode);
+
+                    // Add the form to the jsonDataViews list.
+                    blueprintEditorForms.Add(newBlueprintEditorForm);
+                }
+
+                // Show the form.
+                newBlueprintEditorForm.Show();
+                newBlueprintEditorForm.Activate();
             }
         }
 

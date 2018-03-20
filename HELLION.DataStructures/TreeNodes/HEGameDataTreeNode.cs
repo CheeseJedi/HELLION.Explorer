@@ -30,8 +30,9 @@ namespace HELLION.DataStructures
         /// <param name="nodeType">Type of the new node (HETreeNodeType enum)</param>
         /// <param name="nodeText">Text of the new node (Display Name). If not specified this defaults to the node's name.</param>
         /// <param name="nodeToolTipText">Tool tip text of the new node. If not specified this defaults to the node's text.</param>
-        public HEGameDataTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "") 
-            : base(nodeName, newNodeType, nodeText, nodeToolTipText)
+        public HEGameDataTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, 
+            string nodeText = "", string nodeToolTipText = "", object passedOwner = null) 
+            : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
         {
             childNodesLoaded = false;
         }

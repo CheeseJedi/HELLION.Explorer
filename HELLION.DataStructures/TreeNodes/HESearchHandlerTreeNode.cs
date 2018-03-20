@@ -12,8 +12,10 @@ namespace HELLION.DataStructures
         
         private HESearchHandler.HESearchOperator parentSearchOperator = null;
 
-        public HESearchHandlerTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
-            : base(nodeName, newNodeType, nodeText, nodeToolTipText)
+        
+        public HESearchHandlerTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, 
+            string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
+            : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
         {
 
         }
@@ -27,8 +29,9 @@ namespace HELLION.DataStructures
         /// <param name="newNodeType"></param>
         /// <param name="nodeText"></param>
         /// <param name="nodeToolTipText"></param>
-        public HESearchHandlerTreeNode(HESearchHandler.HESearchOperator passedParentSearchOperator, string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
-            : base(nodeName, newNodeType, nodeText, nodeToolTipText)
+        public HESearchHandlerTreeNode(HESearchHandler.HESearchOperator passedParentSearchOperator, string nodeName, 
+            HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
+            : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
         {
             parentSearchOperator = passedParentSearchOperator ?? throw new NullReferenceException("passedParentSearchOperator was null.");
 

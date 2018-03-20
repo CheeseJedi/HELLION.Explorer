@@ -82,7 +82,7 @@ namespace HELLION.DataStructures
             gameData = passedGameData ?? throw new NullReferenceException("passedGameData was null.");
             solarSystem = passedSolarSystem ?? throw new NullReferenceException("passedSolarSystem was null.");
             
-            rootNode = new HESearchHandlerTreeNode("Search", HETreeNodeType.SearchHandler);
+            rootNode = new HESearchHandlerTreeNode("Search", HETreeNodeType.SearchHandler, passedOwner: this);
             
             searchOperators = new List<HESearchOperator>();
 
@@ -119,7 +119,7 @@ namespace HELLION.DataStructures
             {
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
                 OperatorFlags = passedOperatorFlags;
-                rootNode = new HESearchHandlerTreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName);
+                rootNode = new HESearchHandlerTreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName, passedOwner: this);
                 parent.rootNode.Nodes.Add(rootNode);
                 parent.searchOperators.Add(this);
             }

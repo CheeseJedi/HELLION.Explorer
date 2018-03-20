@@ -22,19 +22,24 @@ namespace HELLION.DataStructures
     public class HETreeNode : TreeNode
     {
         /// <summary>
+        /// A reference to the 'owning' object of this tree node.
+        /// </summary>
+        private object ownerObject = null;
+        
+        /// <summary>
         /// The type of the HETreeNode
         /// </summary>
         private HETreeNodeType nodeType = HETreeNodeType.Unknown;
 
         /// <summary>
-        /// The cached count of direct child nodes. -1 means no data is cached.
+        /// The cached count of direct child nodes. null means no data is cached.
         /// </summary>
-        private int countOfChildNodes = -1;
+        private int? countOfChildNodes = null;
 
         /// <summary>
-        /// The cached count of all child nodes (including sub nodes). -1 means no data is cached.
+        /// The cached count of all child nodes (including sub nodes). null means no data is cached.
         /// </summary>
-        private int countOfAllChildNodes = -1;
+        private int? countOfAllChildNodes = null;
 
         /// <summary>
         /// The cached list of direct child nodes. A value of null means no data is cached.
@@ -45,9 +50,9 @@ namespace HELLION.DataStructures
         /// The cached list of all child nodes (including sub nodes). A value of null means no data is cached.
         /// </summary>
         private List<HETreeNode> listOfAllChildNodes = null;
-
+        
         /// <summary>
-        /// Default constructor
+        /// Default constructor, used by GameData and SolarSystem tree node derived types.
         /// </summary>
         public HETreeNode()
         {
@@ -55,25 +60,29 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Constructor that takes a minimum of a name, but also optionally a type and text (display name).
+        /// Constructor that takes a minimum of a name, but also optionally a type, Text (display name)
+        /// and ToolTipText and an Owner object.
         /// </summary>
-        /// <param name="nodeName">Name of the new node.</param>
-        /// <param name="nodeType">Type of the new node (HETreeNodeType enum)</param>
-        /// <param name="nodeText">Text of the new node (Display Name). If not specified this defaults to the node's name.</param>
-        /// <param name="nodeToolTipText">Tool tip text of the new node. If not specified this defaults to the node's text.</param>
-        public HETreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
+        /// <param name="nodeName"></param>
+        /// <param name="newNodeType"></param>
+        /// <param name="nodeText"></param>
+        /// <param name="nodeToolTipText"></param>
+        /// <param name="passedOwner"></param>
+        public HETreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, 
+            string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
         {
-            if (nodeName != null && nodeName != "") Name = nodeName;
-            else Name = "node " + DateTime.Now.ToString();
-
-            if (nodeText == "") Text = nodeName;
-            else Text = nodeText;
-
-            if (nodeToolTipText == "") ToolTipText = nodeName + " (" + newNodeType.ToString() + ")";
-            else ToolTipText = nodeToolTipText;
+            Name = (nodeName != null && nodeName != "") ? nodeName : "node " + DateTime.Now.ToString();
+            Text = (nodeText == "") ? nodeName : nodeText;
+            ToolTipText = (nodeToolTipText == "") ? nodeName + " (" + newNodeType.ToString() + ")" : nodeToolTipText;
 
             NodeType = newNodeType;
+            ownerObject = passedOwner;
         }
+
+        /// <summary>
+        /// Gets a reference to the owning object, if set.
+        /// </summary>
+        public object OwnerObject => ownerObject;
 
         /// <summary>
         /// Gets/Sets the node type. On a Set operation it triggers the ImageIndex and SelectedImageIndex
@@ -101,8 +110,8 @@ namespace HELLION.DataStructures
         {
             get
             {
-                if (countOfChildNodes == -1) UpdateCounts();
-                return countOfChildNodes;
+                if (countOfChildNodes == null) UpdateCounts();
+                return (int)countOfChildNodes;
             }
         }
         
@@ -113,8 +122,8 @@ namespace HELLION.DataStructures
         {
             get
             {
-                if (countOfAllChildNodes == -1) UpdateCounts();
-                return countOfAllChildNodes;
+                if (countOfAllChildNodes == null) UpdateCounts();
+                return (int)countOfAllChildNodes;
             }
         }
 
@@ -130,7 +139,10 @@ namespace HELLION.DataStructures
             return nodes.Length > 0 ? (HETreeNode)nodes[0] : null;
         }
 
-
+        /// <summary>
+        /// Returns the FullPath of this node, minus the node name and last path seperator.
+        /// </summary>
+        /// <returns></returns>
         public string Path()
         {
             string fullPath = FullPath;
@@ -139,7 +151,6 @@ namespace HELLION.DataStructures
             lastIndex = lastIndex != -1 ? lastIndex : 0;
             return fullPath.Substring(0, lastIndex);
         }
-
 
         /// <summary>
         /// Returns a list of direct descendants
@@ -188,8 +199,8 @@ namespace HELLION.DataStructures
         /// </summary>
         public void ClearCachedData()
         {
-            countOfChildNodes = -1;
-            countOfAllChildNodes = -1;
+            countOfChildNodes = null;
+            countOfAllChildNodes = null;
             listOfChildNodes = null;
             listOfAllChildNodes = null;
         }

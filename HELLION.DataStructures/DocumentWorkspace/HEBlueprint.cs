@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HELLION.DataStructures
 {
@@ -100,7 +100,7 @@ namespace HELLION.DataStructures
             Parent = passedParent;
             Structures = new List<HEBlueprintStructure>();
             RootNode = new HEBlueprintTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView,
-                    nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+                nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.", passedOwner: this);
         }
 
         
@@ -129,13 +129,8 @@ namespace HELLION.DataStructures
             foreach (HEBlueprintDockingPort port in dockingRoot.DockingPorts.ToArray().Reverse())
             {
                 dockingRoot.RootNode.Nodes.Add(port.RootNode);
-                if (port.IsDocked())
-                {
-                    Reassemble(GetStructureByID(port.DockedStructureID), dockingRoot);
-                }
-
+                if (port.IsDocked()) Reassemble(GetStructureByID(port.DockedStructureID), dockingRoot);
             }
-
            
             void Reassemble(HEBlueprintStructure structure, HEBlueprintStructure parent)
             {
@@ -149,27 +144,21 @@ namespace HELLION.DataStructures
                 // Add the structures's node to the link to parent node collection.
                 linkToParent.RootNode.Nodes.Add(structure.RootNode);
 
-
                 foreach (HEBlueprintDockingPort port in structure.DockingPorts.ToArray().Reverse())
                 {
-                    // Set the port's parent.
-                    port.Parent = structure;
-
                     if (port != linkToParent)
                     {
-
                         structure.RootNode.Nodes.Add(port.RootNode);
-                        if (port.IsDocked())
-                        {
-                            Reassemble(GetStructureByID(port.DockedStructureID), structure);
-                        }
+                        if (port.IsDocked()) Reassemble(GetStructureByID(port.DockedStructureID), structure);
                     }
                 }
             }
-            
         }
 
-
+        public HEBlueprintTreeNode GetDockingRootNode()
+        {
+            return GetDockingRoot().RootNode;
+        }
 
         /// <summary>
         /// Gets the 'zeroth' structure, the root of the docking tree when in-game.
@@ -249,7 +238,6 @@ namespace HELLION.DataStructures
             /// </summary>
             public HEBlueprintTreeNode RootNode = null;
 
-
             /// <summary>
             /// Constructor.
             /// </summary>
@@ -258,7 +246,7 @@ namespace HELLION.DataStructures
             {
                 Parent = passedParent;
                 DockingPorts = new List<HEBlueprintDockingPort>();
-                RootNode = new HEBlueprintTreeNode(StructureType.ToString(), HETreeNodeType.BlueprintStructure);
+                RootNode = new HEBlueprintTreeNode(StructureType.ToString(), HETreeNodeType.BlueprintStructure, passedOwner: this);
             }
 
             /// <summary>
@@ -376,7 +364,7 @@ namespace HELLION.DataStructures
             public HEBlueprintDockingPort(HEBlueprintStructure passedParent = null)
             {
                 Parent = passedParent;
-                RootNode = new HEBlueprintTreeNode(PortName.ToString(), HETreeNodeType.BlueprintDockingPort);
+                RootNode = new HEBlueprintTreeNode(PortName.ToString(), HETreeNodeType.BlueprintDockingPort, passedOwner: this);
 
             }
 

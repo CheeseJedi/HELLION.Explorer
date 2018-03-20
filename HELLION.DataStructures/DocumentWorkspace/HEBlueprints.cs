@@ -40,7 +40,7 @@ namespace HELLION.DataStructures
 
         public HEBlueprints()
         {
-            rootNode = new HEBlueprintTreeNode("BLUEPRINTSVIEW", HETreeNodeType.Blueprint, "Blueprints", "Hellion Station Blueprints");
+            rootNode = new HEBlueprintTreeNode("BLUEPRINTSVIEW", HETreeNodeType.Blueprint, "Blueprints", "Hellion Station Blueprints", passedOwner: this);
             blueprintCollectionFolderInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\HELLION.Explorer\Blueprints");
             structureDefinitionsFileInfo = new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\HELLION.Explorer\StructureDefinitions.json");
             Initialise();
@@ -50,13 +50,13 @@ namespace HELLION.DataStructures
         {
             if (blueprintCollectionFolderInfo != null && blueprintCollectionFolderInfo.Exists)
             {
-                blueprintCollection = new HEJsonFileCollection(blueprintCollectionFolderInfo, HEJsonFileCollectionType.BlueprintsFolder, this, autoPopulateTreeDepth: 8);
-                if (blueprintCollection.RootNode == null) throw new NullReferenceException("StaticData rootNode was null");
-                else RootNode.Nodes.Add(blueprintCollection.RootNode);
-
                 structureDefinitionsFile = new HEBlueprintStructureDefinitionsFile(structureDefinitionsFileInfo, this, populateNodeTreeDepth: 8);
                 if (structureDefinitionsFile.RootNode == null) throw new NullReferenceException("structureDefinitionsFile rootNode was null");
                 else RootNode.Nodes.Add(structureDefinitionsFile.RootNode);
+
+                blueprintCollection = new HEJsonFileCollection(blueprintCollectionFolderInfo, HEJsonFileCollectionType.BlueprintsFolder, this, autoPopulateTreeDepth: 8);
+                if (blueprintCollection.RootNode == null) throw new NullReferenceException("StaticData rootNode was null");
+                else RootNode.Nodes.Add(blueprintCollection.RootNode);
             }
         }
 

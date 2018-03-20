@@ -38,7 +38,7 @@ namespace HELLION.DataStructures
         {
             // Basic constructor
 
-            RootNode = new HESolarSystemTreeNode("Solar System", HETreeNodeType.SolarSystemView) //, "Solar System")
+            RootNode = new HESolarSystemTreeNode("Solar System", HETreeNodeType.SolarSystemView, passedOwner: this) //, "Solar System")
             {
                 GUID = -1 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to the Solar System root node
             };

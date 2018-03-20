@@ -8,13 +8,12 @@ namespace HELLION.DataStructures
 {
     public class HEBlueprintTreeNode : HETreeNode
     {
-        public HEBlueprintTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
-            : base(nodeName, newNodeType, nodeText, nodeToolTipText)
+        public HEBlueprintTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, 
+            string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
+            : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
         {
 
         }
-
-
 
     }
 }
