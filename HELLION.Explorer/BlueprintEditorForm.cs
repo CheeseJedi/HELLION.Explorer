@@ -36,9 +36,6 @@ namespace HELLION.Explorer
         /// </summary>
         private bool isDirty = false;
 
-
-
-
         private string FormTitleText = null;
 
         private HEBlueprintTreeNode sourceNode = null;
@@ -47,7 +44,6 @@ namespace HELLION.Explorer
 
         HEJsonBlueprintFile jsonBlueprintFile = null;
         HEBlueprint blueprint = null;
-
 
         /// <summary>
         /// Basic Constructor.
@@ -62,6 +58,8 @@ namespace HELLION.Explorer
             //treeView1.SelectedImageIndex = (int)HEImageList.HEObjectTypesImageList.Flag_16x;
             //treeView1.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
             treeView1.ShowNodeToolTips = true;
+            Text = "Blueprint Editor";
+            PopulateDropDownModuleTypes();
 
         }
 
@@ -110,14 +108,13 @@ namespace HELLION.Explorer
         public void PopulateDropDownModuleTypes()
         {
             Array enumValues = Enum.GetValues(typeof(HEBlueprintStructureTypes));
-            toolStripComboBox1.Items.Add("Please Select...");
-            foreach (string item in enumValues)
+            foreach (int value in enumValues)
             {
-                Debug.Print("EnumValue: " + item);
-                if (item == "UNKNOWN")
-                {
-                    toolStripComboBox1.Items.Add(item);
-                }
+                string display = Enum.GetName(typeof(HEBlueprintStructureTypes), value);
+                //if (value == (int)HEBlueprintStructureTypes.UNKNOWN) display = "Select Type...";
+                // ListViewItem item = new ListViewItem(display, value.ToString());
+                toolStripComboBox1.Items.Add(display);
+                toolStripComboBox1.SelectedIndex = 0;
             }
         }
         
@@ -128,7 +125,17 @@ namespace HELLION.Explorer
 
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Do something - create the new structure in the blueprint.
+            if (blueprint != null)
+            {
+                // Do something - create the new structure in the blueprint.
+                HEBlueprintStructureTypes newStructureType = (HEBlueprintStructureTypes)Enum.Parse(
+                    typeof(HEBlueprintStructureTypes), (string)toolStripComboBox1.SelectedItem);
+
+                HEBlueprint.HEBlueprintStructure newStructure = blueprint.AddStructure(newStructureType);
+                treeView1.Nodes.Add(newStructure.RootNode);
+            }
+
+
         }
 
         private void BlueprintEditorForm_FormClosing(object sender, FormClosingEventArgs e)

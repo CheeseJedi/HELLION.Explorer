@@ -1,41 +1,30 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
 using System.Diagnostics;
-using System.Security.Policy;
+using System.IO;
+using System.Linq;
 
 namespace HELLION.DataStructures
 {
     /// <summary>
-    /// Defines an enum to determine the type of folder - used by the HEJsonFileCollection
-    /// </summary>
-    public enum HEJsonFileCollectionType
-    {
-        Unknown = 0,
-        StaticDataFolder,
-        BlueprintsFolder,
-        SnippetsFolder
-    }
-
-    /// <summary>
     /// Defines an object that contains a dictionary of HEJsonBaseFiles representing the 
     /// json files in a specified folder.
     /// </summary>
-    public class HEJsonFileCollection : IHENotificationReceiver, IHENotificationSender
+    public class HEJsonFileCollection //: IHENotificationReceiver, IHENotificationSender
     {
+        
+        
         /// <summary>
         /// Public property to access the parent object, if set.
         /// </summary>
-        public IHENotificationReceiver Parent => parent;
+        public Object Parent => parent;
 
         /// <summary>
         /// Stores a reference to the parent object, if set using the constructor.
         /// </summary>
-        protected IHENotificationReceiver parent = null;
+        protected Object parent = null;
 
+        /*
         /// <summary>
         /// Implements receiving of simple child-to-parent messages.
         /// </summary>
@@ -69,16 +58,8 @@ namespace HELLION.DataStructures
                 throw new InvalidOperationException();
             }
         }
+        */
 
-        /// <summary>
-        /// Public property to read the type of the collection.
-        /// </summary>
-        public HEJsonFileCollectionType CollectionType => collectionType;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected HEJsonFileCollectionType collectionType = HEJsonFileCollectionType.Unknown;
 
         /// <summary>
         /// 
@@ -147,15 +128,18 @@ namespace HELLION.DataStructures
         /// </summary>
         protected bool isDirty  = false;
 
+
+        public HEJsonFileCollection()
+        {
+        }
+
         /// <summary>
         /// Constructor that takes a DirectoryInfo and if valid, triggers the load
         /// </summary>
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="autoPopulateTree"></param>
-        public HEJsonFileCollection(DirectoryInfo passedDirectoryInfo, HEJsonFileCollectionType passedCollectionType, object passedParentNotificationObject, int autoPopulateTreeDepth = 0)
+        public HEJsonFileCollection(DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
         {
-
-            collectionType = passedCollectionType;
 
             // Set up the data dictionary
             dataDictionary = new Dictionary<string, HEJsonBaseFile>();
@@ -163,33 +147,28 @@ namespace HELLION.DataStructures
             // Check validity and if good load the data set
             if (passedDirectoryInfo != null && passedDirectoryInfo.Exists)
             {
-                if (passedParentNotificationObject == null) throw new InvalidOperationException();
-                else parent = (IHENotificationReceiver)passedParentNotificationObject;
-
                 dataDirectoryInfo = passedDirectoryInfo;
 
-                switch (passedCollectionType)
-                {
-                    case HEJsonFileCollectionType.StaticDataFolder:
-                        rootNode = new HETreeNode(dataDirectoryInfo.Name, HETreeNodeType.DataFolder, nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
-                        break;
+                rootNode = new HETreeNode(dataDirectoryInfo.Name, HETreeNodeType.DataFolder, 
+                    nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
 
-                    case HEJsonFileCollectionType.BlueprintsFolder:
-                        rootNode = new HETreeNode("Blueprints", HETreeNodeType.DataFolder, nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
-                        // targetFileExtension = "*.hsbp.json";
-                        break;
-
-                    default:
-                        rootNode = new HETreeNode(dataDirectoryInfo.Name, HETreeNodeType.DataFolderError, nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
-                        break;
-                }
                 Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
             }
             else
             {
-                rootNode = new HETreeNode(dataDirectoryInfo.Name + " [ERROR]", HETreeNodeType.DataFolderError, nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
+                rootNode = new HETreeNode(dataDirectoryInfo.Name + " [ERROR]", HETreeNodeType.DataFolderError, 
+                    nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
             }
         }
+
+        public HEJsonFileCollection(object passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0) : this(passedDirectoryInfo, autoPopulateTreeDepth)
+        {
+            parent = passedParent ?? throw new InvalidOperationException();
+
+        }
+
+
+
 
         /// <summary>
         /// The load routine for the static data file collection
@@ -211,70 +190,26 @@ namespace HELLION.DataStructures
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
-                    switch (collectionType)
+                    
+                    // Create a new HEJsonBaseFile and populate the path.
+                    HEJsonBaseFile tempJsonFile = new HEJsonBaseFile(this, dataFile, PopulateNodeTreeDepth);
+                    // Add the file to the Data Dictionary 
+                    DataDictionary.Add(dataFile.Name, tempJsonFile);
+
+                    if (tempJsonFile.IsLoaded && !LoadError)
                     {
-                        case HEJsonFileCollectionType.StaticDataFolder:
-                            // Create a new HEJsonBaseFile and populate the path.
-                            HEJsonBaseFile tempJsonFile = new HEJsonBaseFile(dataFile, this, PopulateNodeTreeDepth);
-                            // Add the file to the Data Dictionary 
-                            DataDictionary.Add(dataFile.Name, tempJsonFile);
-
-                            if (tempJsonFile.IsLoaded && !LoadError)
-                            {
-                                /*
-                                if (PopulateNodeTreeDepth > 0)
-                                {
-                                    tempJsonFile.RootNode.CreateChildNodesFromjData(PopulateNodeTreeDepth);
-                                }
-                                */
-                                if (tempJsonFile.RootNode == null) throw new Exception();
-                                else RootNode.Nodes.Add(tempJsonFile.RootNode);
-                            }
-                            break;
-
-                        case HEJsonFileCollectionType.BlueprintsFolder:
-                            // Create a new HEJsonBlueprintFile and populate the path.
-                            HEJsonBlueprintFile tempBlueprintFile = new HEJsonBlueprintFile(dataFile, this, PopulateNodeTreeDepth);
-                            // Add the file to the Data Dictionary 
-                            DataDictionary.Add(dataFile.Name, tempBlueprintFile);
-
-                            if (tempBlueprintFile.IsLoaded && !LoadError)
-                            {
-                                /*
-                                if (PopulateNodeTreeDepth > 0)
-                                {
-                                    tempBlueprintFile.DataViewRootNode.CreateChildNodesFromjData(PopulateNodeTreeDepth);
-                                }
-                                */
-                                if (tempBlueprintFile.RootNode == null) throw new Exception();
-                                else RootNode.Nodes.Add(tempBlueprintFile.RootNode);
-                            }
-                            break;
-
-                        default:
-
-                            break;
+                        /*
+                        if (PopulateNodeTreeDepth > 0)
+                        {
+                            tempJsonFile.RootNode.CreateChildNodesFromjData(PopulateNodeTreeDepth);
+                        }
+                        */
+                        if (tempJsonFile.RootNode == null) throw new Exception();
+                        else RootNode.Nodes.Add(tempJsonFile.RootNode);
                     }
-                    
-                    
-                    /*
-                    // Subscribe to the event using C# 2.0 syntax
-                    tempFile.RaiseCustomEvent += HandleCustomEvent;
-                    */
-
-
-                        // Add the task to the list so it can be monitored
-                        //tasks.Add(t);
                 }
-
-                //Task.WaitAll(tasks.ToArray());
-                //foreach (Task t in tasks)
-                //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
                 return true;
-
             }
-
-
         }
 
         /// <summary>
@@ -324,34 +259,5 @@ namespace HELLION.DataStructures
             }
         }
     }
-    /*
-    //public delegate void HandleCustomEvent<HEJsonBaseFileEventArgs>(object sender, HEJsonBaseFileEventArgs e);
-
-    // Define what actions to take when the event is raised.
-    public void HandleCustomEvent(object sender, HEJsonBaseFileEventArgs e)
-    {
-        Debug.Print("###### " + sender.ToString()+ " sent this message: {0}", e.Message);
-    }
-    */
-
-    /*
-    //Class that subscribes to an event
-    class Subscriber
-    {
-        private string id;
-        public Subscriber(string ID, Publisher pub)
-        {
-            id = ID;
-            // Subscribe to the event using C# 2.0 syntax
-            pub.RaiseCustomEvent += HandleCustomEvent;
-        }
-
-        // Define what actions to take when the event is raised.
-        void HandleCustomEvent(object sender, HEJsonBaseFileEventArgs e)
-        {
-            Console.WriteLine(id + " received this message: {0}", e.Message);
-        }
-    }
-    */
 
 }

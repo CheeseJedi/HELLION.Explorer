@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HELLION.DataStructures
 {
-    public class HEBlueprints : IHENotificationReceiver
+    public class HEBlueprints //: IHENotificationReceiver
     {
         /// <summary>
         /// Public property for the root node of the Search Handler tree.
@@ -36,6 +36,9 @@ namespace HELLION.DataStructures
         private DirectoryInfo blueprintCollectionFolderInfo = null;
 
         private FileInfo structureDefinitionsFileInfo = null;
+
+        public HEBlueprintStructureDefinitionsFile StructureDefinitionsFile => structureDefinitionsFile;
+
         private HEBlueprintStructureDefinitionsFile structureDefinitionsFile = null;
 
         public HEBlueprints()
@@ -50,16 +53,17 @@ namespace HELLION.DataStructures
         {
             if (blueprintCollectionFolderInfo != null && blueprintCollectionFolderInfo.Exists)
             {
-                structureDefinitionsFile = new HEBlueprintStructureDefinitionsFile(structureDefinitionsFileInfo, this, populateNodeTreeDepth: 8);
+                structureDefinitionsFile = new HEBlueprintStructureDefinitionsFile(this, structureDefinitionsFileInfo, populateNodeTreeDepth: 8);
                 if (structureDefinitionsFile.RootNode == null) throw new NullReferenceException("structureDefinitionsFile rootNode was null");
                 else RootNode.Nodes.Add(structureDefinitionsFile.RootNode);
 
-                blueprintCollection = new HEJsonFileCollection(blueprintCollectionFolderInfo, HEJsonFileCollectionType.BlueprintsFolder, this, autoPopulateTreeDepth: 8);
+                blueprintCollection = new HEBlueprintCollection(this, blueprintCollectionFolderInfo, autoPopulateTreeDepth: 8);
                 if (blueprintCollection.RootNode == null) throw new NullReferenceException("StaticData rootNode was null");
                 else RootNode.Nodes.Add(blueprintCollection.RootNode);
             }
         }
 
+        /*
         /// <summary>
         /// Implements receiving of simple child-to-parent messages.
         /// </summary>
@@ -70,7 +74,7 @@ namespace HELLION.DataStructures
         {
             Debug.Print("Message received from {0} of type {1} :: {2}", sender.ToString(), type.ToString(), msg);
         }
-
+        */
     }
 
 

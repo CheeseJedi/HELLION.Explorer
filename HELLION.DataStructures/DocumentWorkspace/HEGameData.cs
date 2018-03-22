@@ -8,24 +8,24 @@ namespace HELLION.DataStructures
     /// Implements the Game Data view node tree, comprised of the sub-trees
     /// of the Save File and each of the .json files in the Data folder (the Static Data).
     /// </summary>
-    public class HEGameData : IHENotificationReceiver
+    public class HEGameData 
     {
         /// <summary>
         /// Public property to get the root node of the Game Data tree.
         /// </summary>
-        public HETreeNode RootNode { get { return rootNode; } }
+        public HETreeNode RootNode => rootNode;
 
         /// <summary>
         /// Public property to get the SaveFile sub-object as this is not settable outside
         /// of the HEGameData class. Set at object creation through the constructor.
         /// </summary>
-        public HEJsonGameFile SaveFile { get { return saveFile; } }
+        public HEJsonGameFile SaveFile => saveFile;
 
         /// <summary>
         /// Public property to get the StaticData object as this is not settable outside
         /// of the HEGameData class. Set at object creation through the constructor.
         /// </summary>
-        public HEJsonFileCollection StaticData { get { return staticData; } }
+        public HEJsonFileCollection StaticData => staticData;
 
         /// <summary>
         /// The root node of the Game Data tree.
@@ -51,13 +51,13 @@ namespace HELLION.DataStructures
         /// <param name="StaticDataFolderInfo">The DirectoryInfo representing the Data folder.</param>
         public HEGameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
         {
-            rootNode = new HETreeNode("Game Data", HETreeNodeType.DataView, passedOwner: this); //, "Game Data");
+            rootNode = new HETreeNode("Game Data", HETreeNodeType.DataView, passedOwner: this);
             if (SaveFileInfo != null && SaveFileInfo.Exists)
             {
                 Debug.Print("File evaluated {0}", SaveFileInfo.Name);
 
                 // FINDME
-                saveFile = new HEJsonGameFile(SaveFileInfo, this, populateNodeTreeDepth: 5);
+                saveFile = new HEJsonGameFile(this, SaveFileInfo, populateNodeTreeDepth: 5);
 
                 // Pre-load in several levels of node.
                 saveFile.RootNode.CreateChildNodesFromjData(3);
@@ -68,7 +68,7 @@ namespace HELLION.DataStructures
 
             if (StaticDataFolderInfo != null && StaticDataFolderInfo.Exists)
             {
-                staticData = new HEJsonFileCollection(StaticDataFolderInfo, HEJsonFileCollectionType.StaticDataFolder, this, autoPopulateTreeDepth: 1);
+                staticData = new HEJsonFileCollection(this, StaticDataFolderInfo, autoPopulateTreeDepth: 1);
                 if (staticData.RootNode == null) throw new Exception("StaticData rootNode was null");
                 else RootNode.Nodes.Add(staticData.RootNode);
             }
@@ -95,19 +95,6 @@ namespace HELLION.DataStructures
 
             return closeSuccess;
         }
-
-        /// <summary>
-        /// Implements receiving of simple child-to-parent messages.
-        /// </summary>
-        /// <param name="sender">The child object that sent the message.</param>
-        /// <param name="type">The type of message.</param>
-        /// <param name="msg">Message text (optional).</param>
-        void IHENotificationReceiver.ReceiveNotification(IHENotificationSender sender, HENotificationType type, string msg)
-        {
-            Debug.Print("Message received from {0} of type {1} :: {2}", sender.ToString(), type.ToString(), msg);
-        }
-
-
 
     }
 }

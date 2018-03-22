@@ -260,7 +260,7 @@ namespace HELLION.DataStructures
     }
 
 
-
+    /*
     #region Interface Definitions
     /// <summary>
     /// Interface definition for a sender that uses this simple parent-notification system.
@@ -292,6 +292,8 @@ namespace HELLION.DataStructures
 
     }
     #endregion
+    */
+
 
     /*
     /// <summary>

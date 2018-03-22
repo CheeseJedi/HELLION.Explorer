@@ -20,12 +20,12 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEBlueprintStructureDefinitionsFile(FileInfo passedFileInfo, object passedParentObject, int populateNodeTreeDepth)
+        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth)
         {
             // Blueprint files
 
-            if (passedParentObject == null) throw new NullReferenceException();
-            else parent = (IHENotificationReceiver)passedParentObject;
+            if (passedParent == null) throw new NullReferenceException();
+            //else parent = (IHENotificationReceiver)passedParent;
 
             if (passedFileInfo == null) throw new NullReferenceException();
             else

@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-//using System.Runtime.CompilerServices;
 
 namespace HELLION.DataStructures
 {
@@ -20,12 +14,11 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEJsonBlueprintFile(FileInfo passedFileInfo, object passedParentObject, int populateNodeTreeDepth)
+        public HEJsonBlueprintFile(HEBlueprintCollection passedParent, /* HEBlueprints passedBlueprints,*/ FileInfo passedFileInfo, int populateNodeTreeDepth)
         {
             // Blueprint files
 
-            if (passedParentObject == null) throw new NullReferenceException();
-            else parent = (IHENotificationReceiver)passedParentObject;
+            parentBlueprintCollection = passedParent ?? throw new NullReferenceException("passedParent is null.");
 
             if (passedFileInfo == null) throw new NullReferenceException();
             else
@@ -64,6 +57,20 @@ namespace HELLION.DataStructures
                 //BuildHierarchyView();
             }
         }
+
+        /// <summary>
+        /// Public property to access the parent object, if set through the constructor.
+        /// </summary>
+        public HEBlueprintCollection ParentBlueprintCollection
+        {
+            get { return parentBlueprintCollection; }
+            set { parentBlueprintCollection = value; }
+        }
+
+        /// <summary>
+        /// Stores a reference to the parent object, if set using the constructor.
+        /// </summary>
+        protected HEBlueprintCollection parentBlueprintCollection = null;
 
         public new HEBlueprintTreeNode RootNode => rootNode;
 
@@ -144,12 +151,6 @@ namespace HELLION.DataStructures
                     newStructNode.Nodes.Add(newPortNode);
                 }
             }
-
-
-
-
-
-
         }
 
         /*
@@ -246,6 +247,7 @@ namespace HELLION.DataStructures
         public void DeserialiseToBlueprintObject()
         {
             blueprintObject = jData.ToObject<HEBlueprint>();
+            blueprintObject.ParentJsonBlueprintFile = this;
             blueprintObject.ReconnectChildParentStructure();
         }
 

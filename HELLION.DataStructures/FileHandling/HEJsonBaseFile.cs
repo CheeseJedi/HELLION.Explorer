@@ -21,12 +21,17 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEJsonBaseFile : IHENotificationSender
+    public class HEJsonBaseFile //: IHENotificationSender
     {
         /// <summary>
         /// Public property to access the parent object, if set through the constructor.
         /// </summary>
-        public IHENotificationReceiver Parent => parent;
+        public object Parent => parent;
+
+        /// <summary>
+        /// Stores a reference to the parent object, if set using the constructor.
+        /// </summary>
+        protected object parent = null;
 
         /// <summary>
         /// Public property to get and set the FileInfo object.
@@ -209,11 +214,6 @@ namespace HELLION.DataStructures
         */
 
         /// <summary>
-        /// Stores a reference to the parent object, if set using the constructor.
-        /// </summary>
-        protected IHENotificationReceiver parent = null;
-
-        /// <summary>
         /// The JToken that was loaded from the file, if load was successful.
         /// </summary>
         protected JToken jData = null;
@@ -262,10 +262,10 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEJsonBaseFile(FileInfo passedFileInfo, object passedParentObject, int populateNodeTreeDepth)
+        public HEJsonBaseFile(object passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth)
         {
-            if (passedParentObject == null) throw new NullReferenceException();
-            else parent = (IHENotificationReceiver)passedParentObject;
+            if (passedParent == null) throw new NullReferenceException();
+            //else parent = (IHENotificationReceiver)passedParent;
 
             if (passedFileInfo == null) throw new NullReferenceException();
             else
@@ -283,6 +283,7 @@ namespace HELLION.DataStructures
             }
         }
 
+        /*
         /// <summary>
         /// Implements sending of simple child-to-parent messages.
         /// </summary>
@@ -300,6 +301,7 @@ namespace HELLION.DataStructures
                 //throw new InvalidOperationException();
             }
         }
+        */
 
         /// <summary>
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
@@ -366,7 +368,7 @@ namespace HELLION.DataStructures
             }
 
             //OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Loading Complete in file {0}", File.FullName)));
-
+            /*
             IHENotificationSender tmp = (IHENotificationSender)this;
             if (LoadError)
             {
@@ -376,7 +378,7 @@ namespace HELLION.DataStructures
             {
                 tmp.SendNotification(HENotificationType.FileLoadComplete, "(" + File.Name + ")");
             }
-
+            */
 
             // Return the value of LoadError
             return LoadError;

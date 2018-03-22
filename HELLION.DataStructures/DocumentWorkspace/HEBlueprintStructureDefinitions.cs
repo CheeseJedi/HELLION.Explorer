@@ -31,7 +31,6 @@ namespace HELLION.DataStructures
 
         public class HEBlueprintStructureDefinition
         {
-
             /// <summary>
             /// To be serialised.
             /// </summary>
@@ -51,7 +50,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Parent object - not to be included in serialisation.
             /// </summary>
-            public object Parent = null;
+            public HEBlueprintStructureDefinitions Parent = null;
 
             /// <summary>
             /// Constructor.
@@ -60,8 +59,6 @@ namespace HELLION.DataStructures
             {
                 DockingPorts = new List<HEBlueprintStructureDefinitionDockingPort>();
             }
-
-
         }
 
         public class HEBlueprintStructureDefinitionDockingPort
