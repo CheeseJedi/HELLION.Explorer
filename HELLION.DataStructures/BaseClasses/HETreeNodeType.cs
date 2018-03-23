@@ -34,6 +34,7 @@ namespace HELLION.DataStructures
         BlueprintsView,     // Node type for the Blueprints view
         Blueprint,          // Node type for a Blueprint file
         BlueprintHierarchyView, // Node type for the root of a Blueprint's Hierarchy View
+        BlueprintDataView,
         BlueprintStructureDefinitionView,
         BlueprintStructure,
         BlueprintStructureDefinition,

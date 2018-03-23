@@ -86,6 +86,8 @@ namespace HELLION.DataStructures
         /// </summary>
         public HEJsonBlueprintFile  ParentJsonBlueprintFile = null;
 
+        public HEBlueprintStructureDefinitions StructureDefinitions = null;
+
         /// <summary>
         /// Not to be serialised.
         /// </summary>
@@ -102,14 +104,18 @@ namespace HELLION.DataStructures
             RootNode = new HEBlueprintTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView,
                 nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.", passedOwner: this);
         }
-        
+
         /// <summary>
         /// Links up all child object's parent reference to their parent.
         /// </summary>
         public void ReconnectChildParentStructure() //HEJsonBlueprintFile passedParent)
         {
-            //ParentJsonBlueprintFile = passedParent ?? throw new NullReferenceException("passedParent was null.");
-            foreach (HEBlueprintStructure structure in Structures) // .ToArray().Reverse())
+            if (ParentJsonBlueprintFile == null) throw new NullReferenceException("ParentJsonBlueprintFile was null.");
+
+            StructureDefinitions = ParentJsonBlueprintFile.ParentBlueprintCollection.Parent
+                .StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
+
+            foreach (HEBlueprintStructure structure in Structures)
             {
                 // Set the structure's parent object (this, the blueprint object)
                 structure.ParentBlueprint = this;
@@ -232,7 +238,9 @@ namespace HELLION.DataStructures
             protected HEBlueprintStructureTypes? structureType = null;
 
             public List<HEBlueprintDockingPort> DockingPorts = null;
-            
+
+            public HEBlueprint Parent => ParentBlueprint;
+
             /// <summary>
             /// Parent object - not to be included in serialisation.
             /// </summary>
@@ -332,17 +340,10 @@ namespace HELLION.DataStructures
 
             public void AddAppropriateDockingPorts()
             {
-
-                
-                HEBlueprints blueprints = ParentBlueprint.ParentJsonBlueprintFile.ParentBlueprintCollection.Parent;
-
-                HEBlueprintStructureDefinitions bpstDefs = blueprints.StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
-
                 // Find the matching definition type for this structures type.
 
-                HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = bpstDefs
+                HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = ParentBlueprint.StructureDefinitions
                     .StructureDefinitions.Where(f => f.SanitisedName == structureType.ToString()).Single();
-
 
                 foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort dockingPort in defn.DockingPorts)
                 {
@@ -382,6 +383,8 @@ namespace HELLION.DataStructures
             public int? OrderID = null;
             public int? DockedStructureID = null;
             public string DockedPortName = null;
+
+            public HEBlueprintStructure Parent => ParentStructure;
 
             /// <summary>
             /// Parent object - not to be included in serialisation.

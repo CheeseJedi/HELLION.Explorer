@@ -76,27 +76,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocumentWorkspace\HEBlueprint.cs" />
-    <Compile Include="DocumentWorkspace\HEBlueprints.cs" />
-    <Compile Include="DocumentWorkspace\HEBlueprintStructureDefinitions.cs" />
+    <Compile Include="Blueprints\HEBlueprint.cs" />
+    <Compile Include="Blueprints\HEBlueprints.cs" />
+    <Compile Include="Blueprints\HEBlueprintStructureDefinitions.cs" />
     <Compile Include="DocumentWorkspace\HEDocumentWorkspace.cs" />
     <Compile Include="DocumentWorkspace\HEGameData.cs" />
-    <Compile Include="DocumentWorkspace\HESearchHandler.cs" />
+    <Compile Include="SearchHandler\HESearchHandler.cs" />
     <Compile Include="DocumentWorkspace\HESolarSystem.cs" />
-    <Compile Include="FileHandling\HEBlueprintCollection.cs" />
-    <Compile Include="FileHandling\HEBlueprintStructureDefinitionsFile.cs" />
-    <Compile Include="FileHandling\HEJsonBlueprintFile.cs" />
-    <Compile Include="FileHandling\HEJsonBaseFile.cs" />
-    <Compile Include="FileHandling\HEJsonFileCollection.cs" />
-    <Compile Include="FileHandling\HEJsonGameFile.cs" />
-    <Compile Include="TreeNodes\HEBlueprintTreeNode.cs" />
-    <Compile Include="TreeNodes\HEGameDataTreeNode.cs" />
-    <Compile Include="TreeNodes\HEOrbitalData.cs" />
-    <Compile Include="TreeNodes\HESearchHandlerTreeNode.cs" />
-    <Compile Include="TreeNodes\HESolarSystemTreeNode.cs" />
-    <Compile Include="TreeNodes\HETNSorterSemiMajorAxis.cs" />
-    <Compile Include="TreeNodes\HETreeNode.cs" />
-    <Compile Include="TreeNodes\HETreeNodeType.cs" />
+    <Compile Include="Blueprints\HEBlueprintCollection.cs" />
+    <Compile Include="Blueprints\HEBlueprintStructureDefinitionsFile.cs" />
+    <Compile Include="Blueprints\HEJsonBlueprintFile.cs" />
+    <Compile Include="BaseClasses\HEJsonBaseFile.cs" />
+    <Compile Include="BaseClasses\HEJsonFileCollection.cs" />
+    <Compile Include="DocumentWorkspace\HEJsonGameFile.cs" />
+    <Compile Include="Blueprints\HEBlueprintTreeNode.cs" />
+    <Compile Include="DocumentWorkspace\HEGameDataTreeNode.cs" />
+    <Compile Include="BaseClasses\HEOrbitalData.cs" />
+    <Compile Include="SearchHandler\HESearchHandlerTreeNode.cs" />
+    <Compile Include="DocumentWorkspace\HESolarSystemTreeNode.cs" />
+    <Compile Include="DocumentWorkspace\HETNSorterSemiMajorAxis.cs" />
+    <Compile Include="BaseClasses\HETreeNode.cs" />
+    <Compile Include="BaseClasses\HETreeNodeType.cs" />
     <Compile Include="DocumentWorkspace\HEGuidManager.cs" />
     <Compile Include="Utilities\HEImageList.cs" />
     <Compile Include="Utilities\HEUpdateChecker.cs" />
@@ -198,10 +198,28 @@
   <ItemGroup>
     <Folder Include="JsonSnippets\" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_AM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_ARG.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CBM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CIM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CLM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CQM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CRM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CSM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_CTM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_FM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_IC.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_LSM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_OUTPOST.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_PSM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\STRUCT_SPM.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

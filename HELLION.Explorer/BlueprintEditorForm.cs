@@ -1,12 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 
@@ -36,6 +28,46 @@ namespace HELLION.Explorer
         /// </summary>
         private bool isDirty = false;
 
+
+        private HEBlueprintTreeNode CurrentlySelectedNode
+        {
+            get { return _currentlySelectedNode; }
+            set
+            {
+                if (_currentlySelectedNode != value)
+                {
+                    _currentlySelectedNode = value;
+
+                    if (_currentlySelectedNode != null)
+                    {
+                        HEBlueprint.HEBlueprintStructure parentStructure = null;
+                        Type parentType = _currentlySelectedNode.Parent.GetType();
+                        if (parentType == typeof(HEBlueprint.HEBlueprintDockingPort))
+                        {
+
+                            //HEBlueprint.HEBlueprintDockingPort 
+
+
+                            //parentStructure = _currentlySelectedNode.(HEBlueprintTreeNode)Parent.
+
+                        }
+                        else if (parentType == typeof(HEBlueprint.HEBlueprintStructure))
+                        {
+
+                        }
+
+
+                    }
+
+                }
+
+            }
+        }
+
+        private HEBlueprintTreeNode _currentlySelectedNode = null;
+
+
+
         private string FormTitleText = null;
 
         private HEBlueprintTreeNode sourceNode = null;
@@ -44,6 +76,8 @@ namespace HELLION.Explorer
 
         HEJsonBlueprintFile jsonBlueprintFile = null;
         HEBlueprint blueprint = null;
+
+
 
         /// <summary>
         /// Basic Constructor.
@@ -114,13 +148,14 @@ namespace HELLION.Explorer
                 //if (value == (int)HEBlueprintStructureTypes.UNKNOWN) display = "Select Type...";
                 // ListViewItem item = new ListViewItem(display, value.ToString());
                 toolStripComboBox1.Items.Add(display);
-                toolStripComboBox1.SelectedIndex = 0;
+                comboBox1.Items.Add(display);
             }
+            toolStripComboBox1.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 0;
         }
-        
+
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Close();
         }
 
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -150,6 +185,21 @@ namespace HELLION.Explorer
             // Remove the current JsonDataViewForm from the jsonDataViews list
             Program.blueprintEditorForms.Remove(this);
             GC.Collect();
+
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
 
         }
     }

@@ -113,6 +113,22 @@ namespace HELLION.DataStructures
             Shader_16x,
             Share_16x,
             String_16x,
+            STRUCT_AM,
+            STRUCT_ARG,
+            STRUCT_CBM,
+            STRUCT_CIM,
+            STRUCT_CLM,
+            STRUCT_CM,
+            STRUCT_CQM,
+            STRUCT_CRM,
+            STRUCT_CSM,
+            STRUCT_CTM,
+            STRUCT_FM,
+            STRUCT_IC,
+            STRUCT_LSM,
+            STRUCT_OUTPOST,
+            STRUCT_PSM,
+            STRUCT_SPM,
             Toolbox_16x,
             TreeView_16x,
         };
@@ -175,8 +191,6 @@ namespace HELLION.DataStructures
                 //case HETreeNodeType.SpawnManagerData:
                 //    return (int)HEObjectTypesImageList.a3DCameraOrbit_16x;
 
-                //case HETreeNodeType.ExpansionAvailable:
-                //    return (int)HEObjectTypesImageList.Expander_16x;
 
                 case HETreeNodeType.JsonArray:
                     return (int)HEObjectTypesImageList.Assembly_16x;
@@ -212,6 +226,9 @@ namespace HELLION.DataStructures
 
                 case HETreeNodeType.BlueprintHierarchyView:
                     return (int)HEObjectTypesImageList.Hub_16x;
+
+                case HETreeNodeType.BlueprintDataView:
+                    return (int)HEObjectTypesImageList.BalanceBrace_16x;
 
                 case HETreeNodeType.BlueprintStructureDefinitionView:
                     return (int)HEObjectTypesImageList.Bios_16x;
