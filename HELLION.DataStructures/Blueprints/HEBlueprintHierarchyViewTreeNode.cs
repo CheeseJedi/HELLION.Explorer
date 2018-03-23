@@ -1,12 +1,15 @@
 ﻿namespace HELLION.DataStructures
 {
-    public class HEBlueprintTreeNode : HETreeNode
+    public class HEBlueprintHierarchyViewTreeNode : HETreeNode
     {
-        public HEBlueprintTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Blueprint, 
+        public HEBlueprintHierarchyViewTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.BlueprintHierarchyView,
             string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
             : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
         {
 
         }
     }
+
+
+
 }

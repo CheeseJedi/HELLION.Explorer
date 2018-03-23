@@ -1,12 +1,15 @@
 ﻿namespace HELLION.DataStructures
 {
-    public class HEBlueprintTreeNode : HETreeNode
+    public class HEBlueprintDockingPortTreeNode : HETreeNode
     {
-        public HEBlueprintTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Blueprint, 
+        public HEBlueprintDockingPortTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.BlueprintDockingPort,
             string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
             : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
         {
 
         }
     }
+
+
+
 }
