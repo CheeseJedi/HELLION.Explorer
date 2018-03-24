@@ -110,6 +110,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="JsonSnippets\" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="_EmbeddedImages\3DCameraOrbit_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\3DExtrude_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\3DScene_16x.png" />
@@ -131,6 +134,7 @@
     <EmbeddedResource Include="_EmbeddedImages\Binary_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Bios_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\BlankFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\BlueprintFolder_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Bolt_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\BranchRelationshipChild_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\BranchRelationshipCousin_16x.png" />
@@ -193,18 +197,12 @@
     <EmbeddedResource Include="_EmbeddedImages\PieChart_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Property_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Rename_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\SearchFolder_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\SemanticZoom_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Settings_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Shader_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Share_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\String_16x.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Toolbox_16x.png" />
-    <EmbeddedResource Include="_EmbeddedImages\TreeView_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="JsonSnippets\" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="_EmbeddedImages\STRUCT_AM.png" />
     <EmbeddedResource Include="_EmbeddedImages\STRUCT_ARG.png" />
     <EmbeddedResource Include="_EmbeddedImages\STRUCT_CBM.png" />
@@ -221,6 +219,8 @@
     <EmbeddedResource Include="_EmbeddedImages\STRUCT_OUTPOST.png" />
     <EmbeddedResource Include="_EmbeddedImages\STRUCT_PSM.png" />
     <EmbeddedResource Include="_EmbeddedImages\STRUCT_SPM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Toolbox_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\TreeView_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

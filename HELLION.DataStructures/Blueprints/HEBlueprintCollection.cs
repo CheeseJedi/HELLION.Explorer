@@ -17,24 +17,22 @@ namespace HELLION.DataStructures
         /// <param name="passedCollectionType"></param>
         /// <param name="autoPopulateTreeDepth"></param>
         public HEBlueprintCollection(HEBlueprints passedParent, DirectoryInfo passedDirectoryInfo,
-             int autoPopulateTreeDepth = 0)
+             int autoPopulateTreeDepth = 0) : base()
         {
             // Set up the data dictionary
             DataDictionary = new Dictionary<string, HEJsonBlueprintFile>();
 
-            OwnerObject = passedParent ?? throw new InvalidOperationException("passedParent was null.");
+            OwnerObject = passedParent ?? throw new NullReferenceException("passedParent was null.");
+            DataDirectoryInfo = passedDirectoryInfo ?? throw new NullReferenceException("passedDirectoryInfo was null.");
+            if (!DataDirectoryInfo.Exists) throw new DirectoryNotFoundException("DataDirectoryInfo reports the passed folder doesn't exist.");
 
-            // Check validity and if good load the data set
-            if (passedDirectoryInfo != null && passedDirectoryInfo.Exists)
-            {
-                DataDirectoryInfo = passedDirectoryInfo;
+            RootNode = new HEBlueprintCollectionTreeNode(passedOwner: this, nodeName: DataDirectoryInfo.Name,
+                nodeToolTipText: DataDirectoryInfo.FullName);
+                
+            if (RootNode == null ) throw new InvalidOperationException("RootNode failed to create.");
 
-                RootNode = new HEBlueprintCollectionTreeNode(passedOwner: this, nodeName: DataDirectoryInfo.Name,
-                    nodeToolTipText: DataDirectoryInfo.FullName);
+            Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
 
-                Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
-
-            }
         }
 
         /// <summary>
@@ -48,11 +46,10 @@ namespace HELLION.DataStructures
         public new Dictionary<string, HEJsonBlueprintFile> DataDictionary { get; protected set; } = null;
 
         /// <summary>
-        /// The root node of the Static Data file collection - each data file will have it's
+        /// The root node of the Blueprint file collection - each data file will have it's
         /// own tree attached as child nodes to this node.
         /// </summary>
-        public new HEBlueprintCollectionTreeNode RootNode { get; protected set; } = null;
-
+        public new HEBlueprintCollectionTreeNode RootNode { get; set; } = null;
 
         /// <summary>
         /// The load routine for the static data file collection
@@ -76,14 +73,12 @@ namespace HELLION.DataStructures
 
                     if (tempBlueprintFile.IsLoaded && !LoadError)
                     {
-                        
                         // if (PopulateNodeTreeDepth > 0) tempBlueprintFile.DataViewRootNode.CreateChildNodesFromjData(PopulateNodeTreeDepth);
 
-                        if (tempBlueprintFile.RootNode == null) throw new Exception();
+                        if (tempBlueprintFile.RootNode == null) throw new NullReferenceException();
                         else RootNode.Nodes.Add(tempBlueprintFile.RootNode);
                     }
                 }
-
                 return true;
             }
         }

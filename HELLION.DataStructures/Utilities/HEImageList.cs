@@ -25,7 +25,7 @@ namespace HELLION.DataStructures
         /// </remarks>
         public enum HEObjectTypesImageList
         {
-            a3DCameraOrbit_16x = 0,
+            a3DCameraOrbit_16x,
             a3DExtrude_16x,
             a3DScene_16x,
             Actor_16x,
@@ -46,6 +46,7 @@ namespace HELLION.DataStructures
             Binary_16x,
             Bios_16x,
             BlankFile_16x,
+            BlueprintFolder_16x,
             Bolt_16x,
             BranchRelationshipChild_16x,
             BranchRelationshipCousin_16x,
@@ -108,6 +109,7 @@ namespace HELLION.DataStructures
             PieChart_16x,
             Property_16x,
             Rename_16x,
+            SearchFolder_16x,
             SemanticZoom_16x,
             Settings_16x,
             Shader_16x,
@@ -131,6 +133,7 @@ namespace HELLION.DataStructures
             STRUCT_SPM,
             Toolbox_16x,
             TreeView_16x,
+
         };
 
         /// <summary>
@@ -219,13 +222,13 @@ namespace HELLION.DataStructures
                     return (int)HEObjectTypesImageList.FolderError_16x;
 
                 case HETreeNodeType.BlueprintsView:
-                    return (int)HEObjectTypesImageList.ListFolder_16x;
+                    return (int)HEObjectTypesImageList.CordovaMultidevice_16x;
 
                 case HETreeNodeType.Blueprint:
                     return (int)HEObjectTypesImageList.CSWorkflowDiagram_16x;
 
                 case HETreeNodeType.BlueprintCollection:
-                    return (int)HEObjectTypesImageList.ListFolder_16x;
+                    return (int)HEObjectTypesImageList.BlueprintFolder_16x;
 
                 case HETreeNodeType.BlueprintHierarchyView:
                     return (int)HEObjectTypesImageList.Hub_16x;

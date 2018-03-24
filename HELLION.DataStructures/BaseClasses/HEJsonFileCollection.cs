@@ -28,21 +28,15 @@ namespace HELLION.DataStructures
             // Set up the data dictionary
             DataDictionary = new Dictionary<string, HEJsonBaseFile>();
 
-            // Check validity and if good load the data set
-            if (passedDirectoryInfo != null && passedDirectoryInfo.Exists)
-            {
-                DataDirectoryInfo = passedDirectoryInfo;
+            // Check validity - if good load the data set
+            OwnerObject = passedParent ?? throw new InvalidOperationException("passedParent was null.");
+            DataDirectoryInfo = passedDirectoryInfo ?? throw new NullReferenceException("passedDirectoryInfo was null.");
+            if (!DataDirectoryInfo.Exists) throw new DirectoryNotFoundException("DataDirectoryInfo reports the passed folder doesn't exist.");
 
-                RootNode = new HETreeNode(ownerObject: this, nodeName: DataDirectoryInfo.Name,
-                    newNodeType: HETreeNodeType.DataFolder, nodeToolTipText: DataDirectoryInfo.FullName);
+            RootNode = new HETreeNode(ownerObject: this, nodeName: DataDirectoryInfo.Name,
+                newNodeType: HETreeNodeType.DataFolder, nodeToolTipText: DataDirectoryInfo.FullName);
 
-                Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
-            }
-            else
-            {
-                RootNode = new HETreeNode(ownerObject: this, nodeName: DataDirectoryInfo.Name + " [ERROR]",
-                    newNodeType: HETreeNodeType.DataFolderError, nodeToolTipText: DataDirectoryInfo.FullName);
-            }
+            Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
         }
 
         /// <summary>
@@ -64,7 +58,7 @@ namespace HELLION.DataStructures
         /// The root node of the Static Data file collection - each data file will have it's
         /// own tree attached as child nodes to this node.
         /// </summary>
-        public HETreeNode RootNode { get; protected set; } = null;
+        public HETreeNode RootNode { get; set; } = null;
 
         /// <summary>
         /// Public property to read the isLoaded bool.
@@ -85,8 +79,6 @@ namespace HELLION.DataStructures
         /// Specifies the target file extension for included files - default on *.json.
         /// </summary>
         protected string targetFileExtension = "*.json";
-
-
 
         /// <summary>
         /// The load routine for the static data file collection

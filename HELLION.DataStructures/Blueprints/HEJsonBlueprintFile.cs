@@ -20,7 +20,7 @@ namespace HELLION.DataStructures
             RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: File.Name, newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
 
             DataViewRootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: "Data View",
-                newNodeType: HETreeNodeType.DataView, nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
+                newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
 
             //hierarchyViewRootNode = new HESolarSystemTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView, 
             //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.", passedOwner: this);
@@ -39,7 +39,7 @@ namespace HELLION.DataStructures
             RootNode.Nodes.Add(BlueprintObject.RootNode);
 
             // Populate the data view.
-            //DataViewRootNode.JData = jData;
+            DataViewRootNode.JData = jData;
             DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
             // Populate the hierarchy view.
             //BuildHierarchyView();
