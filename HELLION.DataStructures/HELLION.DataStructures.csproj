@@ -120,6 +120,8 @@
     <EmbeddedResource Include="_EmbeddedImages\Add_grey_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Alert_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Aserif_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\ASPXFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\AssemblyInfoFile_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Assembly_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Attribute_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\AzureDefaultResource_16x.png" />
@@ -131,6 +133,7 @@
     <EmbeddedResource Include="_EmbeddedImages\BalanceBrace_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\BatchFile_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\BehaviorAction_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\BinaryFile_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Binary_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Bios_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\BlankFile_16x.png" />
@@ -154,7 +157,10 @@
     <EmbeddedResource Include="_EmbeddedImages\Checkerboard_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Collection_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\ComponentDiagram_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\ComponentFile_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Component_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\ConfigurationEditor_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\ConfigurationFile_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Contrast_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\CordovaMultidevice_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\CSWorkflowDiagram_16x.png" />
@@ -162,9 +168,11 @@
     <EmbeddedResource Include="_EmbeddedImages\DateTimeAxis_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Diagnose_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Dictionary_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\DocumentLibraryFolder_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Document_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\DomainType_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Driver_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\EditPage_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Ellipsis_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\EndpointComponent_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Event_16x.png" />
@@ -181,6 +189,9 @@
     <EmbeddedResource Include="_EmbeddedImages\FileOK_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\FileWarning_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Filter_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\FindinFiles_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\FindNext_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\FindPrevious_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\FindResults_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Flag_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\FolderError_16x.png" />
@@ -191,6 +202,7 @@
     <EmbeddedResource Include="_EmbeddedImages\JS_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Label_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\ListFolder_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\LocalServer_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Marquee_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\Numeric_16x.png" />
     <EmbeddedResource Include="_EmbeddedImages\PermissionFile_16x.png" />
@@ -225,7 +237,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
