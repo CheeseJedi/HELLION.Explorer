@@ -57,7 +57,7 @@ namespace HELLION.Explorer
             sourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.FullPath;
             Text = FormTitleText;
-            AppliedText = passedSourceNode.Tag.ToString();
+            AppliedText = passedSourceNode.JData.ToString();
             fastColoredTextBox1.Text = AppliedText;
             // Required as setting the FastColouredTextBox triggers the isDirty
             IsDirty = false;

@@ -23,12 +23,12 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Used to store a reference to the GameData object.
         /// </summary>
-        public HEGameData GameData { get; set; } = null;
+        public HEGameData GameData { get; protected set; } = null;
 
         /// <summary>
         /// A list of all nodes in the Solar System, except the solar system root node.
         /// </summary>
-        public List<HESolarSystemTreeNode> SolarSystemNodes { get; private set; } = null;
+        // public List<HESolarSystemTreeNode> SolarSystemNodes { get; private set; } = null;
 
         /// <summary>
         /// Constructor that takes an HEGameData object and uses this as it's data source.
@@ -38,7 +38,7 @@ namespace HELLION.DataStructures
         {
             // Basic constructor
 
-            RootNode = new HESolarSystemTreeNode("Solar System", HETreeNodeType.SolarSystemView, passedOwner: this) //, "Solar System")
+            RootNode = new HESolarSystemTreeNode(passedOwner: this, nodeName: "Solar System", nodeType: HETreeNodeType.SolarSystemView) //, "Solar System")
             {
                 GUID = -1 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to the Solar System root node
             };
@@ -111,13 +111,25 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.Planet:
                 case HETreeNodeType.Moon:
                     // These come from the Static Data - handled by the CelestialBodies.json member of the DataDictionary
-                    if (GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEJsonBaseFile celestialBodiesJsonBaseFile))
+                    if (!GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEJsonBaseFile celestialBodiesJsonBaseFile))
+                        throw new InvalidOperationException("Unable to access the CelestialBodies.json from the Static Data Dictionary.");
+                    else
                     {
+                        if (!(celestialBodiesJsonBaseFile.RootNode.Nodes.Count > 0)) throw new InvalidOperationException("CelestialBodies RootNode had no child nodes.");
+
                         foreach (HEGameDataTreeNode node in celestialBodiesJsonBaseFile.RootNode.Nodes)
                         {
                             HETreeNodeType newNodeType = HETreeNodeType.Unknown;
 
-                            JObject obj = (JObject)node.Tag;
+                            // FINDME FIXME
+
+                            Debug.Print("node Name/Text: " + node.Name + " / " + node.Text);
+                            //Debug.Print("node.Jdata" + Environment.NewLine + (JObject)node.Jdata.ToString());
+
+                            JObject obj = (JObject)node.JData;
+
+                            if (obj == null) throw new NullReferenceException("Adding CelestialBodies - obj was null.");
+
                             long newNodeParentGUID = 0;
                             JToken testToken = obj["ParentGUID"];
                             if (testToken != null)
@@ -190,7 +202,7 @@ namespace HELLION.DataStructures
 
                     foreach (HEGameDataTreeNode node in arrayRootNode.Nodes)
                     {
-                        JObject obj = (JObject)node.Tag;
+                        JObject obj = (JObject)node.JData;
                         long newNodeParentGUID = 0;
                         long newNodeFakeGUID = 0;
                         JToken testToken = obj["ParentGUID"];

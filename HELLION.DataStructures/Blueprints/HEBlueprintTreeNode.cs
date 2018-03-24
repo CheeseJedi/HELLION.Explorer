@@ -2,9 +2,9 @@
 {
     public class HEBlueprintTreeNode : HETreeNode
     {
-        public HEBlueprintTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Blueprint, 
-            string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
-            : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
+        public HEBlueprintTreeNode(object passedOwner = null, string nodeName = null,
+            HETreeNodeType newNodeType = HETreeNodeType.Blueprint, string nodeText = "", string nodeToolTipText = "")
+            : base(passedOwner, nodeName, newNodeType, nodeText, nodeToolTipText)
         {
 
         }

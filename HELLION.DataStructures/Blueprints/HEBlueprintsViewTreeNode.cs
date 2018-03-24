@@ -2,9 +2,8 @@
 {
     public class HEBlueprintsViewTreeNode : HETreeNode
     {
-        public HEBlueprintsViewTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.BlueprintDockingPort,
-            string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
-            : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
+        public HEBlueprintsViewTreeNode(object passedOwner) //, string nodeName = null, string nodeText = null, string nodeToolTipText = null)
+            : base(passedOwner, "Blueprints", HETreeNodeType.BlueprintsView, null, "Hellion Station Blueprints")
         {
 
         }

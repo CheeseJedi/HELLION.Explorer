@@ -77,8 +77,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blueprints\HEBlueprint.cs" />
+    <Compile Include="Blueprints\HEBlueprintCollectionTreeNode.cs" />
+    <Compile Include="Blueprints\HEBlueprintDataViewTreeNode.cs" />
+    <Compile Include="Blueprints\HEBlueprintDockingPortTreeNode.cs" />
+    <Compile Include="Blueprints\HEBlueprintHierarchyViewTreeNode.cs" />
     <Compile Include="Blueprints\HEBlueprints.cs" />
     <Compile Include="Blueprints\HEBlueprintStructureDefinitions.cs" />
+    <Compile Include="Blueprints\HEBlueprintStructureTreeNode.cs" />
+    <Compile Include="Blueprints\HEBlueprintsViewTreeNode.cs" />
     <Compile Include="DocumentWorkspace\HEDocumentWorkspace.cs" />
     <Compile Include="DocumentWorkspace\HEGameData.cs" />
     <Compile Include="SearchHandler\HESearchHandler.cs" />

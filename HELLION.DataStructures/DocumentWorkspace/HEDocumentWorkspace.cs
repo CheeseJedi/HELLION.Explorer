@@ -23,6 +23,41 @@ namespace HELLION.DataStructures
     public class HEDocumentWorkspace
     {
         /// <summary>
+        /// Constructor that takes a FileInfo and a DirectoryInfo.
+        /// </summary>
+        /// <param name="passedFileInfo">The FileInfo that represents the .save file.</param>
+        /// <param name="passedDirectoryInfo">The DirectoryInfo that represents the Static Data folder.</param>
+        /// <param name="autoLoad"></param>
+        /// <param name="passedListView"></param>
+        /// <param name="passedTreeView"></param>
+        /// <param name="passedImageList"></param>
+        public HEDocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo, TreeView passedTreeView, ListView passedListView, HEImageList passedHEImageList)
+        {
+            // Initialise the GameData, SolarSystem and SearchHandler objects.
+            if (passedFileInfo == null || passedDirectoryInfo == null
+                || !passedFileInfo.Exists || !passedDirectoryInfo.Exists)
+                throw new InvalidOperationException("HEDocumentWorkspace Constructor: A problem occurred with a passed parameter - something doesn't exist.");
+            else
+            {
+                GameData = new HEGameData(passedFileInfo, passedDirectoryInfo);
+                SolarSystem = new HESolarSystem(GameData);
+                SearchHandler = new HESearchHandler(GameData, SolarSystem);
+                Blueprints = new HEBlueprints();
+
+                // Add the parameters related to the MainForm controls.
+                mainFormTreeView = passedTreeView ?? throw new NullReferenceException("passedTreeView was null.");
+                mainFormListView = passedListView ?? throw new NullReferenceException("passedListView was null.");
+                mainProgramHEImageList = passedHEImageList ?? throw new NullReferenceException("passedHEImageList was null.");
+
+                InitialiseTreeView(mainFormTreeView, mainProgramHEImageList.ImageList);
+                InitialiseListView(mainFormListView, mainProgramHEImageList.ImageList);
+
+                IsWorkspaceReady = true;
+            }
+        }
+
+
+        /// <summary>
         /// The HEGameData object that is responsible for loading the save file and all the static data files and then
         /// building node trees representing the raw data.
         /// </summary>
@@ -88,40 +123,6 @@ namespace HELLION.DataStructures
         /// Stores a reference to the main program's ImageList for icon use.
         /// </summary>
         private HEImageList mainProgramHEImageList = null;
-
-        /// <summary>
-        /// Constructor that takes a FileInfo and a DirectoryInfo.
-        /// </summary>
-        /// <param name="passedFileInfo">The FileInfo that represents the .save file.</param>
-        /// <param name="passedDirectoryInfo">The DirectoryInfo that represents the Static Data folder.</param>
-        /// <param name="autoLoad"></param>
-        /// <param name="passedListView"></param>
-        /// <param name="passedTreeView"></param>
-        /// <param name="passedImageList"></param>
-        public HEDocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo, TreeView passedTreeView, ListView passedListView, HEImageList passedHEImageList)
-        {
-            // Initialise the GameData, SolarSystem and SearchHandler objects.
-            if (passedFileInfo == null || passedDirectoryInfo == null 
-                || !passedFileInfo.Exists || !passedDirectoryInfo.Exists)
-                throw new InvalidOperationException("HEDocumentWorkspace Constructor: A problem occurred with a passed parameter - something doesn't exist.");
-            else
-            {
-                GameData = new HEGameData(passedFileInfo, passedDirectoryInfo);
-                SolarSystem = new HESolarSystem(GameData);
-                SearchHandler = new HESearchHandler(GameData, SolarSystem);
-                Blueprints = new HEBlueprints();
-
-                // Add the parameters related to the MainForm controls.
-                mainFormTreeView = passedTreeView ?? throw new NullReferenceException("passedTreeView was null.");
-                mainFormListView = passedListView ?? throw new NullReferenceException("passedListView was null.");
-                mainProgramHEImageList = passedHEImageList ?? throw new NullReferenceException("passedHEImageList was null.");
-
-                InitialiseTreeView(mainFormTreeView, mainProgramHEImageList.ImageList);
-                InitialiseListView(mainFormListView, mainProgramHEImageList.ImageList);
-
-                IsWorkspaceReady = true;
-            }
-        }
 
         /// <summary>
         /// Handles closing of the document workspace.

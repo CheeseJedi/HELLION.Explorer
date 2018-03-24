@@ -2,9 +2,9 @@
 {
     public class HEBlueprintDockingPortTreeNode : HETreeNode
     {
-        public HEBlueprintDockingPortTreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.BlueprintDockingPort,
-            string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
-            : base(nodeName, newNodeType, nodeText, nodeToolTipText, passedOwner)
+        public HEBlueprintDockingPortTreeNode(object passedOwner = null, string nodeName = null,
+            HETreeNodeType newNodeType = HETreeNodeType.BlueprintDockingPort, string nodeText = null, string nodeToolTipText = null)
+            : base(passedOwner, nodeName, newNodeType, nodeText, nodeToolTipText)
         {
 
         }

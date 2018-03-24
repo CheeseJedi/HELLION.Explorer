@@ -10,127 +10,11 @@ namespace HELLION.DataStructures
     /// Defines an object that contains a dictionary of HEJsonBaseFiles representing the 
     /// json files in a specified folder.
     /// </summary>
-    public class HEJsonFileCollection //: IHENotificationReceiver, IHENotificationSender
+    public class HEJsonFileCollection
     {
-        
-        
-        /// <summary>
-        /// Public property to access the parent object, if set.
-        /// </summary>
-        public Object Parent => parent;
-
-        /// <summary>
-        /// Stores a reference to the parent object, if set using the constructor.
-        /// </summary>
-        protected Object parent = null;
-
-        /*
-        /// <summary>
-        /// Implements receiving of simple child-to-parent messages.
-        /// </summary>
-        /// <param name="sender">The child object that sent the message.</param>
-        /// <param name="type">The type of message.</param>
-        /// <param name="msg">Message text (optional).</param>
-        void IHENotificationReceiver.ReceiveNotification(IHENotificationSender sender, HENotificationType type, string msg)
-        {
-            Debug.Print("Message received from {0} of type {1} :: {2}", sender.ToString(), type.ToString(), msg);
-
-
-            IHENotificationSender tmp = (IHENotificationSender)this;
-            tmp.SendNotification(type, "Relayed message from " + sender.ToString() + " " + msg);
-
-
-        }
-
-        /// <summary>
-        /// Implements sending of simple child-to-parent messages.
-        /// </summary>
-        /// <param name="type">The type of message.</param>
-        /// <param name="msg">Message text (optional).</param>
-        void IHENotificationSender.SendNotification(HENotificationType type, string msg)
-        {
-            if (Parent != null)
-            {
-                Parent.ReceiveNotification((IHENotificationSender)this, type, msg);
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
-        }
-        */
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        protected string targetFileExtension = "*.json";
-
-
-        /// <summary>
-        /// Public property for the data dictionary object.
-        /// </summary>
-        public Dictionary<string, HEJsonBaseFile> DataDictionary => dataDictionary;
-
-        /// <summary>
-        /// The Data Dictionary holds HEJsonBaseFile objects, with the file name as the key.
-        /// </summary>
-        protected Dictionary<string, HEJsonBaseFile> dataDictionary = null;
-
-        /// <summary>
-        /// Public property to access the DirectoryInfo used to build the file collection.
-        /// </summary>
-        public DirectoryInfo DataDirectoryInfo => dataDirectoryInfo;
-
-        /// <summary>
-        /// The DirectoryInfo used to build the file collection.
-        /// </summary>
-        protected DirectoryInfo dataDirectoryInfo = null;
-
-        /// <summary>
-        /// Public property to access the rootNode field
-        /// </summary>
-        public HETreeNode RootNode => rootNode;
-
-        /// <summary>
-        /// The root node of the Static Data file collection - each data file will have it's
-        /// own tree attached as child nodes to this node.
-        /// </summary>
-        protected HETreeNode rootNode = null;
-
-        /// <summary>
-        /// Public property to read the isLoaded bool.
-        /// </summary>
-        public bool IsLoaded => isLoaded;
-
-        /// <summary>
-        /// Determines whether the file load is complete.
-        /// </summary>
-        protected bool isLoaded = false;
-
-        /// <summary>
-        /// Public property to read the loadError bool.
-        /// </summary>
-        public bool LoadError => loadError;
-
-        /// <summary>
-        /// Determines whether the file encountered an error while loading.
-        /// </summary>
-        protected bool loadError = false;
-
-        /// <summary>
-        /// Property to read the isDirty field.
-        /// </summary>
-        public bool IsDirty => isDirty;
-
-        /// <summary>
-        /// Used to track whether any of the child objects have been modified.
-        /// </summary>
-        protected bool isDirty  = false;
-
-
         public HEJsonFileCollection()
         {
+
         }
 
         /// <summary>
@@ -138,35 +22,69 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="autoPopulateTree"></param>
-        public HEJsonFileCollection(DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
+        public HEJsonFileCollection(HEGameData passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
         {
 
             // Set up the data dictionary
-            dataDictionary = new Dictionary<string, HEJsonBaseFile>();
+            DataDictionary = new Dictionary<string, HEJsonBaseFile>();
 
             // Check validity and if good load the data set
             if (passedDirectoryInfo != null && passedDirectoryInfo.Exists)
             {
-                dataDirectoryInfo = passedDirectoryInfo;
+                DataDirectoryInfo = passedDirectoryInfo;
 
-                rootNode = new HETreeNode(dataDirectoryInfo.Name, HETreeNodeType.DataFolder, 
-                    nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
+                RootNode = new HETreeNode(ownerObject: this, nodeName: DataDirectoryInfo.Name,
+                    newNodeType: HETreeNodeType.DataFolder, nodeToolTipText: DataDirectoryInfo.FullName);
 
                 Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
             }
             else
             {
-                rootNode = new HETreeNode(dataDirectoryInfo.Name + " [ERROR]", HETreeNodeType.DataFolderError, 
-                    nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
+                RootNode = new HETreeNode(ownerObject: this, nodeName: DataDirectoryInfo.Name + " [ERROR]",
+                    newNodeType: HETreeNodeType.DataFolderError, nodeToolTipText: DataDirectoryInfo.FullName);
             }
         }
 
-        public HEJsonFileCollection(object passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0) : this(passedDirectoryInfo, autoPopulateTreeDepth)
-        {
-            parent = passedParent ?? throw new InvalidOperationException();
+        /// <summary>
+        /// A reference to the 'Owning' object.
+        /// </summary>
+        public HEGameData OwnerObject { get; protected set; } = null;
+            
+        /// <summary>
+        /// The Data Dictionary holds HEJsonBaseFile objects, with the file name as the key.
+        /// </summary>
+        public Dictionary<string, HEJsonBaseFile> DataDictionary { get; protected set; } = null;
 
-        }
+        /// <summary>
+        /// Public property to access the DirectoryInfo used to build the file collection.
+        /// </summary>
+        public DirectoryInfo DataDirectoryInfo { get; protected set; } = null;
 
+        /// <summary>
+        /// The root node of the Static Data file collection - each data file will have it's
+        /// own tree attached as child nodes to this node.
+        /// </summary>
+        public HETreeNode RootNode { get; protected set; } = null;
+
+        /// <summary>
+        /// Public property to read the isLoaded bool.
+        /// </summary>
+        public bool IsLoaded { get; protected set; } = false;
+
+        /// <summary>
+        /// Determines whether the file encountered an error while loading.
+        /// </summary>
+        public bool LoadError { get; protected set; } = false;
+
+        /// <summary>
+        /// Property to read the isDirty field.
+        /// </summary>
+        public bool IsDirty { get; protected set; } = false;
+
+        /// <summary>
+        /// Specifies the target file extension for included files - default on *.json.
+        /// </summary>
+        protected string targetFileExtension = "*.json";
 
 
 
@@ -175,10 +93,10 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="PopulateNodeTrees"></param>
         /// <returns></returns>
-        public /*async*/ bool Load(int PopulateNodeTreeDepth = 0)
+        public bool Load(int PopulateNodeTreeDepth = 0)
         {
             // Loads the static data and builds the trees representing the data files
-            if (!dataDirectoryInfo.Exists) return false;
+            if (!DataDirectoryInfo.Exists) return false;
             else
             {
                 // Set up a list to monitor tasks running asynchronously
@@ -186,7 +104,7 @@ namespace HELLION.DataStructures
 
                 //HEJsonBaseFile tempFile = null;
 
-                foreach (FileInfo dataFile in dataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
+                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
@@ -225,7 +143,7 @@ namespace HELLION.DataStructures
             else
             {
                 // Not dirty, OK to close everything
-                isLoaded = false;
+                IsLoaded = false;
                 bool subFileCloseSuccess = true;
 
                 if (DataDictionary != null)
@@ -251,10 +169,10 @@ namespace HELLION.DataStructures
                     }
                 }
                 else
-                    dataDictionary = null;
+                    DataDictionary = null;
 
-                dataDirectoryInfo = null;
-                rootNode = null;
+                DataDirectoryInfo = null;
+                RootNode = null;
                 return subFileCloseSuccess;
             }
         }

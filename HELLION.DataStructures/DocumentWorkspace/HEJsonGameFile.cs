@@ -20,10 +20,10 @@ namespace HELLION.DataStructures
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
         public HEJsonGameFile(object passedParentObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : base(passedParentObject, passedFileInfo, populateNodeTreeDepth)
         {
-            rootNode.Name = File.Name;
-            rootNode.NodeType = HETreeNodeType.SaveFile;
-            rootNode.Text = File.Name;
-            rootNode.ToolTipText = File.FullName;
+            RootNode.Name = File.Name;
+            RootNode.NodeType = HETreeNodeType.SaveFile;
+            RootNode.Text = File.Name;
+            RootNode.ToolTipText = File.FullName;
         }
     }
 }

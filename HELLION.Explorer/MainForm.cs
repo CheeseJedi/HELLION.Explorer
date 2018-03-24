@@ -506,11 +506,12 @@ namespace HELLION.Explorer
             Program.frmMainForm.treeView1.SelectedNode.Collapse();
         }
 
+        /*
         private void jTokenLengthToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (treeView1.SelectedNode != null)
             {
-                if (treeView1.SelectedNode.Tag != null)
+                if (treeView1.SelectedNode.JData != null)
                 {
                     Debug.Print("Node {0} has a null or empty tag", treeView1.SelectedNode.Text);
                 }
@@ -520,6 +521,7 @@ namespace HELLION.Explorer
                 Debug.Print("{0} was called but there was no SelectedNode", this );
             }
         }
+        */
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {

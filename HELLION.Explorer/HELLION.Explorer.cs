@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.Text;
-using System.Drawing;
-using System.Diagnostics;
-using System.Data;
-using System.IO;
-using System.Configuration;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
 using HELLION.DataStructures;
+using Newtonsoft.Json.Linq;
 
 namespace HELLION.Explorer
 {
@@ -866,7 +862,8 @@ namespace HELLION.Explorer
             StringBuilder sb1 = new StringBuilder();
             StringBuilder sb2 = new StringBuilder();
 
-            if (nSelectedNode != null) //  && docCurrent != null && docCurrent.IsFileReady) // temp change to allow for tree use without a doc loaded
+            //if (nSelectedNode != null) //  && docCurrent != null && docCurrent.IsFileReady) // temp change to allow for tree use without a doc loaded
+            if (false)
             {
                 HETreeNode nSelectedHETNNode = (HETreeNode)nSelectedNode;
 
@@ -999,7 +996,7 @@ namespace HELLION.Explorer
         /// <param name="nSelectedNode"></param>
         internal static void CreateNewJsonDataView(HEGameDataTreeNode nSelectedNode)
         {
-            if (nSelectedNode != null && nSelectedNode.Tag != null)
+            if (nSelectedNode != null && nSelectedNode.JData != null)
             {
                 // Look for an existing form for this node.
                 JsonDataViewForm newDataView = null;

@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.HEImageList;
-//using System.Runtime.CompilerServices;
-//using System.Threading.Tasks;
-//using System.Windows.Forms;
 
 namespace HELLION.DataStructures
 {
@@ -21,27 +15,46 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEJsonBaseFile //: IHENotificationSender
+    public class HEJsonBaseFile
     {
         /// <summary>
-        /// Public property to access the parent object, if set through the constructor.
+        /// Default constructor, not used directly but required by the derived class.
         /// </summary>
-        public object Parent => parent;
+        public HEJsonBaseFile(object ownerObject)
+        {
+            OwnerObject = ownerObject ?? throw new NullReferenceException();
+        }
 
         /// <summary>
-        /// Stores a reference to the parent object, if set using the constructor.
+        /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
-        protected object parent = null;
+        /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
+        public HEJsonBaseFile(object ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : this(ownerObject)
+        {
+            File = passedFileInfo ?? throw new NullReferenceException();
+            RootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+
+            if (!File.Exists) throw new FileNotFoundException();
+            else
+            {
+                LoadFile();
+                RootNode.JData = jData;
+                RootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
+            }
+        }
 
         /// <summary>
-        /// Public property to get and set the FileInfo object.
+        /// Stores a reference to the parent object.
         /// </summary>
-        public FileInfo File => fileInfo;
+        /// <remarks>
+        /// Set by the constructor.
+        /// </remarks>
+        public object OwnerObject { get; protected set; } = null;
 
         /// <summary>
         /// FileInfo object that represents the file on disk that is to be worked with.
         /// </summary>
-        protected FileInfo fileInfo = null;
+        public FileInfo File { get; protected set; } = null;
         
         /// <summary>
         /// Public property to get and set the JToken that was loaded from the file.
@@ -51,7 +64,7 @@ namespace HELLION.DataStructures
             get
             {
                 // Check the file is loaded
-                if (!isLoaded) return null;
+                if (!IsLoaded) return null;
                 // Check there wasn't a load error
                 if (LoadError) return null;
                 return jData;
@@ -79,12 +92,12 @@ namespace HELLION.DataStructures
         /// <remarks>
         /// Casts the RootNode to an HEGameDataTreeNode.
         /// </remarks>
-        public HEGameDataTreeNode RootNode => rootNode;
+        public HEGameDataTreeNode RootNode { get; protected set; } = null;
 
         /// <summary>
-        /// Used to determine whether the file is loaded; read only.
+        /// Used to determine whether the file is loaded.
         /// </summary>
-        public bool IsLoaded => isLoaded;
+        public bool IsLoaded { get; protected set; } = false;
 
         /// <summary>
         /// Used to determine whether there was an error on load.
@@ -95,7 +108,7 @@ namespace HELLION.DataStructures
             {
                 return loadError;
             }
-            private set
+            protected set
             {
                 if (value)
                 {
@@ -104,7 +117,7 @@ namespace HELLION.DataStructures
                         // Set the load error flag
                         loadError = true;
                         // Change the node type so that the icon changes to the error type
-                        rootNode.NodeType = HETreeNodeType.DataFileError;
+                        RootNode.NodeType = HETreeNodeType.DataFileError;
                         /*
                         // Fire the event
                         OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Load Error in file {0}", File.FullName)));
@@ -127,7 +140,7 @@ namespace HELLION.DataStructures
             get
             {
                 // Check the file is loaded
-                if (!isLoaded) return true;
+                if (!IsLoaded) return true;
                 // Check there wasn't a load error
                 if (LoadError) return true;
                 // Is the file read-only in the file system?
@@ -138,7 +151,7 @@ namespace HELLION.DataStructures
             set
             {
                 // Attempts to set the file state to writeable.
-                if (value && isLoaded && !LoadError && !File.IsReadOnly)
+                if (value && IsLoaded && !LoadError && !File.IsReadOnly)
                 {
                     readOnlyOverride = true;
                 }
@@ -181,53 +194,10 @@ namespace HELLION.DataStructures
             }
         }
 
-        /*
-        
-        /// <summary>
-        /// Declare the event handler for notifying the parent object about changes using EventHandler<T>
-        /// </summary>
-        public event EventHandler<HEJsonBaseFileEventArgs> RaiseCustomEvent;
-
-        /// <summary>
-        /// This event invocation is wrapped inside a protected virtual method
-        /// to allow derived classes to override the event invocation behaviour
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnRaiseCustomEvent(HEJsonBaseFileEventArgs e)
-        {
-            // Make a temporary copy of the event to avoid possibility of
-            // a race condition if the last subscriber unsubscribes
-            // immediately after the null check and before the event is raised.
-            EventHandler<HEJsonBaseFileEventArgs> handler = RaiseCustomEvent;
-
-            // Event will be null if there are no subscribers
-            if (handler != null)
-            {
-                // Format the string to send inside the CustomEventArgs parameter
-                e.Message += String.Format(" at {0}", DateTime.Now.ToString());
-
-                // Use the () operator to raise the event.
-                handler(this, e);
-            }
-        }
-
-        */
-
         /// <summary>
         /// The JToken that was loaded from the file, if load was successful.
         /// </summary>
         protected JToken jData = null;
-
-        /// <summary>
-        /// The root node of the file - top level will be a node representing the file and
-        /// any sub objects will be children of this.
-        /// </summary>
-        protected HEGameDataTreeNode rootNode = null;
-
-        /// <summary>
-        /// Determines whether the file has been loaded.
-        /// </summary>
-        protected bool isLoaded = false;
 
         /// <summary>
         /// Tracks whether there was an error encountered during load - only used by the 
@@ -251,57 +221,6 @@ namespace HELLION.DataStructures
         /// Used to activate extended logging to the Debug window in VS.
         /// </summary>
         protected bool logToDebug = false;
-
-        /// <summary>
-        /// Default constructor, not used directly but required by the derived class.
-        /// </summary>
-        public HEJsonBaseFile()
-        { }
-
-        /// <summary>
-        /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
-        /// </summary>
-        /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEJsonBaseFile(object passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth)
-        {
-            if (passedParent == null) throw new NullReferenceException();
-            //else parent = (IHENotificationReceiver)passedParent;
-
-            if (passedFileInfo == null) throw new NullReferenceException();
-            else
-            {
-                fileInfo = passedFileInfo;
-                rootNode = new HEGameDataTreeNode(File.Name, HETreeNodeType.DataFile, nodeToolTipText: File.FullName, passedOwner: this); // nodeText: File.Name,
-
-                if (!File.Exists) throw new FileNotFoundException();
-                else
-                {
-                    LoadFile();
-                    rootNode.Tag = jData;
-                    rootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
-                }
-            }
-        }
-
-        /*
-        /// <summary>
-        /// Implements sending of simple child-to-parent messages.
-        /// </summary>
-        /// <param name="type">The type of message.</param>
-        /// <param name="msg">Message text (optional).</param>
-        void IHENotificationSender.SendNotification(HENotificationType type, string msg)
-        {
-            if (Parent != null)
-            {
-                Parent.ReceiveNotification((IHENotificationSender)this, type, msg);
-            }
-            else
-            {
-                Debug.Print("@@@ ALERT @@@ " + this.File.Name + " .SendNotification was called but parent was null.");
-                //throw new InvalidOperationException();
-            }
-        }
-        */
 
         /// <summary>
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
@@ -356,7 +275,7 @@ namespace HELLION.DataStructures
                         }
                     }
                     // Set the IsLoaded flag to true
-                    isLoaded = true;
+                    IsLoaded = true;
                 }
             }
             else
@@ -367,23 +286,15 @@ namespace HELLION.DataStructures
 
             }
 
-            //OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Loading Complete in file {0}", File.FullName)));
-            /*
-            IHENotificationSender tmp = (IHENotificationSender)this;
-            if (LoadError)
-            {
-                tmp.SendNotification(HENotificationType.FileLoadError, "(" + File.Name + ")");
-            }
-            else
-            {
-                tmp.SendNotification(HENotificationType.FileLoadComplete, "(" + File.Name + ")");
-            }
-            */
-
             // Return the value of LoadError
             return LoadError;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="existingToken"></param>
+        /// <param name="newToken"></param>
         public void ReplaceJToken(JToken existingToken, JToken newToken)
         {
             if (IsReadOnly) throw new InvalidOperationException("Attempted JToken change on non-modifiable file. (IsReadOnly=true)");
@@ -396,7 +307,6 @@ namespace HELLION.DataStructures
                 isDirty = true;
             }
         }
-
 
         /// <summary>
         /// Save the file data.
@@ -462,39 +372,13 @@ namespace HELLION.DataStructures
             else
             {
                 // Not dirty, OK to close everything
-                isLoaded = false;
-                fileInfo = null;
+                IsLoaded = false;
+                File = null;
                 jData = null;
-                rootNode = null;
+                RootNode = null;
                 return true;
             }
         }
-
-        /*
-        /// <summary>
-        /// Attempts to build a user-friendly name from available data in a JObject
-        /// </summary>
-        /// <param name="obj">Takes a JObject and attempts to generate a name from expected fields</param>
-        /// <returns></returns>
-        public string GenerateDisplayName (JObject obj)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
-            sb.Append((string)obj["SanitisedName"]);
-            sb.Append((string)obj["GameName"]);
-            sb.Append((string)obj["CategoryName"]);
-            sb.Append((string)obj["name"]);
-            //string[] prefabPathParts = obj["PrefabPath"].ToString().Split('\\');
-            //sb.Append(prefabPathParts[prefabPathParts.Length - 1]);
-            sb.Append((string)obj["PrefabPath"]);
-            sb.Append((string)obj["RuleName"]);
-            sb.Append((string)obj["TierName"]);
-            sb.Append((string)obj["GroupName"]);
-            if (sb.Length > 0) sb.Append(" ");
-            sb.Append((string)obj["ItemID"]);
-            return sb.ToString() ?? null;
-        }
-        */
 
     }
 }

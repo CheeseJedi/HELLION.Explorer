@@ -33,6 +33,7 @@ namespace HELLION.DataStructures
         Moon,               // Node type for a moon (not the star, or orbiting it directly)
         BlueprintsView,     // Node type for the Blueprints view
         Blueprint,          // Node type for a Blueprint file
+        BlueprintCollection,
         BlueprintHierarchyView, // Node type for the root of a Blueprint's Hierarchy View
         BlueprintDataView,
         BlueprintStructureDefinitionView,

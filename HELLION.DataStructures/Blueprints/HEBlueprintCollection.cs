@@ -20,17 +20,17 @@ namespace HELLION.DataStructures
              int autoPopulateTreeDepth = 0)
         {
             // Set up the data dictionary
-            dataDictionary = new Dictionary<string, HEJsonBlueprintFile>();
+            DataDictionary = new Dictionary<string, HEJsonBlueprintFile>();
 
-            parent = passedParent ?? throw new InvalidOperationException("passedParent was null.");
+            OwnerObject = passedParent ?? throw new InvalidOperationException("passedParent was null.");
 
             // Check validity and if good load the data set
             if (passedDirectoryInfo != null && passedDirectoryInfo.Exists)
             {
-                dataDirectoryInfo = passedDirectoryInfo;
+                DataDirectoryInfo = passedDirectoryInfo;
 
-                rootNode = new HETreeNode(dataDirectoryInfo.Name, HETreeNodeType.DataFolder,
-                    nodeToolTipText: dataDirectoryInfo.FullName, passedOwner: this);
+                RootNode = new HEBlueprintCollectionTreeNode(passedOwner: this, nodeName: DataDirectoryInfo.Name,
+                    nodeToolTipText: DataDirectoryInfo.FullName);
 
                 Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
 
@@ -40,23 +40,18 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Public property to access the parent object.
         /// </summary>
-        public new HEBlueprints Parent => parent;
-
-        /// <summary>
-        /// Stores a reference to the parent object.
-        /// </summary>
-        protected new HEBlueprints parent = null;
-
-        /// <summary>
-        /// Public property for the data dictionary object.
-        /// </summary>
-        public new Dictionary<string, HEJsonBlueprintFile> DataDictionary => dataDictionary;
-
+        public new HEBlueprints OwnerObject { get; protected set; } = null;
+            
         /// <summary>
         /// The Data Dictionary holds HEJsonBaseFile objects, with the file name as the key.
         /// </summary>
-        protected new Dictionary<string, HEJsonBlueprintFile> dataDictionary = null;
+        public new Dictionary<string, HEJsonBlueprintFile> DataDictionary { get; protected set; } = null;
 
+        /// <summary>
+        /// The root node of the Static Data file collection - each data file will have it's
+        /// own tree attached as child nodes to this node.
+        /// </summary>
+        public new HEBlueprintCollectionTreeNode RootNode { get; protected set; } = null;
 
 
         /// <summary>
@@ -67,10 +62,10 @@ namespace HELLION.DataStructures
         public new bool Load(int PopulateNodeTreeDepth = 0)
         {
             // Loads the static data and builds the trees representing the data files
-            if (!dataDirectoryInfo.Exists) return false;
+            if (!DataDirectoryInfo.Exists) return false;
             else
             {
-                foreach (FileInfo dataFile in dataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
+                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
