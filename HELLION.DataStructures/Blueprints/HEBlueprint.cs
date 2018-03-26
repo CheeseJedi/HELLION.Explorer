@@ -238,7 +238,7 @@ namespace HELLION.DataStructures
             public HEBlueprintStructure()
             {
                 DockingPorts = new List<HEBlueprintDockingPort>();
-                RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: StructureType.ToString(), newNodeType: HETreeNodeType.BlueprintStructure);
+                RootNode = new HEBlueprintStructureTreeNode(passedOwner: this, nodeName: StructureType.ToString());
             }
 
             /// <summary>
@@ -258,7 +258,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Not to be serialised.
             /// </summary>
-            public HEBlueprintTreeNode RootNode { get; set; } = null;
+            public HEBlueprintStructureTreeNode RootNode { get; set; } = null;
 
             #region Other
             public int? StructureID { get; set; } = null;
@@ -392,7 +392,7 @@ namespace HELLION.DataStructures
             public HEBlueprintDockingPort(HEBlueprintStructure passedParent = null)
             {
                 OwnerObject = passedParent;
-                RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: PortName.ToString(), newNodeType: HETreeNodeType.BlueprintDockingPort);
+                RootNode = new HEBlueprintDockingPortTreeNode(passedOwner: this, nodeName: PortName.ToString());
             }
 
             /// <summary>
@@ -403,7 +403,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Not to be serialised.
             /// </summary>
-            public HEBlueprintTreeNode RootNode { get; set; } = null;
+            public HEBlueprintDockingPortTreeNode RootNode { get; set; } = null;
 
             #region Other
             public HEDockingPortTypes? PortName

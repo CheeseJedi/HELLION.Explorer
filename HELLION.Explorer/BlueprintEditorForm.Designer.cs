@@ -76,6 +76,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(0, 24);
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(634, 585);
@@ -232,6 +233,7 @@
             // comboBoxStructureList
             // 
             this.comboBoxStructureList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxStructureList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxStructureList.FormattingEnabled = true;
             this.comboBoxStructureList.Location = new System.Drawing.Point(7, 20);
             this.comboBoxStructureList.Name = "comboBoxStructureList";
@@ -355,6 +357,7 @@
             // comboBoxDockingDestinationPort
             // 
             this.comboBoxDockingDestinationPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxDockingDestinationPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationPort.FormattingEnabled = true;
             this.comboBoxDockingDestinationPort.Location = new System.Drawing.Point(7, 89);
             this.comboBoxDockingDestinationPort.Name = "comboBoxDockingDestinationPort";
@@ -365,6 +368,7 @@
             // comboBoxDockingDestinationStructure
             // 
             this.comboBoxDockingDestinationStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxDockingDestinationStructure.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationStructure.FormattingEnabled = true;
             this.comboBoxDockingDestinationStructure.Location = new System.Drawing.Point(7, 62);
             this.comboBoxDockingDestinationStructure.Name = "comboBoxDockingDestinationStructure";
@@ -375,6 +379,7 @@
             // comboBoxDockingSourcePort
             // 
             this.comboBoxDockingSourcePort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxDockingSourcePort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingSourcePort.FormattingEnabled = true;
             this.comboBoxDockingSourcePort.Location = new System.Drawing.Point(7, 20);
             this.comboBoxDockingSourcePort.Name = "comboBoxDockingSourcePort";

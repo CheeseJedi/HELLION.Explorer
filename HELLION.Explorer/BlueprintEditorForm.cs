@@ -76,7 +76,6 @@ namespace HELLION.Explorer
         /// </summary>
         private string FormTitleText = null;
 
-
         private HEBlueprintTreeNode CurrentlySelectedNode
         {
             get { return _currentlySelectedNode; }
@@ -89,50 +88,59 @@ namespace HELLION.Explorer
                     if (_currentlySelectedNode != null)
                     {
                         // Figure out whether it's a Structure node or a Docking Port node.
-                        HEBlueprint.HEBlueprintStructure parentStructure = null;
-                        HEBlueprint.HEBlueprintDockingPort dockingPort = null;
 
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("Node Name: " + _currentlySelectedNode.Name + Environment.NewLine);
-                        sb.Append("Node Text: " + _currentlySelectedNode.Text + Environment.NewLine);
-                        sb.Append("Node Path: " + _currentlySelectedNode.Path() + Environment.NewLine);
-
-                        
                         Type parentType = _currentlySelectedNode.OwnerObject.GetType();
                         if (parentType == typeof(HEBlueprint.HEBlueprintDockingPort))
                         {
-                            // Docking Port node, find the parent structure
-                            //HEBlueprintStructureTreeNode parentNode = (HEBlueprintStructureTreeNode)CurrentlySelectedNode.Parent;
-
-                            Debug.Print("parentType == typeof(HEBlueprint.HEBlueprintDockingPort)");
-
-                            //dockingPort = (HEBlueprint.HEBlueprintStructure)CurrentlySelectedNode.OwnerObject;
-                            //if (CurrentlySelectedNode != dockingPort.RootNode) throw new InvalidOperationException("CurrentlySelectedNode != thisDockingPort.RootNode");
-
-
-                            //object obj = dockingPort.OwnerObject;
-
-                            //parentStructure = dockingPort.OwnerObject;
+                            // Docking Port node, need find the parent structure.
+                            currentDockingPort = (HEBlueprint.HEBlueprintDockingPort)_currentlySelectedNode.OwnerObject;
+                            currentStructure = currentDockingPort.OwnerObject;
 
                         }
                         else if (parentType == typeof(HEBlueprint.HEBlueprintStructure))
                         {
-                            Debug.Print("parentType == typeof(HEBlueprint.HEBlueprintStructure)");
-                            parentStructure = (HEBlueprint.HEBlueprintStructure)CurrentlySelectedNode.OwnerObject;
+                            currentDockingPort = null;
+                            currentStructure = (HEBlueprint.HEBlueprintStructure)_currentlySelectedNode.OwnerObject;
+                        }
+                        else  throw new InvalidOperationException("Unrecognised OwnerObject type.");
+
+                        // Update form items related to the currently selected object.
+                        pictureBoxSelectedStructure.Image = currentStructure == null ? null 
+                            : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(currentStructure.StructureType.Value)];
+
+                        labelSelectedStructureType.Text = currentStructure == null ? null : currentStructure.StructureType.ToString();
+
+                        //comboBoxDockingSourcePort.SelectedIndex = -1;
+                        comboBoxDockingSourcePort.Items.Clear();
+
+                        if (currentStructure.AvailableDockingPorts() != null) // && currentStructure.AvailableDockingPorts().Count > 0)
+                        {
+                            foreach (var port in currentStructure.AvailableDockingPorts())
+                                comboBoxDockingSourcePort.Items.Add(port.PortName.ToString());
+                            /*
+                            // Attempt to select the current docking port from the list.
+                            if (currentDockingPort == null)
+                            {
+                                comboBoxDockingSourcePort.SelectedIndex = -1;
+
+                                comboBoxDockingSourcePort.SelectedItem = currentDockingPort;
+                            }
+                            */
+                            //else
+                            {
+                                //comboBoxDockingSourcePort.SelectedIndex = -1;
+                                comboBoxDockingSourcePort.SelectedIndex = 0;
+                            }
+
                         }
                         else
                         {
-                            Debug.Print("parentType is not blueprint structure or docking port");
+                            comboBoxDockingSourcePort.Items.Add("No available docking ports.");
+                            //comboBoxDockingSourcePort.SelectedIndex = -1;
+                            comboBoxDockingSourcePort.SelectedIndex = 0;
                         }
-                        
 
 
-
-                        // Update form items related to the currently selected object.
-                        pictureBoxSelectedStructure.Image = parentStructure == null ? null 
-                            : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(parentStructure.StructureType.Value)];
-
-                        labelSelectedStructureType.Text = parentStructure == null ? null : parentStructure.StructureType.ToString();
 
 
                     }
@@ -141,6 +149,9 @@ namespace HELLION.Explorer
                         // No currently selected node, clear the displays.
                         pictureBoxSelectedStructure.Image = null;
                         labelSelectedStructureType.Text = null;
+                        //comboBoxDockingSourcePort.SelectedIndex = -1;
+                        comboBoxDockingSourcePort.Items.Clear();
+
                     }
                 }
             }
@@ -148,16 +159,12 @@ namespace HELLION.Explorer
 
         private HEBlueprintTreeNode _currentlySelectedNode = null;
 
-
-
+        private HEBlueprint.HEBlueprintStructure currentStructure = null;
+        private HEBlueprint.HEBlueprintDockingPort currentDockingPort = null;
 
 
         HEJsonBlueprintFile jsonBlueprintFile = null;
         HEBlueprint blueprint = null;
-
-
-
-
 
         /// <summary>
         /// Updates the form's title text with a marker if the object is dirty.
