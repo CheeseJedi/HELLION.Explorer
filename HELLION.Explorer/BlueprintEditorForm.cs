@@ -130,7 +130,7 @@ namespace HELLION.Explorer
 
                         // Update form items related to the currently selected object.
                         pictureBoxSelectedStructure.Image = parentStructure == null ? null 
-                            : Program.hEImageList.IconImageList.Images[HEImageList.GetStructureImageIndexByStructureType(parentStructure.StructureType.Value)];
+                            : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(parentStructure.StructureType.Value)];
 
                         labelSelectedStructureType.Text = parentStructure == null ? null : parentStructure.StructureType.ToString();
 

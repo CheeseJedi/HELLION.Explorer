@@ -111,33 +111,138 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="JsonSnippets\" />
-    <Folder Include="_EmbeddedImages\Icons16x\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_AM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_ARG.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CBM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CIM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CLM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CQM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CRM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CSM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_CTM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_FM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_IC.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_LSM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_OUTPOST.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_PSM.png" />
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_SPM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_AM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_ARG.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CBM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CIM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CLM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CQM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CRM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CSM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_CTM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_FM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_IC.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_LSM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_OUTPOST.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_PSM.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_SPM.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="_EmbeddedImages\Structures\STRUCT_Unspecified.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Structures180x\STRUCT_Unspecified.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\3DCameraOrbit_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\3DExtrude_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\3DScene_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Actor_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Add_grey_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Alert_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Aserif_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ASPXFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\AssemblyInfoFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Assembly_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Attribute_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\AzureDefaultResource_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\AzureLogicApp_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\AzureLogicApp_color_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\AzureResourceGroup_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\AzureResourceTypeView_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\AzureVirtualMachineExtension_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BalanceBrace_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BatchFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BehaviorAction_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BinaryFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Binary_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Bios_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BlankFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BlueprintFolder_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Bolt_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BranchRelationshipChild_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BranchRelationshipCousin_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BranchRelationshipGroup_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BranchRelationshipParent_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BranchRelationshipSibling_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BranchRelationship_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Branch_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Brightness_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BubbleChart_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Bug_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Builder_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\BulletList_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ButtonIcon_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Callout_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\CheckDot_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Checkerboard_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Collection_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ComponentDiagram_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ComponentFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Component_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ConfigurationEditor_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ConfigurationFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Contrast_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\CordovaMultidevice_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\CSWorkflowDiagram_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\DarkTheme_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\DateTimeAxis_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Diagnose_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Dictionary_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\DocumentLibraryFolder_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Document_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\DomainType_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Driver_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\EditPage_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Ellipsis_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\EndpointComponent_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Event_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Expander_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ExplodedPieChart_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FeedbackBubble_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FeedbackSad_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FeedbackSmile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FileCollection_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FileError_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FileGroupError_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FileGroupWarning_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FileGroup_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FileOK_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FileWarning_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Filter_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FindinFiles_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FindNext_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FindPrevious_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FindResults_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Flag_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\FolderError_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Folder_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Gauge_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\HotSpot_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Hub_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\JS_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Label_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\ListFolder_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\LocalServer_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Marquee_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Numeric_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\PermissionFile_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\PieChart_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Property_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Rename_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\SearchFolder_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\SemanticZoom_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Settings_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Shader_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Share_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\String_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\Toolbox_16x.png" />
+    <EmbeddedResource Include="_EmbeddedImages\Icons16x\TreeView_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -133,7 +133,6 @@ namespace HELLION.DataStructures
 
         };
 
-
         public enum HEStructuresImageNames
         {
             STRUCT_AM = 0,
@@ -154,11 +153,6 @@ namespace HELLION.DataStructures
             STRUCT_SPM,
             STRUCT_Unspecified,
         }
-
-
-
-
-
 
 
         /// <summary>
@@ -377,9 +371,8 @@ namespace HELLION.DataStructures
             }
         }
 
-
-
         private ImageList structureImageList = null;
+
 
         /// <summary>
         /// Builds an ImageList from the embedded resources.
@@ -400,32 +393,36 @@ namespace HELLION.DataStructures
             iconImageList = new ImageList();
 
             structureImageList = new ImageList();
+            // Set the ImageSize property to a larger size 
+            // (the default is 16 x 16).
+            structureImageList.ImageSize = new Size(180, 180);
 
             // Process string array of resource names (this includes the namespace name)
             foreach (string embeddedResource in embeddedResourceNames)
             {
                 Debug.Print(embeddedResource);
-
-                if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Icons."))
+                
+                if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Icons16x."))
                 {
+                    Debug.Print("Icon");
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
                     iconImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }
-
-                /*
-                else if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Structures."))
+                
+                else if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Structures180x."))
                 {
+                    Debug.Print("Structure");
+
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
                     structureImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }
-                */
-
-
+                
                 else
                 {
                     // not an image reference
                     throw new InvalidOperationException();
                 }
+                
             }
         }
     }
