@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 
@@ -6,6 +8,47 @@ namespace HELLION.Explorer
 {
     public partial class BlueprintEditorForm : Form
     {
+        /// <summary>
+        /// Basic Constructor.
+        /// </summary>
+        public BlueprintEditorForm()
+        {
+            InitializeComponent();
+            Icon = Program.frmMainForm.Icon;
+
+            treeView1.ImageList = Program.hEImageList.IconImageList;
+            //treeView1.ImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
+            //treeView1.SelectedImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
+            //treeView1.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
+            treeView1.ShowNodeToolTips = true;
+            Text = "Blueprint Editor";
+            PopulateDropDownModuleTypes();
+
+        }
+
+        /// <summary>
+        /// Constructor that takes a HEBlueprintTreeNode.
+        /// </summary>
+        /// <param name="passedSourceNode"></param>
+        public BlueprintEditorForm(HEBlueprintTreeNode passedSourceNode) : this()
+        {
+            SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
+            FormTitleText = passedSourceNode.Name;
+            RefreshBlueprintEditorFormTitleText();
+
+            jsonBlueprintFile = (HEJsonBlueprintFile)passedSourceNode.OwnerObject;
+            blueprint = jsonBlueprintFile.BlueprintObject;
+
+            GraftTreeInbound();
+
+            IsDirty = false;
+        }
+
+        /// <summary>
+        /// The node that the editor was opened from.
+        /// </summary>
+        public HEBlueprintTreeNode SourceNode { get; private set; } = null;
+
         /// <summary>
         /// Property to get/set the isDirty bool.
         /// </summary>
@@ -28,6 +71,11 @@ namespace HELLION.Explorer
         /// </summary>
         private bool isDirty = false;
 
+        /// <summary>
+        /// Stores the form's initial title text.
+        /// </summary>
+        private string FormTitleText = null;
+
 
         private HEBlueprintTreeNode CurrentlySelectedNode
         {
@@ -40,27 +88,61 @@ namespace HELLION.Explorer
 
                     if (_currentlySelectedNode != null)
                     {
+                        // Figure out whether it's a Structure node or a Docking Port node.
                         HEBlueprint.HEBlueprintStructure parentStructure = null;
-                        Type parentType = _currentlySelectedNode.Parent.GetType();
+                        HEBlueprint.HEBlueprintDockingPort dockingPort = null;
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("Node Name: " + _currentlySelectedNode.Name + Environment.NewLine);
+                        sb.Append("Node Text: " + _currentlySelectedNode.Text + Environment.NewLine);
+                        sb.Append("Node Path: " + _currentlySelectedNode.Path() + Environment.NewLine);
+
+                        
+                        Type parentType = _currentlySelectedNode.OwnerObject.GetType();
                         if (parentType == typeof(HEBlueprint.HEBlueprintDockingPort))
                         {
+                            // Docking Port node, find the parent structure
+                            //HEBlueprintStructureTreeNode parentNode = (HEBlueprintStructureTreeNode)CurrentlySelectedNode.Parent;
 
-                            //HEBlueprint.HEBlueprintDockingPort 
+                            Debug.Print("parentType == typeof(HEBlueprint.HEBlueprintDockingPort)");
+
+                            //dockingPort = (HEBlueprint.HEBlueprintStructure)CurrentlySelectedNode.OwnerObject;
+                            //if (CurrentlySelectedNode != dockingPort.RootNode) throw new InvalidOperationException("CurrentlySelectedNode != thisDockingPort.RootNode");
 
 
-                            //parentStructure = _currentlySelectedNode.(HEBlueprintTreeNode)Parent.
+                            //object obj = dockingPort.OwnerObject;
+
+                            //parentStructure = dockingPort.OwnerObject;
 
                         }
                         else if (parentType == typeof(HEBlueprint.HEBlueprintStructure))
                         {
-
+                            Debug.Print("parentType == typeof(HEBlueprint.HEBlueprintStructure)");
+                            parentStructure = (HEBlueprint.HEBlueprintStructure)CurrentlySelectedNode.OwnerObject;
                         }
+                        else
+                        {
+                            Debug.Print("parentType is not blueprint structure or docking port");
+                        }
+                        
+
+
+
+                        // Update form items related to the currently selected object.
+                        pictureBoxSelectedStructure.Image = parentStructure == null ? null 
+                            : Program.hEImageList.IconImageList.Images[HEImageList.GetStructureImageIndexByStructureType(parentStructure.StructureType.Value)];
+
+                        labelSelectedStructureType.Text = parentStructure == null ? null : parentStructure.StructureType.ToString();
 
 
                     }
-
+                    else
+                    {
+                        // No currently selected node, clear the displays.
+                        pictureBoxSelectedStructure.Image = null;
+                        labelSelectedStructureType.Text = null;
+                    }
                 }
-
             }
         }
 
@@ -68,52 +150,14 @@ namespace HELLION.Explorer
 
 
 
-        private string FormTitleText = null;
 
-        private HEBlueprintTreeNode sourceNode = null;
-
-        public HEBlueprintTreeNode SourceNode => sourceNode;
 
         HEJsonBlueprintFile jsonBlueprintFile = null;
         HEBlueprint blueprint = null;
 
 
 
-        /// <summary>
-        /// Basic Constructor.
-        /// </summary>
-        public BlueprintEditorForm()
-        {
-            InitializeComponent();
-            Icon = Program.frmMainForm.Icon;
 
-            treeView1.ImageList = Program.hEImageList.ImageList;
-            //treeView1.ImageIndex = (int)HEImageList.HEObjectTypesImageList.Flag_16x;
-            //treeView1.SelectedImageIndex = (int)HEImageList.HEObjectTypesImageList.Flag_16x;
-            //treeView1.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
-            treeView1.ShowNodeToolTips = true;
-            Text = "Blueprint Editor";
-            PopulateDropDownModuleTypes();
-
-        }
-
-        /// <summary>
-        /// Constructor that takes a HEBlueprintTreeNode.
-        /// </summary>
-        /// <param name="passedSourceNode"></param>
-        public BlueprintEditorForm(HEBlueprintTreeNode passedSourceNode) : this()
-        {
-            sourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
-            FormTitleText = passedSourceNode.Name;
-            RefreshBlueprintEditorFormTitleText();
-
-            jsonBlueprintFile = (HEJsonBlueprintFile)passedSourceNode.OwnerObject;
-            blueprint = jsonBlueprintFile.BlueprintObject;
-
-            GraftTreeInbound();
-
-            IsDirty = false;
-        }
 
         /// <summary>
         /// Updates the form's title text with a marker if the object is dirty.
@@ -123,7 +167,9 @@ namespace HELLION.Explorer
             Text = IsDirty ? FormTitleText + "*" : FormTitleText;
         }
 
-
+        /// <summary>
+        /// Grafts a node tree inbound from the Main Form.
+        /// </summary>
         private void GraftTreeInbound()
         {
             HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
@@ -131,6 +177,9 @@ namespace HELLION.Explorer
             treeView1.Nodes.Add(drn);
         }
 
+        /// <summary>
+        /// Grafts a node tree outbound from the Main Form.
+        /// </summary>
         private void GraftTreeOutbound()
         {
             HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
@@ -138,7 +187,9 @@ namespace HELLION.Explorer
             blueprint.RootNode.Nodes.Add(drn);
         }
 
-
+        /// <summary>
+        /// Populates drop-down boxes with the values from the enum.
+        /// </summary>
         public void PopulateDropDownModuleTypes()
         {
             Array enumValues = Enum.GetValues(typeof(HEBlueprintStructureTypes));
@@ -148,12 +199,14 @@ namespace HELLION.Explorer
                 //if (value == (int)HEBlueprintStructureTypes.UNKNOWN) display = "Select Type...";
                 // ListViewItem item = new ListViewItem(display, value.ToString());
                 toolStripComboBox1.Items.Add(display);
-                comboBox1.Items.Add(display);
+                comboBoxStructureList.Items.Add(display);
             }
             toolStripComboBox1.SelectedIndex = 0;
-            comboBox1.SelectedIndex = 0;
+            comboBoxStructureList.SelectedIndex = 0;
         }
 
+
+        #region Form Controls
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
@@ -201,6 +254,25 @@ namespace HELLION.Explorer
         private void button1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            // Update the Selected
+            CurrentlySelectedNode = (HEBlueprintTreeNode)treeView1.SelectedNode;
+
+        }
+
+        #endregion
+
+        private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.SelectedNode != null) treeView1.SelectedNode.ExpandAll();
+        }
+
+        private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.SelectedNode != null) treeView1.SelectedNode.Collapse();
         }
     }
 }

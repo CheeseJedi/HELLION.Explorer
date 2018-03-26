@@ -3,7 +3,7 @@ using System.IO;
 
 namespace HELLION.DataStructures
 {
-    public class HEBlueprints //: IHENotificationReceiver
+    public class HEBlueprints
     {
         /// <summary>
         /// Default constructor.
@@ -67,6 +67,9 @@ namespace HELLION.DataStructures
         /// The StructureDefinitions.json file used in assembling blueprints.
         /// </summary>
         public HEBlueprintStructureDefinitionsFile StructureDefinitionsFile { get; protected set; } = null;
+
+
+
 
     }
 }

@@ -57,8 +57,55 @@ namespace HELLION.DataStructures
     public class HEBlueprint
     {
         /// <summary>
-        /// To be serialised.
+        /// Constructor.
         /// </summary>
+        /// <param name="passedParent"></param>
+        public HEBlueprint(HEJsonBlueprintFile passedParent = null)
+        {
+            OwnerObject = passedParent;
+            Structures = new List<HEBlueprintStructure>();
+            RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: "Hierarchy View",
+                newNodeType: HETreeNodeType.BlueprintHierarchyView, nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+        }
+
+        /// <summary>
+        /// Parent object - not to be included in serialisation.
+        /// </summary>
+        public HEJsonBlueprintFile OwnerObject { get; set; } = null;
+
+        /// <summary>
+        /// Not to be serialised.
+        /// </summary>
+        public HEBlueprintTreeNode RootNode { get; set; } = null;
+
+        /// <summary>
+        /// Links up all child object's parent reference to their parent.
+        /// </summary>
+        public void ReconnectChildParentStructure()
+        {
+            if (OwnerObject == null) throw new NullReferenceException("ParentJsonBlueprintFile was null.");
+
+            // the following causes an exception.
+            //StructureDefinitions = OwnerObject.OwnerObject.OwnerObject
+            //    .StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
+
+            foreach (HEBlueprintStructure structure in Structures)
+            {
+                // Set the structure's parent object (this, the blueprint object)
+                structure.OwnerObject = this;
+                foreach (HEBlueprintDockingPort port in structure.DockingPorts) port.OwnerObject = structure;
+            }
+        }
+
+
+        #region Other
+
+        /// <summary>
+        /// Type of object (should be "StationBlueprint")
+        /// </summary>
+        /// <remarks>
+        /// To be serialised.
+        /// </remarks>
         public string __ObjectType { get; set; } = null;
 
         /// <summary>
@@ -81,47 +128,7 @@ namespace HELLION.DataStructures
         /// </summary>
         public List<HEBlueprintStructure> Structures { get; set; } = null;
 
-        /// <summary>
-        /// Parent object - not to be included in serialisation.
-        /// </summary>
-        public HEJsonBlueprintFile OwnerObject { get; set; } = null;
-
         public HEBlueprintStructureDefinitions StructureDefinitions { get; set; } = null;
-
-        /// <summary>
-        /// Not to be serialised.
-        /// </summary>
-        public HEBlueprintTreeNode RootNode { get; set; } = null;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="passedParent"></param>
-        public HEBlueprint(HEJsonBlueprintFile passedParent = null)
-        {
-            OwnerObject = passedParent;
-            Structures = new List<HEBlueprintStructure>();
-            RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: "Hierarchy View",
-                newNodeType: HETreeNodeType.BlueprintHierarchyView, nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
-        }
-
-        /// <summary>
-        /// Links up all child object's parent reference to their parent.
-        /// </summary>
-        public void ReconnectChildParentStructure() //HEJsonBlueprintFile passedParent)
-        {
-            if (OwnerObject == null) throw new NullReferenceException("ParentJsonBlueprintFile was null.");
-
-            //StructureDefinitions = OwnerObject.OwnerObject.OwnerObject
-            //    .StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
-
-            foreach (HEBlueprintStructure structure in Structures)
-            {
-                // Set the structure's parent object (this, the blueprint object)
-                structure.OwnerObject = this;
-                foreach (HEBlueprintDockingPort port in structure.DockingPorts) port.OwnerObject = structure;
-            }
-        }
 
         public void ReassembleDockingStructure()
         {
@@ -218,11 +225,42 @@ namespace HELLION.DataStructures
 
         }
 
+        #endregion
+
         /// <summary>
         /// A class to define structures (modules/ships) within the blueprint.
         /// </summary>
         public class HEBlueprintStructure
         {
+            /// <summary>
+            /// Basic constructor.
+            /// </summary>
+            public HEBlueprintStructure()
+            {
+                DockingPorts = new List<HEBlueprintDockingPort>();
+                RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: StructureType.ToString(), newNodeType: HETreeNodeType.BlueprintStructure);
+            }
+
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="ownerObject"></param>
+            public HEBlueprintStructure(HEBlueprint ownerObject = null) : this()
+            {
+                OwnerObject = ownerObject;
+            }
+
+            /// <summary>
+            /// Parent object - not to be included in serialisation.
+            /// </summary>
+            public HEBlueprint OwnerObject { get; set; } = null;
+
+            /// <summary>
+            /// Not to be serialised.
+            /// </summary>
+            public HEBlueprintTreeNode RootNode { get; set; } = null;
+
+            #region Other
             public int? StructureID { get; set; } = null;
             
             public HEBlueprintStructureTypes? StructureType
@@ -241,33 +279,6 @@ namespace HELLION.DataStructures
 
             //public HEBlueprint Parent => OwnerObject;
 
-            /// <summary>
-            /// Parent object - not to be included in serialisation.
-            /// </summary>
-            public HEBlueprint OwnerObject { get; set; } = null;
-
-            /// <summary>
-            /// Not to be serialised.
-            /// </summary>
-            public HEBlueprintTreeNode RootNode { get; set; } = null;
-
-            /// <summary>
-            /// Basic constructor.
-            /// </summary>
-            public HEBlueprintStructure()
-            {
-                DockingPorts = new List<HEBlueprintDockingPort>();
-                RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: StructureType.ToString(), newNodeType: HETreeNodeType.BlueprintStructure);
-            }
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="ownerObject"></param>
-            public HEBlueprintStructure(HEBlueprint ownerObject = null) : this()
-            {
-                OwnerObject = ownerObject;
-            }
 
             /// <summary>
             /// Returns a list of directly docked structures, or all connected structures.
@@ -369,11 +380,32 @@ namespace HELLION.DataStructures
 
                 
             }
-
+            #endregion
         }
 
         public class HEBlueprintDockingPort
         {
+            /// <summary>
+            /// Constructor.
+            /// </summary>
+            /// <param name="passedParent"></param>
+            public HEBlueprintDockingPort(HEBlueprintStructure passedParent = null)
+            {
+                OwnerObject = passedParent;
+                RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: PortName.ToString(), newNodeType: HETreeNodeType.BlueprintDockingPort);
+            }
+
+            /// <summary>
+            /// Parent object - not to be included in serialisation.
+            /// </summary>
+            public HEBlueprintStructure OwnerObject { get; set; } = null;
+
+            /// <summary>
+            /// Not to be serialised.
+            /// </summary>
+            public HEBlueprintTreeNode RootNode { get; set; } = null;
+
+            #region Other
             public HEDockingPortTypes? PortName
             {
                 get { return portName; }
@@ -392,33 +424,31 @@ namespace HELLION.DataStructures
             public string DockedPortName { get; set; } = null;
 
             /// <summary>
-            /// Parent object - not to be included in serialisation.
-            /// </summary>
-            public HEBlueprintStructure OwnerObject { get; set; } = null;
-
-            /// <summary>
-            /// Not to be serialised.
-            /// </summary>
-            public HEBlueprintTreeNode RootNode { get; set; } = null;
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="passedParent"></param>
-            public HEBlueprintDockingPort(HEBlueprintStructure passedParent = null)
-            {
-                OwnerObject = passedParent;
-                RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: PortName.ToString(), newNodeType: HETreeNodeType.BlueprintDockingPort);
-
-            }
-
-            /// <summary>
             /// Indicates whether this port is docked to a port on another structure.
             /// </summary>
             /// <returns></returns>
             public bool IsDocked()
             {
                 return DockedStructureID == null ? false : true;
+            }
+
+            /// <summary>
+            /// Gets a reference to the structure that is docked to this port.
+            /// </summary>
+            /// <returns></returns>
+            public HEBlueprintStructure GetDockedStructure()
+            {
+                return OwnerObject.OwnerObject.GetStructureByID(DockedStructureID);
+            }
+
+            /// <summary>
+            /// Gets a reference to the port that is docked to this port.
+            /// </summary>
+            /// <returns></returns>
+            public HEBlueprintDockingPort GetDockedPort()
+            {
+                return OwnerObject.OwnerObject.GetStructureByID(DockedStructureID)
+                    .GetDockingPortByName(DockedPortName);
             }
 
             public bool Undock()
@@ -435,7 +465,7 @@ namespace HELLION.DataStructures
 
                 return false;
             }
-
+            #endregion
         }
     }
 }

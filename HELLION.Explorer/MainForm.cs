@@ -283,8 +283,14 @@ namespace HELLION.Explorer
                     {
 
                         // Some decision making logic needed here
-                        // Show the Edit menu item.
-                        editToolStripMenuItem1.Visible = true;
+
+                        if (node.NodeType == HETreeNodeType.Blueprint)
+                        {
+                            // Show the Edit menu item.
+                            editToolStripMenuItem1.Visible = true;
+                        }
+                        else editToolStripMenuItem1.Visible = false;
+
 
 
                         // Disable the Json Data View

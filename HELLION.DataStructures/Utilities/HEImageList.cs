@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace HELLION.DataStructures
 {
@@ -23,7 +24,7 @@ namespace HELLION.DataStructures
         /// folder, and all images in that folder must have the VS Build Action set to Embedded Resource.
         /// In an ideal situation this list would be built dynamically, perhaps something for the future.
         /// </remarks>
-        public enum HEObjectTypesImageList
+        public enum HEIconsImageNames
         {
             a3DCameraOrbit_16x = 0,
             a3DExtrude_16x,
@@ -127,7 +128,15 @@ namespace HELLION.DataStructures
             Shader_16x,
             Share_16x,
             String_16x,
-            STRUCT_AM,
+            Toolbox_16x,
+            TreeView_16x,
+
+        };
+
+
+        public enum HEStructuresImageNames
+        {
+            STRUCT_AM = 0,
             STRUCT_ARG,
             STRUCT_CBM,
             STRUCT_CIM,
@@ -143,181 +152,281 @@ namespace HELLION.DataStructures
             STRUCT_OUTPOST,
             STRUCT_PSM,
             STRUCT_SPM,
-            Toolbox_16x,
-            TreeView_16x,
+            STRUCT_Unspecified,
+        }
 
-        };
+
+
+
+
+
 
         /// <summary>
         /// Returns the defined image list index for the node type.
         /// </summary>
         /// <param name="NodeType">Specifies the HETreeNode type to get the image index of.</param>
         /// <returns>Returns an integer representing the image index.</returns>
-        public static int GetImageIndexByNodeType(HETreeNodeType NodeType)
+        public static int GetIconImageIndexByNodeType(HETreeNodeType NodeType)
         {
             switch (NodeType)
             {
                 case HETreeNodeType.SolarSystemView:
-                    return (int)HEObjectTypesImageList.Share_16x;
+                    return (int)HEIconsImageNames.Share_16x;
 
                 case HETreeNodeType.DataView:
-                    return (int)HEObjectTypesImageList.ListFolder_16x;
+                    return (int)HEIconsImageNames.ListFolder_16x;
 
                 case HETreeNodeType.SearchResultsView:
                 case HETreeNodeType.SearchHandler:
                 case HETreeNodeType.SearchResultsSet:
-                    return (int)HEObjectTypesImageList.FindResults_16x;
+                    return (int)HEIconsImageNames.FindResults_16x;
 
                 //case HETreeNodeType.CelestialBody:
                 //case HETreeNodeType.DefCelestialBody:
-                //    return (int)HEObjectTypesImageList.Shader_16x;
+                //    return (int)HEIconsImageNames.Shader_16x;
 
                 case HETreeNodeType.Star:
-                    return (int)HEObjectTypesImageList.Brightness_16x;
+                    return (int)HEIconsImageNames.Brightness_16x;
 
                 case HETreeNodeType.Planet:
-                    return (int)HEObjectTypesImageList.Contrast_16x;
+                    return (int)HEIconsImageNames.Contrast_16x;
 
                 case HETreeNodeType.Moon:
-                    return (int)HEObjectTypesImageList.DarkTheme_16x;
+                    return (int)HEIconsImageNames.DarkTheme_16x;
 
                 case HETreeNodeType.Asteroid:
                     //case HETreeNodeType.DefAsteroid:
-                    return (int)HEObjectTypesImageList.CheckDot_16x;
+                    return (int)HEIconsImageNames.CheckDot_16x;
 
                 case HETreeNodeType.Ship:
-                    return (int)HEObjectTypesImageList.AzureLogicApp_16x;
+                    return (int)HEIconsImageNames.AzureLogicApp_16x;
 
                 case HETreeNodeType.Player:
-                    return (int)HEObjectTypesImageList.Actor_16x;
+                    return (int)HEIconsImageNames.Actor_16x;
 
                 //case HETreeNodeType.DynamicObject:
                 //case HETreeNodeType.DefDynamicObject:
-                //    return (int)HEObjectTypesImageList.Driver_16x;
+                //    return (int)HEIconsImageNames.Driver_16x;
 
                 //case HETreeNodeType.Scene:
-                //    return (int)HEObjectTypesImageList.a3DScene_16x;
+                //    return (int)HEIconsImageNames.a3DScene_16x;
 
                 //case HETreeNodeType.DefStructure:
-                //    return (int)HEObjectTypesImageList.Component_16x;
+                //    return (int)HEIconsImageNames.Component_16x;
 
                 //case HETreeNodeType.SpawnPoint:
                 //case HETreeNodeType.DoomControllerData:
                 //case HETreeNodeType.SpawnManagerData:
-                //    return (int)HEObjectTypesImageList.a3DCameraOrbit_16x;
+                //    return (int)HEIconsImageNames.a3DCameraOrbit_16x;
 
 
                 case HETreeNodeType.JsonArray:
-                    return (int)HEObjectTypesImageList.Assembly_16x;
+                    return (int)HEIconsImageNames.Assembly_16x;
 
                 case HETreeNodeType.JsonObject:
-                    return (int)HEObjectTypesImageList.Settings_16x;
+                    return (int)HEIconsImageNames.Settings_16x;
 
                 case HETreeNodeType.JsonProperty:
-                    return (int)HEObjectTypesImageList.Property_16x;
+                    return (int)HEIconsImageNames.Property_16x;
 
                 case HETreeNodeType.JsonValue:
-                    return (int)HEObjectTypesImageList.DomainType_16x;
+                    return (int)HEIconsImageNames.DomainType_16x;
 
                 case HETreeNodeType.SaveFile:
                 case HETreeNodeType.DataFile:
-                    return (int)HEObjectTypesImageList.Document_16x;
+                    return (int)HEIconsImageNames.Document_16x;
 
                 case HETreeNodeType.SaveFileError:
                 case HETreeNodeType.DataFileError:
-                    return (int)HEObjectTypesImageList.FileError_16x;
+                    return (int)HEIconsImageNames.FileError_16x;
 
                 case HETreeNodeType.DataFolder:
-                    return (int)HEObjectTypesImageList.Folder_16x;
+                    return (int)HEIconsImageNames.Folder_16x;
 
                 case HETreeNodeType.DataFolderError:
-                    return (int)HEObjectTypesImageList.FolderError_16x;
+                    return (int)HEIconsImageNames.FolderError_16x;
 
                 case HETreeNodeType.BlueprintsView:
-                    return (int)HEObjectTypesImageList.CordovaMultidevice_16x;
+                    return (int)HEIconsImageNames.CordovaMultidevice_16x;
 
                 case HETreeNodeType.Blueprint:
-                    return (int)HEObjectTypesImageList.CSWorkflowDiagram_16x;
+                    return (int)HEIconsImageNames.CSWorkflowDiagram_16x;
 
                 case HETreeNodeType.BlueprintCollection:
-                    return (int)HEObjectTypesImageList.BlueprintFolder_16x;
+                    return (int)HEIconsImageNames.BlueprintFolder_16x;
 
                 case HETreeNodeType.BlueprintHierarchyView:
-                    return (int)HEObjectTypesImageList.Hub_16x;
+                    return (int)HEIconsImageNames.Hub_16x;
 
                 case HETreeNodeType.BlueprintDataView:
-                    return (int)HEObjectTypesImageList.BalanceBrace_16x;
+                    return (int)HEIconsImageNames.BalanceBrace_16x;
 
                 case HETreeNodeType.BlueprintStructureDefinitionView:
-                    return (int)HEObjectTypesImageList.Bios_16x;
+                    return (int)HEIconsImageNames.Bios_16x;
 
                 case HETreeNodeType.BlueprintStructure:
                 case HETreeNodeType.BlueprintStructureDefinition:
-                    return (int)HEObjectTypesImageList.Component_16x;
+                    return (int)HEIconsImageNames.Component_16x;
 
                 case HETreeNodeType.BlueprintDockingPort:
                 case HETreeNodeType.BlueprintDockingPortDefinition:
-                    return (int)HEObjectTypesImageList.Bolt_16x;
+                    return (int)HEIconsImageNames.Bolt_16x;
 
                 default:
-                    return (int)HEObjectTypesImageList.Checkerboard_16x;
+                    return (int)HEIconsImageNames.Checkerboard_16x;
             }
         }
 
+
+        public static int GetStructureImageIndexByStructureType(HEBlueprintStructureTypes StructureType)
+        {
+            switch (StructureType)
+            {
+                case HEBlueprintStructureTypes.AM:
+                    return (int)HEStructuresImageNames.STRUCT_AM;
+
+                case HEBlueprintStructureTypes.ARG:
+                    return (int)HEStructuresImageNames.STRUCT_ARG;
+
+                case HEBlueprintStructureTypes.CBM:
+                    return (int)HEStructuresImageNames.STRUCT_CBM;
+
+                case HEBlueprintStructureTypes.CIM:
+                    return (int)HEStructuresImageNames.STRUCT_CIM;
+
+                case HEBlueprintStructureTypes.CLM:
+                    return (int)HEStructuresImageNames.STRUCT_CLM;
+
+                case HEBlueprintStructureTypes.CM:
+                    return (int)HEStructuresImageNames.STRUCT_CM;
+
+                case HEBlueprintStructureTypes.CQM:
+                    return (int)HEStructuresImageNames.STRUCT_CQM;
+
+                case HEBlueprintStructureTypes.CRM:
+                    return (int)HEStructuresImageNames.STRUCT_CRM;
+
+                case HEBlueprintStructureTypes.CSM:
+                    return (int)HEStructuresImageNames.STRUCT_CSM;
+
+                case HEBlueprintStructureTypes.CTM:
+                    return (int)HEStructuresImageNames.STRUCT_CTM;
+
+                case HEBlueprintStructureTypes.FM:
+                    return (int)HEStructuresImageNames.STRUCT_FM;
+
+                case HEBlueprintStructureTypes.IC:
+                    return (int)HEStructuresImageNames.STRUCT_IC;
+
+                case HEBlueprintStructureTypes.LSM:
+                    return (int)HEStructuresImageNames.STRUCT_LSM;
+
+                case HEBlueprintStructureTypes.OUTPOST:
+                    return (int)HEStructuresImageNames.STRUCT_OUTPOST;
+
+                case HEBlueprintStructureTypes.PSM:
+                    return (int)HEStructuresImageNames.STRUCT_PSM;
+
+                case HEBlueprintStructureTypes.SPM:
+                    return (int)HEStructuresImageNames.STRUCT_SPM;
+
+                case HEBlueprintStructureTypes.Unspecified:
+                default:
+                    return (int)HEStructuresImageNames.STRUCT_Unspecified;
+
+            }
+        }
+
+
         /// <summary>
-        /// Public read-only property to get the ImageList so it can be bound to WinForms controls etc.
+        /// Public read-only property to get the IconImageList so it can be bound to WinForms controls etc.
         /// </summary>
         /// <remarks>Triggers de-streaming of the images population on first request.</remarks>
-        public ImageList ImageList
+        public ImageList IconImageList
         {
             get
             {
-                if (imageList == null)
+                if (iconImageList == null)
                 {
                     // Populate the image list
                     BuildImageList();
                 }
-                return imageList;
+                return iconImageList;
             }
         }
 
         /// <summary>
         /// Private field for the list of images.
         /// </summary>
-        private ImageList imageList = null;
+        private ImageList iconImageList = null;
+
+        /// <summary>
+        /// Public read-only property to get the IconImageList so it can be bound to WinForms controls etc.
+        /// </summary>
+        /// <remarks>Triggers de-streaming of the images population on first request.</remarks>
+        public ImageList StructureImageList
+        {
+            get
+            {
+                if (structureImageList == null)
+                {
+                    // Populate the image list
+                    BuildImageList();
+                }
+                return structureImageList;
+            }
+        }
+
+
+
+        private ImageList structureImageList = null;
 
         /// <summary>
         /// Builds an ImageList from the embedded resources.
         /// </summary>
         /// <remarks>
-        /// It is *CRITICAL* that the load order matches the HEObjectTypesImageList enum.
+        /// It is *CRITICAL* that the load order matches the HEIconsImageNames enum.
         /// </remarks>
         /// <returns></returns>
         private void BuildImageList()
         {
-            // Create a new ImageList to hold images used as icons in the tree and list views
-            imageList = new ImageList();
-
             // Use System.Reflection to get a list of all resource names
-            string[] embeddedResources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            string[] embeddedResourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
 
             // Get the currently executing assembly name
-            string sEntryAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+            string entryAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
+
+            // Create ImageList to hold images used as icons in the tree and list views.
+            iconImageList = new ImageList();
+
+            structureImageList = new ImageList();
 
             // Process string array of resource names (this includes the namespace name)
-            foreach (string embeddedResource in embeddedResources)
+            foreach (string embeddedResource in embeddedResourceNames)
             {
-                if (embeddedResource.Contains(sEntryAssemblyName + "._EmbeddedImages."))
+                Debug.Print(embeddedResource);
+
+                if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Icons."))
                 {
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
-                    imageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
+                    iconImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }
+
+                /*
+                else if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Structures."))
+                {
+                    // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
+                    structureImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
+                }
+                */
+
+
                 else
                 {
                     // not an image reference
                     throw new InvalidOperationException();
                 }
             }
-        } // End of BuildImageList()
+        }
     }
 }

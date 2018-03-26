@@ -126,32 +126,32 @@ namespace HELLION.DataStructures
                     {
                         case JTokenType.Boolean:
                             // Bool (CheckDot)
-                            newNodeImageIndex = (int)HEObjectTypesImageList.CheckDot_16x;
+                            newNodeImageIndex = (int)HEIconsImageNames.CheckDot_16x;
                             break;
                         case JTokenType.Bytes:
                             // Binary
-                            newNodeImageIndex = (int)HEObjectTypesImageList.Binary_16x;
+                            newNodeImageIndex = (int)HEIconsImageNames.Binary_16x;
                             break;
                         case JTokenType.Integer:
                         case JTokenType.Float:
                             // Number
-                            newNodeImageIndex = (int)HEObjectTypesImageList.DomainType_16x;
+                            newNodeImageIndex = (int)HEIconsImageNames.DomainType_16x;
                             break;
                         case JTokenType.String:
                         case JTokenType.Comment:
                         case JTokenType.Guid:
                         case JTokenType.Uri:
                             // Text
-                            newNodeImageIndex = (int)HEObjectTypesImageList.String_16x;
+                            newNodeImageIndex = (int)HEIconsImageNames.String_16x;
                             break;
                         case JTokenType.Date:
                         case JTokenType.TimeSpan:
                             // Time/Date
-                            newNodeImageIndex = (int)HEObjectTypesImageList.DateTimeAxis_16x;
+                            newNodeImageIndex = (int)HEIconsImageNames.DateTimeAxis_16x;
                             break;
                         default:
                             // Default (checker board)
-                            newNodeImageIndex = (int)HEObjectTypesImageList.Checkerboard_16x;
+                            newNodeImageIndex = (int)HEIconsImageNames.Checkerboard_16x;
                             break;
                     }
 

@@ -1,6 +1,6 @@
 ﻿namespace HELLION.DataStructures
 {
-    public class HEBlueprintStructureTreeNode : HETreeNode
+    public class HEBlueprintStructureTreeNode : HEBlueprintTreeNode
     {
         public HEBlueprintStructureTreeNode(object passedOwner = null, string nodeName = null,
             HETreeNodeType newNodeType = HETreeNodeType.BlueprintStructure, string nodeText = null, string nodeToolTipText = null)

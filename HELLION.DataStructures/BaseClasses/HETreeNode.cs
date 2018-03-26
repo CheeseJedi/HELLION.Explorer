@@ -60,7 +60,7 @@ namespace HELLION.DataStructures
                 if (value != nodeType)
                 {
                     nodeType = value;
-                    ImageIndex = GetImageIndexByNodeType(nodeType);
+                    ImageIndex = GetIconImageIndexByNodeType(nodeType);
                     SelectedImageIndex = ImageIndex;
                 }
             }

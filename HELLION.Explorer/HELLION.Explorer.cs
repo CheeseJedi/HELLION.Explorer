@@ -50,7 +50,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Defines an ImageList and set it to the HEImageList
         /// </summary>
-        internal static ImageList ilObjectTypesImageList = hEImageList.ImageList;
+        internal static ImageList ilObjectTypesImageList = hEImageList.IconImageList;
 
         /// <summary>
         /// Initialise an HEUpdateChecker object and specify the GitHub user name and repository name.
@@ -761,7 +761,7 @@ namespace HELLION.Explorer
                             Name = "<PARENT>",
                             Text = "<" + nSelectedNode.Parent.Text + ">",
                             Tag = nSelectedNode.Parent,
-                            ImageIndex = HEImageList.GetImageIndexByNodeType(nodeParent.NodeType)
+                            ImageIndex = HEImageList.GetIconImageIndexByNodeType(nodeParent.NodeType)
                         };
                         // Add the item
                         frmMainForm.listView1.Items.Add(liParentItem);
@@ -779,7 +779,7 @@ namespace HELLION.Explorer
                             Name = "<CURRENT>",
                             Text = "<" + nSelectedNode.Text + ">",
                             Tag = nSelectedNode,
-                            ImageIndex = HEImageList.GetImageIndexByNodeType(nSelectedHETNNode.NodeType)
+                            ImageIndex = HEImageList.GetIconImageIndexByNodeType(nSelectedHETNNode.NodeType)
                         };
                         // Add the item
                         frmMainForm.listView1.Items.Add(liCurrentItem);
@@ -810,7 +810,7 @@ namespace HELLION.Explorer
                                 Tag = listItem
                             };
 
-                            liNewItem.ImageIndex = HEImageList.GetImageIndexByNodeType(listItem.NodeType);
+                            liNewItem.ImageIndex = HEImageList.GetIconImageIndexByNodeType(listItem.NodeType);
 
                             // Add the item
                             frmMainForm.listView1.Items.Add(liNewItem);
@@ -837,7 +837,7 @@ namespace HELLION.Explorer
                             Tag = nodeChild
                         };
 
-                        liNewItem.ImageIndex = HEImageList.GetImageIndexByNodeType(nodeChild.NodeType);
+                        liNewItem.ImageIndex = HEImageList.GetIconImageIndexByNodeType(nodeChild.NodeType);
 
                         // Add the item
                         frmMainForm.listView1.Items.Add(liNewItem);

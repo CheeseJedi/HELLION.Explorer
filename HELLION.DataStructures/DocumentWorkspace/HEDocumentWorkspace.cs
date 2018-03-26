@@ -49,8 +49,8 @@ namespace HELLION.DataStructures
                 mainFormListView = passedListView ?? throw new NullReferenceException("passedListView was null.");
                 mainProgramHEImageList = passedHEImageList ?? throw new NullReferenceException("passedHEImageList was null.");
 
-                InitialiseTreeView(mainFormTreeView, mainProgramHEImageList.ImageList);
-                InitialiseListView(mainFormListView, mainProgramHEImageList.ImageList);
+                InitialiseTreeView(mainFormTreeView, mainProgramHEImageList.IconImageList);
+                InitialiseListView(mainFormListView, mainProgramHEImageList.IconImageList);
 
                 IsWorkspaceReady = true;
             }
@@ -166,8 +166,8 @@ namespace HELLION.DataStructures
         private void InitialiseTreeView(TreeView passedTreeView, ImageList passedImageList)
         {
             passedTreeView.ImageList = passedImageList;
-            passedTreeView.ImageIndex = (int)HEImageList.HEObjectTypesImageList.Flag_16x;
-            passedTreeView.SelectedImageIndex = (int)HEImageList.HEObjectTypesImageList.Flag_16x;
+            passedTreeView.ImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
+            passedTreeView.SelectedImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
             passedTreeView.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
             passedTreeView.ShowNodeToolTips = true;
         }
