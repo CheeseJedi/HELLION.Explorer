@@ -57,15 +57,28 @@ namespace HELLION.DataStructures
     public class HEBlueprint
     {
         /// <summary>
-        /// Constructor.
+        /// Default Constructor, called directly by the JToken.ToObject<T>()
         /// </summary>
-        /// <param name="passedParent"></param>
-        public HEBlueprint(HEJsonBlueprintFile passedParent = null)
+        public HEBlueprint()
         {
-            OwnerObject = passedParent;
             Structures = new List<HEBlueprintStructure>();
             RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: "Hierarchy View",
                 newNodeType: HETreeNodeType.BlueprintHierarchyView, nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+        }
+
+        /// <summary>
+        /// Constructor that takes a HEJsonBlueprintFile Owner Object and reference to the 
+        /// structure definitions object.
+        /// </summary>
+        /// <param name="ownerObject"></param>
+        /// <param name="structureDefs"></param>
+        public HEBlueprint(HEJsonBlueprintFile ownerObject, HEBlueprintStructureDefinitions structureDefs) : this()
+        {
+            OwnerObject = ownerObject ?? throw new NullReferenceException("passedParent was null.");
+            StructureDefinitions = structureDefs ?? throw new NullReferenceException("structureDefs was null.");
+            __ObjectType = "StationBlueprint";
+            Version = (decimal)0.3;
+
         }
 
         /// <summary>
@@ -86,8 +99,8 @@ namespace HELLION.DataStructures
             if (OwnerObject == null) throw new NullReferenceException("ParentJsonBlueprintFile was null.");
 
             // the following causes an exception.
-            //StructureDefinitions = OwnerObject.OwnerObject.OwnerObject
-            //    .StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
+            StructureDefinitions = OwnerObject.OwnerObject.OwnerObject
+                .StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
 
             foreach (HEBlueprintStructure structure in Structures)
             {
@@ -135,16 +148,24 @@ namespace HELLION.DataStructures
             // Start with the root node, should be item zero in the list.
             HEBlueprintStructure dockingRoot = GetDockingRoot();
 
+            // Debug.Print("dockingRoot {0} StructureID {1}", dockingRoot.StructureType, dockingRoot.StructureID);
+
             // Process the docking root's ports slightly differently - always child nodes.
             RootNode.Nodes.Add(dockingRoot.RootNode);
             foreach (HEBlueprintDockingPort port in dockingRoot.DockingPorts.ToArray().Reverse())
             {
                 dockingRoot.RootNode.Nodes.Add(port.RootNode);
-                if (port.IsDocked()) Reassemble(GetStructureByID(port.DockedStructureID), dockingRoot);
+                if (port.IsDocked())
+                {
+                    Reassemble(GetStructureByID(port.DockedStructureID), dockingRoot);
+                }
             }
            
             void Reassemble(HEBlueprintStructure structure, HEBlueprintStructure parent)
             {
+                //Debug.Print("structure = " + structure.ToString());
+                //Debug.Print("parent = " + parent.ToString());
+                
                 // Figure out which port is docking us to the parent and vice versa
                 HEBlueprintDockingPort linkToParent = structure.GetDockingPortByDockedStructureID((int)parent.StructureID);
                 HEBlueprintDockingPort linkFromParent = parent.GetDockingPortByDockedStructureID((int)structure.StructureID);
@@ -163,6 +184,7 @@ namespace HELLION.DataStructures
                         if (port.IsDocked()) Reassemble(GetStructureByID(port.DockedStructureID), structure);
                     }
                 }
+                
             }
         }
 
@@ -187,8 +209,13 @@ namespace HELLION.DataStructures
         /// <returns></returns>
         public HEBlueprintStructure GetStructureByID(int? id)
         {
-            if (id != null) return Structures.Where(f => f.StructureID == id).Single();
-            else return null;
+            HEBlueprintStructure result = null;
+            if (id != null)
+            {
+                List<HEBlueprintStructure> resultsList = Structures.Where(f => f.StructureID == id).ToList();
+                result = (resultsList.Count() > 0) ? resultsList[0] : null;
+            }
+            return result;
         }
 
         /// <summary>
@@ -261,8 +288,22 @@ namespace HELLION.DataStructures
             public HEBlueprintStructureTreeNode RootNode { get; set; } = null;
 
             #region Other
-            public int? StructureID { get; set; } = null;
-            
+            public int? StructureID
+            {
+                get { return structureID; }
+                set
+                {
+                    if (value != structureID)
+                    {
+                        // Change detected, evaluate whether this is the root node (has ID of zero)
+                        structureID = value;
+                        RootNode.DisplayRootStructureIcon = (value != null && value == 0) ? true : false;
+                    }
+                }
+            }
+
+            protected int? structureID = null;
+
             public HEBlueprintStructureTypes? StructureType
             {
                 get { return structureType; }
@@ -276,9 +317,6 @@ namespace HELLION.DataStructures
             protected HEBlueprintStructureTypes? structureType = null;
 
             public List<HEBlueprintDockingPort> DockingPorts = null;
-
-            //public HEBlueprint Parent => OwnerObject;
-
 
             /// <summary>
             /// Returns a list of directly docked structures, or all connected structures.
@@ -359,6 +397,8 @@ namespace HELLION.DataStructures
             public void AddAppropriateDockingPorts()
             {
                 // Find the matching definition type for this structures type.
+
+                if (OwnerObject.StructureDefinitions == null) throw new NullReferenceException();
 
                 HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = OwnerObject.StructureDefinitions
                     .StructureDefinitions.Where(f => f.SanitisedName == structureType.ToString()).Single();
@@ -451,6 +491,12 @@ namespace HELLION.DataStructures
                     .GetDockingPortByName(DockedPortName);
             }
 
+            public bool DockTo()
+            {
+
+                return false;
+            }
+
             public bool Undock()
             {
                 // Find the paired docking port
@@ -460,8 +506,8 @@ namespace HELLION.DataStructures
                 // Reset it's settings
 
                 // Reset local port settings
-                DockedStructureID = null;
-                DockedPortName = "";
+                //DockedStructureID = null;
+                //DockedPortName = "";
 
                 return false;
             }

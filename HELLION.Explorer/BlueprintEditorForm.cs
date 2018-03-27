@@ -113,33 +113,31 @@ namespace HELLION.Explorer
                         //comboBoxDockingSourcePort.SelectedIndex = -1;
                         comboBoxDockingSourcePort.Items.Clear();
 
+                        bool dockingPortSet = false;
+
                         if (currentStructure.AvailableDockingPorts() != null) // && currentStructure.AvailableDockingPorts().Count > 0)
                         {
                             foreach (var port in currentStructure.AvailableDockingPorts())
+                            {
                                 comboBoxDockingSourcePort.Items.Add(port.PortName.ToString());
-                            /*
-                            // Attempt to select the current docking port from the list.
-                            if (currentDockingPort == null)
-                            {
-                                comboBoxDockingSourcePort.SelectedIndex = -1;
-
-                                comboBoxDockingSourcePort.SelectedItem = currentDockingPort;
+                                if (currentDockingPort != null && currentDockingPort == port)
+                                {
+                                    comboBoxDockingSourcePort.SelectedItem = port.PortName.ToString();
+                                    dockingPortSet = true;
+                                }
                             }
-                            */
-                            //else
-                            {
-                                //comboBoxDockingSourcePort.SelectedIndex = -1;
-                                comboBoxDockingSourcePort.SelectedIndex = 0;
-                            }
-
                         }
                         else
                         {
                             comboBoxDockingSourcePort.Items.Add("No available docking ports.");
+                        }
+
+                        // Attempt to select the current docking port from the list.
+                        if (!dockingPortSet)
+                        {
                             //comboBoxDockingSourcePort.SelectedIndex = -1;
                             comboBoxDockingSourcePort.SelectedIndex = 0;
                         }
-
 
 
 

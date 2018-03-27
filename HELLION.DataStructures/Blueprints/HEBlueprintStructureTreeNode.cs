@@ -8,6 +8,21 @@
         {
 
         }
+
+        public bool DisplayRootStructureIcon
+        {
+            get { return displayRootStructureIcon; }
+            set
+            {
+                // Only make the change if it's actually a new value.
+                if (value != displayRootStructureIcon)
+                {
+                    NodeType = value ? HETreeNodeType.BlueprintRootStructure : HETreeNodeType.BlueprintStructure;
+                }
+            }
+        }
+
+        protected bool displayRootStructureIcon = false;
     }
 
 

@@ -15,6 +15,10 @@ namespace HELLION.DataStructures
         public HEJsonBlueprintFile(HEBlueprintCollection passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth)
             : base(passedParent)
         {
+            // Re-assign the OwnerObject (the base class stores this as an object,
+            // we ideally need it in its native type to work with its methods.
+            OwnerObject = passedParent ?? throw new NullReferenceException();
+
             File = passedFileInfo ?? throw new NullReferenceException();
 
             RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: File.Name, newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
@@ -78,6 +82,7 @@ namespace HELLION.DataStructures
         {
             BlueprintObject = jData.ToObject<HEBlueprint>();
             BlueprintObject.OwnerObject = this;
+            //BlueprintObject.StructureDefinitions = ;
             BlueprintObject.ReconnectChildParentStructure();
         }
 

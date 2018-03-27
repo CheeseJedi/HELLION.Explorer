@@ -38,6 +38,7 @@ namespace HELLION.DataStructures
         BlueprintDataView,
         BlueprintStructureDefinitionView,
         BlueprintStructure,
+        BlueprintRootStructure,
         BlueprintStructureDefinition,
         BlueprintDockingPort,
         BlueprintDockingPortDefinition,

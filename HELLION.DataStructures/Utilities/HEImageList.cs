@@ -250,7 +250,7 @@ namespace HELLION.DataStructures
                     return (int)HEIconsImageNames.BlueprintFolder_16x;
 
                 case HETreeNodeType.BlueprintHierarchyView:
-                    return (int)HEIconsImageNames.Hub_16x;
+                    return (int)HEIconsImageNames.TreeView_16x;
 
                 case HETreeNodeType.BlueprintDataView:
                     return (int)HEIconsImageNames.BalanceBrace_16x;
@@ -261,6 +261,9 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.BlueprintStructure:
                 case HETreeNodeType.BlueprintStructureDefinition:
                     return (int)HEIconsImageNames.Component_16x;
+
+                case HETreeNodeType.BlueprintRootStructure:
+                    return (int)HEIconsImageNames.Hub_16x;
 
                 case HETreeNodeType.BlueprintDockingPort:
                 case HETreeNodeType.BlueprintDockingPortDefinition:
@@ -392,6 +395,7 @@ namespace HELLION.DataStructures
             // Create ImageList to hold images used as icons in the tree and list views.
             iconImageList = new ImageList();
 
+            // Create ImageList to hold structure (ship/module) images for identification use.
             structureImageList = new ImageList();
             // Set the ImageSize property to a larger size 
             // (the default is 16 x 16).
