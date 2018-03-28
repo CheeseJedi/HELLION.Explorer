@@ -143,6 +143,9 @@ namespace HELLION.DataStructures
 
         public HEBlueprintStructureDefinitions StructureDefinitions { get; set; } = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void ReassembleDockingStructure()
         {
             // Start with the root node, should be item zero in the list.
@@ -322,7 +325,7 @@ namespace HELLION.DataStructures
             /// Returns a list of directly docked structures, or all connected structures.
             /// </summary>
             /// <returns></returns>
-            public List<HEBlueprintStructure> DockedStructures(bool AllConnected = false)
+            public List<HEBlueprintStructure> DockedStructures(bool AllConnected = false, HEBlueprintStructure incomingLink = null)
             {
                 List<HEBlueprintStructure> dockedStructures = new List<HEBlueprintStructure>();
                 foreach (HEBlueprintDockingPort port in DockingPorts)
@@ -331,9 +334,12 @@ namespace HELLION.DataStructures
                     {
                         //This port is docked to a structure, retrieve it by ID
                         HEBlueprintStructure result = OwnerObject.GetStructureByID(port.DockedStructureID);
-                        dockedStructures.Add(result);
+                        if (incomingLink != null && incomingLink != result)
+                        {
+                            dockedStructures.Add(result);
 
-                        if (AllConnected) dockedStructures.AddRange(result.DockedStructures(AllConnected));
+                            if (AllConnected) dockedStructures.AddRange(result.DockedStructures(AllConnected, this));
+                        }
                     }
                 }
                 return dockedStructures;
@@ -347,11 +353,52 @@ namespace HELLION.DataStructures
             public List<HEBlueprintDockingPort> AvailableDockingPorts()
             {
                 List<HEBlueprintDockingPort> availableDockingPorts = new List<HEBlueprintDockingPort>();
+
                 foreach (HEBlueprintDockingPort port in DockingPorts)
                 {
-                    if (!port.IsDocked()) availableDockingPorts.Add(port);
+                    if (!port.IsDocked())
+                    {
+                        // Docking port is free, add it to the list.
+                        availableDockingPorts.Add(port);
+                    }
                 }
                 return availableDockingPorts.Count > 0 ? availableDockingPorts : null;
+            }
+
+            /// <summary>
+            /// Returns a list of available (un-docked) docking ports for this structure or null if
+            /// there are no ports available.
+            /// </summary>
+            /// <returns></returns>
+            public List<HEBlueprintStructure> AllConnectedDockableStructures()
+            {
+                // Define a list of structures.
+                List<HEBlueprintStructure> results = new List<HEBlueprintStructure>();
+
+                List<HEBlueprintStructure> visitedStructures = null;
+
+                // Add this structure if there are available ports.
+                if (AvailableDockingPorts() != null && AvailableDockingPorts().Count() > 0 && !visitedStructures.Contains(this))
+                {
+                    results.Add(this);
+                    visitedStructures.Add(this);
+                }
+
+                //Iterate through the list of docked structures
+                foreach (HEBlueprintStructure structure in DockedStructures(AllConnected: true, incomingLink: this))
+                {
+                    if (structure.AvailableDockingPorts() != null 
+                        && structure.AvailableDockingPorts().Count() > 0
+                        && !visitedStructures.Contains(structure))
+                    {
+                        // Add to results list.
+                        results.Add(structure);
+
+                        // Add to the visitedStructures list.
+
+                    }
+                }
+                return results.Count > 0 ? results : null;
             }
 
             /// <summary>

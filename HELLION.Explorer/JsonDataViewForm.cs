@@ -69,17 +69,26 @@ namespace HELLION.Explorer
             else Text = FormTitleText;
         }
 
-
+        // This really needs to happen before form closing
         private void JsonDataViewForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
             if (IsDirty)
             {
                 // Unsaved changes, prompt the user to apply them before closing the window.
-                MessageBox.Show("Un-applied changes!");
-            }
+                DialogResult result = MessageBox.Show("Do you want to apply changes to the main file?",
+                    "Un-Applied Changes Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
 
-            
+                switch (result)
+                {
+                    case DialogResult.Cancel:
+                        return;
+
+                    case DialogResult.Yes:
+                        MessageBox.Show("User selected to apply changes.", "NonImplemented Notice",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                }
+            }
             // Remove the current JsonDataViewForm from the jsonDataViews list
             Program.jsonDataViews.Remove(this);
             GC.Collect();
