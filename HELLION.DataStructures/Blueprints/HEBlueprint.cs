@@ -375,7 +375,7 @@ namespace HELLION.DataStructures
                 // Define a list of structures.
                 List<HEBlueprintStructure> results = new List<HEBlueprintStructure>();
 
-                List<HEBlueprintStructure> visitedStructures = null;
+                List<HEBlueprintStructure> visitedStructures = new List<HEBlueprintStructure>();
 
                 // Add this structure if there are available ports.
                 if (AvailableDockingPorts() != null && AvailableDockingPorts().Count() > 0 && !visitedStructures.Contains(this))

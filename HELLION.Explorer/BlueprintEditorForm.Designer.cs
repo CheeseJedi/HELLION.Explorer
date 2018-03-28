@@ -406,6 +406,7 @@
             this.comboBoxDockingSourcePort.Name = "comboBoxDockingSourcePort";
             this.comboBoxDockingSourcePort.Size = new System.Drawing.Size(169, 21);
             this.comboBoxDockingSourcePort.TabIndex = 0;
+            this.comboBoxDockingSourcePort.SelectedIndexChanged += new System.EventHandler(this.comboBoxDockingSourcePort_SelectedIndexChanged);
             // 
             // panelToolPanel
             // 
