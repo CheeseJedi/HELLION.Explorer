@@ -83,11 +83,8 @@
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.subNodesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.updateCountsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.loadNextLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadAllLevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.expandAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collapseAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
@@ -101,6 +98,7 @@
             this.jsonDataViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -344,7 +342,7 @@
             // 
             this.cleanupToolStripMenuItem.Enabled = false;
             this.cleanupToolStripMenuItem.Name = "cleanupToolStripMenuItem";
-            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.cleanupToolStripMenuItem.Text = "Cleanup...";
             this.cleanupToolStripMenuItem.Visible = false;
             // 
@@ -352,14 +350,14 @@
             // 
             this.repairToolStripMenuItem.Enabled = false;
             this.repairToolStripMenuItem.Name = "repairToolStripMenuItem";
-            this.repairToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.repairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.repairToolStripMenuItem.Text = "Repair...";
             this.repairToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(124, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // optionsToolStripMenuItem
@@ -368,7 +366,7 @@
             this.setDataFolderLocationToolStripMenuItem,
             this.verifyDataFolderToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // setDataFolderLocationToolStripMenuItem
@@ -425,7 +423,7 @@
             // saveTestToolStripMenuItem
             // 
             this.saveTestToolStripMenuItem.Name = "saveTestToolStripMenuItem";
-            this.saveTestToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.saveTestToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveTestToolStripMenuItem.Text = "SaveTest";
             this.saveTestToolStripMenuItem.Click += new System.EventHandler(this.saveTestToolStripMenuItem_Click);
             // 
@@ -624,28 +622,14 @@
             // subNodesToolStripMenuItem
             // 
             this.subNodesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.updateCountsToolStripMenuItem1,
+            this.expandAllToolStripMenuItem,
+            this.collapseAllToolStripMenuItem,
             this.toolStripSeparator7,
             this.loadNextLevelToolStripMenuItem,
-            this.loadAllLevelsToolStripMenuItem,
-            this.toolStripSeparator9,
-            this.expandAllToolStripMenuItem,
-            this.collapseAllToolStripMenuItem});
+            this.loadAllLevelsToolStripMenuItem});
             this.subNodesToolStripMenuItem.Name = "subNodesToolStripMenuItem";
             this.subNodesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.subNodesToolStripMenuItem.Text = "Sub Nodes";
-            // 
-            // updateCountsToolStripMenuItem1
-            // 
-            this.updateCountsToolStripMenuItem1.Name = "updateCountsToolStripMenuItem1";
-            this.updateCountsToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.updateCountsToolStripMenuItem1.Text = "Update Counts";
-            this.updateCountsToolStripMenuItem1.Click += new System.EventHandler(this.updateCountsToolStripMenuItem1_Click);
-            // 
-            // toolStripSeparator7
-            // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
             // 
             // loadNextLevelToolStripMenuItem
             // 
@@ -660,11 +644,6 @@
             this.loadAllLevelsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadAllLevelsToolStripMenuItem.Text = "Load All levels";
             this.loadAllLevelsToolStripMenuItem.Click += new System.EventHandler(this.loadAllLevelsToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator9
-            // 
-            this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(177, 6);
             // 
             // expandAllToolStripMenuItem
             // 
@@ -755,6 +734,11 @@
             this.testToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Visible = false;
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(177, 6);
             // 
             // MainForm
             // 
@@ -847,13 +831,10 @@
         public System.Windows.Forms.ToolStripMenuItem loadAllLevelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem expandAllToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem collapseAllToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         public System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem jsonDataViewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem updateCountsToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         public System.Windows.Forms.ToolStripMenuItem revertToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem jumpToToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem thisObjectInSolarSystemViewToolStripMenuItem;
@@ -866,6 +847,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveTestToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem observedGUIDsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
     }
 } // End of namespace HELLION.Explorer
 

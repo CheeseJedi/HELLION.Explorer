@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.Diagnostics;  // To allow use of the Debug object
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using HELLION.DataStructures;
-//using System.IO;
-//using System.Threading.Tasks;
-//using System.Drawing;
 
 namespace HELLION.Explorer
 {
@@ -87,37 +75,37 @@ namespace HELLION.Explorer
             // Show/hide the Navigation Pane
 
             // Change the state of the bViewShowNavigationPane
-            Program.bViewShowNavigationPane = !Program.bViewShowNavigationPane;
+            Program._viewShowNavigationPane = !Program._viewShowNavigationPane;
 
-            splitContainer1.Panel1Collapsed = !Program.bViewShowNavigationPane;
-            navigationPaneToolStripMenuItem.Checked = Program.bViewShowNavigationPane;
+            splitContainer1.Panel1Collapsed = !Program._viewShowNavigationPane;
+            navigationPaneToolStripMenuItem.Checked = Program._viewShowNavigationPane;
         }
 
         private void dynamicListPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show/hide the Dynamic list (list view control)
 
-            Program.bViewShowDynamicList = !Program.bViewShowDynamicList;
+            Program._viewShowDynamicList = !Program._viewShowDynamicList;
 
-            splitContainer2.Panel1Collapsed = !Program.bViewShowDynamicList;
+            splitContainer2.Panel1Collapsed = !Program._viewShowDynamicList;
 
-            Program.bViewShowInfoPane = !splitContainer2.Panel1Collapsed;
+            Program._viewShowInfoPane = !splitContainer2.Panel1Collapsed;
 
 
-            dynamicListPaneToolStripMenuItem.Checked = Program.bViewShowDynamicList;
-            infoPaneToolStripMenuItem.Checked = Program.bViewShowInfoPane;
+            dynamicListPaneToolStripMenuItem.Checked = Program._viewShowDynamicList;
+            infoPaneToolStripMenuItem.Checked = Program._viewShowInfoPane;
         }
 
         private void infoPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show/hide the info pane
-            Program.bViewShowInfoPane = !Program.bViewShowInfoPane;
+            Program._viewShowInfoPane = !Program._viewShowInfoPane;
 
-            splitContainer2.Panel2Collapsed = !Program.bViewShowInfoPane;
-            Program.bViewShowDynamicList = !splitContainer2.Panel1Collapsed;
+            splitContainer2.Panel2Collapsed = !Program._viewShowInfoPane;
+            Program._viewShowDynamicList = !splitContainer2.Panel1Collapsed;
 
-            dynamicListPaneToolStripMenuItem.Checked = Program.bViewShowDynamicList;
-            infoPaneToolStripMenuItem.Checked = Program.bViewShowInfoPane;
+            dynamicListPaneToolStripMenuItem.Checked = Program._viewShowDynamicList;
+            infoPaneToolStripMenuItem.Checked = Program._viewShowInfoPane;
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -135,11 +123,6 @@ namespace HELLION.Explorer
             Program.VerifyGameDataFolder();
         }
 
-        private void testOption1ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.TestOption1();
-        }
-
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.ShowFindForm();
@@ -147,7 +130,7 @@ namespace HELLION.Explorer
 
         private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.frmFindForm.MainFormFindNextActivated();
+            Program.FindForm.MainFormFindNextActivated();
         }
 
         #endregion
@@ -192,9 +175,8 @@ namespace HELLION.Explorer
                         jumpToToolStripMenuItem.Enabled = true;
 
                         // GD nodes always have load items visible, even if enabled
-                        loadNextLevelToolStripMenuItem.Visible = true;
-                        loadAllLevelsToolStripMenuItem.Visible = true;
-                        toolStripSeparator9.Visible = true;
+                        loadNextLevelToolStripMenuItem.Enabled = true;
+                        loadAllLevelsToolStripMenuItem.Enabled = true;
 
                         // We're in the Game Data already, so disable selection of it
                         thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
@@ -235,9 +217,8 @@ namespace HELLION.Explorer
                         jsonDataViewToolStripMenuItem.Enabled = false;
 
                         // Solar System nodes never have load options
-                        loadNextLevelToolStripMenuItem.Visible = false;
-                        loadAllLevelsToolStripMenuItem.Visible = false;
-                        toolStripSeparator9.Visible = false;
+                        loadNextLevelToolStripMenuItem.Enabled = false;
+                        loadAllLevelsToolStripMenuItem.Enabled = false;
 
                         // We're in the Solar System already, so disable selection of it
                         thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
@@ -312,15 +293,8 @@ namespace HELLION.Explorer
                         parentCelestialBodyToolStripMenuItem.Enabled = false;
 
                         // Disable the load options
-                        loadNextLevelToolStripMenuItem.Visible = false;
-                        loadAllLevelsToolStripMenuItem.Visible = false;
-                        toolStripSeparator9.Visible = false;
-
-
-
-
-
-
+                        loadNextLevelToolStripMenuItem.Enabled = false;
+                        loadAllLevelsToolStripMenuItem.Enabled = false;
 
                     }
                     else
@@ -349,9 +323,8 @@ namespace HELLION.Explorer
                         parentCelestialBodyToolStripMenuItem.Enabled = false;
 
                         // Disable the load options
-                        loadNextLevelToolStripMenuItem.Visible = false;
-                        loadAllLevelsToolStripMenuItem.Visible = false;
-                        toolStripSeparator9.Visible = false;
+                        loadNextLevelToolStripMenuItem.Enabled = false;
+                        loadAllLevelsToolStripMenuItem.Enabled = false;
                     }
 
                     // throw new InvalidOperationException("Unexpected node type " + t.ToString());
@@ -367,10 +340,10 @@ namespace HELLION.Explorer
 
         private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (Program.frmMainForm.treeView1.SelectedNode != null)
+            if (Program.MainForm.treeView1.SelectedNode != null)
             {
                 // Cast the TreeNode to an HETreeNode to determine it's type
-                HETreeNode tempHETreeNode = (HETreeNode)Program.frmMainForm.treeView1.SelectedNode;
+                HETreeNode tempHETreeNode = (HETreeNode)Program.MainForm.treeView1.SelectedNode;
 
                 switch (tempHETreeNode.NodeType)
                 {
@@ -382,7 +355,7 @@ namespace HELLION.Explorer
                     case HETreeNodeType.JsonValue:
                         // We're in the Game Data section
 
-                        HEGameDataTreeNode tempGameDataNode = (HEGameDataTreeNode)Program.frmMainForm.treeView1.SelectedNode;
+                        HEGameDataTreeNode tempGameDataNode = (HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode;
                         if (!tempGameDataNode.ChildNodesLoaded)
                         {
                             // Load next level
@@ -486,7 +459,7 @@ namespace HELLION.Explorer
         private void loadNextLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load next level
-            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.frmMainForm.treeView1.SelectedNode;
+            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 1);
             //tempNode.UpdateCounts();
         }
@@ -494,7 +467,7 @@ namespace HELLION.Explorer
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load all levels (up to depth of 15)
-            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.frmMainForm.treeView1.SelectedNode;
+            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 15);
             //tempNode.UpdateCounts();
             tempNode.Expand();
@@ -503,46 +476,23 @@ namespace HELLION.Explorer
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Tell the node to expand all child items
-            Program.frmMainForm.treeView1.SelectedNode.ExpandAll();
+            Program.MainForm.treeView1.SelectedNode.ExpandAll();
         }
 
         private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Tell the node to expand all child items
-            Program.frmMainForm.treeView1.SelectedNode.Collapse();
+            Program.MainForm.treeView1.SelectedNode.Collapse();
         }
-
-        /*
-        private void jTokenLengthToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (treeView1.SelectedNode != null)
-            {
-                if (treeView1.SelectedNode.JData != null)
-                {
-                    Debug.Print("Node {0} has a null or empty tag", treeView1.SelectedNode.Text);
-                }
-            }
-            else
-            {
-                Debug.Print("{0} was called but there was no SelectedNode", this );
-            }
-        }
-        */
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.CreateNewJsonDataView((HEGameDataTreeNode)Program.frmMainForm.treeView1.SelectedNode);
+            Program.CreateNewJsonDataView((HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode);
         }
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Program.CreateNewBlueprintEditor((HEBlueprintTreeNode)Program.frmMainForm.treeView1.SelectedNode);
-        }
-
-        private void updateCountsToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            HETreeNode tempNode = (HETreeNode)Program.frmMainForm.treeView1.SelectedNode;
-            tempNode.UpdateCounts();
+            Program.CreateNewBlueprintEditor((HEBlueprintTreeNode)Program.MainForm.treeView1.SelectedNode);
         }
 
         private void thisObjectInSolarSystemViewToolStripMenuItem_Click(object sender, EventArgs e)

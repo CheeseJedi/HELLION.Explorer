@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using static HELLION.DataStructures.HEImageList;
 
-/// <summary>
-/// Defines a derived HETreeNode to handle objects in the Game Data view.
-/// Also defines an enum of node types applicable to the HETreeNode class.
-/// </summary>
-
 namespace HELLION.DataStructures
 {
     /// <summary>
@@ -15,6 +10,7 @@ namespace HELLION.DataStructures
     /// </summary>
     public class HETreeNode : TreeNode
     {
+        #region Constructors
         /// <summary>
         /// Default constructor, used by GameData and SolarSystem tree node derived types.
         /// </summary>
@@ -41,26 +37,83 @@ namespace HELLION.DataStructures
 
             NodeType = newNodeType;
         }
+        #endregion
 
         /// <summary>
-        /// Gets a reference to the owning object.
+        /// Stores a reference to the owning object.
         /// </summary>
         public object OwnerObject { get; protected set; } = null;
 
         /// <summary>
-        /// Gets/Sets the node type. On a Set operation it triggers the ImageIndex and SelectedImageIndex
-        /// to refresh based 
+        /// Redefines the Name accessor to track changes.
         /// </summary>
+        public new string Name
+        {
+            get { return base.Name; }
+            set
+            {
+                if (base.Name != value)
+                {
+                    base.Name = value;
+
+                    // Trigger updates here.
+                }
+            }
+        }
+
+        /// <summary>
+        /// Redefines the ToolTipText accessor to track changes.
+        /// </summary>
+        public new string Text
+        {
+            get { return base.Text; }
+            set
+            {
+                if (base.Text != value)
+                {
+                    base.Text = value;
+
+                    // Trigger updates here.
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Redefines the base's Text accessor to track changes.
+        /// </summary>
+        public new string ToolTipText
+        {
+            get { return base.ToolTipText; }
+            set
+            {
+                if (base.ToolTipText != value)
+                {
+                    base.ToolTipText = value;
+
+                    // Trigger updates here.
+
+                }
+            }
+        }
+        
+        /// <summary>
+        /// The node's HETreeNodeType type.
+        /// </summary>
+        /// <remarks>
+        /// On a Set operation it triggers the ImageIndex and SelectedImageIndex
+        /// </remarks>
+        protected HETreeNodeType _nodeType = HETreeNodeType.Unknown;
         public HETreeNodeType NodeType
         {
-            get { return nodeType; }
+            get { return _nodeType; }
             set
             {
                 // Only update the nodeType if it is different.
-                if (value != nodeType)
+                if (value != _nodeType)
                 {
-                    nodeType = value;
-                    ImageIndex = GetIconImageIndexByNodeType(nodeType);
+                    _nodeType = value;
+                    ImageIndex = GetIconImageIndexByNodeType(_nodeType);
                     SelectedImageIndex = ImageIndex;
                 }
             }
@@ -71,11 +124,8 @@ namespace HELLION.DataStructures
         /// </summary>
         public int CountOfChildNodes
         {
-            get
-            {
-                if (countOfChildNodes == null) UpdateCounts();
-                return (int)countOfChildNodes;
-            }
+            get { return GetNodeCount(includeSubTrees: false); }
+
         }
 
         /// <summary>
@@ -83,77 +133,43 @@ namespace HELLION.DataStructures
         /// </summary>
         public int CountOfAllChildNodes
         {
-            get
-            {
-                if (countOfAllChildNodes == null) UpdateCounts();
-                return (int)countOfAllChildNodes;
-            }
+            get { return GetNodeCount(includeSubTrees: true); }
         }
 
         /// <summary>
-        /// Returns a list of direct descendants
+        /// Returns a list of HETreeNodes of direct descendant nodes.
         /// </summary>
-        /// <returns>List<HETreeNode></HETreeNode></returns>
+        /// <returns>Also returns null if there are no child nodes</returns>
         public List<HETreeNode> ListOfChildNodes
         {
             get
             {
-                if (listOfChildNodes == null)
+                List<HETreeNode> _listOfChildNodes = new List<HETreeNode> { this };
+                foreach (HETreeNode child in Nodes)
                 {
-                    listOfChildNodes = new List<HETreeNode>
-                    {
-                        this
-                    };
-                    foreach (HETreeNode child in Nodes)
-                    {
-                        listOfChildNodes.Add(child);
-                    }
+                    _listOfChildNodes.Add(child);
                 }
-                return listOfChildNodes;
+                return _listOfChildNodes.Count > 0 ? _listOfChildNodes: null;
             }
         }
 
         /// <summary>
-        /// Returns a list of all child nodes via a separate recursive function
+        /// Returns a list of all child nodes via recursion.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Also returns null if there are no child nodes</returns>
         public List<HETreeNode> ListOfAllChildNodes
         {
             get
             {
-                if (listOfAllChildNodes == null)
+                List<HETreeNode> _listOfAllChildNodes = new List<HETreeNode> { this };
+                foreach (HETreeNode child in Nodes)
                 {
-                    listOfAllChildNodes = GetAllNodes();
+                    _listOfAllChildNodes.AddRange(child.ListOfAllChildNodes);
                 }
-                return listOfAllChildNodes;
+                return _listOfAllChildNodes.Count > 0 ? _listOfAllChildNodes: null;
             }
         }
 
-        /// <summary>
-        /// The type of the HETreeNode
-        /// </summary>
-        private HETreeNodeType nodeType = HETreeNodeType.Unknown;
-
-        /// <summary>
-        /// The cached count of direct child nodes. null means no data is cached.
-        /// </summary>
-        private int? countOfChildNodes = null;
-
-        /// <summary>
-        /// The cached count of all child nodes (including sub nodes). null means no data is cached.
-        /// </summary>
-        private int? countOfAllChildNodes = null;
-
-        /// <summary>
-        /// The cached list of direct child nodes. A value of null means no data is cached.
-        /// </summary>
-        private List<HETreeNode> listOfChildNodes = null;
-
-        /// <summary>
-        /// The cached list of all child nodes (including sub nodes). A value of null means no data is cached.
-        /// </summary>
-        private List<HETreeNode> listOfAllChildNodes = null;
-        
         /// <summary>
         /// Gets the first node that matches the given key in the current nodes children.
         /// </summary>
@@ -167,69 +183,36 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Returns the FullPath of this node, minus the node name and last path separator.
-        /// </summary>
-        /// <returns></returns>
-        public string Path()
-        {
-            string fullPath = FullPath;
-            int lastIndex = fullPath.LastIndexOf(TreeView.PathSeparator);
-            // Ensure the lastIndex is not -1
-            lastIndex = lastIndex != -1 ? lastIndex : 0;
-            return fullPath.Substring(0, lastIndex);
-        }
-
-        /// <summary>
-        /// Used to reset the counts and lists back to uninitialised state.
-        /// This is intended to be called by a newly-added child node upon adding to this
-        /// node's Nodes TreeNodeCollection and will ensure the regeneration of this
-        /// data next time it's needed.
-        /// </summary>
-        public void ClearCachedData()
-        {
-            countOfChildNodes = null;
-            countOfAllChildNodes = null;
-            listOfChildNodes = null;
-            listOfAllChildNodes = null;
-        }
-
-        /// <summary>
-        /// Updates the counts of sub nodes for this child (recursive).
+        /// Returns the Path of this node, with reference to the TreeView control.
         /// </summary>
         /// <remarks>
-        /// As this is recursive it can take a while on large trees.
+        /// Returns FullPath but strips off the node name and last path separator.
         /// </remarks>
-        public void UpdateCounts()
+        public string Path
         {
-            countOfChildNodes = GetNodeCount(includeSubTrees: false);
-            countOfAllChildNodes = GetNodeCount(includeSubTrees: true);
-
-            if (CountOfChildNodes > 0)
+            get
             {
-                // This node has child nodes, recursively process them
-                foreach (HETreeNode nChildNode in Nodes)
-                {
-                    nChildNode.UpdateCounts();
-                }
+                string fullPath = FullPath;
+                int lastIndex = fullPath.LastIndexOf(TreeView.PathSeparator);
+                // Ensure the lastIndex is not -1, present zero instead.
+                lastIndex = lastIndex != -1 ? lastIndex : 0;
+                return fullPath.Substring(0, lastIndex);
             }
         }
 
         /// <summary>
-        /// Returns a List(HETreeNode) of nodes containing this node plus all descendants.
+        /// Re-generates the text displayed in the label of the tree node. 
         /// </summary>
-        /// <returns></returns>
-        private List<HETreeNode> GetAllNodes()
+        protected void RefreshText()
         {
-            List<HETreeNode> result = new List<HETreeNode>
-            {
-                this
-            };
-            foreach (HETreeNode child in Nodes)
-            {
-                result.AddRange(child.GetAllNodes());
-            }
-            return result;
+
         }
+        protected void RefreshToolTipText()
+        {
+
+        }
+
+
 
     }
 }

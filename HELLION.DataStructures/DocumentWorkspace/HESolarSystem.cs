@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
 using System.Windows.Forms;
+using Newtonsoft.Json.Linq;
 
 namespace HELLION.DataStructures
 {
@@ -15,21 +13,6 @@ namespace HELLION.DataStructures
     /// </summary>
     public class HESolarSystem
     {
-        /// <summary>
-        /// Root node of the Solar System tree.
-        /// </summary>
-        public HESolarSystemTreeNode RootNode { get; set; } = null;
-
-        /// <summary>
-        /// Used to store a reference to the GameData object.
-        /// </summary>
-        public HEGameData GameData { get; protected set; } = null;
-
-        /// <summary>
-        /// A list of all nodes in the Solar System, except the solar system root node.
-        /// </summary>
-        // public List<HESolarSystemTreeNode> SolarSystemNodes { get; private set; } = null;
-
         /// <summary>
         /// Constructor that takes an HEGameData object and uses this as it's data source.
         /// </summary>
@@ -55,20 +38,21 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Handles closing of the Solar System object. Sets RootNode to null.
+        /// Used to store a reference to the GameData object.
         /// </summary>
-        public void Close()
-        {
-            RootNode = null;
-        }
-        
+        public HEGameData GameData { get; protected set; } = null;
+
+        /// <summary>
+        /// Root node of the Solar System tree.
+        /// </summary>
+        public HESolarSystemTreeNode RootNode { get; set; } = null;
+
         /// <summary>
         /// Builds tree nodes from the GameData nodes, with cross-references
         /// </summary>
         public void BuildSolarSystem()
         {
             // Basic operation
-            //
             // The following types of HESolarSystemTreeNodes to be created as child nodes of the
             // Solar System root node, then the hierarchy will be applied and nodes re-parented
             // to the appropriate place.
@@ -92,9 +76,6 @@ namespace HELLION.DataStructures
 
             // 6. Rehydrate docked ship/module structure.
             RehydrateDockedShips();
-
-            // 7. Trigger the root node to recursively update the node counts.
-            // RootNode.UpdateCounts();
 
         }
 
@@ -181,15 +162,16 @@ namespace HELLION.DataStructures
                     if (findKey == "") throw new Exception("findKey was empty.");
 
                     TreeNode[] tmpMatches = GameData.SaveFile.RootNode.Nodes.Find(findKey, searchAllChildren: false);
-
+                    /*
                     HEGameDataTreeNode sectionRootNode = null;
                     foreach (var match in tmpMatches)
                     {
                         sectionRootNode = (HEGameDataTreeNode)match;
                         break;
                     }
-                    if (sectionRootNode == null) throw new NullReferenceException("sectionRootNode was null.");
-
+                    */
+                    HEGameDataTreeNode sectionRootNode = tmpMatches.Count() > 0 ? (HEGameDataTreeNode)tmpMatches[0] : throw new NullReferenceException("sectionRootNode was null.");
+                    /*
                     HEGameDataTreeNode arrayRootNode = null;
                     foreach (var match2 in sectionRootNode.Nodes)
                     {
@@ -197,8 +179,8 @@ namespace HELLION.DataStructures
                         break;
                     }
                     if (arrayRootNode == null) throw new NullReferenceException("subRootNode was null.");
-
-                    
+                    */
+                    HEGameDataTreeNode arrayRootNode = sectionRootNode.Nodes.Count > 0 ? (HEGameDataTreeNode)sectionRootNode.Nodes[0] : throw new NullReferenceException("subRootNode was null.");
 
                     foreach (HEGameDataTreeNode node in arrayRootNode.Nodes)
                     {
@@ -207,7 +189,6 @@ namespace HELLION.DataStructures
                         long newNodeFakeGUID = 0;
                         JToken testToken = obj["ParentGUID"];
                         if (testToken != null) newNodeParentGUID = (long)obj["ParentGUID"];
-
 
                         testToken = obj["FakeGUID"];
                         if (testToken != null) newNodeFakeGUID = (long)obj["FakeGUID"];
@@ -267,9 +248,6 @@ namespace HELLION.DataStructures
                         // Add the ship being re-parented to the new parent's node collection.
                         newParentNode.Nodes.Add(node);
 
-                        // As both parent's node collections have changed, clear their cache to force regeneration.
-                        currentParentNode.ClearCachedData();
-                        newParentNode.ClearCachedData();
                     }
                     catch (Exception e)
                     {
@@ -312,22 +290,24 @@ namespace HELLION.DataStructures
                         .Cast<HESolarSystemTreeNode>()
                         .Where(p => p.GUID == node.DockedToShipGUID)
                         .Single(); 
-                    // If the .Single() causes an exception, there's more than one module docked to that port!
+                    // If the .Single() causes an exception, there's not exactly one module docked to that port!
 
                     // Remove the ship to be re-parented from it's current parent's node collection.
                     node.Parent.Nodes.Remove(node);
                     // Add the ship being re-parented to the new parent's node collection.
                     newParentNode.Nodes.Add(node);
-                    // As the new parent's node collection has changed, clear it's cache to force regeneration.
-                    newParentNode.ClearCachedData();
                 }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
+                else throw new InvalidOperationException();
             }
         }
 
-        
+        /// <summary>
+        /// Handles closing of the Solar System object. Sets RootNode to null.
+        /// </summary>
+        public void Close()
+        {
+            RootNode = null;
+        }
+
     }
 }

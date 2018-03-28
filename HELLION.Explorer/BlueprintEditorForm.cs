@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 
@@ -20,13 +18,14 @@ namespace HELLION.Explorer
 
         }
 
+        #region Constructors
         /// <summary>
         /// Basic Constructor.
         /// </summary>
         public BlueprintEditorForm()
         {
             InitializeComponent();
-            Icon = Program.frmMainForm.Icon;
+            Icon = Program.MainForm.Icon;
 
             treeViewHierarchy.ImageList = Program.hEImageList.IconImageList;
             //treeView1.ImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
@@ -36,7 +35,7 @@ namespace HELLION.Explorer
             Text = "Blueprint Editor";
             RefreshDropDownModuleTypes();
             RefreshDropDownDockingDestinationSource();
-            GenerateDestinationStructureList();
+            RefreshDestinationStructureList();
 
             //
         }
@@ -60,7 +59,9 @@ namespace HELLION.Explorer
 
             IsDirty = false;
         }
+        #endregion
 
+        #region Core variables
         /// <summary>
         /// The node that the editor was opened from.
         /// </summary>
@@ -84,6 +85,21 @@ namespace HELLION.Explorer
             }
         }
 
+        /// <summary>
+        /// Stores the form's initial title text.
+        /// </summary>
+        private string FormTitleText = null;
+        /// <summary>
+        /// A reference to the jsonBlueprintFile the blueprint is from.
+        /// </summary>
+        private HEJsonBlueprintFile jsonBlueprintFile = null;
+        /// <summary>
+        /// A reference to the blueprint object being worked on.
+        /// </summary>
+        private HEBlueprint blueprint = null;
+        #endregion
+
+        #region Docking Related Properties
         /// <summary>
         /// Represents the currently selected tree node.
         /// </summary>
@@ -113,57 +129,27 @@ namespace HELLION.Explorer
                             CurrentDockingPort = null;
                             CurrentStructure = (HEBlueprint.HEBlueprintStructure)_currentlySelectedNode.OwnerObject;
                         }
-                        else  throw new InvalidOperationException("Unrecognised OwnerObject type.");
+                        else throw new InvalidOperationException("Unrecognised OwnerObject type.");
 
                         // Update form items related to the currently selected object.
-                        pictureBoxSelectedStructure.Image = CurrentStructure == null ? null 
-                            : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(CurrentStructure.StructureType.Value)];
+                        //pictureBoxSelectedStructure.Image = CurrentStructure == null ? null 
+                        //    : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(CurrentStructure.StructureType.Value)];
 
-                        labelSelectedStructureType.Text = CurrentStructure == null ? null : CurrentStructure.StructureType.ToString();
+                        // labelSelectedStructureType.Text = CurrentStructure == null ? null : CurrentStructure.StructureType.ToString();
                     }
-                    else
+                    //else
                     {
                         // No currently selected node, clear the displays.
-                        pictureBoxSelectedStructure.Image = null;
-                        labelSelectedStructureType.Text = null;
+                        //pictureBoxSelectedStructure.Image = null;
+                        //labelSelectedStructureType.Text = null;
                     }
-                    RefreshDropDownDockingSourcePort();
+                    //RefreshPictureBoxSelectedStructure();
+                    //RefreshLabelSelectedStructureType();
+
+                    //RefreshDropDownDockingSourcePort();
                     
-                    RefreshDropDownDestinationStructures();
-                    RefreshDropDownDockingDestinationPort();
-                }
-            }
-        }
-
-        /// <summary>
-        /// This list is populated with structures that are available for a docking.
-        /// </summary>
-        private List<HEBlueprint.HEBlueprintStructure> destinationStructureList = null;
-        public List<HEBlueprint.HEBlueprintStructure> DestinationStructureList
-        {
-            get { return destinationStructureList; }
-            private set
-            {
-                destinationStructureList = value;
-                // The list has changed so trigger a refresh of the control's values.
-                RefreshDropDownDestinationStructures();
-            }
-        }
-
-        /// <summary>
-        /// Represents the currently selected source for dockable modules.
-        /// </summary>
-        private DockingDestSourceFilterType _dockingDestinationSource;
-        public DockingDestSourceFilterType DockingDestinationSource
-        {
-            get { return _dockingDestinationSource; }
-            private set
-            {
-                if (_dockingDestinationSource != value)
-                {
-                    _dockingDestinationSource = value;
-
-                    // Trigger control update.
+                    //RefreshDropDownDestinationStructures();
+                    //RefreshDropDownDockingDestinationPort();
                 }
             }
         }
@@ -182,6 +168,10 @@ namespace HELLION.Explorer
                     _currentStructure = value;
 
                     // Trigger updates.
+                    RefreshPictureBoxSelectedStructure();
+                    RefreshLabelSelectedStructureType();
+
+                    RefreshDropDownDockingSourcePort();
                 }
             }
         }
@@ -205,6 +195,44 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
+        /// Represents the currently selected source for dockable modules.
+        /// </summary>
+        private DockingDestSourceFilterType _dockingDestinationSource;
+        public DockingDestSourceFilterType DockingDestinationSource
+        {
+            get { return _dockingDestinationSource; }
+            private set
+            {
+                if (_dockingDestinationSource != value)
+                {
+                    _dockingDestinationSource = value;
+
+                    // Trigger control update.
+                    RefreshDropDownDestinationStructures();
+                    RefreshDropDownDockingDestinationPort();
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// This list is populated with structures that are available for a docking.
+        /// </summary>
+        private List<HEBlueprint.HEBlueprintStructure> destinationStructureList = null;
+        public List<HEBlueprint.HEBlueprintStructure> DestinationStructureList
+        {
+            get { return destinationStructureList; }
+            private set
+            {
+                destinationStructureList = value;
+                // The list has changed so trigger a refresh of the control's values.
+                RefreshDropDownDestinationStructures();
+                //RefreshDropDownDockingDestinationPort();
+
+            }
+        }
+
+        /// <summary>
         /// Represents the selected destination structure for docking.
         /// </summary>
         private HEBlueprint.HEBlueprintStructure _destinationStructure = null;
@@ -218,6 +246,7 @@ namespace HELLION.Explorer
                     _destinationStructure = value;
 
                     // Trigger updates.
+                    // RefreshDropDownDestinationStructures();
                     RefreshDropDownDockingDestinationPort();
                 }
             }
@@ -237,22 +266,32 @@ namespace HELLION.Explorer
                     _destinationDockingPort = value;
 
                     // Trigger updates.
+
+                    // check all structures and ports are valid before enabling the dock button.
+
+
                 }
             }
         }
+        #endregion
+
+        #region Refresh Methods
+        /// <summary>
+        /// Updates the image displayed by the picture box based on the currently selected structure.
+        /// </summary>
+        private void RefreshPictureBoxSelectedStructure()
+        {
+            pictureBoxSelectedStructure.Image = CurrentStructure == null ? null 
+                            : Program.hEImageList.StructureImageList.Images [HEImageList.GetStructureImageIndexByStructureType(CurrentStructure.StructureType.Value)];
+        }
 
         /// <summary>
-        /// Stores the form's initial title text.
+        /// Updates the label text for the selected structure type.
         /// </summary>
-        private string FormTitleText = null;
-        /// <summary>
-        /// A reference to the jsonBlueprintFile the blueprint is from.
-        /// </summary>
-        private HEJsonBlueprintFile jsonBlueprintFile = null;
-        /// <summary>
-        /// A reference to the blueprint object being worked on.
-        /// </summary>
-        private HEBlueprint blueprint = null;
+        private void RefreshLabelSelectedStructureType()
+        {
+            labelSelectedStructureType.Text = CurrentStructure == null ? null : CurrentStructure.StructureType.ToString();
+        }
 
         /// <summary>
         /// Updates the form's title text with a marker if the object is dirty.
@@ -260,32 +299,6 @@ namespace HELLION.Explorer
         private void RefreshBlueprintEditorFormTitleText()
         {
             Text = IsDirty ? FormTitleText + "*" : FormTitleText;
-        }
-
-        /// <summary>
-        /// Grafts a node tree inbound from the Main Form.
-        /// </summary>
-        private void GraftTreeInbound()
-        {
-            HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
-            if (drn != null)
-            {
-                blueprint.RootNode.Nodes.Remove(drn);
-                treeViewHierarchy.Nodes.Add(drn);
-            }
-        }
-
-        /// <summary>
-        /// Grafts a node tree outbound from the Main Form.
-        /// </summary>
-        private void GraftTreeOutbound()
-        {
-            HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
-            if (drn != null)
-            {
-                treeViewHierarchy.Nodes.Remove(drn);
-                blueprint.RootNode.Nodes.Add(drn);
-            }
         }
 
         /// <summary>
@@ -369,7 +382,6 @@ namespace HELLION.Explorer
             comboBoxDockingDestinationStructure.SelectedIndex = 0;
         }
 
-
         /// <summary>
         /// NOT FINISHED!
         /// </summary>
@@ -400,14 +412,11 @@ namespace HELLION.Explorer
             }
         }
 
-
-
-
         /// <summary>
         /// Generates a new list of structures with available docking ports based on the 
         /// specified filter (in the filter drop down)
         /// </summary>
-        public void GenerateDestinationStructureList()
+        public void RefreshDestinationStructureList()
         {
             // Create a new list to hold the results.
             List<HEBlueprint.HEBlueprintStructure> newStructureList = new List<HEBlueprint.HEBlueprintStructure>();
@@ -450,6 +459,148 @@ namespace HELLION.Explorer
             // Set the DestinationStructureList.
             DestinationStructureList = newStructureList.Count > 0 ? newStructureList : null;
         }
+        #endregion
+
+        #region TreeNode Grafting
+        /// <summary>
+        /// Grafts a node tree inbound from the Main Form.
+        /// </summary>
+        private void GraftTreeInbound()
+        {
+            HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
+            if (drn != null)
+            {
+                blueprint.RootNode.Nodes.Remove(drn);
+                treeViewHierarchy.Nodes.Add(drn);
+            }
+        }
+
+        /// <summary>
+        /// Grafts a node tree outbound from the Main Form.
+        /// </summary>
+        private void GraftTreeOutbound()
+        {
+            HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
+            if (drn != null)
+            {
+                treeViewHierarchy.Nodes.Remove(drn);
+                blueprint.RootNode.Nodes.Add(drn);
+            }
+        }
+        #endregion
+
+        #region ToolPane ComboBoxes
+        /// <summary>
+        /// Tracks currently selected item in the comboBoxStructureList and enables the 
+        /// Add structure button if the selected item is non-zero (not the 'Unspecified'
+        /// default choice.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBoxStructureList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            buttonAddStructure.Enabled = comboBoxStructureList.SelectedIndex != 0 ? true : false;
+        }
+
+        private void comboBoxDockingSourcePort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBoxDockingDestinationSource_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (blueprint != null)
+            {
+                // DockingDestSourceFilterType
+                //DockingDestSourceFilterType newStructureType = (DockingDestSourceFilterType)Enum.Parse(
+                //    typeof(DockingDestSourceFilterType), (string)comboBoxDockingDestinationSource.SelectedItem);
+                DockingDestSourceFilterType dockDestSourceValue;
+                if (Enum.TryParse((string)comboBoxDockingDestinationSource.SelectedItem, false, out dockDestSourceValue))
+                {
+                    DockingDestinationSource = dockDestSourceValue;
+                }
+                else throw new InvalidOperationException("Unable to parse Docking Destination Source.");
+            }
+        }
+
+        private void comboBoxDockingDestinationStructure_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // update the list of ports drop down.
+            if (blueprint != null)
+            {
+                /*
+                HEBlueprint.HEBlueprintStructure dockDestStructureValue;
+                if (Enum.TryParse((string)comboBoxDockingDestinationStructure.SelectedItem, false, out dockDestStructureValue))
+                {
+                    DestinationStructure = dockDestStructureValue;
+                }
+                else throw new InvalidOperationException("Unable to parse Docking Destination Source.");
+                */
+            }
+        }
+
+        private void comboBoxDockingDestinationPort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // if a valid port is selected, enable the Dock button.
+        }
+        #endregion
+
+        #region Tool Pane Buttons
+        /// <summary>
+        /// Adds a new structure of the type specified in the comboBoxStructureList.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonAddStructure_Click(object sender, EventArgs e)
+        {
+            if (blueprint != null && (string)comboBoxStructureList.SelectedItem != "Unspecified")
+            {
+                // Do something - create the new structure in the blueprint.
+                HEBlueprintStructureTypes newStructureType = (HEBlueprintStructureTypes)Enum.Parse(
+                    typeof(HEBlueprintStructureTypes), (string)comboBoxStructureList.SelectedItem);
+
+                HEBlueprint.HEBlueprintStructure newStructure = blueprint.AddStructure(newStructureType);
+                treeViewHierarchy.Nodes.Add(newStructure.RootNode);
+
+                // Select the new node
+                treeViewHierarchy.SelectedNode = newStructure.RootNode;
+
+            }
+        }
+
+        private void buttonRemoveStructure_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonUndockPort_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("User selected UndockPort button.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void buttonDockPort_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("User selected DockPort.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        #endregion
+
+        #region Form Controls
+        /// <summary>
+        /// Triggers an update of the currentlySelectedNode.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void treeViewHierarchy_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            // Update the info display for the selected item.
+            CurrentlySelectedNode = (HEBlueprintTreeNode)treeViewHierarchy.SelectedNode;
+        }
 
         /// <summary>
         /// Form Closing IsDirty check with prompt to save changes.
@@ -488,9 +639,9 @@ namespace HELLION.Explorer
             GC.Collect();
 
         }
+        #endregion
 
         #region Form Menu Items
-
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (treeViewHierarchy.SelectedNode != null) treeViewHierarchy.SelectedNode.ExpandAll();
@@ -523,111 +674,6 @@ namespace HELLION.Explorer
         {
             Close();
         }
-
-        /// <summary>
-        /// Tracks currently selected item in the comboBoxStructureList and enables the 
-        /// Add structure button if the selected item is non-zero (not the 'Unspecified'
-        /// default choice.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void comboBoxStructureList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            buttonAddStructure.Enabled = comboBoxStructureList.SelectedIndex != 0 ? true : false;
-        }
-
-        #endregion
-
-
-
-        #region ToolPane
-
-        /// <summary>
-        /// Triggers an update of the currentlySelectedNode.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void treeViewHierarchy_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            // Update the info display for the selected item.
-            CurrentlySelectedNode = (HEBlueprintTreeNode)treeViewHierarchy.SelectedNode;
-        }
-
-        /// <summary>
-        /// Adds a new structure of the type specified in the comboBoxStructureList.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void buttonAddStructure_Click(object sender, EventArgs e)
-        {
-            if (blueprint != null && (string)comboBoxStructureList.SelectedItem != "Unspecified" )
-            {
-                // Do something - create the new structure in the blueprint.
-                HEBlueprintStructureTypes newStructureType = (HEBlueprintStructureTypes)Enum.Parse(
-                    typeof(HEBlueprintStructureTypes), (string)comboBoxStructureList.SelectedItem);
-
-                HEBlueprint.HEBlueprintStructure newStructure = blueprint.AddStructure(newStructureType);
-                treeViewHierarchy.Nodes.Add(newStructure.RootNode);
-
-                // Select the new node
-                treeViewHierarchy.SelectedNode = newStructure.RootNode;
-
-            }
-        }
-
-        private void comboBoxDockingSourcePort_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void comboBoxDockingDestinationSource_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (blueprint != null)
-            {
-                // DockingDestSourceFilterType
-                //DockingDestSourceFilterType newStructureType = (DockingDestSourceFilterType)Enum.Parse(
-                //    typeof(DockingDestSourceFilterType), (string)comboBoxDockingDestinationSource.SelectedItem);
-                DockingDestSourceFilterType dockDestSourceValue;
-                if (Enum.TryParse((string)comboBoxDockingDestinationSource.SelectedItem, false, out dockDestSourceValue))
-                {
-                    DockingDestinationSource = dockDestSourceValue;
-                }
-                else throw new InvalidOperationException("Unable to parse Docking Destination Source.");
-            }
-        }
-
-        private void comboBoxDockingDestinationStructure_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // update the list of ports drop down.
-        }
-
-        private void comboBoxDockingDestinationPort_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // if a valid port is selected, enable the Dock button.
-        }
-
-
-
-        private void buttonRemoveStructure_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonUndockPort_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("User selected UndockPort button.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void buttonDockPort_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("User selected DockPort.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
         #endregion
 
     }

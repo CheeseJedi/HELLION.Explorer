@@ -26,36 +26,17 @@ namespace HELLION.Explorer
     /// </remarks>
     static class Program
     {
-        /// <summary>
-        /// Defines the main form object.
-        /// </summary>
-        internal static MainForm frmMainForm { get; private set; }
+        #region Form Related Objects
 
         /// <summary>
         /// Defines the main form object.
         /// </summary>
-        internal static FindForm frmFindForm { get; private set; }
+        internal static MainForm MainForm { get;  private set; }
 
         /// <summary>
-        /// Defines an object to hold the current open document
+        /// Defines the main form object.
         /// </summary>
-        internal static HEDocumentWorkspace docCurrent = null;
-
-        /// <summary>
-        /// Initialises an HEImageList object to supply the image list to the tree view and
-        /// list view controls, plus anywhere else the images may be used.
-        /// </summary>
-        internal static HEImageList hEImageList = new HEImageList();
-
-        /// <summary>
-        /// Defines an ImageList and set it to the HEImageList
-        /// </summary>
-        internal static ImageList ilObjectTypesImageList = hEImageList.IconImageList;
-
-        /// <summary>
-        /// Initialise an HEUpdateChecker object and specify the GitHub user name and repository name.
-        /// </summary>
-        internal static HEUpdateChecker hEUpdateChecker = new HEUpdateChecker("CheeseJedi", "HELLION.Explorer");
+        internal static FindForm FindForm { get;  private set; }
 
         /// <summary>
         /// Reference to the current ObservedGuidsForm, only valid if a document is open.
@@ -63,34 +44,18 @@ namespace HELLION.Explorer
         internal static ObservedGuidsForm ObservedGuidsForm = null;
 
         /// <summary>
-        /// Used to trigger debugging comments
+        /// Holds a list of the JsonDataViewForm windows that have been created.
         /// </summary>
-        //internal static bool bLogToDebug = false;
+        internal static List<JsonDataViewForm> jsonDataViews = new List<JsonDataViewForm>();
 
         /// <summary>
-        /// Determines whether the Navigation Pane (the split that contains the tree view control) is visible.
+        /// Holds a list of the BlueprintEditorForm windows that have been created.
         /// </summary>
-        internal static bool bViewShowNavigationPane = true;
+        internal static List<BlueprintEditorForm> blueprintEditorForms = new List<BlueprintEditorForm>();
 
-        /// <summary>
-        /// Determines whether the Dynamic List (the split that contains the list view control) is visible.
-        /// </summary>
-        /// <remarks>
-        /// The Dynamic List and the Info Pane share a split container, and trying to set both to not visible
-        /// will result in the underlying Split control re-activating the other split, so at least one split is
-        /// visible at one time. TODO: Some better logic to handle this will be required.
-        /// </remarks>
-        internal static bool bViewShowDynamicList = true;
+        #endregion
 
-        /// <summary>
-        /// Determines whether the Info Pane (the split that contains the tab control of info text, is visible.
-        /// </summary>
-        /// <remarks>
-        /// The Dynamic List and the Info Pane share a split container, and trying to set both to not visible
-        /// will result in the underlying Split control re-activating the other split, so at least one split is
-        /// visible at one time. TODO: Some better logic to handle this will be required.
-        /// </remarks>
-        internal static bool bViewShowInfoPane = true;
+        #region File Handling Objects
 
         /// <summary>
         /// The DirectoryInfo object representing the Static Data directory.
@@ -103,15 +68,276 @@ namespace HELLION.Explorer
         internal static FileInfo saveFileInfo = null;
 
         /// <summary>
-        /// Holds a list of the JsonDataViewForm windows that have been created
+        /// Defines an object to hold the current open document
         /// </summary>
-        internal static List<JsonDataViewForm> jsonDataViews = new List<JsonDataViewForm>();
+        internal static HEDocumentWorkspace docCurrent = null;
+
+        #endregion
+
+        #region View Settings
 
         /// <summary>
-        /// 
+        /// Determines whether the Navigation Pane (the split that contains the tree view control) is visible.
         /// </summary>
-        internal static List<BlueprintEditorForm> blueprintEditorForms = new List<BlueprintEditorForm>();
-        
+        internal static bool _viewShowNavigationPane = true;
+
+        /// <summary>
+        /// Determines whether the Dynamic List (the split that contains the list view control) is visible.
+        /// </summary>
+        /// <remarks>
+        /// The Dynamic List and the Info Pane share a split container, and trying to set both to not visible
+        /// will result in the underlying Split control re-activating the other split, so at least one split is
+        /// visible at one time. TODO: Some better logic to handle this will be required.
+        /// </remarks>
+        internal static bool _viewShowDynamicList = true;
+
+        /// <summary>
+        /// Determines whether the Info Pane (the split that contains the tab control of info text, is visible.
+        /// </summary>
+        /// <remarks>
+        /// The Dynamic List and the Info Pane share a split container, and trying to set both to not visible
+        /// will result in the underlying Split control re-activating the other split, so at least one split is
+        /// visible at one time. TODO: Some better logic to handle this will be required.
+        /// </remarks>
+        internal static bool _viewShowInfoPane = true;
+
+        #endregion
+
+        #region Misc Objects
+
+        /// <summary>
+        /// Initialise an HEUpdateChecker object and specify the GitHub user name and repository name.
+        /// </summary>
+        internal static HEUpdateChecker hEUpdateChecker = new HEUpdateChecker
+            ("CheeseJedi", "HELLION.Explorer");
+
+        /// <summary>
+        /// Initialises an HEImageList object to supply the image list to the tree view and
+        /// list view controls, plus anywhere else the images may be used.
+        /// </summary>
+        internal static HEImageList hEImageList = new HEImageList();
+
+        /// <summary>
+        /// Defines an ImageList and set it to the HEImageList
+        /// </summary>
+        internal static ImageList ilObjectTypesImageList = hEImageList.IconImageList;
+
+        #endregion
+
+        #region New SubForm Creation
+
+        /// <summary>
+        /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
+        /// </summary>
+        /// <param name="nSelectedNode"></param>
+        internal static void CreateNewJsonDataView(HEGameDataTreeNode nSelectedNode)
+        {
+            if (nSelectedNode != null && nSelectedNode.JData != null)
+            {
+                // Look for an existing form for this node.
+                JsonDataViewForm newDataView = null;
+                foreach (JsonDataViewForm form in jsonDataViews)
+                {
+                    if (form.SourceNode == nSelectedNode)
+                    {
+                        newDataView = form;
+                        break;
+                    }
+                }
+
+                if (newDataView == null)
+                {
+                    // No existing form for this node was found, create a new one.
+                    newDataView = new JsonDataViewForm(nSelectedNode);
+
+                    // Add the form to the jsonDataViews list.
+                    jsonDataViews.Add(newDataView);
+                }
+
+                // Show the form.
+                newDataView.Show();
+                newDataView.Activate();
+            }
+        }
+
+        /// <summary>
+        /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
+        /// </summary>
+        /// <param name="selectedNode"></param>
+        internal static void CreateNewBlueprintEditor(HEBlueprintTreeNode selectedNode)
+        {
+            if (selectedNode != null)
+            {
+                // Look for an existing form for this node.
+                BlueprintEditorForm newBlueprintEditorForm = null;
+                foreach (BlueprintEditorForm form in blueprintEditorForms)
+                {
+                    if (form.SourceNode == selectedNode)
+                    {
+                        newBlueprintEditorForm = form;
+                        break;
+                    }
+                }
+
+                if (newBlueprintEditorForm == null)
+                {
+                    // No existing form for this node was found, create a new one.
+                    newBlueprintEditorForm = new BlueprintEditorForm(selectedNode);
+
+                    // Add the form to the jsonDataViews list.
+                    blueprintEditorForms.Add(newBlueprintEditorForm);
+                }
+
+                // Show the form.
+                newBlueprintEditorForm.Show();
+                newBlueprintEditorForm.Activate();
+            }
+        }
+
+        #endregion
+
+        #region Misc Methods
+
+        /// <summary>
+        /// Processes any command line arguments issued to the program.
+        /// </summary>
+        /// <remarks>
+        /// Hellion.Explorer.exe [(full file name of .save file to open)] [/data (full path to the dedi's Data folder)]
+        /// 1 argument - just the .save file, Data folder needs to be already defined
+        /// 2 arguments - Sets the data folder path 
+        /// 3 arguments - Sets the data folder path and opens the .save file
+        /// </remarks>
+        /// <param name="arguments"></param>
+        internal static void ProcessCommandLineArguments(string[] arguments)
+        {
+            if (arguments.Length > 0)
+            {
+                // There are arguments 
+                string saveFilePath = "";
+                string dataFolderPath = "";
+                string helpText = Application.ProductName + ".exe [<full file name of .save file to open>] [/data <full path to the dedi's Data folder>]";
+
+                for (int i = 0; i < arguments.Length; i++)
+                {
+                    // Try to figure out what's in this argument
+                    if (arguments[i].EndsWith(".save", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        // It's a .save file
+                        saveFilePath = arguments[i];
+                        Console.WriteLine("Argument: Save File " + saveFilePath);
+                    }
+                    else if (arguments[i].Equals("/data", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        // It's the /data argument, increment i by one to prevent the next element being
+                        // processed in case there are other(?) arguments.
+                        i++;
+                        dataFolderPath = arguments[i];
+                        Console.WriteLine("Argument: Data Folder " + dataFolderPath);
+                    }
+                    else if (arguments[i].Equals("/?") || arguments[i].ToLower().Contains("help"))
+                    {
+                        Console.WriteLine(helpText);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unexpected Argument: " + arguments[i]);
+                        Console.WriteLine("Use /? or /help to show available arguments.");
+                    }
+                }
+
+                if (dataFolderPath != "")
+                {
+                    // Set the Data folder
+                    SetGameDataFolder(dataFolderPath);
+                }
+
+                if (saveFilePath != "")
+                {
+                    // Open the .save file
+                    FileOpen(saveFilePath);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Generates the About dialog text, to be returned to the user by the program in a
+        /// MessageBox.
+        /// </summary>
+        /// <returns></returns>
+        internal static string GenerateAboutBoxText()
+        {
+            // Define a StringBuilder to hold the string to be sent to the dialog box
+            StringBuilder sb = new StringBuilder();
+
+            // Create a 'shorthand' for the new line character appropriate for this environment
+            string sNL = Environment.NewLine;
+            string sNL2 = sNL + sNL;
+
+            // Assemble the About dialog text
+            sb.Append(sNL);
+
+            // Add the product name and version
+            sb.Append(Application.ProductName);
+            sb.Append("   Version ");
+            sb.Append(Application.ProductVersion);
+            sb.Append(sNL2);
+
+            // Add version information for HELLION.DataStructures.dll
+            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEUtilities)).GetName();
+            sb.Append(anHELLIONDataStructures.Name);
+            sb.Append("   Version ");
+            sb.Append(anHELLIONDataStructures.Version);
+            sb.Append(sNL);
+
+            // Add version information for NewtonsoftJson.dll -  this is inaccurate and only reports v 10.0.0
+            var anNewtonsoftJson = System.Reflection.Assembly.GetAssembly(typeof(JObject)).GetName();
+            sb.Append(anNewtonsoftJson.Name);
+            sb.Append("   Version ");
+            sb.Append(anNewtonsoftJson.Version);
+            sb.Append(sNL);
+
+            // Add version information for FastColoredTextBox.dll
+            var anFastColoredTextBox = System.Reflection.Assembly.GetAssembly(typeof(FastColoredTextBoxNS.FastColoredTextBox)).GetName();
+            sb.Append(anFastColoredTextBox.Name);
+            sb.Append("   Version ");
+            sb.Append(anFastColoredTextBox.Version);
+            sb.Append(sNL2);
+
+            // Add an estimate of current memory usage from the garbage collector
+            sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
+            sb.Append(sNL2);
+            sb.Append(sNL);
+
+            // Credit
+            sb.Append("Uses the Newtonsoft JSON library. http://www.newtonsoft.com/json");
+            sb.Append(sNL2);
+
+            // Credit
+            sb.Append("Uses the FastColoredTextBox library. https://github.com/PavelTorgashov/FastColoredTextBox");
+            sb.Append(sNL2);
+
+            // Credit
+            sb.Append("HELLION trademarks, content and materials are property of Zero Gravity Games or it's licensors. http://www.zerogravitygames.com");
+            sb.Append(sNL2);
+            sb.Append(sNL);
+
+            // Thanks
+            sb.Append("Thanks to all who have helped out in testing, and provided advice and feedback.");
+            sb.Append(sNL2);
+
+            // Cheeseware statement
+            sb.Append("This product is 100% certified Cheeseware* and is not dishwasher safe.");
+            sb.Append(sNL2);
+
+            // Cheeseware definition ;)
+            sb.Append("* cheeseware (Noun)");
+            sb.Append(sNL);
+            sb.Append("  1. (computing, slang, pejorative) Exceptionally low-quality software.");
+            sb.Append(sNL);
+
+            return sb.ToString();
+        }
+
         /// <summary>
         /// Exits the program in a controlled manner - closes an open document etc.
         /// </summary>
@@ -140,6 +366,10 @@ namespace HELLION.Explorer
             */
         }
 
+        #endregion
+
+        #region File Menu Methods
+
         /// <summary>
         /// Loads a .save file in to memory - passes details on to the HEDocumentWorkspace and
         /// tells it to load.
@@ -156,9 +386,9 @@ namespace HELLION.Explorer
                 // The checks failed, throw up an error message and cancel the load
                 MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu."); // this needs to be massively improved!
                 // Begin repainting the TreeView.
-                frmMainForm.treeView1.EndUpdate();
+                MainForm.treeView1.EndUpdate();
                 // Restore mouse cursor
-                frmMainForm.Cursor = Cursors.Default;
+                MainForm.Cursor = Cursors.Default;
                 return;
             }
 
@@ -208,19 +438,19 @@ namespace HELLION.Explorer
             if (saveFileInfo.Exists && dataDirectoryInfo.Exists)
             {
                 // Set the status strip message
-                frmMainForm.toolStripStatusLabel1.Text = ("Loading file: " + saveFileInfo.FullName);
+                MainForm.toolStripStatusLabel1.Text = ("Loading file: " + saveFileInfo.FullName);
 
                 // Update the main window's title text to reflect the filename selected
                 RefreshMainFormTitleText(saveFileInfo.FullName);
 
                 //Application.UseWaitCursor = true;
-                frmMainForm.Cursor = Cursors.WaitCursor;
+                MainForm.Cursor = Cursors.WaitCursor;
 
                 // Suppress repainting the TreeView until all the objects have been created.
-                frmMainForm.treeView1.BeginUpdate();
+                MainForm.treeView1.BeginUpdate();
 
                 // Create a new DocumentWorkspace
-                docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo, frmMainForm.treeView1, frmMainForm.listView1, hEImageList);
+                docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
 
                 // Set up the GuidManager
                 HEGuidManager.ClearObservedGuidsList();
@@ -236,12 +466,12 @@ namespace HELLION.Explorer
                 ObservedGuidsForm.Hide();
 
                 // Add the nodes to the TreeView control.
-                frmMainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
-                frmMainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
-                frmMainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
-                frmMainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
+                MainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
+                MainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
+                MainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
+                MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
 
-                //frmMainForm.treeView1.Sort();
+                //MainForm.treeView1.Sort();
                 // Display prettying - set the star as the selected node and expand it and the solar system root node.
 
                 // Expand the Solar System root node.
@@ -249,54 +479,42 @@ namespace HELLION.Explorer
                 // Expand the star node, Hellion.
                 docCurrent.SolarSystem.RootNode.FirstNode.Expand();
                 // Set the star node as the selected node.
-                frmMainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
+                MainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
 
                 // Enable the Find option, leaving the FindNext disabled.
-                frmMainForm.findToolStripMenuItem.Enabled = true;
-                frmMainForm.findNextToolStripMenuItem.Enabled = false;
+                MainForm.findToolStripMenuItem.Enabled = true;
+                MainForm.findNextToolStripMenuItem.Enabled = false;
 
                 // Enable the Save and Save As menu items.
-                frmMainForm.saveToolStripMenuItem.Enabled = true;
-                frmMainForm.saveAsToolStripMenuItem.Enabled = true;
+                MainForm.saveToolStripMenuItem.Enabled = true;
+                MainForm.saveAsToolStripMenuItem.Enabled = true;
 
                 // Enable the Observed GUIDs menu item.
-                frmMainForm.observedGUIDsToolStripMenuItem.Enabled = true;
+                MainForm.observedGUIDsToolStripMenuItem.Enabled = true;
 
                 // Begin repainting the TreeView.
-                frmMainForm.treeView1.EndUpdate();
+                MainForm.treeView1.EndUpdate();
 
                 //Application.UseWaitCursor = false;
-                frmMainForm.Cursor = Cursors.Default;
+                MainForm.Cursor = Cursors.Default;
 
                 RefreshMainFormTitleText();
                 //RefreshSelectedObjectSummaryText(docCurrent.SolarSystemRootNode);
 
-                frmMainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
+                MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
 
-                frmMainForm.closeToolStripMenuItem.Enabled = true;
-                frmMainForm.revertToolStripMenuItem.Enabled = true;
+                MainForm.closeToolStripMenuItem.Enabled = true;
+                MainForm.revertToolStripMenuItem.Enabled = true;
 
-                /*
-                // Blueprint test hook-in
-                foreach (HEJsonBlueprintFile entry in docCurrent.Blueprints.Blueprintcollection.DataDictionary.Values)
-                {
-                    Debug.Print(entry.BlueprintObject.Name);
-                    foreach (HEBlueprint.HEBlueprintStructure structure in entry.BlueprintObject.Structures)
-                    {
-                        Debug.Print("  " + structure.StructureID + " " + structure.StructureType);
-
-                        foreach (HEBlueprint.HEBlueprintDockingPort port in structure.DockingPorts)
-                        {
-                            Debug.Print("    " + port.PortName);
-                            Debug.Print("      Docked to " + port.DockedStructureID + ":" + port.DockedPortName);
-
-                        }
-                    }
-                }
-                */
+                
             }
         }
 
+        /// <summary>
+        /// Performs a save operation of the current document, or if a string file name is
+        /// passed it will perform a SaveAs operation to the new desired file name.
+        /// </summary>
+        /// <param name="passedFileName"></param>
         internal static void FileSave(string passedFileName = null)
         {
             if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
@@ -308,6 +526,9 @@ namespace HELLION.Explorer
             }
         }
 
+        /// <summary>
+        /// Prompts the user to input a new file name then calls the FileSave method.
+        /// </summary>
         internal static void FileSaveAs()
         {
             if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
@@ -375,21 +596,21 @@ namespace HELLION.Explorer
             while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
 
             // Disable both the Find and FindNext menu items.
-            frmMainForm.findToolStripMenuItem.Enabled = false;
-            frmMainForm.findNextToolStripMenuItem.Enabled = false;
+            MainForm.findToolStripMenuItem.Enabled = false;
+            MainForm.findNextToolStripMenuItem.Enabled = false;
 
             // Disable the Save and Save As menu items.
-            frmMainForm.saveToolStripMenuItem.Enabled = false;
-            frmMainForm.saveAsToolStripMenuItem.Enabled = false;
+            MainForm.saveToolStripMenuItem.Enabled = false;
+            MainForm.saveAsToolStripMenuItem.Enabled = false;
 
             // Disable the Observed GUIDs menu item.
-            frmMainForm.observedGUIDsToolStripMenuItem.Enabled = false;
+            MainForm.observedGUIDsToolStripMenuItem.Enabled = false;
 
             // Clear any existing nodes from the tree view
-            frmMainForm.treeView1.Nodes.Clear();
+            MainForm.treeView1.Nodes.Clear();
 
             // Clear any items from the list view
-            frmMainForm.listView1.Items.Clear();
+            MainForm.listView1.Items.Clear();
 
             // Check for an existing document and close it if necessary
             if (docCurrent != null)
@@ -399,8 +620,8 @@ namespace HELLION.Explorer
                 docCurrent = null;
             }
 
-            frmMainForm.closeToolStripMenuItem.Enabled = false;
-            frmMainForm.revertToolStripMenuItem.Enabled = false;
+            MainForm.closeToolStripMenuItem.Enabled = false;
+            MainForm.revertToolStripMenuItem.Enabled = false;
 
             // Trigger refresh of UI elements
             RefreshMainFormTitleText();
@@ -426,6 +647,10 @@ namespace HELLION.Explorer
             FileOpen(currentFileName);
         }
 
+        #endregion
+
+        #region Edit Menu Methods
+
         internal static string findSearchKey = null;
         internal static HETreeNode findStartingNode = null;
         internal static List<HETreeNode>.Enumerator findEnumerator;
@@ -435,8 +660,8 @@ namespace HELLION.Explorer
         /// </summary>
         internal static void ShowFindForm()
         {
-            frmFindForm.ResetForm();
-            frmFindForm.Show();
+            FindForm.ResetForm();
+            FindForm.Show();
         }
 
         /// <summary>
@@ -451,8 +676,8 @@ namespace HELLION.Explorer
             if (NewQuery)
             {
                 HESearchHandler.HESearchOperatorFlags operatorFlags = 0;
-                if (frmFindForm.PathSearchValue) operatorFlags |= HESearchHandler.HESearchOperatorFlags.ByPath;
-                if (frmFindForm.MatchCaseValue)
+                if (FindForm.PathSearchValue) operatorFlags |= HESearchHandler.HESearchOperatorFlags.ByPath;
+                if (FindForm.MatchCaseValue)
                 {
                     Debug.Print("Match Case ON");
                     operatorFlags |= HESearchHandler.HESearchOperatorFlags.MatchCase;
@@ -463,8 +688,8 @@ namespace HELLION.Explorer
                 docCurrent.SearchHandler.CreateSearchOperator(operatorFlags);
                 if (docCurrent.SearchHandler.CurrentOperator == null) throw new NullReferenceException("CurrentOperator was null.");
 
-                docCurrent.SearchHandler.CurrentOperator.Query = frmFindForm.QueryValue;
-                docCurrent.SearchHandler.CurrentOperator.StartingNode = (HETreeNode)frmMainForm.treeView1.SelectedNode;
+                docCurrent.SearchHandler.CurrentOperator.Query = FindForm.QueryValue;
+                docCurrent.SearchHandler.CurrentOperator.StartingNode = (HETreeNode)MainForm.treeView1.SelectedNode;
 
                 // Execute the query, which updates the results list.
                 if (!docCurrent.SearchHandler.CurrentOperator.Execute()) MessageBox.Show("No results for search term " + findSearchKey);
@@ -473,7 +698,7 @@ namespace HELLION.Explorer
                     // Get a reference to the Results list enumerator.
                     findEnumerator = docCurrent.SearchHandler.CurrentOperator.Results.GetEnumerator();
 
-                    frmMainForm.findNextToolStripMenuItem.Enabled = true;
+                    MainForm.findNextToolStripMenuItem.Enabled = true;
                     //EditFindNext(JumpToResultsSet);
                 }
             }
@@ -486,11 +711,11 @@ namespace HELLION.Explorer
                 {
                     // There's a next record
 
-                    if (!JumpToResultsSet) frmMainForm.treeView1.SelectedNode = findEnumerator.Current;
+                    if (!JumpToResultsSet) MainForm.treeView1.SelectedNode = findEnumerator.Current;
                     else
                     {
-                        frmMainForm.treeView1.SelectedNode = docCurrent.SearchHandler.CurrentOperator.RootNode;
-                        frmMainForm.treeView1.SelectedNode.Expand();
+                        MainForm.treeView1.SelectedNode = docCurrent.SearchHandler.CurrentOperator.RootNode;
+                        MainForm.treeView1.SelectedNode.Expand();
                     }
                 }
                 else
@@ -498,13 +723,13 @@ namespace HELLION.Explorer
                     if (!JumpToResultsSet) MessageBox.Show("End of results for search term " + findSearchKey);
                     else
                     {
-                        frmMainForm.treeView1.SelectedNode = docCurrent.SearchHandler.CurrentOperator.RootNode;
-                        frmMainForm.treeView1.SelectedNode.Expand();
+                        MainForm.treeView1.SelectedNode = docCurrent.SearchHandler.CurrentOperator.RootNode;
+                        MainForm.treeView1.SelectedNode.Expand();
                     }
                 }
             }
         }
-        
+
         /// <summary>
         /// Handles Find and Find Next simple searching of a node in the tree view control's 
         /// currently selected node's Nodes collection.
@@ -516,84 +741,59 @@ namespace HELLION.Explorer
             MessageBox.Show("EditFindNext was called!!");
         }
 
+        #endregion
+
+        #region Tools Menu Methods
+
         /// <summary>
-        /// Generates the About dialog text, to be returned to the user by the program in a
-        /// MessageBox.
+        /// Sets the Game Data folder
         /// </summary>
-        /// <returns></returns>
-        internal static string GenerateAboutBoxText()
+        internal static void SetGameDataFolder(string passedFolder = "")
+        {
+            if (passedFolder == "")
+            {
+                // We weren't passed a folder so prompt the user to select one.
+                MessageBox.Show("Please use the following folder browser window to select the location of the game Data folder." + Environment.NewLine + Environment.NewLine +
+                    "The Data folder and the files within can be obtained as part of the HELLION Dedicated Server installation and are required to load a .save file."
+                    , "Please set the Data folder location", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Create a new OpenFileDialog box and set some parameters
+                var folderBrowserDialog1 = new FolderBrowserDialog()
                 {
-                    // Define a StringBuilder to hold the string to be sent to the dialog box
-                    StringBuilder sb = new StringBuilder();
-
-                    // Create a 'shorthand' for the new line character appropriate for this environment
-                    string sNL = Environment.NewLine;
-                    string sNL2 = sNL + sNL;
-
-                    // Assemble the About dialog text
-                    sb.Append(sNL);
-
-                    // Add the product name and version
-                    sb.Append(Application.ProductName);
-                    sb.Append("   Version ");
-                    sb.Append(Application.ProductVersion);
-                    sb.Append(sNL2);
-
-                    // Add version information for HELLION.DataStructures.dll
-                    var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEUtilities)).GetName();
-                    sb.Append(anHELLIONDataStructures.Name);
-                    sb.Append("   Version ");
-                    sb.Append(anHELLIONDataStructures.Version);
-                    sb.Append(sNL);
-
-                    // Add version information for NewtonsoftJson.dll -  this is inaccurate and only reports v 10.0.0
-                    var anNewtonsoftJson = System.Reflection.Assembly.GetAssembly(typeof(JObject)).GetName();
-                    sb.Append(anNewtonsoftJson.Name);
-                    sb.Append("   Version ");
-                    sb.Append(anNewtonsoftJson.Version);
-                    sb.Append(sNL);
-
-                    // Add version information for FastColoredTextBox.dll
-                    var anFastColoredTextBox = System.Reflection.Assembly.GetAssembly(typeof(FastColoredTextBoxNS.FastColoredTextBox)).GetName();
-                    sb.Append(anFastColoredTextBox.Name);
-                    sb.Append("   Version ");
-                    sb.Append(anFastColoredTextBox.Version);
-                    sb.Append(sNL2);
-
-                    // Add an estimate of current memory usage from the garbage collector
-                    sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
-                    sb.Append(sNL2);
-                    sb.Append(sNL);
-
-                    // Credit
-                    sb.Append("Uses the Newtonsoft JSON library. http://www.newtonsoft.com/json");
-                    sb.Append(sNL2);
-
-                    // Credit
-                    sb.Append("Uses the FastColoredTextBox library. https://github.com/PavelTorgashov/FastColoredTextBox");
-                    sb.Append(sNL2);
-
-                    // Credit
-                    sb.Append("HELLION trademarks, content and materials are property of Zero Gravity Games or it's licensors. http://www.zerogravitygames.com");
-                    sb.Append(sNL2);
-                    sb.Append(sNL);
-
-                    // Thanks
-                    sb.Append("Thanks to all who have helped out in testing, and provided advice and feedback.");
-                    sb.Append(sNL2);
-
-                    // Cheeseware statement
-                    sb.Append("This product is 100% certified Cheeseware* and is not dishwasher safe.");
-                    sb.Append(sNL2);
-
-                    // Cheeseware definition ;)
-                    sb.Append("* cheeseware (Noun)");
-                    sb.Append(sNL);
-                    sb.Append("  1. (computing, slang, pejorative) Exceptionally low-quality software.");
-                    sb.Append(sNL);
-
-                    return sb.ToString();
+                    Description = "Select location of Data folder",
+                    RootFolder = Environment.SpecialFolder.Desktop,
+                    // Pre-populate the path with whatever is stored in the Properties.
+                    SelectedPath = Properties.HELLIONExplorer.Default.sGameDataFolder,
+                };
+                // If the user clicked OK then set the game data path on the settings.
+                if (folderBrowserDialog1.ShowDialog() == DialogResult.OK) // && folderBrowserDialog1. CheckFolderExists)
+                {
+                    passedFolder = folderBrowserDialog1.SelectedPath;
                 }
+            }
+            // Set the path and save the settings.
+            Properties.HELLIONExplorer.Default.sGameDataFolder = passedFolder;
+            Properties.HELLIONExplorer.Default.Save();
+        }
+
+        /// <summary>
+        /// Checks that the Static Data folder is valid. Called by menu option on the main
+        /// form and Is interactive and will prompt the user to set a valid folder.
+        /// </summary>
+        internal static void VerifyGameDataFolder(bool NotifySuccess = true)
+        {
+            // Check that the Data folder path has been defined and there's stuff there
+            if (!IsGameDataFolderValid())
+            {
+                // The checks failed, throw up an error message and cancel the load
+                MessageBox.Show("There was a problem with the Data Folder - use Set Data Folder option in Tools menu."); // this needs to be massively improved!
+                return;
+            }
+            else if (NotifySuccess)
+            {
+                MessageBox.Show("Game Data folder: " + Properties.HELLIONExplorer.Default.sGameDataFolder + " seems valid.");
+            }
+        }
 
         /// <summary>
         /// Called indirectly by menu option on the main form, and directly when opening a file, or by other means.
@@ -631,55 +831,9 @@ namespace HELLION.Explorer
 
         }
 
-        /// <summary>
-        /// Checks that the Static Data folder is valid. Called by menu option on the main
-        /// form and Is interactive and will prompt the user to set a valid folder.
-        /// </summary>
-        internal static void VerifyGameDataFolder(bool NotifySuccess = true)
-        {
-            // Check that the Data folder path has been defined and there's stuff there
-            if (!IsGameDataFolderValid())
-            {
-                // The checks failed, throw up an error message and cancel the load
-                MessageBox.Show("There was a problem with the Data Folder - use Set Data Folder option in Tools menu."); // this needs to be massively improved!
-                return;
-            }
-            else if (NotifySuccess)
-            {
-                MessageBox.Show("Game Data folder: " + Properties.HELLIONExplorer.Default.sGameDataFolder + " seems valid.");
-            }
-        }
+        #endregion
 
-        /// <summary>
-        /// Sets the Game Data folder
-        /// </summary>
-        internal static void SetGameDataFolder(string passedFolder = "")
-        {
-            if (passedFolder == "")
-            {
-                // We weren't passed a folder so prompt the user to select one.
-                MessageBox.Show("Please use the following folder browser window to select the location of the game Data folder." + Environment.NewLine + Environment.NewLine +
-                    "The Data folder and the files within can be obtained as part of the HELLION Dedicated Server installation and are required to load a .save file."
-                    , "Please set the Data folder location", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                // Create a new OpenFileDialog box and set some parameters
-                var folderBrowserDialog1 = new FolderBrowserDialog()
-                {
-                    Description = "Select location of Data folder",
-                    RootFolder = Environment.SpecialFolder.Desktop,
-                    // Pre-populate the path with whatever is stored in the Properties.
-                    SelectedPath = Properties.HELLIONExplorer.Default.sGameDataFolder,
-                };
-                // If the user clicked OK then set the game data path on the settings.
-                if (folderBrowserDialog1.ShowDialog() == DialogResult.OK) // && folderBrowserDialog1. CheckFolderExists)
-                {
-                    passedFolder = folderBrowserDialog1.SelectedPath;
-                }
-            }
-            // Set the path and save the settings.
-            Properties.HELLIONExplorer.Default.sGameDataFolder = passedFolder;
-            Properties.HELLIONExplorer.Default.Save();
-        }
+        #region Refresh Methods
 
         /// <summary>
         /// Regenerates and sets the application's main window title text.
@@ -703,7 +857,7 @@ namespace HELLION.Explorer
                 if (docCurrent.IsDirty) sb.Append("*");
             }
 
-            frmMainForm.Text = sb.ToString();
+            MainForm.Text = sb.ToString();
         }
 
         /// <summary>
@@ -722,11 +876,11 @@ namespace HELLION.Explorer
                 //sb.Append(nSelectedNode.NodeType.ToString());
                 //sb.Append(")");
 
-                frmMainForm.label1.Text = sb.ToString();
+                MainForm.label1.Text = sb.ToString();
             }
             else
             {
-                frmMainForm.label1.Text = ">>";
+                MainForm.label1.Text = ">>";
             }
         }
 
@@ -741,7 +895,7 @@ namespace HELLION.Explorer
                 HETreeNode nSelectedHETNNode = (HETreeNode)nSelectedNode;
 
                 // Clear the list view's items
-                frmMainForm.listView1.Items.Clear();
+                MainForm.listView1.Items.Clear();
 
                 // Test to see if we're drawing a <PARENT> and <THIS> item in the list view (option not yet implemented, on by default)
                 const bool bFakeTestResult = true;
@@ -764,7 +918,7 @@ namespace HELLION.Explorer
                             ImageIndex = HEImageList.GetIconImageIndexByNodeType(nodeParent.NodeType)
                         };
                         // Add the item
-                        frmMainForm.listView1.Items.Add(liParentItem);
+                        MainForm.listView1.Items.Add(liParentItem);
                     }
 
                     // Draw the <THIS> node if it's not null
@@ -782,7 +936,7 @@ namespace HELLION.Explorer
                             ImageIndex = HEImageList.GetIconImageIndexByNodeType(nSelectedHETNNode.NodeType)
                         };
                         // Add the item
-                        frmMainForm.listView1.Items.Add(liCurrentItem);
+                        MainForm.listView1.Items.Add(liCurrentItem);
                     }
                 }
 
@@ -799,7 +953,7 @@ namespace HELLION.Explorer
                             arr[1] = listItem.NodeType.ToString();
                             arr[2] = listItem.CountOfChildNodes.ToString();
                             arr[3] = listItem.CountOfAllChildNodes.ToString();
-                            arr[4] = listItem.Path();
+                            arr[4] = listItem.Path;
                             arr[5] = ""; // listItem.GUID.ToString();
                             arr[6] = ""; // nodeChild.SceneID.ToString();
 
@@ -813,7 +967,7 @@ namespace HELLION.Explorer
                             liNewItem.ImageIndex = HEImageList.GetIconImageIndexByNodeType(listItem.NodeType);
 
                             // Add the item
-                            frmMainForm.listView1.Items.Add(liNewItem);
+                            MainForm.listView1.Items.Add(liNewItem);
                         }
                     }
                 }
@@ -826,7 +980,7 @@ namespace HELLION.Explorer
                         arr[1] = nodeChild.NodeType.ToString();
                         arr[2] = nodeChild.CountOfChildNodes.ToString();
                         arr[3] = nodeChild.CountOfAllChildNodes.ToString();
-                        arr[4] = nodeChild.Path();
+                        arr[4] = nodeChild.Path;
                         arr[5] = ""; // nodeChild.GUID.ToString();
                         arr[6] = ""; // nodeChild.SceneID.ToString();
 
@@ -840,7 +994,7 @@ namespace HELLION.Explorer
                         liNewItem.ImageIndex = HEImageList.GetIconImageIndexByNodeType(nodeChild.NodeType);
 
                         // Add the item
-                        frmMainForm.listView1.Items.Add(liNewItem);
+                        MainForm.listView1.Items.Add(liNewItem);
                     }
                 }
 
@@ -984,79 +1138,13 @@ namespace HELLION.Explorer
             }
 
             // Pass results to various text boxes
-            frmMainForm.textBox1.Text = sb1.ToString();
-            frmMainForm.textBox2.Text = sb2.ToString();
-
+            MainForm.textBox1.Text = sb1.ToString();
+            MainForm.textBox2.Text = sb2.ToString();
 
         }
 
-        /// <summary>
-        /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
-        /// </summary>
-        /// <param name="nSelectedNode"></param>
-        internal static void CreateNewJsonDataView(HEGameDataTreeNode nSelectedNode)
-        {
-            if (nSelectedNode != null && nSelectedNode.JData != null)
-            {
-                // Look for an existing form for this node.
-                JsonDataViewForm newDataView = null;
-                foreach (JsonDataViewForm form in jsonDataViews)
-                {
-                    if (form.SourceNode == nSelectedNode)
-                    {
-                        newDataView = form;
-                        break;
-                    }
-                }
+        #endregion
 
-                if (newDataView == null)
-                {
-                    // No existing form for this node was found, create a new one.
-                    newDataView = new JsonDataViewForm(nSelectedNode);
-
-                    // Add the form to the jsonDataViews list.
-                    jsonDataViews.Add(newDataView);
-                }
-
-                // Show the form.
-                newDataView.Show();
-                newDataView.Activate();
-            }
-        }
-
-        /// <summary>
-        /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
-        /// </summary>
-        /// <param name="selectedNode"></param>
-        internal static void CreateNewBlueprintEditor(HEBlueprintTreeNode selectedNode)
-        {
-            if (selectedNode != null)
-            {
-                // Look for an existing form for this node.
-                BlueprintEditorForm newBlueprintEditorForm = null;
-                foreach (BlueprintEditorForm form in blueprintEditorForms)
-                {
-                    if (form.SourceNode == selectedNode)
-                    {
-                        newBlueprintEditorForm = form;
-                        break;
-                    }
-                }
-
-                if (newBlueprintEditorForm == null)
-                {
-                    // No existing form for this node was found, create a new one.
-                    newBlueprintEditorForm = new BlueprintEditorForm(selectedNode);
-
-                    // Add the form to the jsonDataViews list.
-                    blueprintEditorForms.Add(newBlueprintEditorForm);
-                }
-
-                // Show the form.
-                newBlueprintEditorForm.Show();
-                newBlueprintEditorForm.Activate();
-            }
-        }
 
         /// <summary>
         /// Returns a single TreeNode with a given path.
@@ -1104,96 +1192,6 @@ namespace HELLION.Explorer
             }
         }
 
-
-        /*
-        internal static void NodePathSearch2()
-        {
-            string nodePathSearchKey = HEUtilities.Prompt.ShowDialog("Enter PATH search term to find:", "Find Node from: entered path", frmMainForm.Icon);
-
-            TreeNode result = GetNodeByPath(frmMainForm.treeView1, nodePathSearchKey);
-
-            if (result == null) MessageBox.Show("No results for search term " + nodePathSearchKey);
-            else
-            {
-                MessageBox.Show("Result found: " + result.Text);
-                frmMainForm.treeView1.SelectedNode = result;
-            }
-        }
-        */
-
-        /*
-        internal static void NodePathSearch()
-        {
-            string nodePathSearchKey = HEUtilities.Prompt.ShowDialog("Enter PATH search term to find:", "Find Node from: entered path", frmMainForm.Icon);
-
-            docCurrent.SearchHandler.FindNodeByPathOperator.Query = nodePathSearchKey;
-
-            // Execute the query, which updates the results list.
-            if (docCurrent.SearchHandler.FindNodeByPathOperator.Execute())
-            {
-                // Get a reference to the Results list enumerator.
-                findEnumerator = docCurrent.SearchHandler.FindNodeByPathOperator.Results.GetEnumerator();
-
-                //frmMainForm.findNextToolStripMenuItem.Enabled = true;
-                // EditFindNext(); // this needs replacing
-
-                if (findEnumerator.MoveNext())
-                {
-                    // There's a next record
-                    //frmMainForm.treeView1.SelectedNode = findEnumerator.Current;
-                }
-
-
-            }
-            else
-            {
-                MessageBox.Show("No results for search term " + Environment.NewLine + nodePathSearchKey);
-            }
-        }
-        */
-
-        /// <summary>
-        /// Temporary test option, called from the temp menu item.
-        /// </summary>
-        internal static void TestOption1()
-        {
-            // Scratch-pad area for testing new stuff out 
-            // Make a note of the starting time
-            DateTime StartingTime = DateTime.Now;
-
-            // Some async test stuff
-
-            // Task to run asynchronously
-            //List<Task> tasks = new List<Task>();
-            //Task t1 = Task.Run(() => 
-
-            //tasks.Add(t1);
-            //HEJsonFileCollection testDataFileCollection = null;
-
-            //if (Properties.HELLIONExplorer.Default.sGameDataFolder != "")
-            {
-
-                //Task t2 = Task.Run(() => //testDataFileCollection = new HEJsonFileCollection(Properties.HELLIONExplorer.Default.sGameDataFolder);
-                //tasks.Add(t2);
-            }
-
-            // Wait for tasks to complete
-            //Task.WaitAll(tasks.ToArray());
-
-            //tempParent.Nodes.Add(testDataFileCollection.RootNode ?? new HETreeNode("DATAFOLDER", HETreeNodeType.DataFolderError, "Data Folder - ERROR"));
-
-            //tempParent.Nodes.Add(nodeSaveFile);
-
-
-            //foreach (Task t in tasks)
-                //Debug.Print("Task {0} Status: {1}", t.Id, t.Status);
-            Debug.Print("Process completed in {0:mm}m{0:ss}s", DateTime.Now - StartingTime);
-
-            
-            //tempParent.UpdateCounts();
-            GC.Collect();
-    }
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -1204,7 +1202,7 @@ namespace HELLION.Explorer
             Console.WriteLine(Application.ProductName + " - " + Application.ProductVersion);
 
             #if DEBUG
-                Console.WriteLine("Mode=Debug");
+            Console.WriteLine("Mode=Debug");
             #else
                 Console.WriteLine("Mode=Release"); 
             #endif
@@ -1213,98 +1211,46 @@ namespace HELLION.Explorer
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Initialise the main form
-            frmMainForm = new MainForm();
+            MainForm = new MainForm();
 
             // Initialise the find form.
-            frmFindForm = new FindForm(frmMainForm);
-            frmFindForm.Hide();
+            FindForm = new FindForm(MainForm);
+            FindForm.Hide();
 
 
             // Set the form's icon
             var exe = System.Reflection.Assembly.GetExecutingAssembly();
             var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HELLION.Explorer.ico");
-            if (iconStream != null) frmMainForm.Icon = new Icon(iconStream);
+            if (iconStream != null) MainForm.Icon = new Icon(iconStream);
 
             // Update the main form's title text - this adds the application name
             RefreshMainFormTitleText();
 
             // Disable the File/Close menu item - this is re-enabled when a file is loaded
-            frmMainForm.closeToolStripMenuItem.Enabled = false;
-            frmMainForm.revertToolStripMenuItem.Enabled = false;
+            MainForm.closeToolStripMenuItem.Enabled = false;
+            MainForm.revertToolStripMenuItem.Enabled = false;
 
             // Disable both the Find and FindNext menu items.
-            frmMainForm.findToolStripMenuItem.Enabled = false;
-            frmMainForm.findNextToolStripMenuItem.Enabled = false;
+            MainForm.findToolStripMenuItem.Enabled = false;
+            MainForm.findNextToolStripMenuItem.Enabled = false;
 
             // Disable the Save and Save As menu items.
-            frmMainForm.saveToolStripMenuItem.Enabled = false;
-            frmMainForm.saveAsToolStripMenuItem.Enabled = false;
+            MainForm.saveToolStripMenuItem.Enabled = false;
+            MainForm.saveAsToolStripMenuItem.Enabled = false;
 
             // Disable the Observed GUIDs menu item.
-            frmMainForm.observedGUIDsToolStripMenuItem.Enabled = false;
+            MainForm.observedGUIDsToolStripMenuItem.Enabled = false;
 
             // Show the main form
-            frmMainForm.Show();
+            MainForm.Show();
 
-            // Valid command line options
-            //
-            // Hellion.Explorer.exe [<full file name of .save file to open>] [/data <full path to the dedi's Data folder>]
-            // 1 argument - just the .save file, Data folder needs to be already defined
-            // 2 arguments - Sets the data folder path 
-            // 3 arguments - Sets the data folder path and opens the .save file
-
-            if (args.Length > 0)
-            {
-                // There are arguments 
-                string saveFilePath = "";
-                string dataFolderPath = "";
-                string helpText = Application.ProductName + ".exe [<full file name of .save file to open>] [/data <full path to the dedi's Data folder>]";
-
-                for (int i = 0; i < args.Length; i++)
-                {
-                    // Try to figure out what's in this argument
-                    if (args[i].EndsWith(".save", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        // It's a .save file
-                        saveFilePath = args[i];
-                        Console.WriteLine("Argument: Save File " + saveFilePath);
-                    }
-                    else if (args[i].Equals("/data", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        // It's the /data argument, increment i by one to prevent the next element being
-                        // processed in case there are other(?) arguments.
-                        i++;
-                        dataFolderPath = args[i];
-                        Console.WriteLine("Argument: Data Folder " + dataFolderPath);
-                    }
-                    else if (args[i].Equals("/?") || args[i].ToLower().Contains("help"))
-                    {
-                        Console.WriteLine(helpText);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Unexpected Argument: " + args[i]);
-                        Console.WriteLine("Use /? or /help to show available arguments.");
-                    }
-                }
-
-                if (dataFolderPath != "")
-                {
-                    // Set the Data folder
-                    SetGameDataFolder(dataFolderPath);
-                }
-
-                if (saveFilePath != "")
-                {
-                    // Open the .save file
-                    FileOpen(saveFilePath);
-                }
-            }
+            ProcessCommandLineArguments(args);
 
             // Start the Windows Forms message loop
             Application.Run(); // Application.Run(new MainForm());
 
         }
+
     }
 }
 
