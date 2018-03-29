@@ -92,7 +92,7 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.Planet:
                 case HETreeNodeType.Moon:
                     // These come from the Static Data - handled by the CelestialBodies.json member of the DataDictionary
-                    if (!GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEJsonBaseFile celestialBodiesJsonBaseFile))
+                    if (!GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEBaseJsonFile celestialBodiesJsonBaseFile))
                         throw new InvalidOperationException("Unable to access the CelestialBodies.json from the Static Data Dictionary.");
                     else
                     {
@@ -217,7 +217,7 @@ namespace HELLION.DataStructures
         {
             HESolarSystemTreeNode currentParentNode = null;
             bool errorState = false;
-            foreach (HESolarSystemTreeNode node in RootNode.ListOfAllChildNodes)
+            foreach (HESolarSystemTreeNode node in RootNode.GetChildNodes(includeSubtrees: true))
             {
                 // If this node has a non-zero value for DockedToShipGUID, process it.
                 if (node.ParentGUID == 0)
@@ -232,7 +232,7 @@ namespace HELLION.DataStructures
                     // There can be only one!
                     try
                     {
-                        HESolarSystemTreeNode newParentNode = RootNode.ListOfAllChildNodes
+                        HESolarSystemTreeNode newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
                             .Cast<HESolarSystemTreeNode>()
                             .Where(p => p.GUID == node.ParentGUID)
                             .Single();
@@ -275,7 +275,7 @@ namespace HELLION.DataStructures
         /// </remarks>
         public void RehydrateDockedShips()
         {
-            IEnumerable<HESolarSystemTreeNode> shipsToBeReparented = RootNode.ListOfAllChildNodes
+            IEnumerable<HESolarSystemTreeNode> shipsToBeReparented = RootNode.GetChildNodes(includeSubtrees: true)
                 .Cast<HESolarSystemTreeNode>()
                 .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
 
@@ -286,7 +286,7 @@ namespace HELLION.DataStructures
                 {
                     // Find the node that has the GUID matching the DockedToShipGUID of this node.
                     // There can be only one!
-                    HESolarSystemTreeNode newParentNode = RootNode.ListOfAllChildNodes
+                    HESolarSystemTreeNode newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
                         .Cast<HESolarSystemTreeNode>()
                         .Where(p => p.GUID == node.DockedToShipGUID)
                         .Single(); 

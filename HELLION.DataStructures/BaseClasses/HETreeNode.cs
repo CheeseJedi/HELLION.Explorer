@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows.Forms;
 using static HELLION.DataStructures.HEImageList;
 
@@ -11,6 +12,7 @@ namespace HELLION.DataStructures
     public class HETreeNode : TreeNode
     {
         #region Constructors
+
         /// <summary>
         /// Default constructor, used by GameData and SolarSystem tree node derived types.
         /// </summary>
@@ -31,13 +33,18 @@ namespace HELLION.DataStructures
         public HETreeNode(object ownerObject, string nodeName = null, HETreeNodeType newNodeType = HETreeNodeType.Unknown,
              string nodeText = "", string nodeToolTipText = "") : this(ownerObject)
         {
-            Name = (nodeName == null || nodeName == "") ? "Unnamed node " + DateTime.Now.ToString() : nodeName;
-            Text = (nodeText == null || nodeText == "") ? nodeName : nodeText;
-            ToolTipText = (nodeToolTipText == null || nodeToolTipText == "") ? nodeName + " (" + newNodeType.ToString() + ")" : nodeToolTipText;
-
+            BaseNodeName = nodeName;
             NodeType = newNodeType;
+            BaseNodeText = nodeText;
+            BaseNodeToolTipText = nodeToolTipText;
+
+            // Trigger name and other info generation based on what was passed.
+            RefreshName();
         }
+
         #endregion
+
+        #region Properties
 
         /// <summary>
         /// Stores a reference to the owning object.
@@ -45,18 +52,77 @@ namespace HELLION.DataStructures
         public object OwnerObject { get; protected set; } = null;
 
         /// <summary>
+        /// The 'base' of the node name - this may be displayed differently.
+        /// </summary>
+        public string BaseNodeName
+        {
+            get => _baseNodeName;
+            set
+            {
+                _baseNodeName = value;
+                RefreshName();
+            }
+        }
+
+        /// <summary>
+        /// The HETreeNodeType type of this node.
+        /// </summary>
+        public HETreeNodeType NodeType
+        {
+            get => _nodeType;
+            set
+            {
+                if (value != _nodeType)
+                {
+                    _nodeType = value;
+
+                    RefreshImageIndex();
+                }
+            }
+        }
+
+        /// <summary>
+        /// The 'base' of the node text aka what's displayed. 
+        /// </summary>
+        public string BaseNodeText
+        {
+            get => _baseNodeText;
+            set
+            {
+                _baseNodeText = value;
+                RefreshText();
+            }
+        }
+
+        /// <summary>
+        /// The 'base' of the ToolTipText - if set this is displayed instead
+        /// of an auto-generated ToolTipText.
+        /// </summary>
+        public string BaseNodeToolTipText
+        {
+            get => _baseNodeToolTipText;
+            set
+            {
+                _baseNodeToolTipText = value;
+                RefreshToolTipText();
+            }
+        }
+        
+        /// <summary>
         /// Redefines the Name accessor to track changes.
         /// </summary>
         public new string Name
         {
-            get { return base.Name; }
-            set
+            get => base.Name;
+            protected set
             {
                 if (base.Name != value)
                 {
                     base.Name = value;
 
                     // Trigger updates here.
+                    RefreshText();
+                    RefreshToolTipText();
                 }
             }
         }
@@ -66,15 +132,15 @@ namespace HELLION.DataStructures
         /// </summary>
         public new string Text
         {
-            get { return base.Text; }
-            set
+            get => base.Text;
+            protected set
             {
                 if (base.Text != value)
                 {
                     base.Text = value;
 
                     // Trigger updates here.
-
+                    RefreshToolTipText();
                 }
             }
         }
@@ -84,90 +150,96 @@ namespace HELLION.DataStructures
         /// </summary>
         public new string ToolTipText
         {
-            get { return base.ToolTipText; }
-            set
+            get => base.ToolTipText;
+            protected set
             {
                 if (base.ToolTipText != value)
                 {
                     base.ToolTipText = value;
 
                     // Trigger updates here.
-
-                }
-            }
-        }
-        
-        /// <summary>
-        /// The node's HETreeNodeType type.
-        /// </summary>
-        /// <remarks>
-        /// On a Set operation it triggers the ImageIndex and SelectedImageIndex
-        /// </remarks>
-        protected HETreeNodeType _nodeType = HETreeNodeType.Unknown;
-        public HETreeNodeType NodeType
-        {
-            get { return _nodeType; }
-            set
-            {
-                // Only update the nodeType if it is different.
-                if (value != _nodeType)
-                {
-                    _nodeType = value;
-                    ImageIndex = GetIconImageIndexByNodeType(_nodeType);
-                    SelectedImageIndex = ImageIndex;
                 }
             }
         }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
-        /// Builds and returns a count of direct descendent nodes.
+        /// Returns a count of direct descendent (first generation) nodes.
         /// </summary>
+        [Obsolete("CountOfChildNodes is deprecated, please use GetNodeCount() instead.")]
         public int CountOfChildNodes
         {
-            get { return GetNodeCount(includeSubTrees: false); }
+            get => GetNodeCount(includeSubTrees: false);
 
         }
 
         /// <summary>
         /// Builds and returns a could of all descendent nodes.
         /// </summary>
+        [Obsolete("CountOfAllChildNodes is deprecated, please use GetNodeCount() instead.")]
         public int CountOfAllChildNodes
         {
-            get { return GetNodeCount(includeSubTrees: true); }
+            get => GetNodeCount(includeSubTrees: true);
         }
 
         /// <summary>
         /// Returns a list of HETreeNodes of direct descendant nodes.
         /// </summary>
         /// <returns>Also returns null if there are no child nodes</returns>
+        [Obsolete("ListOfChildNodes is deprecated, please use GetChildNodes() instead.")]
         public List<HETreeNode> ListOfChildNodes
         {
-            get
+            get => GetChildNodes(includeSubtrees: false);
+
+            /*
             {
                 List<HETreeNode> _listOfChildNodes = new List<HETreeNode> { this };
                 foreach (HETreeNode child in Nodes)
                 {
                     _listOfChildNodes.Add(child);
                 }
-                return _listOfChildNodes.Count > 0 ? _listOfChildNodes: null;
+                return _listOfChildNodes.Count > 0 ? _listOfChildNodes : null;
             }
+            */
         }
 
         /// <summary>
         /// Returns a list of all child nodes via recursion.
         /// </summary>
         /// <returns>Also returns null if there are no child nodes</returns>
+        [Obsolete("ListOfAllChildNodes is deprecated, please use GetChildNodes() instead.")]
         public List<HETreeNode> ListOfAllChildNodes
         {
-            get
+            get => GetChildNodes(includeSubtrees: true);
+            /*
             {
                 List<HETreeNode> _listOfAllChildNodes = new List<HETreeNode> { this };
                 foreach (HETreeNode child in Nodes)
                 {
                     _listOfAllChildNodes.AddRange(child.ListOfAllChildNodes);
                 }
-                return _listOfAllChildNodes.Count > 0 ? _listOfAllChildNodes: null;
+                return _listOfAllChildNodes.Count > 0 ? _listOfAllChildNodes : null;
             }
+            */
+        }
+
+        /// <summary>
+        /// Returns a list of all first generation child nodes, or all descendants via recursion.
+        /// </summary>
+        /// <param name="includeSubtrees"></param>
+        /// <returns>Returns null if this node has no children.</returns>
+        public List<HETreeNode> GetChildNodes(bool includeSubtrees = false)
+        {
+            List<HETreeNode> _listOfChildNodes = new List<HETreeNode> { this };
+            foreach (HETreeNode child in Nodes)
+            {
+                if (!includeSubtrees) _listOfChildNodes.Add(child);
+                else _listOfChildNodes.AddRange(child.GetChildNodes(includeSubtrees: true));
+            }
+            return _listOfChildNodes.Count > 0 ? _listOfChildNodes : null;
         }
 
         /// <summary>
@@ -178,8 +250,8 @@ namespace HELLION.DataStructures
         /// <returns></returns>
         public HETreeNode GetFirstChildNodeByName(string key)
         {
-            TreeNode[] nodes = Nodes.Find(key, searchAllChildren: true);
-            return nodes.Length > 0 ? (HETreeNode)nodes[0] : null;
+            TreeNode[] _nodes = Nodes.Find(key, searchAllChildren: true);
+            return _nodes.Length > 0 ? (HETreeNode)_nodes[0] : null;
         }
 
         /// <summary>
@@ -192,27 +264,116 @@ namespace HELLION.DataStructures
         {
             get
             {
-                string fullPath = FullPath;
-                int lastIndex = fullPath.LastIndexOf(TreeView.PathSeparator);
-                // Ensure the lastIndex is not -1, present zero instead.
-                lastIndex = lastIndex != -1 ? lastIndex : 0;
-                return fullPath.Substring(0, lastIndex);
+                if (TreeView != null)
+                {
+                    string fullPath = FullPath;
+                    int lastIndex = fullPath.LastIndexOf(TreeView.PathSeparator);
+                    // Ensure the lastIndex is not -1, present zero instead.
+                    lastIndex = lastIndex != -1 ? lastIndex : 0;
+                    return fullPath.Substring(0, lastIndex);
+                }
+                else return "Path Unavailable (no TreeView)";
+            }
+        }
+
+        #region Refresh and Generation Methods
+
+        /// <summary>
+        /// Generates a name for the node.
+        /// </summary>
+        /// <returns></returns>
+        protected string GenerateBaseNodeName()
+        {
+            return "Unnamed node " + DateTime.Now.ToString();
+        }
+
+        /// <summary>
+        /// Refreshes the node name and triggers auto generation if necessary.
+        /// </summary>
+        protected void RefreshName()
+        {
+            if (BaseNodeName == null || BaseNodeName == "")
+            {
+                BaseNodeName = GenerateBaseNodeName();
+            }
+
+            // Alterations to the base name can be applied here.
+            Name = BaseNodeName;
+        }
+
+        /// <summary>
+        /// Generates the text displayed in the label of the tree node.
+        /// </summary>
+        /// <returns></returns>
+        protected string GenerateBaseNodeText()
+        {
+            return Name ?? "UNNAMED NODE";
+        }
+
+        /// <summary>
+        /// Refreshes the text displayed in the label of the tree node. 
+        /// </summary>
+        protected void RefreshText()
+        {
+            if (BaseNodeText == null || BaseNodeText == "") Text = GenerateBaseNodeText();
+            else
+            {
+                // Alterations to the base text can be applied here.
+                Text = BaseNodeText;
             }
         }
 
         /// <summary>
-        /// Re-generates the text displayed in the label of the tree node. 
+        /// Regenerates the ToolTipText text used by the pop-up.
         /// </summary>
-        protected void RefreshText()
+        /// <returns></returns>
+        protected string GenerateBaseNodeToolTipText()
         {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Name: " + Name + Environment.NewLine);
+            sb.Append("Text: " + Text + Environment.NewLine);
+            sb.Append("NodeType: " + NodeType + Environment.NewLine);
+            sb.Append("Path: " + Path + Environment.NewLine);
 
+            return sb.ToString();
         }
+
+        /// <summary>
+        /// Refreshes the node's ToolTipText.
+        /// </summary>
         protected void RefreshToolTipText()
         {
-
+            
+            if (BaseNodeToolTipText == null || BaseNodeToolTipText == "") ToolTipText = GenerateBaseNodeToolTipText();
+            else
+            {
+                // Alterations to the base text can be applied here.
+                ToolTipText = BaseNodeText;
+            }
+            
         }
 
+        /// <summary>
+        /// Refreshes the ImageIndex and SelectedImageIndex for this node.
+        /// </summary>
+        protected void RefreshImageIndex()
+        {
+            ImageIndex = GetIconImageIndexByNodeType(_nodeType);
+            SelectedImageIndex = ImageIndex;
+        }
 
+        #endregion
+
+        #endregion
+
+        #region Fields
+
+        protected HETreeNodeType _nodeType = HETreeNodeType.Unknown;
+        protected string _baseNodeName = null;
+        protected string _baseNodeText = null;
+        protected string _baseNodeToolTipText = null;
+
+        #endregion
 
     }
 }

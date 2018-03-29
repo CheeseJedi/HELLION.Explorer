@@ -455,7 +455,7 @@ namespace HELLION.Explorer
                 // Set up the GuidManager
                 HEGuidManager.ClearObservedGuidsList();
                 // Add the Celestial Bodies GUIDs.
-                if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEJsonBaseFile celestialBodiesJsonBaseFile))
+                if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEBaseJsonFile celestialBodiesJsonBaseFile))
                 {
                     HEGuidManager.PopulateObservedGuidsList(celestialBodiesJsonBaseFile.JData);
                 }
@@ -951,8 +951,8 @@ namespace HELLION.Explorer
                             string[] arr = new string[7];
                             arr[0] = listItem.Text;
                             arr[1] = listItem.NodeType.ToString();
-                            arr[2] = listItem.CountOfChildNodes.ToString();
-                            arr[3] = listItem.CountOfAllChildNodes.ToString();
+                            arr[2] = listItem.GetNodeCount(includeSubTrees: false).ToString();
+                            arr[3] = listItem.GetNodeCount(includeSubTrees: true).ToString();
                             arr[4] = listItem.Path;
                             arr[5] = ""; // listItem.GUID.ToString();
                             arr[6] = ""; // nodeChild.SceneID.ToString();
@@ -978,8 +978,8 @@ namespace HELLION.Explorer
                         string[] arr = new string[7];
                         arr[0] = nodeChild.Text;
                         arr[1] = nodeChild.NodeType.ToString();
-                        arr[2] = nodeChild.CountOfChildNodes.ToString();
-                        arr[3] = nodeChild.CountOfAllChildNodes.ToString();
+                        arr[2] = nodeChild.GetNodeCount(includeSubTrees: false).ToString();
+                        arr[3] = nodeChild.GetNodeCount(includeSubTrees: true).ToString();
                         arr[4] = nodeChild.Path;
                         arr[5] = ""; // nodeChild.GUID.ToString();
                         arr[6] = ""; // nodeChild.SceneID.ToString();
@@ -1112,9 +1112,9 @@ namespace HELLION.Explorer
                 if (true) // nSelectedHETNNode.NodeType != HETreeNodeType.SystemNAV) // temp addition
                 {
                     // Get the count of the child nodes contained in the selected node
-                    decimal iTotalNodeCount = docCurrent.SolarSystem.RootNode.CountOfAllChildNodes;
-                    int iThisNodeCount = nSelectedHETNNode.CountOfChildNodes;
-                    int iThisNodeAndSubsCount = nSelectedHETNNode.CountOfAllChildNodes;
+                    decimal iTotalNodeCount = docCurrent.SolarSystem.RootNode.GetNodeCount(includeSubTrees: true);
+                    int iThisNodeCount = nSelectedHETNNode.GetNodeCount(includeSubTrees: false);
+                    int iThisNodeAndSubsCount = nSelectedHETNNode.GetNodeCount(includeSubTrees: true);
 
                     decimal dThisNodeCountAsPercentage = ((decimal)iThisNodeCount / iTotalNodeCount) * 100;
                     decimal dThisNodeAndSubsCountAsPercentage = ((decimal)iThisNodeAndSubsCount / iTotalNodeCount) * 100;

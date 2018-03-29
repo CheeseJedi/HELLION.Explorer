@@ -15,12 +15,12 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEJsonBaseFile
+    public class HEBaseJsonFile
     {
         /// <summary>
         /// Default constructor, not used directly but required by the derived class.
         /// </summary>
-        public HEJsonBaseFile(object ownerObject)
+        public HEBaseJsonFile(object ownerObject)
         {
             OwnerObject = ownerObject ?? throw new NullReferenceException();
         }
@@ -29,7 +29,7 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEJsonBaseFile(object ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : this(ownerObject)
+        public HEBaseJsonFile(object ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : this(ownerObject)
         {
             File = passedFileInfo ?? throw new NullReferenceException();
             RootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);

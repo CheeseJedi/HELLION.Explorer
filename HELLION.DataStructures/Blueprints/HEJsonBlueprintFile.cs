@@ -6,7 +6,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// Defines a class to load HSBF blueprint files.
     /// </summary>
-    public class HEJsonBlueprintFile : HEJsonBaseFile
+    public class HEJsonBlueprintFile : HEBaseJsonFile
     {
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.

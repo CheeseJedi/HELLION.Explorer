@@ -8,7 +8,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// 
     /// </summary>
-    public class HEBlueprintStructureDefinitionsFile : HEJsonBaseFile
+    public class HEBlueprintStructureDefinitionsFile : HEBaseJsonFile
     {
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.

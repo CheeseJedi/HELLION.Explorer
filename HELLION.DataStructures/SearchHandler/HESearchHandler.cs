@@ -119,8 +119,8 @@ namespace HELLION.DataStructures
             {
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
                 OperatorFlags = passedOperatorFlags;
-                rootNode = new HESearchHandlerTreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName, passedOwner: this);
-                parent.rootNode.Nodes.Add(rootNode);
+                _rootNode = new HESearchHandlerTreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName, passedOwner: this);
+                parent.rootNode.Nodes.Add(_rootNode);
                 parent.searchOperators.Add(this);
             }
 
@@ -134,12 +134,12 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Public property for the root node of the Search Handler tree.
             /// </summary>
-            public HETreeNode RootNode => rootNode;
+            public HETreeNode RootNode => _rootNode;
 
             /// <summary>
             /// The root node of the Game Data tree.
             /// </summary>
-            protected HETreeNode rootNode = null;
+            protected HETreeNode _rootNode = null;
 
             /// <summary>
             /// Stores a reference to this object's parent, the HESearchHandler
@@ -257,7 +257,7 @@ namespace HELLION.DataStructures
                         // Unrecognised/unsupported first token.
                         return false;
                     }
-                    rootNode.Text = GenerateResultSetDisplayName();
+                    _rootNode.BaseNodeText = GenerateResultSetDisplayName();
                     return results.Count() > 0 ? true : false;
                 }
                 else
@@ -267,7 +267,7 @@ namespace HELLION.DataStructures
                     {
                         Debug.Print("Find, Case SENTITIVE");
 
-                        results = startingNode.ListOfAllChildNodes
+                        results = startingNode.GetChildNodes(includeSubtrees: true)
                             .Where<HETreeNode>(f => f.Name.Contains(query)
                             || f.Text.Contains(query)
                             || f.NodeType.ToString().Contains(query))
@@ -277,14 +277,14 @@ namespace HELLION.DataStructures
                     {
                         Debug.Print("Find, Case INsensitive");
 
-                        results = startingNode.ListOfAllChildNodes
+                        results = startingNode.GetChildNodes(includeSubtrees: true)
                             .Where<HETreeNode>(f => f.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
                             || f.Text.Contains(query, StringComparison.OrdinalIgnoreCase)
                             || f.NodeType.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
                             .ToList<HETreeNode>();
                     }
 
-                    rootNode.Text = GenerateResultSetDisplayName();
+                    _rootNode.BaseNodeText = GenerateResultSetDisplayName();
                     return results.Count() > 0 ? true : false;
                 }
             }
