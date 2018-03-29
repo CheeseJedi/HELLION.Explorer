@@ -11,18 +11,18 @@
 
         public bool DisplayRootStructureIcon
         {
-            get { return displayRootStructureIcon; }
+            get { return _displayRootStructureIcon; }
             set
             {
                 // Only make the change if it's actually a new value.
-                if (value != displayRootStructureIcon)
+                if (value != _displayRootStructureIcon)
                 {
                     NodeType = value ? HETreeNodeType.BlueprintRootStructure : HETreeNodeType.BlueprintStructure;
                 }
             }
         }
 
-        protected bool displayRootStructureIcon = false;
+        protected bool _displayRootStructureIcon = false;
     }
 
 

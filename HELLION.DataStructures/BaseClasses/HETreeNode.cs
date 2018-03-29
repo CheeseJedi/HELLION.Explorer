@@ -107,7 +107,41 @@ namespace HELLION.DataStructures
                 RefreshToolTipText();
             }
         }
-        
+
+        /// <summary>
+        /// The 'prefix' applied prior to the node text.
+        /// </summary>
+        public string PrefixNodeText
+        {
+            get => _prefixNodeText;
+            set
+            {
+                if (_prefixNodeText != value)
+                {
+                    _prefixNodeText = value;
+
+                    RefreshText();
+                }
+            }
+        }
+
+        /// <summary>
+        /// The 'postfix' applied after to the node text.
+        /// </summary>
+        public string PostfixNodeText
+        {
+            get => _postfixNodeText;
+            set
+            {
+                if (_postfixNodeText != value)
+                {
+                    _postfixNodeText = value;
+
+                    RefreshToolTipText();
+                }
+            }
+        }
+
         /// <summary>
         /// Redefines the Name accessor to track changes.
         /// </summary>
@@ -165,66 +199,6 @@ namespace HELLION.DataStructures
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Returns a count of direct descendent (first generation) nodes.
-        /// </summary>
-        [Obsolete("CountOfChildNodes is deprecated, please use GetNodeCount() instead.")]
-        public int CountOfChildNodes
-        {
-            get => GetNodeCount(includeSubTrees: false);
-
-        }
-
-        /// <summary>
-        /// Builds and returns a could of all descendent nodes.
-        /// </summary>
-        [Obsolete("CountOfAllChildNodes is deprecated, please use GetNodeCount() instead.")]
-        public int CountOfAllChildNodes
-        {
-            get => GetNodeCount(includeSubTrees: true);
-        }
-
-        /// <summary>
-        /// Returns a list of HETreeNodes of direct descendant nodes.
-        /// </summary>
-        /// <returns>Also returns null if there are no child nodes</returns>
-        [Obsolete("ListOfChildNodes is deprecated, please use GetChildNodes() instead.")]
-        public List<HETreeNode> ListOfChildNodes
-        {
-            get => GetChildNodes(includeSubtrees: false);
-
-            /*
-            {
-                List<HETreeNode> _listOfChildNodes = new List<HETreeNode> { this };
-                foreach (HETreeNode child in Nodes)
-                {
-                    _listOfChildNodes.Add(child);
-                }
-                return _listOfChildNodes.Count > 0 ? _listOfChildNodes : null;
-            }
-            */
-        }
-
-        /// <summary>
-        /// Returns a list of all child nodes via recursion.
-        /// </summary>
-        /// <returns>Also returns null if there are no child nodes</returns>
-        [Obsolete("ListOfAllChildNodes is deprecated, please use GetChildNodes() instead.")]
-        public List<HETreeNode> ListOfAllChildNodes
-        {
-            get => GetChildNodes(includeSubtrees: true);
-            /*
-            {
-                List<HETreeNode> _listOfAllChildNodes = new List<HETreeNode> { this };
-                foreach (HETreeNode child in Nodes)
-                {
-                    _listOfAllChildNodes.AddRange(child.ListOfAllChildNodes);
-                }
-                return _listOfAllChildNodes.Count > 0 ? _listOfAllChildNodes : null;
-            }
-            */
-        }
 
         /// <summary>
         /// Returns a list of all first generation child nodes, or all descendants via recursion.
@@ -299,6 +273,8 @@ namespace HELLION.DataStructures
 
             // Alterations to the base name can be applied here.
             Name = BaseNodeName;
+
+            //RefreshText();
         }
 
         /// <summary>
@@ -313,13 +289,14 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Refreshes the text displayed in the label of the tree node. 
         /// </summary>
-        protected void RefreshText()
+        public  void RefreshText()
         {
             if (BaseNodeText == null || BaseNodeText == "") Text = GenerateBaseNodeText();
             else
             {
                 // Alterations to the base text can be applied here.
-                Text = BaseNodeText;
+                Text = _prefixNodeText + BaseNodeText + _postfixNodeText;
+                //RefreshToolTipText();
             }
         }
 
@@ -341,7 +318,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Refreshes the node's ToolTipText.
         /// </summary>
-        protected void RefreshToolTipText()
+        public void RefreshToolTipText(bool includeSubtrees = false)
         {
             
             if (BaseNodeToolTipText == null || BaseNodeToolTipText == "") ToolTipText = GenerateBaseNodeToolTipText();
@@ -349,6 +326,13 @@ namespace HELLION.DataStructures
             {
                 // Alterations to the base text can be applied here.
                 ToolTipText = BaseNodeText;
+            }
+            if (includeSubtrees && Nodes.Count > 0)
+            {
+                foreach (HETreeNode node in Nodes)
+                {
+                    node.RefreshToolTipText(includeSubtrees);
+                }
             }
             
         }
@@ -372,6 +356,10 @@ namespace HELLION.DataStructures
         protected string _baseNodeName = null;
         protected string _baseNodeText = null;
         protected string _baseNodeToolTipText = null;
+
+        protected string _prefixNodeText = null;
+        protected string _postfixNodeText = null;
+
 
         #endregion
 

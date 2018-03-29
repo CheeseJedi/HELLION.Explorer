@@ -302,6 +302,7 @@ namespace HELLION.DataStructures
             public HEBlueprintStructure(HEBlueprint ownerObject = null) : this()
             {
                 OwnerObject = ownerObject;
+                
             }
 
             #endregion
@@ -326,11 +327,13 @@ namespace HELLION.DataStructures
                 get => _structureID;
                 set
                 {
-                    if (value != _structureID)
+                    if (_structureID != value)
                     {
                         // Change detected, evaluate whether this is the root node (has ID of zero)
+                        _previousStructureID = _structureID;
                         _structureID = value;
-                        RootNode.DisplayRootStructureIcon = (value != null && value == 0) ? true : false;
+
+                        ProcessStructureIDChange();
                     }
                 }
             }
@@ -505,12 +508,28 @@ namespace HELLION.DataStructures
 
             }
 
+            /// <summary>
+            /// Is called when the StructureID changes and updates the node's prefix and icon.
+            /// </summary>
+            protected void ProcessStructureIDChange()
+            {
+                if (StructureID != null)
+                {
+                    // Module ID zero is always the docking root in a blueprint so when c
+                    RootNode.DisplayRootStructureIcon = (StructureID != null && StructureID == 0) ? true : false;
+
+                    RootNode.PrefixNodeText = String.Format("[{0:000}] ", (int)StructureID);
+                    RootNode.RefreshText();
+                }
+            }
+
             #endregion
 
             #region Fields
 
             protected HEBlueprintStructureTypes? _structureType = null;
             protected int? _structureID = null;
+            protected int? _previousStructureID = null;
 
             #endregion
 

@@ -471,6 +471,15 @@ namespace HELLION.Explorer
                 MainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
 
+                // Trigger a refresh on each of the node trees.
+                docCurrent.SolarSystem.RootNode.RefreshToolTipText(includeSubtrees: true);
+                docCurrent.GameData.RootNode.RefreshToolTipText(includeSubtrees: true);
+                docCurrent.Blueprints.RootNode.RefreshToolTipText(includeSubtrees: true);
+                docCurrent.SearchHandler.RootNode.RefreshToolTipText(includeSubtrees: true);
+
+
+
+
                 //MainForm.treeView1.Sort();
                 // Display prettying - set the star as the selected node and expand it and the solar system root node.
 

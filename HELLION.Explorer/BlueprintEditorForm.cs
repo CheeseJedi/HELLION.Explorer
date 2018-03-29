@@ -472,6 +472,8 @@ namespace HELLION.Explorer
             {
                 blueprint.RootNode.Nodes.Remove(drn);
                 treeViewHierarchy.Nodes.Add(drn);
+                drn.RefreshToolTipText(includeSubtrees: true);
+                drn.ExpandAll();
             }
         }
 
@@ -485,6 +487,8 @@ namespace HELLION.Explorer
             {
                 treeViewHierarchy.Nodes.Remove(drn);
                 blueprint.RootNode.Nodes.Add(drn);
+                drn.RefreshToolTipText(includeSubtrees: true);
+                drn.Collapse();
             }
         }
         #endregion
