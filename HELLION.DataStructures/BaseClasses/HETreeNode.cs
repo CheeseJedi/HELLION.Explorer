@@ -351,7 +351,7 @@ namespace HELLION.DataStructures
             sb.Append("Name: " + Name + Environment.NewLine);
             sb.Append("Text: " + Text + Environment.NewLine);
             sb.Append("NodeType: " + NodeType + Environment.NewLine);
-            sb.Append("Path: " + Path + Environment.NewLine);
+            //sb.Append("Path: " + Path + Environment.NewLine);
 
             return sb.ToString();
         }

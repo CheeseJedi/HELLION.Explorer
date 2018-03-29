@@ -112,6 +112,18 @@ namespace HELLION.Explorer
                         CurrentDockingPort = null;
                         CurrentStructure = null;
                     }
+
+                    Debug.Print("CurrentlySelectedNode has caused new values to be set.");
+
+
+                    if (CurrentStructure == null) Debug.Print("CurrentStructure is null.");
+                    else Debug.Print("CurrentStructure [" + CurrentStructure.StructureID.ToString() + "] " + CurrentStructure.StructureType.ToString());
+
+                    if (CurrentDockingPort == null) Debug.Print("CurrentDockingPort is null.");
+                    else Debug.Print("CurrentDockingPort " + CurrentDockingPort.PortName.ToString());
+
+                    // TEMPORARY
+                    RefreshDestinationStructureList();
                 }
             }
         }
@@ -150,6 +162,7 @@ namespace HELLION.Explorer
                     _currentDockingPort = value;
 
                     // Trigger updates.
+                    RefreshDropDownDockingSourcePort();
                 }
             }
         }
@@ -168,6 +181,7 @@ namespace HELLION.Explorer
 
                     // Trigger control update.
                     RefreshDropDownDestinationStructures();
+
                     RefreshDropDownDockingDestinationPort();
 
                 }
@@ -302,10 +316,14 @@ namespace HELLION.Explorer
             {
                 foreach (var port in CurrentStructure.AvailableDockingPorts())
                 {
-                    comboBoxDockingSourcePort.Items.Add(port.PortName.ToString());
+                    string formattedPortName = String.Format("[{0:000}] {1}",
+                        port.OwnerObject.StructureID, port.PortName);
+
+                    comboBoxDockingSourcePort.Items.Add(formattedPortName);
+
                     if (CurrentDockingPort != null && CurrentDockingPort == port)
                     {
-                        comboBoxDockingSourcePort.SelectedItem = port.PortName.ToString();
+                        comboBoxDockingSourcePort.SelectedItem = formattedPortName;
                         dockingPortSet = true;
                     }
                 }
@@ -313,10 +331,7 @@ namespace HELLION.Explorer
             else comboBoxDockingSourcePort.Items.Add("No available docking ports");
 
             // Attempt to select the current docking port from the list.
-            if (!dockingPortSet)
-            {
-                comboBoxDockingSourcePort.SelectedIndex = 0;
-            }
+            if (!dockingPortSet) comboBoxDockingSourcePort.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -330,13 +345,12 @@ namespace HELLION.Explorer
             if (DestinationStructureList == null) Debug.Print("DestinationStructureList is null.");
             else Debug.Print("DestinationStructureList.Count " + DestinationStructureList.Count);
 
-
             if (DestinationStructureList != null && DestinationStructureList.Count > 0)
             {
                 foreach (HEBlueprint.HEBlueprintStructure structure in DestinationStructureList)
                 {
-                    // needs to also display structure ids
-                    comboBoxDockingDestinationStructure.Items.Add(structure.StructureType.ToString());
+                    comboBoxDockingDestinationStructure.Items.Add(String.Format("[{0:000}] {1}", 
+                        (int)structure.StructureID, structure.StructureType));
                 }
             }
             else comboBoxDockingDestinationStructure.Items.Add("No available structures");
@@ -491,6 +505,8 @@ namespace HELLION.Explorer
                     DockingDestinationSource = dockDestSourceValue;
                 }
                 else throw new InvalidOperationException("Unable to parse Docking Destination Source.");
+
+                RefreshDestinationStructureList();
             }
         }
 
