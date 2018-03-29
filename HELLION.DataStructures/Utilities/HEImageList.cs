@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
-using System.Diagnostics;
 
 namespace HELLION.DataStructures
 {
@@ -274,7 +273,11 @@ namespace HELLION.DataStructures
             }
         }
 
-
+        /// <summary>
+        /// Returns the ImageIndex for a particular blueprint structure type.
+        /// </summary>
+        /// <param name="StructureType"></param>
+        /// <returns></returns>
         public static int GetStructureImageIndexByStructureType(HEBlueprintStructureTypes StructureType)
         {
             switch (StructureType)
@@ -334,7 +337,6 @@ namespace HELLION.DataStructures
             }
         }
 
-
         /// <summary>
         /// Public read-only property to get the IconImageList so it can be bound to WinForms controls etc.
         /// </summary>
@@ -376,7 +378,6 @@ namespace HELLION.DataStructures
 
         private ImageList structureImageList = null;
 
-
         /// <summary>
         /// Builds an ImageList from the embedded resources.
         /// </summary>
@@ -404,19 +405,15 @@ namespace HELLION.DataStructures
             // Process string array of resource names (this includes the namespace name)
             foreach (string embeddedResource in embeddedResourceNames)
             {
-                Debug.Print(embeddedResource);
                 
                 if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Icons16x."))
                 {
-                    Debug.Print("Icon");
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
                     iconImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }
                 
                 else if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Structures180x."))
                 {
-                    Debug.Print("Structure");
-
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
                     structureImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }

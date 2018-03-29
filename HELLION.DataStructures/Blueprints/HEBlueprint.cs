@@ -148,7 +148,6 @@ namespace HELLION.DataStructures
         {
             if (OwnerObject == null) throw new NullReferenceException("ParentJsonBlueprintFile was null.");
 
-            // the following causes an exception.
             StructureDefinitions = OwnerObject.OwnerObject.OwnerObject
                 .StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
 
@@ -292,7 +291,14 @@ namespace HELLION.DataStructures
             public HEBlueprintStructure()
             {
                 DockingPorts = new List<HEBlueprintDockingPort>();
-                RootNode = new HEBlueprintStructureTreeNode(passedOwner: this, nodeName: StructureType.ToString());
+                RootNode = new HEBlueprintStructureTreeNode(passedOwner: this,
+                    nodeName: StructureType.ToString());
+
+                //String.Format("[{0:000}] {1} ", StructureID, StructureType));
+
+                //RootNode.PrefixNodeName = StructureID != null ? String.Format("[{0:000}] ", (int)StructureID) : "[ERR] ";
+                //RootNode.RefreshName();
+
             }
 
             /// <summary>
@@ -333,7 +339,7 @@ namespace HELLION.DataStructures
                         _previousStructureID = _structureID;
                         _structureID = value;
 
-                        ProcessStructureIDChange();
+                        RefreshAfterStructureIDChange();
                     }
                 }
             }
@@ -511,15 +517,29 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Is called when the StructureID changes and updates the node's prefix and icon.
             /// </summary>
-            protected void ProcessStructureIDChange()
+            protected void RefreshAfterStructureIDChange()
             {
                 if (StructureID != null)
                 {
-                    // Module ID zero is always the docking root in a blueprint so when c
+                    // Module ID zero is always the docking root in a blueprint and has a different icon.
                     RootNode.DisplayRootStructureIcon = (StructureID != null && StructureID == 0) ? true : false;
 
-                    RootNode.PrefixNodeText = String.Format("[{0:000}] ", (int)StructureID);
-                    RootNode.RefreshText();
+                    // RootNode.BaseNodeName = StructureType.ToString();
+                    RootNode.PrefixNodeName = String.Format("[{0:000}] ", (int)StructureID);
+                    RootNode.RefreshName();
+
+                    // Update Docking Port nodes for this node.
+                    if (DockingPorts.Count > 0)
+                    {
+                        foreach (var port in DockingPorts)
+                        {
+                            port.RefreshAfterParentStructureIDChange();
+                        }
+                    }
+
+                    
+                    // Update docking structure relationships between this module and any docked modules.
+
                 }
             }
 
@@ -544,7 +564,14 @@ namespace HELLION.DataStructures
             /// </summary>
             public HEBlueprintDockingPort()
             {
-                RootNode = new HEBlueprintDockingPortTreeNode(passedOwner: this, nodeName: PortName.ToString());
+                RootNode = new HEBlueprintDockingPortTreeNode(passedOwner: this,
+                    nodeName: PortName.ToString());
+
+                RootNode.PrefixNodeName = OwnerObject != null && OwnerObject.StructureID != null ? String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] ";
+                //RootNode.RefreshName();
+
+
+
             }
 
             /// <summary>
@@ -563,8 +590,15 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Parent object - not to be included in serialisation.
             /// </summary>
-            public HEBlueprintStructure OwnerObject { get; set; } = null;
-
+            public HEBlueprintStructure OwnerObject
+            {
+                get => _ownerObject;
+                set
+                {
+                    _ownerObject = value;
+                    RefreshAfterParentStructureIDChange();
+                }
+            }
             /// <summary>
             /// Not to be serialised.
             /// </summary>
@@ -644,11 +678,21 @@ namespace HELLION.DataStructures
                 return false;
             }
 
+
+            public void RefreshAfterParentStructureIDChange()
+            {
+                RootNode.PrefixNodeName = OwnerObject != null ? String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] ";
+                RootNode.RefreshName();
+            }
+
+
+
             #endregion
 
             #region Fields
 
             private HEDockingPortTypes? _portName = null;
+            private HEBlueprintStructure _ownerObject = null;
 
             #endregion
 

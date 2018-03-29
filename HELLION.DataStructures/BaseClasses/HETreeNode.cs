@@ -51,96 +51,6 @@ namespace HELLION.DataStructures
         /// </summary>
         public object OwnerObject { get; protected set; } = null;
 
-        /// <summary>
-        /// The 'base' of the node name - this may be displayed differently.
-        /// </summary>
-        public string BaseNodeName
-        {
-            get => _baseNodeName;
-            set
-            {
-                _baseNodeName = value;
-                RefreshName();
-            }
-        }
-
-        /// <summary>
-        /// The HETreeNodeType type of this node.
-        /// </summary>
-        public HETreeNodeType NodeType
-        {
-            get => _nodeType;
-            set
-            {
-                if (value != _nodeType)
-                {
-                    _nodeType = value;
-
-                    RefreshImageIndex();
-                }
-            }
-        }
-
-        /// <summary>
-        /// The 'base' of the node text aka what's displayed. 
-        /// </summary>
-        public string BaseNodeText
-        {
-            get => _baseNodeText;
-            set
-            {
-                _baseNodeText = value;
-                RefreshText();
-            }
-        }
-
-        /// <summary>
-        /// The 'base' of the ToolTipText - if set this is displayed instead
-        /// of an auto-generated ToolTipText.
-        /// </summary>
-        public string BaseNodeToolTipText
-        {
-            get => _baseNodeToolTipText;
-            set
-            {
-                _baseNodeToolTipText = value;
-                RefreshToolTipText();
-            }
-        }
-
-        /// <summary>
-        /// The 'prefix' applied prior to the node text.
-        /// </summary>
-        public string PrefixNodeText
-        {
-            get => _prefixNodeText;
-            set
-            {
-                if (_prefixNodeText != value)
-                {
-                    _prefixNodeText = value;
-
-                    RefreshText();
-                }
-            }
-        }
-
-        /// <summary>
-        /// The 'postfix' applied after to the node text.
-        /// </summary>
-        public string PostfixNodeText
-        {
-            get => _postfixNodeText;
-            set
-            {
-                if (_postfixNodeText != value)
-                {
-                    _postfixNodeText = value;
-
-                    RefreshToolTipText();
-                }
-            }
-        }
 
         /// <summary>
         /// Redefines the Name accessor to track changes.
@@ -162,6 +72,72 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
+        /// The 'prefix' applied prior to the node name.
+        /// </summary>
+        public string PrefixNodeName
+        {
+            get => _prefixNodeName;
+            set
+            {
+                if (_prefixNodeName != value)
+                {
+                    _prefixNodeName = value;
+
+                    RefreshName();
+                }
+            }
+        }
+
+        /// <summary>
+        /// The 'base' of the node name - this may be displayed differently.
+        /// </summary>
+        public string BaseNodeName
+        {
+            get => _baseNodeName;
+            set
+            {
+                _baseNodeName = value;
+                RefreshName();
+            }
+        }
+
+        /// <summary>
+        /// The 'postfix' applied after to the node name.
+        /// </summary>
+        public string PostfixNodeName
+        {
+            get => _postfixNodeName;
+            set
+            {
+                if (_postfixNodeName != value)
+                {
+                    _postfixNodeName = value;
+
+                    RefreshName();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// The HETreeNodeType type of this node.
+        /// </summary>
+        public HETreeNodeType NodeType
+        {
+            get => _nodeType;
+            set
+            {
+                if (value != _nodeType)
+                {
+                    _nodeType = value;
+
+                    RefreshImageIndex();
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Redefines the ToolTipText accessor to track changes.
         /// </summary>
         public new string Text
@@ -180,6 +156,54 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
+        /// The 'prefix' applied prior to the node text.
+        /// </summary>
+        public string PrefixNodeText
+        {
+            get => _prefixNodeText;
+            set
+            {
+                if (_prefixNodeText != value)
+                {
+                    _prefixNodeText = value;
+
+                    RefreshText();
+                }
+            }
+        }
+
+        /// <summary>
+        /// The 'base' of the node text aka what's displayed. 
+        /// </summary>
+        public string BaseNodeText
+        {
+            get => _baseNodeText;
+            set
+            {
+                _baseNodeText = value;
+                RefreshText();
+            }
+        }
+
+        /// <summary>
+        /// The 'postfix' applied after to the node text.
+        /// </summary>
+        public string PostfixNodeText
+        {
+            get => _postfixNodeText;
+            set
+            {
+                if (_postfixNodeText != value)
+                {
+                    _postfixNodeText = value;
+
+                    RefreshText();
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Redefines the base's Text accessor to track changes.
         /// </summary>
         public new string ToolTipText
@@ -195,6 +219,23 @@ namespace HELLION.DataStructures
                 }
             }
         }
+
+        /// <summary>
+        /// The 'base' of the ToolTipText - if set this is displayed instead
+        /// of an auto-generated ToolTipText.
+        /// </summary>
+        public string BaseNodeToolTipText
+        {
+            get => _baseNodeToolTipText;
+            set
+            {
+                _baseNodeToolTipText = value;
+                RefreshToolTipText();
+            }
+        }
+
+
+
 
         #endregion
 
@@ -264,7 +305,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Refreshes the node name and triggers auto generation if necessary.
         /// </summary>
-        protected void RefreshName()
+        public void RefreshName()
         {
             if (BaseNodeName == null || BaseNodeName == "")
             {
@@ -272,9 +313,9 @@ namespace HELLION.DataStructures
             }
 
             // Alterations to the base name can be applied here.
-            Name = BaseNodeName;
+            Name = _prefixNodeName + BaseNodeName + _postfixNodeName;
 
-            //RefreshText();
+            RefreshText();
         }
 
         /// <summary>
@@ -296,7 +337,7 @@ namespace HELLION.DataStructures
             {
                 // Alterations to the base text can be applied here.
                 Text = _prefixNodeText + BaseNodeText + _postfixNodeText;
-                //RefreshToolTipText();
+                RefreshToolTipText();
             }
         }
 
@@ -356,6 +397,9 @@ namespace HELLION.DataStructures
         protected string _baseNodeName = null;
         protected string _baseNodeText = null;
         protected string _baseNodeToolTipText = null;
+
+        protected string _prefixNodeName = null;
+        protected string _postfixNodeName = null;
 
         protected string _prefixNodeText = null;
         protected string _postfixNodeText = null;

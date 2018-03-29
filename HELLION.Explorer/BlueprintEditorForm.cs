@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 
@@ -7,18 +8,8 @@ namespace HELLION.Explorer
 {
     public partial class BlueprintEditorForm : Form
     {
-        /// <summary>
-        /// Defines of filter type for the DockingDstinationSource list.
-        /// </summary>
-        public enum DockingDestSourceFilterType
-        {
-            Primary_Structure = 0,
-            Non_Primary_Structures,
-            Undocked_Structures,
-
-        }
-
         #region Constructors
+
         /// <summary>
         /// Basic Constructor.
         /// </summary>
@@ -59,9 +50,11 @@ namespace HELLION.Explorer
 
             IsDirty = false;
         }
+
         #endregion
 
-        #region Core variables
+        #region Properties
+
         /// <summary>
         /// The node that the editor was opened from.
         /// </summary>
@@ -70,7 +63,6 @@ namespace HELLION.Explorer
         /// <summary>
         /// Determines whether the text has been changed.
         /// </summary>
-        private bool _isDirty = false;
         public bool IsDirty
         {
             get { return _isDirty; }
@@ -86,27 +78,11 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
-        /// Stores the form's initial title text.
-        /// </summary>
-        private string FormTitleText = null;
-        /// <summary>
-        /// A reference to the jsonBlueprintFile the blueprint is from.
-        /// </summary>
-        private HEJsonBlueprintFile jsonBlueprintFile = null;
-        /// <summary>
-        /// A reference to the blueprint object being worked on.
-        /// </summary>
-        private HEBlueprint blueprint = null;
-        #endregion
-
-        #region Docking Related Properties
-        /// <summary>
         /// Represents the currently selected tree node.
         /// </summary>
-        private HEBlueprintTreeNode _currentlySelectedNode = null;
         public HEBlueprintTreeNode CurrentlySelectedNode
         {
-            get { return _currentlySelectedNode; }
+            get => _currentlySelectedNode;
             set
             {
                 if (_currentlySelectedNode != value)
@@ -130,26 +106,12 @@ namespace HELLION.Explorer
                             CurrentStructure = (HEBlueprint.HEBlueprintStructure)_currentlySelectedNode.OwnerObject;
                         }
                         else throw new InvalidOperationException("Unrecognised OwnerObject type.");
-
-                        // Update form items related to the currently selected object.
-                        //pictureBoxSelectedStructure.Image = CurrentStructure == null ? null 
-                        //    : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(CurrentStructure.StructureType.Value)];
-
-                        // labelSelectedStructureType.Text = CurrentStructure == null ? null : CurrentStructure.StructureType.ToString();
                     }
-                    //else
+                    else
                     {
-                        // No currently selected node, clear the displays.
-                        //pictureBoxSelectedStructure.Image = null;
-                        //labelSelectedStructureType.Text = null;
+                        CurrentDockingPort = null;
+                        CurrentStructure = null;
                     }
-                    //RefreshPictureBoxSelectedStructure();
-                    //RefreshLabelSelectedStructureType();
-
-                    //RefreshDropDownDockingSourcePort();
-                    
-                    //RefreshDropDownDestinationStructures();
-                    //RefreshDropDownDockingDestinationPort();
                 }
             }
         }
@@ -157,10 +119,9 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected structure.
         /// </summary>
-        private HEBlueprint.HEBlueprintStructure _currentStructure = null;
         public HEBlueprint.HEBlueprintStructure CurrentStructure
         {
-            get { return _currentStructure; }
+            get => _currentStructure;
             private set
             {
                 if (_currentStructure != value)
@@ -179,10 +140,9 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected docking port.
         /// </summary>
-        private HEBlueprint.HEBlueprintDockingPort _currentDockingPort = null;
         public HEBlueprint.HEBlueprintDockingPort CurrentDockingPort
         {
-            get { return _currentDockingPort; }
+            get => _currentDockingPort;
             private set
             {
                 if (_currentDockingPort != value)
@@ -197,10 +157,9 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected source for dockable modules.
         /// </summary>
-        private DockingDestSourceFilterType _dockingDestinationSource;
         public DockingDestSourceFilterType DockingDestinationSource
         {
-            get { return _dockingDestinationSource; }
+            get => _dockingDestinationSource;
             private set
             {
                 if (_dockingDestinationSource != value)
@@ -218,16 +177,15 @@ namespace HELLION.Explorer
         /// <summary>
         /// This list is populated with structures that are available for a docking.
         /// </summary>
-        private List<HEBlueprint.HEBlueprintStructure> destinationStructureList = null;
         public List<HEBlueprint.HEBlueprintStructure> DestinationStructureList
         {
-            get { return destinationStructureList; }
+            get => destinationStructureList;
             private set
             {
                 destinationStructureList = value;
                 // The list has changed so trigger a refresh of the control's values.
                 RefreshDropDownDestinationStructures();
-                //RefreshDropDownDockingDestinationPort();
+                RefreshDropDownDockingDestinationPort();
 
             }
         }
@@ -235,10 +193,9 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the selected destination structure for docking.
         /// </summary>
-        private HEBlueprint.HEBlueprintStructure _destinationStructure = null;
         public HEBlueprint.HEBlueprintStructure DestinationStructure
         {
-            get { return _destinationStructure; }
+            get => _destinationStructure;
             private set
             {
                 if (_destinationStructure != value)
@@ -255,10 +212,9 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the selected destination structures target docking port for docking.
         /// </summary>
-        private HEBlueprint.HEBlueprintDockingPort _destinationDockingPort = null;
         public HEBlueprint.HEBlueprintDockingPort DestinationDockingPort
         {
-            get { return _destinationDockingPort; }
+            get => _destinationDockingPort;
             private set
             {
                 if (_destinationDockingPort != value)
@@ -273,9 +229,11 @@ namespace HELLION.Explorer
                 }
             }
         }
+
         #endregion
 
         #region Refresh Methods
+
         /// <summary>
         /// Updates the image displayed by the picture box based on the currently selected structure.
         /// </summary>
@@ -290,7 +248,7 @@ namespace HELLION.Explorer
         /// </summary>
         private void RefreshLabelSelectedStructureType()
         {
-            labelSelectedStructureType.Text = CurrentStructure == null ? null : CurrentStructure.StructureType.ToString();
+            labelSelectedStructureType.Text = CurrentStructure == null ? null : String.Format("[{0:000}] {1}", CurrentStructure.StructureID, CurrentStructure.StructureType);
         }
 
         /// <summary>
@@ -332,7 +290,7 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
-        /// 
+        /// Refreshes the drop down for the current structures undocked ports.
         /// </summary>
         private void RefreshDropDownDockingSourcePort()
         {
@@ -352,7 +310,7 @@ namespace HELLION.Explorer
                     }
                 }
             }
-            else comboBoxDockingSourcePort.Items.Add("No available docking ports.");
+            else comboBoxDockingSourcePort.Items.Add("No available docking ports");
 
             // Attempt to select the current docking port from the list.
             if (!dockingPortSet)
@@ -369,6 +327,10 @@ namespace HELLION.Explorer
         {
             comboBoxDockingDestinationStructure.Items.Clear();
 
+            if (DestinationStructureList == null) Debug.Print("DestinationStructureList is null.");
+            else Debug.Print("DestinationStructureList.Count " + DestinationStructureList.Count);
+
+
             if (DestinationStructureList != null && DestinationStructureList.Count > 0)
             {
                 foreach (HEBlueprint.HEBlueprintStructure structure in DestinationStructureList)
@@ -377,7 +339,7 @@ namespace HELLION.Explorer
                     comboBoxDockingDestinationStructure.Items.Add(structure.StructureType.ToString());
                 }
             }
-            else comboBoxDockingDestinationStructure.Items.Add("No available structures.");
+            else comboBoxDockingDestinationStructure.Items.Add("No available structures");
 
             comboBoxDockingDestinationStructure.SelectedIndex = 0;
         }
@@ -403,7 +365,7 @@ namespace HELLION.Explorer
                     }
                 }
             }
-            else comboBoxDockingSourcePort.Items.Add("No available docking ports.");
+            else comboBoxDockingSourcePort.Items.Add("No available docking ports");
 
             // Attempt to select the current docking port from the list.
             if (!dockingPortSet)
@@ -461,7 +423,7 @@ namespace HELLION.Explorer
         }
         #endregion
 
-        #region TreeNode Grafting
+        #region TreeNode Grafting Methods
         /// <summary>
         /// Grafts a node tree inbound from the Main Form.
         /// </summary>
@@ -493,7 +455,7 @@ namespace HELLION.Explorer
         }
         #endregion
 
-        #region ToolPane ComboBoxes
+        #region ToolPane ComboBoxe Event Methods
         /// <summary>
         /// Tracks currently selected item in the comboBoxStructureList and enables the 
         /// Add structure button if the selected item is non-zero (not the 'Unspecified'
@@ -554,7 +516,8 @@ namespace HELLION.Explorer
         }
         #endregion
 
-        #region Tool Pane Buttons
+        #region Tool Pane Button Event Methods
+
         /// <summary>
         /// Adds a new structure of the type specified in the comboBoxStructureList.
         /// </summary>
@@ -594,7 +557,8 @@ namespace HELLION.Explorer
 
         #endregion
 
-        #region Form Controls
+        #region Form Control Event Methods
+
         /// <summary>
         /// Triggers an update of the currentlySelectedNode.
         /// </summary>
@@ -643,9 +607,11 @@ namespace HELLION.Explorer
             GC.Collect();
 
         }
+
         #endregion
 
-        #region Form Menu Items
+        #region Form Menu Item Event Methods
+
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (treeViewHierarchy.SelectedNode != null) treeViewHierarchy.SelectedNode.ExpandAll();
@@ -678,7 +644,38 @@ namespace HELLION.Explorer
         {
             Close();
         }
+
         #endregion
 
+        #region Fields
+
+        private bool _isDirty = false;
+        private string FormTitleText = null;
+        private HEJsonBlueprintFile jsonBlueprintFile = null;
+        private HEBlueprint blueprint = null;
+        private HEBlueprintTreeNode _currentlySelectedNode = null;
+        private HEBlueprint.HEBlueprintStructure _currentStructure = null;
+        private HEBlueprint.HEBlueprintDockingPort _currentDockingPort = null;
+        private DockingDestSourceFilterType _dockingDestinationSource;
+        private List<HEBlueprint.HEBlueprintStructure> destinationStructureList = null;
+        private HEBlueprint.HEBlueprintStructure _destinationStructure = null;
+        private HEBlueprint.HEBlueprintDockingPort _destinationDockingPort = null;
+
+        #endregion
+
+        #region Enumerations
+
+        /// <summary>
+        /// Defines of filter type for the DockingDstinationSource list.
+        /// </summary>
+        public enum DockingDestSourceFilterType
+        {
+            Primary_Structure = 0,
+            Non_Primary_Structures,
+            Undocked_Structures,
+
+        }
+
+        #endregion
     }
 }

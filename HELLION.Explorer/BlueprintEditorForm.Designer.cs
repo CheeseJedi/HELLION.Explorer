@@ -58,6 +58,7 @@
             this.buttonUndockPort = new System.Windows.Forms.Button();
             this.groupBoxDockPort = new System.Windows.Forms.GroupBox();
             this.buttonDockPort = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBoxDockingDestinationPort = new System.Windows.Forms.ComboBox();
             this.comboBoxDockingDestinationSource = new System.Windows.Forms.ComboBox();
@@ -83,7 +84,7 @@
             this.treeViewHierarchy.HideSelection = false;
             this.treeViewHierarchy.Location = new System.Drawing.Point(0, 24);
             this.treeViewHierarchy.Name = "treeViewHierarchy";
-            this.treeViewHierarchy.Size = new System.Drawing.Size(701, 625);
+            this.treeViewHierarchy.Size = new System.Drawing.Size(701, 640);
             this.treeViewHierarchy.TabIndex = 0;
             this.treeViewHierarchy.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewHierarchy_AfterSelect);
             // 
@@ -209,7 +210,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 649);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 664);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(899, 22);
             this.statusStrip1.TabIndex = 1;
@@ -308,7 +309,7 @@
             // 
             this.groupBoxUndockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBoxUndockPort.Controls.Add(this.buttonUndockPort);
-            this.groupBoxUndockPort.Location = new System.Drawing.Point(10, 567);
+            this.groupBoxUndockPort.Location = new System.Drawing.Point(10, 582);
             this.groupBoxUndockPort.Name = "groupBoxUndockPort";
             this.groupBoxUndockPort.Size = new System.Drawing.Size(180, 51);
             this.groupBoxUndockPort.TabIndex = 4;
@@ -331,14 +332,15 @@
             // 
             this.groupBoxDockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBoxDockPort.Controls.Add(this.buttonDockPort);
+            this.groupBoxDockPort.Controls.Add(this.label3);
             this.groupBoxDockPort.Controls.Add(this.label2);
             this.groupBoxDockPort.Controls.Add(this.comboBoxDockingDestinationPort);
             this.groupBoxDockPort.Controls.Add(this.comboBoxDockingDestinationSource);
             this.groupBoxDockPort.Controls.Add(this.comboBoxDockingDestinationStructure);
             this.groupBoxDockPort.Controls.Add(this.comboBoxDockingSourcePort);
-            this.groupBoxDockPort.Location = new System.Drawing.Point(10, 372);
+            this.groupBoxDockPort.Location = new System.Drawing.Point(10, 376);
             this.groupBoxDockPort.Name = "groupBoxDockPort";
-            this.groupBoxDockPort.Size = new System.Drawing.Size(180, 189);
+            this.groupBoxDockPort.Size = new System.Drawing.Size(180, 200);
             this.groupBoxDockPort.TabIndex = 3;
             this.groupBoxDockPort.TabStop = false;
             this.groupBoxDockPort.Text = "Dock Port";
@@ -347,13 +349,22 @@
             // 
             this.buttonDockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonDockPort.Enabled = false;
-            this.buttonDockPort.Location = new System.Drawing.Point(5, 159);
+            this.buttonDockPort.Location = new System.Drawing.Point(6, 170);
             this.buttonDockPort.Name = "buttonDockPort";
             this.buttonDockPort.Size = new System.Drawing.Size(169, 24);
             this.buttonDockPort.TabIndex = 1;
             this.buttonDockPort.Text = "Dock";
             this.buttonDockPort.UseVisualStyleBackColor = true;
             this.buttonDockPort.Click += new System.EventHandler(this.buttonDockPort_Click);
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.Location = new System.Drawing.Point(6, 115);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(169, 16);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Docking Port";
             // 
             // label2
             // 
@@ -362,14 +373,14 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(169, 16);
             this.label2.TabIndex = 5;
-            this.label2.Text = "To Structure and Docking Port";
+            this.label2.Text = "To Structure";
             // 
             // comboBoxDockingDestinationPort
             // 
             this.comboBoxDockingDestinationPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingDestinationPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationPort.FormattingEnabled = true;
-            this.comboBoxDockingDestinationPort.Location = new System.Drawing.Point(5, 127);
+            this.comboBoxDockingDestinationPort.Location = new System.Drawing.Point(6, 134);
             this.comboBoxDockingDestinationPort.Name = "comboBoxDockingDestinationPort";
             this.comboBoxDockingDestinationPort.Size = new System.Drawing.Size(169, 21);
             this.comboBoxDockingDestinationPort.TabIndex = 0;
@@ -380,7 +391,7 @@
             this.comboBoxDockingDestinationSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingDestinationSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationSource.FormattingEnabled = true;
-            this.comboBoxDockingDestinationSource.Location = new System.Drawing.Point(5, 73);
+            this.comboBoxDockingDestinationSource.Location = new System.Drawing.Point(5, 64);
             this.comboBoxDockingDestinationSource.Name = "comboBoxDockingDestinationSource";
             this.comboBoxDockingDestinationSource.Size = new System.Drawing.Size(169, 21);
             this.comboBoxDockingDestinationSource.TabIndex = 0;
@@ -391,7 +402,7 @@
             this.comboBoxDockingDestinationStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingDestinationStructure.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationStructure.FormattingEnabled = true;
-            this.comboBoxDockingDestinationStructure.Location = new System.Drawing.Point(5, 100);
+            this.comboBoxDockingDestinationStructure.Location = new System.Drawing.Point(5, 91);
             this.comboBoxDockingDestinationStructure.Name = "comboBoxDockingDestinationStructure";
             this.comboBoxDockingDestinationStructure.Size = new System.Drawing.Size(169, 21);
             this.comboBoxDockingDestinationStructure.TabIndex = 0;
@@ -402,7 +413,7 @@
             this.comboBoxDockingSourcePort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingSourcePort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingSourcePort.FormattingEnabled = true;
-            this.comboBoxDockingSourcePort.Location = new System.Drawing.Point(5, 20);
+            this.comboBoxDockingSourcePort.Location = new System.Drawing.Point(4, 19);
             this.comboBoxDockingSourcePort.Name = "comboBoxDockingSourcePort";
             this.comboBoxDockingSourcePort.Size = new System.Drawing.Size(169, 21);
             this.comboBoxDockingSourcePort.TabIndex = 0;
@@ -420,20 +431,20 @@
             this.panelToolPanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.panelToolPanel.Location = new System.Drawing.Point(699, 24);
             this.panelToolPanel.Name = "panelToolPanel";
-            this.panelToolPanel.Size = new System.Drawing.Size(200, 625);
+            this.panelToolPanel.Size = new System.Drawing.Size(200, 640);
             this.panelToolPanel.TabIndex = 6;
             // 
             // BlueprintEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(899, 671);
+            this.ClientSize = new System.Drawing.Size(899, 686);
             this.Controls.Add(this.panelToolPanel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.treeViewHierarchy);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(700, 710);
+            this.MinimumSize = new System.Drawing.Size(700, 725);
             this.Name = "BlueprintEditorForm";
             this.Text = "BlueprintEditorForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlueprintEditorForm_FormClosing);
@@ -490,5 +501,6 @@
         private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem newFromClipboardToolStripMenuItem;
+        private System.Windows.Forms.Label label3;
     }
 }
