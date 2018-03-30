@@ -123,7 +123,7 @@ namespace HELLION.Explorer
                     else Debug.Print("CurrentDockingPort " + CurrentDockingPort.PortName.ToString());
 
                     // TEMPORARY
-                    RefreshDestinationStructureList();
+                    //RefreshDestinationStructureList();
                 }
             }
         }
@@ -141,6 +141,9 @@ namespace HELLION.Explorer
                     _currentStructure = value;
 
                     // Trigger updates.
+
+                    if (value == null) CurrentDockingPort = null;
+
                     RefreshPictureBoxSelectedStructure();
                     RefreshLabelSelectedStructureType();
 
@@ -217,7 +220,10 @@ namespace HELLION.Explorer
                     _destinationStructure = value;
 
                     // Trigger updates.
-                    // RefreshDropDownDestinationStructures();
+
+                    if (value == null) DestinationDockingPort = null;
+
+
                     RefreshDropDownDockingDestinationPort();
                 }
             }
@@ -371,20 +377,24 @@ namespace HELLION.Explorer
             {
                 foreach (var port in DestinationStructure.AvailableDockingPorts())
                 {
-                    comboBoxDockingDestinationPort.Items.Add(port.PortName.ToString());
+                    string formattedPortName = String.Format("[{0:000}] {1}", 
+                        port.OwnerObject.StructureID, port.PortName);
+
+                    comboBoxDockingDestinationPort.Items.Add(formattedPortName);
+
                     if (CurrentDockingPort != null && CurrentDockingPort == port)
                     {
-                        comboBoxDockingDestinationPort.SelectedItem = port.PortName.ToString();
+                        comboBoxDockingDestinationPort.SelectedItem = formattedPortName;
                         dockingPortSet = true;
                     }
                 }
             }
-            else comboBoxDockingSourcePort.Items.Add("No available docking ports");
+            else comboBoxDockingDestinationPort.Items.Add("No available docking ports");
 
             // Attempt to select the current docking port from the list.
             if (!dockingPortSet)
             {
-                comboBoxDockingSourcePort.SelectedIndex = 0;
+                comboBoxDockingDestinationPort.SelectedIndex = 0;
             }
         }
 
@@ -484,11 +494,12 @@ namespace HELLION.Explorer
 
         private void comboBoxDockingSourcePort_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // TODO this needs to parse the ComboBox's selected item and find the port it relates to.
 
         }
 
         /// <summary>
-        /// 
+        /// Handles changes in the docking destination source filter combobox.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -496,9 +507,6 @@ namespace HELLION.Explorer
         {
             if (blueprint != null)
             {
-                // DockingDestSourceFilterType
-                //DockingDestSourceFilterType newStructureType = (DockingDestSourceFilterType)Enum.Parse(
-                //    typeof(DockingDestSourceFilterType), (string)comboBoxDockingDestinationSource.SelectedItem);
                 DockingDestSourceFilterType dockDestSourceValue;
                 if (Enum.TryParse((string)comboBoxDockingDestinationSource.SelectedItem, false, out dockDestSourceValue))
                 {
@@ -515,14 +523,19 @@ namespace HELLION.Explorer
             // update the list of ports drop down.
             if (blueprint != null)
             {
-                /*
-                HEBlueprint.HEBlueprintStructure dockDestStructureValue;
-                if (Enum.TryParse((string)comboBoxDockingDestinationStructure.SelectedItem, false, out dockDestStructureValue))
+                string destStructureIDString = comboBoxDockingDestinationStructure.SelectedItem.ToString().Substring(1,3);
+
+                int destStructureID;
+                if (int.TryParse(destStructureIDString, out destStructureID))
                 {
-                    DestinationStructure = dockDestStructureValue;
+                    // We should have a StructureID
+
+                    //MessageBox.Show("destStructureID (string) " + destStructureID + "(" + destStructureIDString + ")");
+
+                    DestinationStructure = blueprint.GetStructureByID(destStructureID) ?? throw new InvalidOperationException("Unable to retrieve structure by id.");
                 }
-                else throw new InvalidOperationException("Unable to parse Docking Destination Source.");
-                */
+                else DestinationStructure = null;
+
             }
         }
 
