@@ -67,7 +67,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Filled when de-serialised.
             /// </summary>
-            public HEDockingPortTypes? PortName = null;
+            public HEDockingPortType? PortName = null;
             
             /// <summary>
             /// Filled when de-serialised.

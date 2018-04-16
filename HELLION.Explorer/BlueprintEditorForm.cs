@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 
@@ -18,11 +19,11 @@ namespace HELLION.Explorer
             InitializeComponent();
             Icon = Program.MainForm.Icon;
 
-            treeViewHierarchy.ImageList = Program.hEImageList.IconImageList;
+            treeViewPrimaryStructure.ImageList = Program.hEImageList.IconImageList;
             //treeView1.ImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
             //treeView1.SelectedImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
             //treeView1.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
-            treeViewHierarchy.ShowNodeToolTips = true;
+            treeViewPrimaryStructure.ShowNodeToolTips = true;
             Text = "Blueprint Editor";
             RefreshDropDownModuleTypes();
             RefreshDropDownDockingDestinationSource();
@@ -44,7 +45,7 @@ namespace HELLION.Explorer
             jsonBlueprintFile = (HEJsonBlueprintFile)passedSourceNode.OwnerObject;
             blueprint = jsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("jsonBlueprintFile.BlueprintObject was null.");
 
-            GraftTreeInbound();
+            GraftTreeInboundFromMainForm();
             RefreshDropDownDockingDestinationSource();
 
 
@@ -244,7 +245,7 @@ namespace HELLION.Explorer
                     // Trigger updates.
 
                     // check all structures and ports are valid before enabling the dock button.
-
+                    RefreshDockButtonEnabledStatus();
 
                 }
             }
@@ -259,8 +260,8 @@ namespace HELLION.Explorer
         /// </summary>
         private void RefreshPictureBoxSelectedStructure()
         {
-            pictureBoxSelectedStructure.Image = CurrentStructure == null ? null 
-                            : Program.hEImageList.StructureImageList.Images [HEImageList.GetStructureImageIndexByStructureType(CurrentStructure.StructureType.Value)];
+            pictureBoxSelectedStructure.Image = CurrentStructure == null ? null
+                            : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(CurrentStructure.StructureType.Value)];
         }
 
         /// <summary>
@@ -285,10 +286,10 @@ namespace HELLION.Explorer
         private void RefreshDropDownModuleTypes()
         {
             comboBoxStructureList.Items.Clear();
-            Array enumValues = Enum.GetValues(typeof(HEBlueprintStructureTypes));
+            Array enumValues = Enum.GetValues(typeof(HEBlueprintStructureType));
             foreach (int value in enumValues)
             {
-                string display = Enum.GetName(typeof(HEBlueprintStructureTypes), value);
+                string display = Enum.GetName(typeof(HEBlueprintStructureType), value);
                 comboBoxStructureList.Items.Add(display);
             }
             comboBoxStructureList.SelectedIndex = 0;
@@ -355,7 +356,7 @@ namespace HELLION.Explorer
             {
                 foreach (HEBlueprint.HEBlueprintStructure structure in DestinationStructureList)
                 {
-                    comboBoxDockingDestinationStructure.Items.Add(String.Format("[{0:000}] {1}", 
+                    comboBoxDockingDestinationStructure.Items.Add(String.Format("[{0:000}] {1}",
                         (int)structure.StructureID, structure.StructureType));
                 }
             }
@@ -377,7 +378,7 @@ namespace HELLION.Explorer
             {
                 foreach (var port in DestinationStructure.AvailableDockingPorts())
                 {
-                    string formattedPortName = String.Format("[{0:000}] {1}", 
+                    string formattedPortName = String.Format("[{0:000}] {1}",
                         port.OwnerObject.StructureID, port.PortName);
 
                     comboBoxDockingDestinationPort.Items.Add(formattedPortName);
@@ -396,6 +397,19 @@ namespace HELLION.Explorer
             {
                 comboBoxDockingDestinationPort.SelectedIndex = 0;
             }
+        }
+
+        /// <summary>
+        /// Refreshes the enabled status of the Dock button.
+        /// </summary>
+        private void RefreshDockButtonEnabledStatus()
+        {
+            if (CurrentStructure != null && CurrentDockingPort != null
+                && DestinationStructure != null && DestinationDockingPort != null)
+            {
+                buttonDockPort.Enabled = true;
+            }
+            else buttonDockPort.Enabled = false;
         }
 
         /// <summary>
@@ -421,21 +435,34 @@ namespace HELLION.Explorer
                         // that have an available docking port, and the primary structure module
                         // if it has any available ports.
 
-                        List<HEBlueprint.HEBlueprintStructure> results = blueprint.GetDockingRoot().AllConnectedDockableStructures();
+                        List<HEBlueprint.HEBlueprintStructure> _primaryResults = blueprint.GetDockingRoot().AllConnectedDockableStructures();
 
-                        if (results != null) newStructureList.AddRange(results);
+                        if (_primaryResults != null) newStructureList.AddRange(_primaryResults);
 
                         break;
 
-                    case DockingDestSourceFilterType.Non_Primary_Structures:
+                    case DockingDestSourceFilterType.Secondary_Structures:
 
                         // This needs to get the root of each structure chain or any individual
                         // structures not yet docked to anything.
 
+                        //List<HEBlueprint.HEBlueprintStructure> _secondaryResults = new List<HEBlueprint.HEBlueprintStructure>();
+                        
+                        foreach (var _secStructure in blueprint.SecondaryStructures)
+                        {
+                            List<HEBlueprint.HEBlueprintStructure> _secondaryResults = _secStructure.AllConnectedDockableStructures();
+
+                            if (_secondaryResults != null) newStructureList.AddRange(_secondaryResults);
+                        }
+
+
+
+                        //if (_secondaryResults.Count > 0) newStructureList.AddRange(_secondaryResults);
+
 
                         break;
 
-                    case DockingDestSourceFilterType.Undocked_Structures:
+                    //case DockingDestSourceFilterType.Undocked_Structures:
 
                         // This needs to get any individual structure not yet docked to anything.
 
@@ -445,19 +472,86 @@ namespace HELLION.Explorer
             // Set the DestinationStructureList.
             DestinationStructureList = newStructureList.Count > 0 ? newStructureList : null;
         }
+
+
+        public void RefreshTreeViews()
+        {
+
+            treeViewPrimaryStructure.Nodes.Clear();
+            treeViewSecondaryStructures.Nodes.Clear();
+
+            // Trigger the reassembly of all node trees in the blueprint.
+            blueprint.RefreshAllTreeNodes();
+
+            // Add the primary structure.
+
+            Debug.Print("DockingRootNode parent = " + (blueprint.GetDockingRootNode().Parent != null ? blueprint.GetDockingRootNode().Parent.Name : "null"));
+
+            treeViewPrimaryStructure.Nodes.Add(blueprint.GetDockingRootNode());
+
+            // Add secondary structures.
+            foreach (HEBlueprint.HEBlueprintStructure _secondaryStructure in blueprint.SecondaryStructures)
+            {
+                treeViewSecondaryStructures.Nodes.Add(_secondaryStructure.RootNode);
+
+            }
+
+
+
+        }
+
+
+
+        /*
+        public void RefreshSecondaryStructuresList()
+        {
+            
+            
+            // Create a new list to hold the results.
+            List<HEBlueprint.HEBlueprintStructure> newSecondaryStructuresList = new List<HEBlueprint.HEBlueprintStructure>();
+
+            if (blueprint != null)
+            {
+                // Get the list of nodes connected to the primary structure and find 
+
+                newSecondaryStructuresList = blueprint.GetDockingRoot()
+                    .DockedStructures(AllConnected: true, incomingLink: blueprint.GetDockingRoot())
+                    .Except(blueprint.Structures).ToList();
+
+                Debug.Print(Environment.NewLine + "Secondary Structures List");
+
+
+                foreach (var thing in newSecondaryStructuresList)
+                {
+                    Debug.Print(thing.StructureID + " " + thing.StructureType);
+                }
+            }
+
+            SecondaryStructureList = newSecondaryStructuresList.Count > 0 ? newSecondaryStructuresList : null;
+
+            
+
+        }
+        */
+
         #endregion
 
         #region TreeNode Grafting Methods
+
         /// <summary>
         /// Grafts a node tree inbound from the Main Form.
         /// </summary>
-        private void GraftTreeInbound()
+        private void GraftTreeInboundFromMainForm()
         {
             HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
             if (drn != null)
             {
                 blueprint.RootNode.Nodes.Remove(drn);
-                treeViewHierarchy.Nodes.Add(drn);
+
+                RefreshTreeViews();
+
+                //treeViewPrimaryStructure.Nodes.Add(drn);
+
                 drn.RefreshToolTipText(includeSubtrees: true);
                 drn.ExpandAll();
             }
@@ -466,20 +560,22 @@ namespace HELLION.Explorer
         /// <summary>
         /// Grafts a node tree outbound from the Main Form.
         /// </summary>
-        private void GraftTreeOutbound()
+        private void GraftTreeOutboundToMainForm()
         {
             HEBlueprintTreeNode drn = blueprint.GetDockingRootNode();
             if (drn != null)
             {
-                treeViewHierarchy.Nodes.Remove(drn);
+                treeViewPrimaryStructure.Nodes.Remove(drn);
                 blueprint.RootNode.Nodes.Add(drn);
                 drn.RefreshToolTipText(includeSubtrees: true);
                 drn.Collapse();
             }
         }
+
         #endregion
 
-        #region ToolPane ComboBoxe Event Methods
+        #region Tool Pane ComboBox Event Methods
+
         /// <summary>
         /// Tracks currently selected item in the comboBoxStructureList and enables the 
         /// Add structure button if the selected item is non-zero (not the 'Unspecified'
@@ -520,29 +616,43 @@ namespace HELLION.Explorer
 
         private void comboBoxDockingDestinationStructure_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // update the list of ports drop down.
             if (blueprint != null)
             {
-                string destStructureIDString = comboBoxDockingDestinationStructure.SelectedItem.ToString().Substring(1,3);
+                string _destStructureIDString = comboBoxDockingDestinationStructure.SelectedItem.ToString().Substring(1, 3);
 
-                int destStructureID;
-                if (int.TryParse(destStructureIDString, out destStructureID))
+                int _destStructureID;
+                if (int.TryParse(_destStructureIDString, out _destStructureID))
                 {
                     // We should have a StructureID
-
-                    //MessageBox.Show("destStructureID (string) " + destStructureID + "(" + destStructureIDString + ")");
-
-                    DestinationStructure = blueprint.GetStructureByID(destStructureID) ?? throw new InvalidOperationException("Unable to retrieve structure by id.");
+                    DestinationStructure = blueprint.GetStructureByID(_destStructureID)
+                        ?? throw new InvalidOperationException("Unable to retrieve structure by id.");
                 }
                 else DestinationStructure = null;
-
             }
         }
 
         private void comboBoxDockingDestinationPort_SelectedIndexChanged(object sender, EventArgs e)
         {
             // if a valid port is selected, enable the Dock button.
+
+            if (blueprint != null)
+            {
+                string _destPortUnprocessedName = comboBoxDockingDestinationPort.SelectedItem.ToString();
+                string destPortProcessedName = _destPortUnprocessedName.Length > 0 ? _destPortUnprocessedName.Substring(6) : "Error";
+
+                if (DestinationStructure == null || _destPortUnprocessedName == "No available docking ports")
+                {
+                    DestinationDockingPort = null;
+                    return;
+                }
+                else
+                {
+                    DestinationDockingPort = DestinationStructure.GetDockingPortByName(destPortProcessedName)
+                        ?? throw new InvalidOperationException("Unable to retrieve structure by id.");
+                }
+            }
         }
+
         #endregion
 
         #region Tool Pane Button Event Methods
@@ -557,14 +667,24 @@ namespace HELLION.Explorer
             if (blueprint != null && (string)comboBoxStructureList.SelectedItem != "Unspecified")
             {
                 // Do something - create the new structure in the blueprint.
-                HEBlueprintStructureTypes newStructureType = (HEBlueprintStructureTypes)Enum.Parse(
-                    typeof(HEBlueprintStructureTypes), (string)comboBoxStructureList.SelectedItem);
+                HEBlueprintStructureType newStructureType = (HEBlueprintStructureType)Enum.Parse(
+                    typeof(HEBlueprintStructureType), (string)comboBoxStructureList.SelectedItem);
 
                 HEBlueprint.HEBlueprintStructure newStructure = blueprint.AddStructure(newStructureType);
-                treeViewHierarchy.Nodes.Add(newStructure.RootNode);
+
+                // Refresh tree views
+
+                RefreshTreeViews();
+
+
+
+                // treeViewPrimaryStructure.Nodes.Add(newStructure.RootNode);
 
                 // Select the new node
-                treeViewHierarchy.SelectedNode = newStructure.RootNode;
+                treeViewSecondaryStructures.SelectedNode = newStructure.RootNode;
+
+                // Set the focus on the Secondary Structures TreeView.
+                treeViewSecondaryStructures.Focus();
 
             }
         }
@@ -589,14 +709,25 @@ namespace HELLION.Explorer
         #region Form Control Event Methods
 
         /// <summary>
-        /// Triggers an update of the currentlySelectedNode.
+        /// Handles selection events within the PrimaryStructure TreeView.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void treeViewHierarchy_AfterSelect(object sender, TreeViewEventArgs e)
+        private void treeViewPrimaryStructure_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            CurrentlySelectedNode = (HEBlueprintTreeNode)treeViewHierarchy.SelectedNode;
+            CurrentlySelectedNode = (HEBlueprintTreeNode)treeViewPrimaryStructure.SelectedNode;
+        }
+
+        /// <summary>
+        /// Handles selection events within the SecondaryStructures TreeView.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void treeViewSecondaryStructures_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            // Update the info display for the selected item.
+            CurrentlySelectedNode = (HEBlueprintTreeNode)treeViewSecondaryStructures.SelectedNode;
         }
 
         /// <summary>
@@ -615,6 +746,7 @@ namespace HELLION.Explorer
                 switch (result)
                 {
                     case DialogResult.Cancel:
+                        e.Cancel = true;
                         return;
 
                     case DialogResult.Yes:
@@ -628,7 +760,7 @@ namespace HELLION.Explorer
             // TODO: More work to be done here to handle cleanup, and calling the save
 
 
-            GraftTreeOutbound();
+            GraftTreeOutboundToMainForm();
 
 
             // Remove the current JsonDataViewForm from the jsonDataViews list
@@ -643,12 +775,12 @@ namespace HELLION.Explorer
 
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeViewHierarchy.SelectedNode != null) treeViewHierarchy.SelectedNode.ExpandAll();
+            if (treeViewPrimaryStructure.SelectedNode != null) treeViewPrimaryStructure.SelectedNode.ExpandAll();
         }
 
         private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (treeViewHierarchy.SelectedNode != null) treeViewHierarchy.SelectedNode.Collapse();
+            if (treeViewPrimaryStructure.SelectedNode != null) treeViewPrimaryStructure.SelectedNode.Collapse();
         }
 
         /// <summary>
@@ -660,8 +792,8 @@ namespace HELLION.Explorer
         {
             const int adjustmentAmount = 197; // This is basically the width of the Tool Panel, with a tweak.
             panelToolPanel.Visible = toolPaneToolStripMenuItem.Checked;
-            if (toolPaneToolStripMenuItem.Checked) treeViewHierarchy.Width -= adjustmentAmount;
-            else treeViewHierarchy.Width += adjustmentAmount;
+            if (toolPaneToolStripMenuItem.Checked) splitContainerTreeViews.Width -= adjustmentAmount;
+            else splitContainerTreeViews.Width += adjustmentAmount;
         }
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -700,11 +832,12 @@ namespace HELLION.Explorer
         public enum DockingDestSourceFilterType
         {
             Primary_Structure = 0,
-            Non_Primary_Structures,
-            Undocked_Structures,
+            Secondary_Structures,
+            //Undocked_Structures,
 
         }
 
         #endregion
+
     }
 }

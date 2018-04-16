@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 
 namespace HELLION.DataStructures
 {
@@ -13,20 +13,6 @@ namespace HELLION.DataStructures
     /// </summary>
     public static class HEUtilities
     {
-
-        /*
-        /// <summary>
-        /// Gets the first node that matches the given key in the current nodes children.
-        /// </summary>
-        /// <param name="nCurrentNode"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static TreeNode GetChildNodeByName(TreeNode nCurrentNode, string key)
-        {
-            TreeNode[] nodes = nCurrentNode.Nodes.Find(key, searchAllChildren: true);
-            return nodes.Length > 0 ? nodes[0] : null;
-        }
-        */
 
         // Fonts in .Forms TreeViews are BROKEN! Memory leaks aplenty
         // public static Font fntRegular = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Regular);
@@ -67,6 +53,10 @@ namespace HELLION.DataStructures
 
         #region 3rdPartyCode
         // 3rd party code.
+
+
+
+
 
         /// <summary>
         /// Based on an example from https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
@@ -260,58 +250,65 @@ namespace HELLION.DataStructures
     }
 
 
-    /*
-    #region Interface Definitions
     /// <summary>
-    /// Interface definition for a sender that uses this simple parent-notification system.
+    /// A static class for reflection type functions.
     /// </summary>
-    public interface IHENotificationSender
+    /// <remarks>
+    /// Based on the post by Azerothian in the following thread:
+    /// https://stackoverflow.com/questions/930433/apply-properties-values-from-one-object-to-another-of-the-same-type-automaticall
+    /// </remarks>
+    public static class Reflection
     {
-        IHENotificationReceiver Parent { get; }
-        void SendNotification(HENotificationType type, string msg = "");
-    }
-
-    /// <summary>
-    /// Interface definition for a receiver that uses this simple parent-notification system.
-    /// </summary>
-    public interface IHENotificationReceiver
-    {
-        void ReceiveNotification(IHENotificationSender sender, HENotificationType type, string msg);
-
-    }
-
-    /// <summary>
-    /// Defines standard notification types
-    /// </summary>
-    public enum HENotificationType
-    {
-        Unknown = 0,
-        FileLoadError,
-        FileLoadComplete,
-        ContentsDirty,
-
-    }
-    #endregion
-    */
-
-
-    /*
-    /// <summary>
-    /// Defines a class to hold custom event info
-    /// </summary>    
-    public class HEJsonBaseFileEventArgs : EventArgs
-    {
-        public HEJsonBaseFileEventArgs(string s)
+        /// <summary>
+        /// Extension for 'Object' that copies the properties to a destination object.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="destination">The destination.</param>
+        public static void CopyProperties(this object source, object destination)
         {
-            message = s;
-        }
-        private string message;
+            // If any this null throw an exception
+            if (source == null || destination == null)
+                throw new Exception("Source or/and Destination Objects are null");
+            // Getting the Types of the objects
+            Type typeDest = destination.GetType();
+            Type typeSrc = source.GetType();
 
-        public string Message
-        {
-            get { return message; }
-            set { message = value; }
+            // Iterate the Properties of the source instance and  
+            // populate them from their desination counterparts  
+            PropertyInfo[] srcProps = typeSrc.GetProperties();
+            foreach (PropertyInfo srcProp in srcProps)
+            {
+                if (!srcProp.CanRead)
+                {
+                    continue;
+                }
+                PropertyInfo targetProperty = typeDest.GetProperty(srcProp.Name);
+                if (targetProperty == null)
+                {
+                    continue;
+                }
+                if (!targetProperty.CanWrite)
+                {
+                    continue;
+                }
+                if (targetProperty.GetSetMethod(true) != null && targetProperty.GetSetMethod(true).IsPrivate)
+                {
+                    continue;
+                }
+                if ((targetProperty.GetSetMethod().Attributes & MethodAttributes.Static) != 0)
+                {
+                    continue;
+                }
+                if (!targetProperty.PropertyType.IsAssignableFrom(srcProp.PropertyType))
+                {
+                    continue;
+                }
+                // Passed all tests, lets set the value
+                targetProperty.SetValue(destination, srcProp.GetValue(source, null), null);
+            }
         }
     }
-    */
+
+
+
 }

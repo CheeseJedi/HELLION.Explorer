@@ -39,7 +39,8 @@ namespace HELLION.DataStructures
             // Populate the blueprint object.
             DeserialiseToBlueprintObject();
 
-            BlueprintObject.ReassembleDockingStructure();
+            // Assemble the primary tree hierarchy based on the DockingRoot.
+            BlueprintObject.ReassembleTreeNodeDockingStructure(BlueprintObject.GetDockingRoot(), AttachToBlueprintTreeNode: true);
             RootNode.Nodes.Add(BlueprintObject.RootNode);
 
             // Populate the data view.
@@ -83,7 +84,7 @@ namespace HELLION.DataStructures
             BlueprintObject = jData.ToObject<HEBlueprint>();
             BlueprintObject.OwnerObject = this;
             //BlueprintObject.StructureDefinitions = ;
-            BlueprintObject.ReconnectChildParentStructure();
+            BlueprintObject.PostDeserialisationInit();
         }
 
         /// <summary>

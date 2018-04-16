@@ -278,59 +278,59 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="StructureType"></param>
         /// <returns></returns>
-        public static int GetStructureImageIndexByStructureType(HEBlueprintStructureTypes StructureType)
+        public static int GetStructureImageIndexByStructureType(HEBlueprintStructureType StructureType)
         {
             switch (StructureType)
             {
-                case HEBlueprintStructureTypes.AM:
+                case HEBlueprintStructureType.AM:
                     return (int)HEStructuresImageNames.STRUCT_AM;
 
-                case HEBlueprintStructureTypes.ARG:
+                case HEBlueprintStructureType.ARG:
                     return (int)HEStructuresImageNames.STRUCT_ARG;
 
-                case HEBlueprintStructureTypes.CBM:
+                case HEBlueprintStructureType.CBM:
                     return (int)HEStructuresImageNames.STRUCT_CBM;
 
-                case HEBlueprintStructureTypes.CIM:
+                case HEBlueprintStructureType.CIM:
                     return (int)HEStructuresImageNames.STRUCT_CIM;
 
-                case HEBlueprintStructureTypes.CLM:
+                case HEBlueprintStructureType.CLM:
                     return (int)HEStructuresImageNames.STRUCT_CLM;
 
-                case HEBlueprintStructureTypes.CM:
+                case HEBlueprintStructureType.CM:
                     return (int)HEStructuresImageNames.STRUCT_CM;
 
-                case HEBlueprintStructureTypes.CQM:
+                case HEBlueprintStructureType.CQM:
                     return (int)HEStructuresImageNames.STRUCT_CQM;
 
-                case HEBlueprintStructureTypes.CRM:
+                case HEBlueprintStructureType.CRM:
                     return (int)HEStructuresImageNames.STRUCT_CRM;
 
-                case HEBlueprintStructureTypes.CSM:
+                case HEBlueprintStructureType.CSM:
                     return (int)HEStructuresImageNames.STRUCT_CSM;
 
-                case HEBlueprintStructureTypes.CTM:
+                case HEBlueprintStructureType.CTM:
                     return (int)HEStructuresImageNames.STRUCT_CTM;
 
-                case HEBlueprintStructureTypes.FM:
+                case HEBlueprintStructureType.FM:
                     return (int)HEStructuresImageNames.STRUCT_FM;
 
-                case HEBlueprintStructureTypes.IC:
+                case HEBlueprintStructureType.IC:
                     return (int)HEStructuresImageNames.STRUCT_IC;
 
-                case HEBlueprintStructureTypes.LSM:
+                case HEBlueprintStructureType.LSM:
                     return (int)HEStructuresImageNames.STRUCT_LSM;
 
-                case HEBlueprintStructureTypes.OUTPOST:
+                case HEBlueprintStructureType.OUTPOST:
                     return (int)HEStructuresImageNames.STRUCT_OUTPOST;
 
-                case HEBlueprintStructureTypes.PSM:
+                case HEBlueprintStructureType.PSM:
                     return (int)HEStructuresImageNames.STRUCT_PSM;
 
-                case HEBlueprintStructureTypes.SPM:
+                case HEBlueprintStructureType.SPM:
                     return (int)HEStructuresImageNames.STRUCT_SPM;
 
-                case HEBlueprintStructureTypes.Unspecified:
+                case HEBlueprintStructureType.Unspecified:
                 default:
                     return (int)HEStructuresImageNames.STRUCT_Unspecified;
 

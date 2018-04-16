@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.treeViewHierarchy = new System.Windows.Forms.TreeView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.blueprintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,6 +64,9 @@
             this.comboBoxDockingDestinationStructure = new System.Windows.Forms.ComboBox();
             this.comboBoxDockingSourcePort = new System.Windows.Forms.ComboBox();
             this.panelToolPanel = new System.Windows.Forms.Panel();
+            this.splitContainerTreeViews = new System.Windows.Forms.SplitContainer();
+            this.treeViewPrimaryStructure = new System.Windows.Forms.TreeView();
+            this.treeViewSecondaryStructures = new System.Windows.Forms.TreeView();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxAddStructure.SuspendLayout();
@@ -73,20 +75,11 @@
             this.groupBoxUndockPort.SuspendLayout();
             this.groupBoxDockPort.SuspendLayout();
             this.panelToolPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTreeViews)).BeginInit();
+            this.splitContainerTreeViews.Panel1.SuspendLayout();
+            this.splitContainerTreeViews.Panel2.SuspendLayout();
+            this.splitContainerTreeViews.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // treeViewHierarchy
-            // 
-            this.treeViewHierarchy.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeViewHierarchy.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeViewHierarchy.HideSelection = false;
-            this.treeViewHierarchy.Location = new System.Drawing.Point(0, 24);
-            this.treeViewHierarchy.Name = "treeViewHierarchy";
-            this.treeViewHierarchy.Size = new System.Drawing.Size(701, 640);
-            this.treeViewHierarchy.TabIndex = 0;
-            this.treeViewHierarchy.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewHierarchy_AfterSelect);
             // 
             // menuStrip1
             // 
@@ -434,14 +427,57 @@
             this.panelToolPanel.Size = new System.Drawing.Size(200, 640);
             this.panelToolPanel.TabIndex = 6;
             // 
+            // splitContainerTreeViews
+            // 
+            this.splitContainerTreeViews.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerTreeViews.Location = new System.Drawing.Point(0, 24);
+            this.splitContainerTreeViews.Name = "splitContainerTreeViews";
+            this.splitContainerTreeViews.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerTreeViews.Panel1
+            // 
+            this.splitContainerTreeViews.Panel1.Controls.Add(this.treeViewPrimaryStructure);
+            // 
+            // splitContainerTreeViews.Panel2
+            // 
+            this.splitContainerTreeViews.Panel2.Controls.Add(this.treeViewSecondaryStructures);
+            this.splitContainerTreeViews.Size = new System.Drawing.Size(699, 640);
+            this.splitContainerTreeViews.SplitterDistance = 550;
+            this.splitContainerTreeViews.TabIndex = 7;
+            // 
+            // treeViewPrimaryStructure
+            // 
+            this.treeViewPrimaryStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewPrimaryStructure.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewPrimaryStructure.HideSelection = false;
+            this.treeViewPrimaryStructure.Location = new System.Drawing.Point(0, 0);
+            this.treeViewPrimaryStructure.Name = "treeViewPrimaryStructure";
+            this.treeViewPrimaryStructure.Size = new System.Drawing.Size(699, 550);
+            this.treeViewPrimaryStructure.TabIndex = 1;
+            this.treeViewPrimaryStructure.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewPrimaryStructure_AfterSelect);
+            // 
+            // treeViewSecondaryStructures
+            // 
+            this.treeViewSecondaryStructures.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeViewSecondaryStructures.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewSecondaryStructures.Location = new System.Drawing.Point(0, 0);
+            this.treeViewSecondaryStructures.Name = "treeViewSecondaryStructures";
+            this.treeViewSecondaryStructures.Size = new System.Drawing.Size(699, 84);
+            this.treeViewSecondaryStructures.TabIndex = 0;
+            this.treeViewSecondaryStructures.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewSecondaryStructures_AfterSelect);
+            // 
             // BlueprintEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(899, 686);
+            this.Controls.Add(this.splitContainerTreeViews);
             this.Controls.Add(this.panelToolPanel);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.treeViewHierarchy);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(700, 725);
@@ -458,14 +494,16 @@
             this.groupBoxUndockPort.ResumeLayout(false);
             this.groupBoxDockPort.ResumeLayout(false);
             this.panelToolPanel.ResumeLayout(false);
+            this.splitContainerTreeViews.Panel1.ResumeLayout(false);
+            this.splitContainerTreeViews.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerTreeViews)).EndInit();
+            this.splitContainerTreeViews.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TreeView treeViewHierarchy;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
@@ -502,5 +540,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem newFromClipboardToolStripMenuItem;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.SplitContainer splitContainerTreeViews;
+        private System.Windows.Forms.TreeView treeViewPrimaryStructure;
+        private System.Windows.Forms.TreeView treeViewSecondaryStructures;
     }
 }

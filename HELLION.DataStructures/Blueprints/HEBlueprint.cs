@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace HELLION.DataStructures
 {
-    #region Enums
+    #region Enumerations
 
     /// <summary>
     /// Structure Types Enum.
@@ -14,7 +14,7 @@ namespace HELLION.DataStructures
     /// The numeric values of these correspond to the game's ItemID in the structures.json
     /// to allow for easier cross-referencing.
     /// </remarks>
-    public enum HEBlueprintStructureTypes
+    public enum HEBlueprintStructureType
     {
         Unspecified = 0,
         CIM = 3,
@@ -38,7 +38,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// Docking Port Types Enum.
     /// </summary>
-    public enum HEDockingPortTypes
+    public enum HEDockingPortType
     {
         Unspecified = 0,
         StandardDockingPortA,
@@ -71,8 +71,11 @@ namespace HELLION.DataStructures
         public HEBlueprint()
         {
             Structures = new List<HEBlueprintStructure>();
+            SecondaryStructures = new List<HEBlueprintStructure>();
             RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: "Hierarchy View",
-                newNodeType: HETreeNodeType.BlueprintHierarchyView, nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+                newNodeType: HETreeNodeType.BlueprintHierarchyView, 
+                nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+
         }
 
         /// <summary>
@@ -104,6 +107,19 @@ namespace HELLION.DataStructures
         /// </summary>
         public HEBlueprintTreeNode RootNode { get; set; } = null;
 
+        public HEBlueprintStructureDefinitions StructureDefinitions { get; set; } = null;
+
+        /// <summary>
+        /// The list of all Secondary Structures - these are not technically part of a finished
+        /// blueprint and are linked here to allow processing separately to the primary structure.
+        /// </summary>
+        public List<HEBlueprintStructure> SecondaryStructures { get; set; } = null;
+
+
+        #endregion
+
+        #region Serialised Properties
+
         /// <summary>
         /// Type of object (should be "StationBlueprint")
         /// </summary>
@@ -113,38 +129,58 @@ namespace HELLION.DataStructures
         public string __ObjectType { get; set; } = null;
 
         /// <summary>
-        /// To be serialised.
+        /// The Blueprint version.
         /// </summary>
+        /// <remarks>
+        /// Should reflect the version of the StructureDefinitions.json file.
+        /// To be serialised.
+        /// </remarks>
         public decimal? Version { get; set; } = null;
 
         /// <summary>
-        /// To be serialised.
+        /// The Station's name.
         /// </summary>
+        /// <remarks>
+        /// To be serialised.
+        /// </remarks>
         public string Name { get; set; } = null;
 
         /// <summary>
-        /// To be serialised.
+        /// The link URI for the blueprint source.
         /// </summary>
+        /// <remarks>
+        /// If this is generates in Hellion Explorer, this will be a link to the GitHub Repo.
+        /// If the blueprint originated from HSP, this will be a link to the station in HSP.
+        /// To be serialised.
+        /// </remarks>
         public Uri LinkURI { get; set; } = null;
 
         /// <summary>
-        /// To be serialised.
+        /// The list of all structures in the blueprint.
         /// </summary>
+        /// <remarks>
+        /// May contain secondary structures during the process of editing.
+        /// To be serialised.
+        /// </remarks>
         public List<HEBlueprintStructure> Structures { get; set; } = null;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public HEBlueprintStructureDefinitions StructureDefinitions { get; set; } = null;
 
         #endregion
 
         #region Methods
 
         /// <summary>
+        /// 
+        /// </summary>
+        public void PostDeserialisationInit()
+        {
+            ReconnectChildToParentObjectHierarchy();
+        }
+
+        /// <summary>
         /// Links up all child object's parent reference to their parent.
         /// </summary>
-        public void ReconnectChildParentStructure()
+        private void ReconnectChildToParentObjectHierarchy()
         {
             if (OwnerObject == null) throw new NullReferenceException("ParentJsonBlueprintFile was null.");
 
@@ -155,28 +191,33 @@ namespace HELLION.DataStructures
             {
                 // Set the structure's parent object (this, the blueprint object)
                 structure.OwnerObject = this;
-                foreach (HEBlueprintDockingPort port in structure.DockingPorts) port.OwnerObject = structure;
+                foreach (HEBlueprintDockingPort port in structure.DockingPorts)
+                {
+                    port.OwnerObject = structure;
+
+                }
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void ReassembleDockingStructure()
+        public void ReassembleTreeNodeDockingStructure(HEBlueprintStructure hierarchyRoot, bool AttachToBlueprintTreeNode = false)
         {
             // Start with the root node, should be item zero in the list.
-            HEBlueprintStructure dockingRoot = GetDockingRoot();
+            
 
             // Debug.Print("dockingRoot {0} StructureID {1}", dockingRoot.StructureType, dockingRoot.StructureID);
 
             // Process the docking root's ports slightly differently - always child nodes.
-            RootNode.Nodes.Add(dockingRoot.RootNode);
-            foreach (HEBlueprintDockingPort port in dockingRoot.DockingPorts.ToArray().Reverse())
+            if (AttachToBlueprintTreeNode) RootNode.Nodes.Add(hierarchyRoot.RootNode);
+
+            foreach (HEBlueprintDockingPort port in hierarchyRoot.DockingPorts.ToArray().Reverse())
             {
-                dockingRoot.RootNode.Nodes.Add(port.RootNode);
-                if (port.IsDocked())
+                hierarchyRoot.RootNode.Nodes.Add(port.RootNode);
+                if (port.IsDocked)
                 {
-                    Reassemble(GetStructureByID(port.DockedStructureID), dockingRoot);
+                    Reassemble(GetStructureByID(port.DockedStructureID), hierarchyRoot);
                 }
             }
 
@@ -200,12 +241,49 @@ namespace HELLION.DataStructures
                     if (port != linkToParent)
                     {
                         structure.RootNode.Nodes.Add(port.RootNode);
-                        if (port.IsDocked()) Reassemble(GetStructureByID(port.DockedStructureID), structure);
+                        if (port.IsDocked) Reassemble(GetStructureByID(port.DockedStructureID), structure);
                     }
                 }
 
             }
         }
+
+        /// <summary>
+        /// Removes each tree node from it's parent's collection.
+        /// </summary>
+        public void ResetAllTreeNodes()
+        {
+            //
+            foreach (HEBlueprintStructure structure in Structures)
+            {
+                structure.OwnerObject.RootNode.Nodes.Remove(structure.RootNode);
+                foreach (HEBlueprintDockingPort port in structure.DockingPorts)
+                {
+                    port.OwnerObject.RootNode.Nodes.Remove(port.RootNode);
+                }
+            }
+        }
+
+
+        public void RefreshAllTreeNodes()
+        {
+            // Break any existing parent/child relationships.
+            ResetAllTreeNodes();
+
+            // Assemble the primary blueprint structure's docked node tree.
+            ReassembleTreeNodeDockingStructure(GetDockingRoot());
+
+            // Assemble the secondary structures node trees.
+            foreach (HEBlueprintStructure _secondaryStructure in SecondaryStructures)
+            {
+                ReassembleTreeNodeDockingStructure(_secondaryStructure);
+
+
+
+            }
+
+        }
+
 
         /// <summary>
         /// 
@@ -242,22 +320,32 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Adds a new structure.
+        /// Adds a new structure to the Secondary Structures list.
         /// </summary>
         /// <returns>Returns true if the added structure is in the Structures list once created.</returns>
-        public HEBlueprintStructure AddStructure(HEBlueprintStructureTypes structureType)
+        public HEBlueprintStructure AddStructure(HEBlueprintStructureType structureType)
         {
             HEBlueprintStructure newStructure = new HEBlueprintStructure
             {
                 StructureType = structureType,
-                StructureID = Structures.Count() + 1
+
+                StructureID = Structures.Count() // + 2000,
             };
+            // Set this blueprint as the owner.
             newStructure.OwnerObject = this;
+            // Populate the DockingPorts collection with ports appropriate for this structure type.
             newStructure.AddAppropriateDockingPorts();
 
+            // Add the new structure to the main Structures list.
             Structures.Add(newStructure);
 
-            ReconnectChildParentStructure();
+            // Add the new structure to the Secondary Structures list.
+            SecondaryStructures.Add(newStructure);
+
+
+            ReconnectChildToParentObjectHierarchy();
+
+
             return newStructure;
         }
 
@@ -345,9 +433,9 @@ namespace HELLION.DataStructures
             }
 
             /// <summary>
-            /// The structure type - a value from the HEBlueprintStructureTypes enum.
+            /// The structure type - a value from the HEBlueprintStructureType enum.
             /// </summary>
-            public HEBlueprintStructureTypes? StructureType
+            public HEBlueprintStructureType? StructureType
             {
                 get => _structureType;
                 set
@@ -362,6 +450,8 @@ namespace HELLION.DataStructures
             /// 
             /// </summary>
             public List<HEBlueprintDockingPort> DockingPorts { get; set; } = null;
+
+            public bool IsAHierarchyRoot { get; set; } = false;
 
             #endregion
 
@@ -402,7 +492,7 @@ namespace HELLION.DataStructures
 
                 foreach (HEBlueprintDockingPort port in DockingPorts)
                 {
-                    if (!port.IsDocked())
+                    if (!port.IsDocked)
                     {
                         // Docking port is free, add it to the list.
                         availableDockingPorts.Add(port);
@@ -547,7 +637,7 @@ namespace HELLION.DataStructures
 
             #region Fields
 
-            protected HEBlueprintStructureTypes? _structureType = null;
+            protected HEBlueprintStructureType? _structureType = null;
             protected int? _structureID = null;
             protected int? _previousStructureID = null;
 
@@ -607,7 +697,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// 
             /// </summary>
-            public HEDockingPortTypes? PortName
+            public HEDockingPortType? PortName
             {
                 get => _portName;
                 set
@@ -622,22 +712,136 @@ namespace HELLION.DataStructures
             }
 
             public int? OrderID { get; set; } = null;
-            public int? DockedStructureID { get; set; } = null;
-            public string DockedPortName { get; set; } = null;
+
+            /// <summary>
+            /// The ID of the structure this port is docked to.
+            /// </summary>
+            /// <remarks>
+            /// This is to be serialised.
+            /// This should only be set initially by the JToken.ToObject()
+            /// Attempts to set the DockedStructure object.
+            /// </remarks>
+            public int? DockedStructureID
+            {
+                get => _dockedStructureID;
+                set
+                {
+                    if (_dockedStructureID != value)
+                    {
+                        _dockedStructureID = value;
+
+                        AttemptUpdateDockedStructure();
+
+                    }
+                }
+            }
+
+            /// <summary>
+            /// The structure object of the port this port is docked to.
+            /// </summary>
+            /// <remarks>
+            /// Updates the DockedStructureID.
+            /// </remarks>
+            public HEBlueprintStructure DockedStructure
+            {
+                get => _dockedStructure;
+                set
+                {
+                    if (_dockedStructure != value)
+                    {
+                        _dockedStructure = value;
+
+                        // Attempt to update the DockedSctuctureID
+                        if (_dockedStructure != null)
+                        {
+                            DockedStructureID = _dockedStructure.StructureID;
+
+
+                        }
+                    }
+                }
+            }
+
+            /// <summary>
+            /// The name of the port this port is docked to.
+            /// </summary>
+            /// <remarks>
+            /// This is to be serialised.
+            /// Updates the DockedStructureID.
+            /// </remarks>
+            public HEDockingPortType? DockedPortName
+            {
+                get => _dockedPortName;
+                set
+                {
+                    if (_dockedPortName != value)
+                    {
+                        _dockedPortName = value;
+
+                        AttemptUpdateDockedPort();
+                    }
+                }
+            }
+
+            /// <summary>
+            /// The Port object this port is docked to.
+            /// </summary>
+            public HEBlueprintDockingPort DockedPort
+            {
+                get => _dockedPort;
+                set
+                {
+                    if (_dockedPort != value)
+                    {
+                        _dockedPort = value;
+
+                        // Attempt to update the DockedPortName
+                        DockedPortName = _dockedPort.PortName;
+
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Indicates whether this port is docked to a port on another structure.
+            /// </summary>
+            public bool IsDocked
+            {
+                get => DockedStructureID == null ? false : true;
+            }
 
             #endregion
 
             #region Methods
 
             /// <summary>
-            /// Indicates whether this port is docked to a port on another structure.
+            /// Attempt to update the DockedStructure object.
             /// </summary>
-            /// <returns></returns>
-            public bool IsDocked()
+            /// <returns>
+            /// Return true if a non null was returned from the GetStructureByID.
+            /// </returns>
+            protected bool AttemptUpdateDockedStructure()
             {
-                return DockedStructureID == null ? false : true;
+                if (OwnerObject == null || OwnerObject.OwnerObject == null) return false;
+                DockedStructure = OwnerObject.OwnerObject.GetStructureByID(_dockedStructureID);
+                return DockedStructure != null ? true : false;
             }
 
+            /// <summary>
+            /// Attempt to update the DockedPort object.
+            /// </summary>
+            /// <returns>
+            /// Return true if a non null was returned from the GetStructureByID.
+            /// </returns>
+            protected bool AttemptUpdateDockedPort()
+            {
+                if (DockedStructure == null || OwnerObject.OwnerObject == null) return false;
+                DockedPort = DockedStructure.GetDockingPortByName(_dockedPortName.ToString());
+                return DockedPort != null ? true : false;
+            }
+
+
+            /*
             /// <summary>
             /// Gets a reference to the structure that is docked to this port.
             /// </summary>
@@ -656,6 +860,8 @@ namespace HELLION.DataStructures
                 return OwnerObject.OwnerObject.GetStructureByID(DockedStructureID)
                     .GetDockingPortByName(DockedPortName);
             }
+
+            */
 
             public bool DockTo()
             {
@@ -691,8 +897,13 @@ namespace HELLION.DataStructures
 
             #region Fields
 
-            private HEDockingPortTypes? _portName = null;
+            private HEDockingPortType? _portName = null;
             private HEBlueprintStructure _ownerObject = null;
+            private int? _dockedStructureID = null;
+            private HEBlueprintStructure _dockedStructure = null;
+            private HEDockingPortType? _dockedPortName = null;
+            private HEBlueprintDockingPort _dockedPort = null;
+
 
             #endregion
 
