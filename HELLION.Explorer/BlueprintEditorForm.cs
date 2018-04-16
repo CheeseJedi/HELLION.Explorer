@@ -484,9 +484,6 @@ namespace HELLION.Explorer
             blueprint.RefreshAllTreeNodes();
 
             // Add the primary structure.
-
-            Debug.Print("DockingRootNode parent = " + (blueprint.GetDockingRootNode().Parent != null ? blueprint.GetDockingRootNode().Parent.Name : "null"));
-
             treeViewPrimaryStructure.Nodes.Add(blueprint.GetDockingRootNode());
 
             // Add secondary structures.
@@ -697,11 +694,26 @@ namespace HELLION.Explorer
         private void buttonUndockPort_Click(object sender, EventArgs e)
         {
             MessageBox.Show("User selected UndockPort button.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+
+
+
+
+
+
+
         }
 
         private void buttonDockPort_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("User selected DockPort.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            HEBlueprint.HEBlueprintDockingPort a = CurrentDockingPort ?? throw new NullReferenceException("CurrentDockingPort was null.");
+            HEBlueprint.HEBlueprintDockingPort b = DestinationDockingPort ?? throw new NullReferenceException("DestinationDockingPort was null.");
+
+            HEDockingResultStatus result = blueprint.DockStructures(a, b);
+
+            RefreshTreeViews();
+
+            MessageBox.Show("Result: " + result.ToString(), "Docking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         #endregion
@@ -794,6 +806,16 @@ namespace HELLION.Explorer
             panelToolPanel.Visible = toolPaneToolStripMenuItem.Checked;
             if (toolPaneToolStripMenuItem.Checked) splitContainerTreeViews.Width -= adjustmentAmount;
             else splitContainerTreeViews.Width += adjustmentAmount;
+        }
+
+        /// <summary>
+        /// Hides or shows the Secondary Structures Pane.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void secondaryStructuresPaneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            splitContainerTreeViews.Panel2Collapsed = !secondaryStructuresPaneToolStripMenuItem.Checked;
         }
 
         private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)

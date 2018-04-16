@@ -56,6 +56,22 @@ namespace HELLION.DataStructures
         CargoDock  // Dockable Cargo (IC) module
     }
 
+    /// <summary>
+    /// Enumeration for the results of a docking operation.
+    /// </summary>
+    public enum HEDockingResultStatus
+    {
+        Success = 0,
+        InvalidPortA,
+        InvalidPortB,
+        InvalidStructurePortA,
+        InvalidStructurePortB,
+        AlreadyDockedPortA,
+        AlreadyDockedPortB,
+        PortsNotDocked,
+        WillCauseOrphanedStructure,
+    }
+
     #endregion
 
     /// <summary>
@@ -163,7 +179,6 @@ namespace HELLION.DataStructures
         /// To be serialised.
         /// </remarks>
         public List<HEBlueprintStructure> Structures { get; set; } = null;
-
 
         #endregion
 
@@ -362,6 +377,58 @@ namespace HELLION.DataStructures
             return Structures.Contains(GetStructureByID(id)) ? true : false;
 
         }
+
+        /// <summary>
+        /// Docks the structures that the two specified ports belong to.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public HEDockingResultStatus DockStructures(HEBlueprintDockingPort a, HEBlueprintDockingPort b)
+        {
+
+            if (a == null) return HEDockingResultStatus.InvalidPortA;
+            if (b == null) return HEDockingResultStatus.InvalidPortB;
+
+            if (a.OwnerObject == null) return HEDockingResultStatus.InvalidStructurePortA;
+            if (b.OwnerObject == null) return HEDockingResultStatus.InvalidStructurePortB;
+
+            if (a.IsDocked) return HEDockingResultStatus.AlreadyDockedPortA;
+            if (b.IsDocked) return HEDockingResultStatus.AlreadyDockedPortB;
+
+            // Proceed with docking operation.
+
+            // Update a.
+            a.DockedStructure = b.OwnerObject;
+            a.DockedPort = b;
+
+            // Update b.
+            b.DockedStructure = a.OwnerObject;
+            b.DockedPort = a;
+
+            // Clean up Secondary Structures list.
+            //if (SecondaryStructures.Contains(a.OwnerObject)) SecondaryStructures.Remove(a.OwnerObject);
+            if (SecondaryStructures.Contains(b.OwnerObject)) SecondaryStructures.Remove(b.OwnerObject);
+
+
+            return HEDockingResultStatus.Success;
+        }
+
+
+
+        public HEDockingResultStatus UndockStructures(HEBlueprintDockingPort a, HEBlueprintDockingPort b)
+        {
+            if (a == null) return HEDockingResultStatus.InvalidPortA;
+            if (b == null) return HEDockingResultStatus.InvalidPortB;
+
+            if (a.OwnerObject == null) return HEDockingResultStatus.InvalidStructurePortA;
+            if (b.OwnerObject == null) return HEDockingResultStatus.InvalidStructurePortB;
+
+
+            return HEDockingResultStatus.Success;
+        }
+
+
 
         #endregion
 

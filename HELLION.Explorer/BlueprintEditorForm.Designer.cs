@@ -67,6 +67,8 @@
             this.splitContainerTreeViews = new System.Windows.Forms.SplitContainer();
             this.treeViewPrimaryStructure = new System.Windows.Forms.TreeView();
             this.treeViewSecondaryStructures = new System.Windows.Forms.TreeView();
+            this.labelSecondaryStructuresPane = new System.Windows.Forms.Label();
+            this.secondaryStructuresPaneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxAddStructure.SuspendLayout();
@@ -165,7 +167,8 @@
             this.expandAllToolStripMenuItem,
             this.collapseAllToolStripMenuItem,
             this.toolStripSeparator3,
-            this.toolPaneToolStripMenuItem});
+            this.toolPaneToolStripMenuItem,
+            this.secondaryStructuresPaneToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -173,21 +176,21 @@
             // expandAllToolStripMenuItem
             // 
             this.expandAllToolStripMenuItem.Name = "expandAllToolStripMenuItem";
-            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.expandAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.expandAllToolStripMenuItem.Text = "Expand All";
             this.expandAllToolStripMenuItem.Click += new System.EventHandler(this.expandAllToolStripMenuItem_Click);
             // 
             // collapseAllToolStripMenuItem
             // 
             this.collapseAllToolStripMenuItem.Name = "collapseAllToolStripMenuItem";
-            this.collapseAllToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.collapseAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.collapseAllToolStripMenuItem.Text = "Collapse All";
             this.collapseAllToolStripMenuItem.Click += new System.EventHandler(this.collapseAllToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(133, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // toolPaneToolStripMenuItem
             // 
@@ -195,7 +198,7 @@
             this.toolPaneToolStripMenuItem.CheckOnClick = true;
             this.toolPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolPaneToolStripMenuItem.Name = "toolPaneToolStripMenuItem";
-            this.toolPaneToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.toolPaneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.toolPaneToolStripMenuItem.Text = "Tool Pane";
             this.toolPaneToolStripMenuItem.Click += new System.EventHandler(this.toolPaneToolStripMenuItem_Click);
             // 
@@ -218,9 +221,9 @@
             // 
             this.groupBoxAddStructure.Controls.Add(this.buttonAddStructure);
             this.groupBoxAddStructure.Controls.Add(this.comboBoxStructureList);
-            this.groupBoxAddStructure.Location = new System.Drawing.Point(8, 3);
+            this.groupBoxAddStructure.Location = new System.Drawing.Point(6, 3);
             this.groupBoxAddStructure.Name = "groupBoxAddStructure";
-            this.groupBoxAddStructure.Size = new System.Drawing.Size(182, 82);
+            this.groupBoxAddStructure.Size = new System.Drawing.Size(184, 82);
             this.groupBoxAddStructure.TabIndex = 3;
             this.groupBoxAddStructure.TabStop = false;
             this.groupBoxAddStructure.Text = "Add Structure";
@@ -229,7 +232,7 @@
             // 
             this.buttonAddStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonAddStructure.Enabled = false;
-            this.buttonAddStructure.Location = new System.Drawing.Point(6, 48);
+            this.buttonAddStructure.Location = new System.Drawing.Point(9, 48);
             this.buttonAddStructure.Name = "buttonAddStructure";
             this.buttonAddStructure.Size = new System.Drawing.Size(170, 24);
             this.buttonAddStructure.TabIndex = 2;
@@ -242,19 +245,20 @@
             this.comboBoxStructureList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxStructureList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxStructureList.FormattingEnabled = true;
-            this.comboBoxStructureList.Location = new System.Drawing.Point(7, 20);
+            this.comboBoxStructureList.Location = new System.Drawing.Point(9, 20);
             this.comboBoxStructureList.Name = "comboBoxStructureList";
-            this.comboBoxStructureList.Size = new System.Drawing.Size(169, 21);
+            this.comboBoxStructureList.Size = new System.Drawing.Size(170, 21);
             this.comboBoxStructureList.TabIndex = 1;
             this.comboBoxStructureList.SelectedIndexChanged += new System.EventHandler(this.comboBoxStructureList_SelectedIndexChanged);
             // 
             // pictureBoxSelectedStructure
             // 
+            this.pictureBoxSelectedStructure.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.pictureBoxSelectedStructure.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBoxSelectedStructure.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxSelectedStructure.Location = new System.Drawing.Point(10, 126);
+            this.pictureBoxSelectedStructure.Location = new System.Drawing.Point(8, 126);
             this.pictureBoxSelectedStructure.Name = "pictureBoxSelectedStructure";
-            this.pictureBoxSelectedStructure.Size = new System.Drawing.Size(180, 180);
+            this.pictureBoxSelectedStructure.Padding = new System.Windows.Forms.Padding(1);
+            this.pictureBoxSelectedStructure.Size = new System.Drawing.Size(182, 182);
             this.pictureBoxSelectedStructure.TabIndex = 4;
             this.pictureBoxSelectedStructure.TabStop = false;
             // 
@@ -279,9 +283,9 @@
             // groupBoxRemoveStructure
             // 
             this.groupBoxRemoveStructure.Controls.Add(this.buttonRemoveStructure);
-            this.groupBoxRemoveStructure.Location = new System.Drawing.Point(10, 312);
+            this.groupBoxRemoveStructure.Location = new System.Drawing.Point(8, 312);
             this.groupBoxRemoveStructure.Name = "groupBoxRemoveStructure";
-            this.groupBoxRemoveStructure.Size = new System.Drawing.Size(180, 51);
+            this.groupBoxRemoveStructure.Size = new System.Drawing.Size(182, 51);
             this.groupBoxRemoveStructure.TabIndex = 5;
             this.groupBoxRemoveStructure.TabStop = false;
             this.groupBoxRemoveStructure.Text = "Remove Structure";
@@ -290,7 +294,7 @@
             // 
             this.buttonRemoveStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonRemoveStructure.Enabled = false;
-            this.buttonRemoveStructure.Location = new System.Drawing.Point(5, 19);
+            this.buttonRemoveStructure.Location = new System.Drawing.Point(7, 19);
             this.buttonRemoveStructure.Name = "buttonRemoveStructure";
             this.buttonRemoveStructure.Size = new System.Drawing.Size(170, 24);
             this.buttonRemoveStructure.TabIndex = 1;
@@ -302,9 +306,9 @@
             // 
             this.groupBoxUndockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBoxUndockPort.Controls.Add(this.buttonUndockPort);
-            this.groupBoxUndockPort.Location = new System.Drawing.Point(10, 582);
+            this.groupBoxUndockPort.Location = new System.Drawing.Point(8, 582);
             this.groupBoxUndockPort.Name = "groupBoxUndockPort";
-            this.groupBoxUndockPort.Size = new System.Drawing.Size(180, 51);
+            this.groupBoxUndockPort.Size = new System.Drawing.Size(182, 51);
             this.groupBoxUndockPort.TabIndex = 4;
             this.groupBoxUndockPort.TabStop = false;
             this.groupBoxUndockPort.Text = "Undock Port";
@@ -313,9 +317,9 @@
             // 
             this.buttonUndockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonUndockPort.Enabled = false;
-            this.buttonUndockPort.Location = new System.Drawing.Point(4, 19);
+            this.buttonUndockPort.Location = new System.Drawing.Point(7, 19);
             this.buttonUndockPort.Name = "buttonUndockPort";
-            this.buttonUndockPort.Size = new System.Drawing.Size(169, 24);
+            this.buttonUndockPort.Size = new System.Drawing.Size(168, 24);
             this.buttonUndockPort.TabIndex = 1;
             this.buttonUndockPort.Text = "Undock";
             this.buttonUndockPort.UseVisualStyleBackColor = true;
@@ -331,9 +335,9 @@
             this.groupBoxDockPort.Controls.Add(this.comboBoxDockingDestinationSource);
             this.groupBoxDockPort.Controls.Add(this.comboBoxDockingDestinationStructure);
             this.groupBoxDockPort.Controls.Add(this.comboBoxDockingSourcePort);
-            this.groupBoxDockPort.Location = new System.Drawing.Point(10, 376);
+            this.groupBoxDockPort.Location = new System.Drawing.Point(8, 376);
             this.groupBoxDockPort.Name = "groupBoxDockPort";
-            this.groupBoxDockPort.Size = new System.Drawing.Size(180, 200);
+            this.groupBoxDockPort.Size = new System.Drawing.Size(182, 200);
             this.groupBoxDockPort.TabIndex = 3;
             this.groupBoxDockPort.TabStop = false;
             this.groupBoxDockPort.Text = "Dock Port";
@@ -342,9 +346,9 @@
             // 
             this.buttonDockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonDockPort.Enabled = false;
-            this.buttonDockPort.Location = new System.Drawing.Point(6, 170);
+            this.buttonDockPort.Location = new System.Drawing.Point(7, 170);
             this.buttonDockPort.Name = "buttonDockPort";
-            this.buttonDockPort.Size = new System.Drawing.Size(169, 24);
+            this.buttonDockPort.Size = new System.Drawing.Size(170, 24);
             this.buttonDockPort.TabIndex = 1;
             this.buttonDockPort.Text = "Dock";
             this.buttonDockPort.UseVisualStyleBackColor = true;
@@ -353,7 +357,7 @@
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.Location = new System.Drawing.Point(6, 115);
+            this.label3.Location = new System.Drawing.Point(8, 115);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(169, 16);
             this.label3.TabIndex = 5;
@@ -362,7 +366,7 @@
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.Location = new System.Drawing.Point(4, 45);
+            this.label2.Location = new System.Drawing.Point(6, 45);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(169, 16);
             this.label2.TabIndex = 5;
@@ -373,9 +377,9 @@
             this.comboBoxDockingDestinationPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingDestinationPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationPort.FormattingEnabled = true;
-            this.comboBoxDockingDestinationPort.Location = new System.Drawing.Point(6, 134);
+            this.comboBoxDockingDestinationPort.Location = new System.Drawing.Point(7, 134);
             this.comboBoxDockingDestinationPort.Name = "comboBoxDockingDestinationPort";
-            this.comboBoxDockingDestinationPort.Size = new System.Drawing.Size(169, 21);
+            this.comboBoxDockingDestinationPort.Size = new System.Drawing.Size(170, 21);
             this.comboBoxDockingDestinationPort.TabIndex = 0;
             this.comboBoxDockingDestinationPort.SelectedIndexChanged += new System.EventHandler(this.comboBoxDockingDestinationPort_SelectedIndexChanged);
             // 
@@ -384,9 +388,9 @@
             this.comboBoxDockingDestinationSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingDestinationSource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationSource.FormattingEnabled = true;
-            this.comboBoxDockingDestinationSource.Location = new System.Drawing.Point(5, 64);
+            this.comboBoxDockingDestinationSource.Location = new System.Drawing.Point(7, 64);
             this.comboBoxDockingDestinationSource.Name = "comboBoxDockingDestinationSource";
-            this.comboBoxDockingDestinationSource.Size = new System.Drawing.Size(169, 21);
+            this.comboBoxDockingDestinationSource.Size = new System.Drawing.Size(170, 21);
             this.comboBoxDockingDestinationSource.TabIndex = 0;
             this.comboBoxDockingDestinationSource.SelectedIndexChanged += new System.EventHandler(this.comboBoxDockingDestinationSource_SelectedIndexChanged);
             // 
@@ -395,9 +399,9 @@
             this.comboBoxDockingDestinationStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingDestinationStructure.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingDestinationStructure.FormattingEnabled = true;
-            this.comboBoxDockingDestinationStructure.Location = new System.Drawing.Point(5, 91);
+            this.comboBoxDockingDestinationStructure.Location = new System.Drawing.Point(7, 91);
             this.comboBoxDockingDestinationStructure.Name = "comboBoxDockingDestinationStructure";
-            this.comboBoxDockingDestinationStructure.Size = new System.Drawing.Size(169, 21);
+            this.comboBoxDockingDestinationStructure.Size = new System.Drawing.Size(170, 21);
             this.comboBoxDockingDestinationStructure.TabIndex = 0;
             this.comboBoxDockingDestinationStructure.SelectedIndexChanged += new System.EventHandler(this.comboBoxDockingDestinationStructure_SelectedIndexChanged);
             // 
@@ -406,9 +410,9 @@
             this.comboBoxDockingSourcePort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxDockingSourcePort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxDockingSourcePort.FormattingEnabled = true;
-            this.comboBoxDockingSourcePort.Location = new System.Drawing.Point(4, 19);
+            this.comboBoxDockingSourcePort.Location = new System.Drawing.Point(7, 19);
             this.comboBoxDockingSourcePort.Name = "comboBoxDockingSourcePort";
-            this.comboBoxDockingSourcePort.Size = new System.Drawing.Size(169, 21);
+            this.comboBoxDockingSourcePort.Size = new System.Drawing.Size(170, 21);
             this.comboBoxDockingSourcePort.TabIndex = 0;
             this.comboBoxDockingSourcePort.SelectedIndexChanged += new System.EventHandler(this.comboBoxDockingSourcePort_SelectedIndexChanged);
             // 
@@ -429,6 +433,7 @@
             // 
             // splitContainerTreeViews
             // 
+            this.splitContainerTreeViews.BackColor = System.Drawing.SystemColors.ControlLight;
             this.splitContainerTreeViews.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerTreeViews.Location = new System.Drawing.Point(0, 24);
             this.splitContainerTreeViews.Name = "splitContainerTreeViews";
@@ -440,6 +445,7 @@
             // 
             // splitContainerTreeViews.Panel2
             // 
+            this.splitContainerTreeViews.Panel2.Controls.Add(this.labelSecondaryStructuresPane);
             this.splitContainerTreeViews.Panel2.Controls.Add(this.treeViewSecondaryStructures);
             this.splitContainerTreeViews.Size = new System.Drawing.Size(699, 640);
             this.splitContainerTreeViews.SplitterDistance = 550;
@@ -464,11 +470,32 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewSecondaryStructures.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeViewSecondaryStructures.Location = new System.Drawing.Point(0, 0);
+            this.treeViewSecondaryStructures.Location = new System.Drawing.Point(0, 13);
             this.treeViewSecondaryStructures.Name = "treeViewSecondaryStructures";
-            this.treeViewSecondaryStructures.Size = new System.Drawing.Size(699, 84);
+            this.treeViewSecondaryStructures.Size = new System.Drawing.Size(699, 73);
             this.treeViewSecondaryStructures.TabIndex = 0;
             this.treeViewSecondaryStructures.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewSecondaryStructures_AfterSelect);
+            // 
+            // labelSecondaryStructuresPane
+            // 
+            this.labelSecondaryStructuresPane.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelSecondaryStructuresPane.BackColor = System.Drawing.SystemColors.Control;
+            this.labelSecondaryStructuresPane.Location = new System.Drawing.Point(0, 0);
+            this.labelSecondaryStructuresPane.Name = "labelSecondaryStructuresPane";
+            this.labelSecondaryStructuresPane.Size = new System.Drawing.Size(699, 13);
+            this.labelSecondaryStructuresPane.TabIndex = 1;
+            this.labelSecondaryStructuresPane.Text = "Secondary Structures";
+            // 
+            // secondaryStructuresPaneToolStripMenuItem
+            // 
+            this.secondaryStructuresPaneToolStripMenuItem.Checked = true;
+            this.secondaryStructuresPaneToolStripMenuItem.CheckOnClick = true;
+            this.secondaryStructuresPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.secondaryStructuresPaneToolStripMenuItem.Name = "secondaryStructuresPaneToolStripMenuItem";
+            this.secondaryStructuresPaneToolStripMenuItem.Size = new System.Drawing.Size(214, 22);
+            this.secondaryStructuresPaneToolStripMenuItem.Text = "Secondary Structures Pane";
+            this.secondaryStructuresPaneToolStripMenuItem.Click += new System.EventHandler(this.secondaryStructuresPaneToolStripMenuItem_Click);
             // 
             // BlueprintEditorForm
             // 
@@ -543,5 +570,7 @@
         private System.Windows.Forms.SplitContainer splitContainerTreeViews;
         private System.Windows.Forms.TreeView treeViewPrimaryStructure;
         private System.Windows.Forms.TreeView treeViewSecondaryStructures;
+        private System.Windows.Forms.Label labelSecondaryStructuresPane;
+        private System.Windows.Forms.ToolStripMenuItem secondaryStructuresPaneToolStripMenuItem;
     }
 }
