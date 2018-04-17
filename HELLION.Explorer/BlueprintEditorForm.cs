@@ -20,16 +20,20 @@ namespace HELLION.Explorer
             Icon = Program.MainForm.Icon;
 
             treeViewPrimaryStructure.ImageList = Program.hEImageList.IconImageList;
-            //treeView1.ImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
-            //treeView1.SelectedImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
-            //treeView1.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
+            treeViewSecondaryStructures.ImageList = Program.hEImageList.IconImageList;
+
             treeViewPrimaryStructure.ShowNodeToolTips = true;
+            treeViewSecondaryStructures.ShowNodeToolTips = true;
+
             Text = "Blueprint Editor";
             RefreshDropDownModuleTypes();
+
+            /*
             RefreshDropDownDockingDestinationSource();
             RefreshDestinationStructureList();
+            */
 
-            //
+            
         }
 
         /// <summary>
@@ -46,7 +50,8 @@ namespace HELLION.Explorer
             blueprint = jsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("jsonBlueprintFile.BlueprintObject was null.");
 
             GraftTreeInboundFromMainForm();
-            RefreshDropDownDockingDestinationSource();
+
+            // RefreshDropDownDockingDestinationSource();
 
 
             IsDirty = false;
@@ -79,60 +84,121 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
-        /// Represents the currently selected tree node.
+        /// Represents the currently selected tree node in the Primary Structure TreeView.
         /// </summary>
-        public HEBlueprintTreeNode CurrentlySelectedNode
+        public HEBlueprintTreeNode SelectedPrimaryStructureNode
         {
-            get => _currentlySelectedNode;
+            get => _selectedPrimaryStructureNode;
             set
             {
-                if (_currentlySelectedNode != value)
+                if (_selectedPrimaryStructureNode != value)
                 {
-                    _currentlySelectedNode = value;
+                    _selectedPrimaryStructureNode = value;
 
-                    if (_currentlySelectedNode != null)
+                    if (_selectedPrimaryStructureNode != null)
                     {
                         // Figure out whether it's a Structure node or a Docking Port node.
-                        Type parentType = _currentlySelectedNode.OwnerObject.GetType();
+                        Type parentType = _selectedPrimaryStructureNode.OwnerObject.GetType();
                         if (parentType == typeof(HEBlueprint.HEBlueprintDockingPort))
                         {
                             // Docking Port node, need find the parent structure.
-                            CurrentDockingPort = (HEBlueprint.HEBlueprintDockingPort)_currentlySelectedNode.OwnerObject;
-                            CurrentStructure = CurrentDockingPort.OwnerObject;
+                            SelectedPrimaryDockingPort = (HEBlueprint.HEBlueprintDockingPort)_selectedPrimaryStructureNode.OwnerObject;
+
+                            SelectedPrimaryStructure = SelectedPrimaryDockingPort?.OwnerObject;
 
                         }
                         else if (parentType == typeof(HEBlueprint.HEBlueprintStructure))
                         {
-                            CurrentDockingPort = null;
-                            CurrentStructure = (HEBlueprint.HEBlueprintStructure)_currentlySelectedNode.OwnerObject;
+                            SelectedPrimaryDockingPort = null;
+                            SelectedPrimaryStructure = (HEBlueprint.HEBlueprintStructure)_selectedPrimaryStructureNode.OwnerObject;
                         }
                         else throw new InvalidOperationException("Unrecognised OwnerObject type.");
                     }
                     else
                     {
-                        CurrentDockingPort = null;
-                        CurrentStructure = null;
+                        SelectedPrimaryDockingPort = null;
+                        SelectedPrimaryStructure = null;
                     }
 
-                    Debug.Print("CurrentlySelectedNode has caused new values to be set.");
+                    Debug.Print("SelectedPrimaryStructureNode has caused new values to be set.");
+                    if (SelectedPrimaryStructure == null) Debug.Print("CurrentStructure is null.");
+                    else Debug.Print("CurrentStructure [" + SelectedPrimaryStructure.StructureID.ToString() + "] " + SelectedPrimaryStructure.StructureType.ToString());
+                    if (SelectedPrimaryDockingPort == null) Debug.Print("CurrentDockingPort is null.");
+                    else Debug.Print("CurrentDockingPort " + SelectedPrimaryDockingPort.PortName.ToString());
 
+                    // Trigger updates.
 
-                    if (CurrentStructure == null) Debug.Print("CurrentStructure is null.");
-                    else Debug.Print("CurrentStructure [" + CurrentStructure.StructureID.ToString() + "] " + CurrentStructure.StructureType.ToString());
+                    RefreshLabelSelectedPrimaryStructure();
+                    RefreshPictureBoxSelectedPrimaryStructure();
+                    RefreshLabelSelectedPrimaryDockingPort();
 
-                    if (CurrentDockingPort == null) Debug.Print("CurrentDockingPort is null.");
-                    else Debug.Print("CurrentDockingPort " + CurrentDockingPort.PortName.ToString());
+                    RefreshDockButtonEnabledStatus();
 
-                    // TEMPORARY
-                    //RefreshDestinationStructureList();
                 }
             }
         }
 
         /// <summary>
+        /// Represents the currently selected tree node in the Secondary Structures TreeView.
+        /// </summary>
+        public HEBlueprintTreeNode SelectedSecondaryStructureNode
+        {
+            get => _selectedSecondaryStructureNode;
+            set
+            {
+                if (_selectedSecondaryStructureNode != value)
+                {
+                    _selectedSecondaryStructureNode = value;
+
+                    if (_selectedSecondaryStructureNode != null)
+                    {
+                        // Figure out whether it's a Structure node or a Docking Port node.
+                        Type parentType = _selectedSecondaryStructureNode.OwnerObject.GetType();
+                        if (parentType == typeof(HEBlueprint.HEBlueprintDockingPort))
+                        {
+                            // Docking Port node, need find the parent structure.
+                            SelectedSecondaryDockingPort = (HEBlueprint.HEBlueprintDockingPort)_selectedSecondaryStructureNode.OwnerObject;
+
+                            SelectedSecondaryStructure = SelectedSecondaryDockingPort?.OwnerObject;
+
+                        }
+                        else if (parentType == typeof(HEBlueprint.HEBlueprintStructure))
+                        {
+                            SelectedSecondaryDockingPort = null;
+                            SelectedSecondaryStructure = (HEBlueprint.HEBlueprintStructure)_selectedSecondaryStructureNode.OwnerObject;
+                        }
+                        else throw new InvalidOperationException("Unrecognised OwnerObject type.");
+                    }
+                    else
+                    {
+                        SelectedSecondaryDockingPort = null;
+                        SelectedSecondaryStructure = null;
+                    }
+
+                    Debug.Print("SelectedSecondaryStructureNode has caused new values to be set.");
+                    if (SelectedSecondaryStructure == null) Debug.Print("SelectedSecondaryStructure is null.");
+                    else Debug.Print("SelectedSecondaryStructure [" + SelectedSecondaryStructure.StructureID.ToString() + "] " + SelectedSecondaryStructure.StructureType.ToString());
+                    if (SelectedSecondaryDockingPort == null) Debug.Print("SelectedSecondaryDockingPort is null.");
+                    else Debug.Print("SelectedSecondaryDockingPort " + SelectedSecondaryDockingPort.PortName.ToString());
+
+                    // Trigger updates.
+
+                    RefreshLabelSelectedSecondaryStructure();
+                    RefreshPictureBoxSelectedSecondaryStructure();
+                    RefreshLabelSelectedSecondaryDockingPort();
+
+                    RefreshDockButtonEnabledStatus();
+
+                }
+            }
+        }
+
+
+
+        /// <summary>
         /// Represents the currently selected structure.
         /// </summary>
-        public HEBlueprint.HEBlueprintStructure CurrentStructure
+        public HEBlueprint.HEBlueprintStructure SelectedPrimaryStructure
         {
             get => _currentStructure;
             private set
@@ -143,12 +209,12 @@ namespace HELLION.Explorer
 
                     // Trigger updates.
 
-                    if (value == null) CurrentDockingPort = null;
+                    if (value == null) SelectedPrimaryDockingPort = null;
 
-                    RefreshPictureBoxSelectedStructure();
-                    RefreshLabelSelectedStructureType();
+                    RefreshPictureBoxSelectedPrimaryStructure();
+                    RefreshLabelSelectedPrimaryStructure();
 
-                    RefreshDropDownDockingSourcePort();
+                    //RefreshDropDownDockingSourcePort();
                 }
             }
         }
@@ -156,7 +222,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected docking port.
         /// </summary>
-        public HEBlueprint.HEBlueprintDockingPort CurrentDockingPort
+        public HEBlueprint.HEBlueprintDockingPort SelectedPrimaryDockingPort
         {
             get => _currentDockingPort;
             private set
@@ -166,11 +232,12 @@ namespace HELLION.Explorer
                     _currentDockingPort = value;
 
                     // Trigger updates.
-                    RefreshDropDownDockingSourcePort();
+                    //RefreshDropDownDockingSourcePort();
                 }
             }
         }
 
+        /*
         /// <summary>
         /// Represents the currently selected source for dockable modules.
         /// </summary>
@@ -184,9 +251,9 @@ namespace HELLION.Explorer
                     _dockingDestinationSource = value;
 
                     // Trigger control update.
-                    RefreshDropDownDestinationStructures();
+                    //RefreshDropDownDestinationStructures();
 
-                    RefreshDropDownDockingDestinationPort();
+                    //RefreshDropDownDockingDestinationPort();
 
                 }
             }
@@ -202,16 +269,17 @@ namespace HELLION.Explorer
             {
                 destinationStructureList = value;
                 // The list has changed so trigger a refresh of the control's values.
-                RefreshDropDownDestinationStructures();
-                RefreshDropDownDockingDestinationPort();
+                //RefreshDropDownDestinationStructures();
+                //RefreshDropDownDockingDestinationPort();
 
             }
         }
+        */
 
         /// <summary>
         /// Represents the selected destination structure for docking.
         /// </summary>
-        public HEBlueprint.HEBlueprintStructure DestinationStructure
+        public HEBlueprint.HEBlueprintStructure SelectedSecondaryStructure
         {
             get => _destinationStructure;
             private set
@@ -222,10 +290,10 @@ namespace HELLION.Explorer
 
                     // Trigger updates.
 
-                    if (value == null) DestinationDockingPort = null;
+                    if (value == null) SelectedSecondaryDockingPort = null;
 
 
-                    RefreshDropDownDockingDestinationPort();
+                    //RefreshDropDownDockingDestinationPort();
                 }
             }
         }
@@ -233,7 +301,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the selected destination structures target docking port for docking.
         /// </summary>
-        public HEBlueprint.HEBlueprintDockingPort DestinationDockingPort
+        public HEBlueprint.HEBlueprintDockingPort SelectedSecondaryDockingPort
         {
             get => _destinationDockingPort;
             private set
@@ -245,7 +313,7 @@ namespace HELLION.Explorer
                     // Trigger updates.
 
                     // check all structures and ports are valid before enabling the dock button.
-                    RefreshDockButtonEnabledStatus();
+                    //RefreshDockButtonEnabledStatus();
 
                 }
             }
@@ -256,21 +324,64 @@ namespace HELLION.Explorer
         #region Refresh Methods
 
         /// <summary>
-        /// Updates the image displayed by the picture box based on the currently selected structure.
+        /// Updates the label text for the Primary Structure.
         /// </summary>
-        private void RefreshPictureBoxSelectedStructure()
+        private void RefreshLabelSelectedPrimaryStructure()
         {
-            pictureBoxSelectedStructure.Image = CurrentStructure == null ? null
-                            : Program.hEImageList.StructureImageList.Images[HEImageList.GetStructureImageIndexByStructureType(CurrentStructure.StructureType.Value)];
+            labelSelectedPrimaryStructure.Text = SelectedPrimaryStructure == null ? "Unspecified"
+                : String.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryStructure.StructureType);
         }
 
         /// <summary>
-        /// Updates the label text for the selected structure type.
+        /// Updates the image displayed by the Primary Structure PictureBox.
         /// </summary>
-        private void RefreshLabelSelectedStructureType()
+        private void RefreshPictureBoxSelectedPrimaryStructure()
         {
-            labelSelectedStructureType.Text = CurrentStructure == null ? null : String.Format("[{0:000}] {1}", CurrentStructure.StructureID, CurrentStructure.StructureType);
+            pictureBoxSelectedPrimaryStructure.Image = SelectedPrimaryStructure == null ? null
+                : Program.hEImageList.StructureImageList.Images[
+                    HEImageList.GetStructureImageIndexByStructureType(SelectedPrimaryStructure.StructureType.Value)];
         }
+
+        /// <summary>
+        /// Updates the label text for the Primary Docking Port.
+        /// </summary>
+        private void RefreshLabelSelectedPrimaryDockingPort()
+        {
+            labelSelectedPrimaryDockingPort.Text = SelectedPrimaryDockingPort == null ? "Unspecified"
+                : String.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryDockingPort.PortName.ToString());
+
+            //Debug.Print("SelectedPrimaryDockingPort.PortName = " + SelectedPrimaryDockingPort.PortName.ToString());
+        }
+
+
+        /// <summary>
+        /// Updates the label text for the Secondary Structure.
+        /// </summary>
+        private void RefreshLabelSelectedSecondaryStructure()
+        {
+            labelSelectedSecondaryStructure.Text = SelectedSecondaryStructure == null ? "Unspecified"
+                : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID, SelectedSecondaryStructure.StructureType);
+        }
+
+        /// <summary>
+        /// Updates the image displayed by the Secondary Structure PictureBox.
+        /// </summary>
+        private void RefreshPictureBoxSelectedSecondaryStructure()
+        {
+            pictureBoxSelectedSecondaryStructure.Image = SelectedSecondaryStructure == null ? null
+                : Program.hEImageList.StructureImageList.Images[
+                    HEImageList.GetStructureImageIndexByStructureType(SelectedSecondaryStructure.StructureType.Value)];
+        }
+
+        /// <summary>
+        /// Updates the label text for the Secondary Docking Port.
+        /// </summary>
+        private void RefreshLabelSelectedSecondaryDockingPort()
+        {
+            labelSelectedSecondaryDockingPort.Text = SelectedSecondaryDockingPort == null ? "Unspecified"
+                : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID, SelectedSecondaryDockingPort.PortName.ToString());
+        }
+        
 
         /// <summary>
         /// Updates the form's title text with a marker if the object is dirty.
@@ -294,6 +405,8 @@ namespace HELLION.Explorer
             }
             comboBoxStructureList.SelectedIndex = 0;
         }
+
+        /*
 
         /// <summary>
         /// Populates the drop down for the source of modules to choose for docking.
@@ -319,16 +432,17 @@ namespace HELLION.Explorer
 
             bool dockingPortSet = false;
 
-            if (CurrentStructure != null && CurrentStructure.AvailableDockingPorts() != null)
+            if (SelectedPrimaryStructure != null && SelectedPrimaryStructure.AvailableDockingPorts() != null)
             {
-                foreach (var port in CurrentStructure.AvailableDockingPorts())
+                comboBoxDockingSourcePort.Items.Add("Unspecified");
+                foreach (var port in SelectedPrimaryStructure.AvailableDockingPorts())
                 {
                     string formattedPortName = String.Format("[{0:000}] {1}",
                         port.OwnerObject.StructureID, port.PortName);
 
                     comboBoxDockingSourcePort.Items.Add(formattedPortName);
 
-                    if (CurrentDockingPort != null && CurrentDockingPort == port)
+                    if (SelectedPrimaryDockingPort != null && SelectedPrimaryDockingPort == port)
                     {
                         comboBoxDockingSourcePort.SelectedItem = formattedPortName;
                         dockingPortSet = true;
@@ -354,6 +468,7 @@ namespace HELLION.Explorer
 
             if (DestinationStructureList != null && DestinationStructureList.Count > 0)
             {
+                comboBoxDockingDestinationStructure.Items.Add("Unspecified");
                 foreach (HEBlueprint.HEBlueprintStructure structure in DestinationStructureList)
                 {
                     comboBoxDockingDestinationStructure.Items.Add(String.Format("[{0:000}] {1}",
@@ -374,16 +489,17 @@ namespace HELLION.Explorer
 
             bool dockingPortSet = false;
 
-            if (DestinationStructure != null && DestinationStructure.AvailableDockingPorts() != null)
+            if (SelectedSecondaryStructure != null && SelectedSecondaryStructure.AvailableDockingPorts() != null)
             {
-                foreach (var port in DestinationStructure.AvailableDockingPorts())
+                comboBoxDockingDestinationPort.Items.Add("Unspecified");
+                foreach (var port in SelectedSecondaryStructure.AvailableDockingPorts())
                 {
                     string formattedPortName = String.Format("[{0:000}] {1}",
                         port.OwnerObject.StructureID, port.PortName);
 
                     comboBoxDockingDestinationPort.Items.Add(formattedPortName);
 
-                    if (CurrentDockingPort != null && CurrentDockingPort == port)
+                    if (SelectedPrimaryDockingPort != null && SelectedPrimaryDockingPort == port)
                     {
                         comboBoxDockingDestinationPort.SelectedItem = formattedPortName;
                         dockingPortSet = true;
@@ -397,19 +513,6 @@ namespace HELLION.Explorer
             {
                 comboBoxDockingDestinationPort.SelectedIndex = 0;
             }
-        }
-
-        /// <summary>
-        /// Refreshes the enabled status of the Dock button.
-        /// </summary>
-        private void RefreshDockButtonEnabledStatus()
-        {
-            if (CurrentStructure != null && CurrentDockingPort != null
-                && DestinationStructure != null && DestinationDockingPort != null)
-            {
-                buttonDockPort.Enabled = true;
-            }
-            else buttonDockPort.Enabled = false;
         }
 
         /// <summary>
@@ -474,7 +577,24 @@ namespace HELLION.Explorer
         }
 
 
-        public void RefreshTreeViews()
+        */
+
+        /// <summary>
+        /// Refreshes the enabled status of the Dock button.
+        /// </summary>
+        private void RefreshDockButtonEnabledStatus()
+        {
+            
+            if (SelectedPrimaryStructure != null && SelectedPrimaryDockingPort != null
+                && SelectedSecondaryStructure != null && SelectedSecondaryDockingPort != null)
+            {
+                buttonDockPort.Enabled = true;
+            }
+            else buttonDockPort.Enabled = false;
+            
+        }
+
+        private void RefreshTreeViews()
         {
 
             treeViewPrimaryStructure.Nodes.Clear();
@@ -485,18 +605,43 @@ namespace HELLION.Explorer
 
             // Add the primary structure.
             treeViewPrimaryStructure.Nodes.Add(blueprint.GetDockingRootNode());
+            blueprint.GetDockingRootNode().ExpandAll();
 
             // Add secondary structures.
             foreach (HEBlueprint.HEBlueprintStructure _secondaryStructure in blueprint.SecondaryStructures)
             {
                 treeViewSecondaryStructures.Nodes.Add(_secondaryStructure.RootNode);
-
+                _secondaryStructure.RootNode.ExpandAll();
             }
 
 
 
         }
 
+        private void RefreshSelectedPrimaryStructure()
+        {
+            RefreshLabelSelectedPrimaryStructure();
+            RefreshPictureBoxSelectedPrimaryStructure();
+            RefreshLabelSelectedPrimaryDockingPort();
+        }
+
+        private void RefreshSelectedSecondaryStructure()
+        {
+            RefreshLabelSelectedSecondaryStructure();
+            RefreshPictureBoxSelectedSecondaryStructure();
+            RefreshLabelSelectedSecondaryDockingPort();
+        }
+
+        public void RefreshEverything()
+        {
+            RefreshBlueprintEditorFormTitleText();
+            RefreshTreeViews();
+
+            RefreshSelectedPrimaryStructure();
+            RefreshSelectedSecondaryStructure();
+
+            RefreshDockButtonEnabledStatus();
+        }
 
 
         /*
@@ -585,9 +730,32 @@ namespace HELLION.Explorer
             buttonAddStructure.Enabled = comboBoxStructureList.SelectedIndex != 0 ? true : false;
         }
 
+        /*
         private void comboBoxDockingSourcePort_SelectedIndexChanged(object sender, EventArgs e)
         {
             // TODO this needs to parse the ComboBox's selected item and find the port it relates to.
+            
+            if (blueprint != null)
+            {
+                string _sourcePortUnprocessedName = comboBoxDockingSourcePort.SelectedItem.ToString();
+                string _sourcePortProcessedName = _sourcePortUnprocessedName.Length > 0 ? _sourcePortUnprocessedName.Substring(6) : "Error";
+
+                Debug.Print("@@@@ _sourcePortUnprocessedName " + _sourcePortUnprocessedName + "  _sourcePortProcessedName " + _sourcePortProcessedName);
+
+                if (SelectedPrimaryStructure == null || _sourcePortUnprocessedName == "" 
+                    || _sourcePortUnprocessedName == "Unspecified" || _sourcePortProcessedName == "Error"
+                    || _sourcePortUnprocessedName == "No available docking ports")
+                {
+                    SelectedPrimaryDockingPort = null;
+                    return;
+                }
+                else
+                {
+                    SelectedPrimaryDockingPort = SelectedPrimaryStructure.GetDockingPortByName(_sourcePortProcessedName)
+                        ?? throw new InvalidOperationException("Unable to retrieve structure by id.");
+                }
+            }
+            
 
         }
 
@@ -621,10 +789,10 @@ namespace HELLION.Explorer
                 if (int.TryParse(_destStructureIDString, out _destStructureID))
                 {
                     // We should have a StructureID
-                    DestinationStructure = blueprint.GetStructureByID(_destStructureID)
+                    SelectedSecondaryStructure = blueprint.GetStructureByID(_destStructureID)
                         ?? throw new InvalidOperationException("Unable to retrieve structure by id.");
                 }
-                else DestinationStructure = null;
+                else SelectedSecondaryStructure = null;
             }
         }
 
@@ -635,20 +803,23 @@ namespace HELLION.Explorer
             if (blueprint != null)
             {
                 string _destPortUnprocessedName = comboBoxDockingDestinationPort.SelectedItem.ToString();
-                string destPortProcessedName = _destPortUnprocessedName.Length > 0 ? _destPortUnprocessedName.Substring(6) : "Error";
+                string _destPortProcessedName = _destPortUnprocessedName.Length > 0 ? _destPortUnprocessedName.Substring(6) : "Error";
 
-                if (DestinationStructure == null || _destPortUnprocessedName == "No available docking ports")
+                if (SelectedSecondaryStructure == null || _destPortUnprocessedName == "" 
+                    || _destPortUnprocessedName == "Unspecified" || _destPortUnprocessedName == "Error"
+                    || _destPortUnprocessedName == "No available docking ports")
                 {
-                    DestinationDockingPort = null;
+                    SelectedSecondaryDockingPort = null;
                     return;
                 }
                 else
                 {
-                    DestinationDockingPort = DestinationStructure.GetDockingPortByName(destPortProcessedName)
+                    SelectedSecondaryDockingPort = SelectedSecondaryStructure.GetDockingPortByName(_destPortProcessedName)
                         ?? throw new InvalidOperationException("Unable to retrieve structure by id.");
                 }
             }
         }
+        */
 
         #endregion
 
@@ -706,12 +877,17 @@ namespace HELLION.Explorer
 
         private void buttonDockPort_Click(object sender, EventArgs e)
         {
-            HEBlueprint.HEBlueprintDockingPort a = CurrentDockingPort ?? throw new NullReferenceException("CurrentDockingPort was null.");
-            HEBlueprint.HEBlueprintDockingPort b = DestinationDockingPort ?? throw new NullReferenceException("DestinationDockingPort was null.");
+            HEBlueprint.HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("CurrentDockingPort was null.");
+            HEBlueprint.HEBlueprintDockingPort b = SelectedSecondaryDockingPort ?? throw new NullReferenceException("DestinationDockingPort was null.");
 
             HEDockingResultStatus result = blueprint.DockStructures(a, b);
 
-            RefreshTreeViews();
+            if (result == HEDockingResultStatus.Success)
+            {
+                SelectedSecondaryStructureNode = null;
+            }
+
+            RefreshEverything();
 
             MessageBox.Show("Result: " + result.ToString(), "Docking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -728,7 +904,7 @@ namespace HELLION.Explorer
         private void treeViewPrimaryStructure_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            CurrentlySelectedNode = (HEBlueprintTreeNode)treeViewPrimaryStructure.SelectedNode;
+            SelectedPrimaryStructureNode = (HEBlueprintTreeNode)treeViewPrimaryStructure.SelectedNode;
         }
 
         /// <summary>
@@ -739,7 +915,7 @@ namespace HELLION.Explorer
         private void treeViewSecondaryStructures_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            CurrentlySelectedNode = (HEBlueprintTreeNode)treeViewSecondaryStructures.SelectedNode;
+            SelectedSecondaryStructureNode = (HEBlueprintTreeNode)treeViewSecondaryStructures.SelectedNode;
         }
 
         /// <summary>
@@ -836,11 +1012,12 @@ namespace HELLION.Explorer
         private string FormTitleText = null;
         private HEJsonBlueprintFile jsonBlueprintFile = null;
         private HEBlueprint blueprint = null;
-        private HEBlueprintTreeNode _currentlySelectedNode = null;
+        private HEBlueprintTreeNode _selectedPrimaryStructureNode = null;
+        private HEBlueprintTreeNode _selectedSecondaryStructureNode = null;
         private HEBlueprint.HEBlueprintStructure _currentStructure = null;
         private HEBlueprint.HEBlueprintDockingPort _currentDockingPort = null;
-        private DockingDestSourceFilterType _dockingDestinationSource;
-        private List<HEBlueprint.HEBlueprintStructure> destinationStructureList = null;
+        //private DockingDestSourceFilterType _dockingDestinationSource;
+        //private List<HEBlueprint.HEBlueprintStructure> destinationStructureList = null;
         private HEBlueprint.HEBlueprintStructure _destinationStructure = null;
         private HEBlueprint.HEBlueprintDockingPort _destinationDockingPort = null;
 
@@ -860,6 +1037,5 @@ namespace HELLION.Explorer
         }
 
         #endregion
-
     }
 }

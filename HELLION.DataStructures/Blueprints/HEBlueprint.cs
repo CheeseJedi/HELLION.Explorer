@@ -414,8 +414,6 @@ namespace HELLION.DataStructures
             return HEDockingResultStatus.Success;
         }
 
-
-
         public HEDockingResultStatus UndockStructures(HEBlueprintDockingPort a, HEBlueprintDockingPort b)
         {
             if (a == null) return HEDockingResultStatus.InvalidPortA;
@@ -427,7 +425,6 @@ namespace HELLION.DataStructures
 
             return HEDockingResultStatus.Success;
         }
-
 
 
         #endregion
@@ -611,7 +608,12 @@ namespace HELLION.DataStructures
             /// <returns></returns>
             public HEBlueprintDockingPort GetDockingPortByName(string name)
             {
-                if (name != null) return DockingPorts.Where(f => f.PortName.ToString() == name).Single();
+                if (name != null && name != "" && DockingPorts.Count > 0)
+                {
+                    List<HEBlueprintDockingPort> results = DockingPorts.Where(f => f.PortName.ToString() == name).ToList();
+                    if (results.Count < 1 || results.Count > 1) return null;
+                    return results.Single();
+                }
                 else return null;
             }
 
@@ -722,9 +724,10 @@ namespace HELLION.DataStructures
             public HEBlueprintDockingPort()
             {
                 RootNode = new HEBlueprintDockingPortTreeNode(passedOwner: this,
-                    nodeName: PortName.ToString());
-
-                RootNode.PrefixNodeName = OwnerObject != null && OwnerObject.StructureID != null ? String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] ";
+                    nodeName: PortName.ToString())
+                {
+                    PrefixNodeName = OwnerObject != null && OwnerObject.StructureID != null ? String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] "
+                };
                 //RootNode.RefreshName();
 
 
