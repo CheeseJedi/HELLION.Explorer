@@ -862,34 +862,29 @@ namespace HELLION.Explorer
 
         }
 
-        private void buttonUndockPort_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("User selected UndockPort button.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-
-
-
-
-
-
-
-        }
-
         private void buttonDockPort_Click(object sender, EventArgs e)
         {
-            HEBlueprint.HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("CurrentDockingPort was null.");
-            HEBlueprint.HEBlueprintDockingPort b = SelectedSecondaryDockingPort ?? throw new NullReferenceException("DestinationDockingPort was null.");
+            HEBlueprint.HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
+            HEBlueprint.HEBlueprintDockingPort b = SelectedSecondaryDockingPort ?? throw new NullReferenceException("SelectedSecondaryDockingPort was null.");
 
-            HEDockingResultStatus result = blueprint.DockStructures(a, b);
+            HEDockingResultStatus result = blueprint.DockPorts(a, b);
 
-            if (result == HEDockingResultStatus.Success)
-            {
-                SelectedSecondaryStructureNode = null;
-            }
+            if (result == HEDockingResultStatus.Success) SelectedSecondaryStructureNode = null;
+            else MessageBox.Show("Result: " + result.ToString(), "Docking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             RefreshEverything();
+        }
 
-            MessageBox.Show("Result: " + result.ToString(), "Docking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void buttonUndockPort_Click(object sender, EventArgs e)
+        {
+            HEBlueprint.HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
+
+            HEDockingResultStatus result = blueprint.UndockPort(a);
+
+            if (result == HEDockingResultStatus.Success) SelectedSecondaryStructureNode = null;
+            else MessageBox.Show("Result: " + result.ToString(), "Undocking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            RefreshEverything();
         }
 
         #endregion

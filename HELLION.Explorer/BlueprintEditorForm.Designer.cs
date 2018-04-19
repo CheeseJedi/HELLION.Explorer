@@ -57,26 +57,26 @@
             this.buttonUndockPort = new System.Windows.Forms.Button();
             this.buttonDockPort = new System.Windows.Forms.Button();
             this.panelToolPanel = new System.Windows.Forms.Panel();
+            this.labelSelectedSecondaryDockingPort = new System.Windows.Forms.Label();
+            this.labelSelectedPrimaryDockingPort = new System.Windows.Forms.Label();
+            this.labelSelectedSecondaryStructure = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.pictureBoxSelectedSecondaryStructure = new System.Windows.Forms.PictureBox();
             this.splitContainerTreeViews = new System.Windows.Forms.SplitContainer();
             this.treeViewPrimaryStructure = new System.Windows.Forms.TreeView();
             this.labelSecondaryStructuresPane = new System.Windows.Forms.Label();
             this.treeViewSecondaryStructures = new System.Windows.Forms.TreeView();
-            this.labelSelectedPrimaryDockingPort = new System.Windows.Forms.Label();
-            this.pictureBoxSelectedSecondaryStructure = new System.Windows.Forms.PictureBox();
-            this.labelSelectedSecondaryStructure = new System.Windows.Forms.Label();
-            this.labelSelectedSecondaryDockingPort = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxAddStructure.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSelectedPrimaryStructure)).BeginInit();
             this.groupBoxRemoveStructure.SuspendLayout();
             this.panelToolPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSelectedSecondaryStructure)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTreeViews)).BeginInit();
             this.splitContainerTreeViews.Panel1.SuspendLayout();
             this.splitContainerTreeViews.Panel2.SuspendLayout();
             this.splitContainerTreeViews.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSelectedSecondaryStructure)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -313,7 +313,6 @@
             // buttonUndockPort
             // 
             this.buttonUndockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonUndockPort.Enabled = false;
             this.buttonUndockPort.Location = new System.Drawing.Point(8, 276);
             this.buttonUndockPort.Name = "buttonUndockPort";
             this.buttonUndockPort.Size = new System.Drawing.Size(182, 24);
@@ -352,6 +351,57 @@
             this.panelToolPanel.Name = "panelToolPanel";
             this.panelToolPanel.Size = new System.Drawing.Size(200, 705);
             this.panelToolPanel.TabIndex = 6;
+            // 
+            // labelSelectedSecondaryDockingPort
+            // 
+            this.labelSelectedSecondaryDockingPort.AutoEllipsis = true;
+            this.labelSelectedSecondaryDockingPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSelectedSecondaryDockingPort.Location = new System.Drawing.Point(6, 537);
+            this.labelSelectedSecondaryDockingPort.Name = "labelSelectedSecondaryDockingPort";
+            this.labelSelectedSecondaryDockingPort.Size = new System.Drawing.Size(184, 20);
+            this.labelSelectedSecondaryDockingPort.TabIndex = 5;
+            this.labelSelectedSecondaryDockingPort.Text = "Unspecified";
+            this.labelSelectedSecondaryDockingPort.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelSelectedPrimaryDockingPort
+            // 
+            this.labelSelectedPrimaryDockingPort.AutoEllipsis = true;
+            this.labelSelectedPrimaryDockingPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSelectedPrimaryDockingPort.Location = new System.Drawing.Point(6, 223);
+            this.labelSelectedPrimaryDockingPort.Name = "labelSelectedPrimaryDockingPort";
+            this.labelSelectedPrimaryDockingPort.Size = new System.Drawing.Size(184, 20);
+            this.labelSelectedPrimaryDockingPort.TabIndex = 5;
+            this.labelSelectedPrimaryDockingPort.Text = "Unspecified";
+            this.labelSelectedPrimaryDockingPort.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // labelSelectedSecondaryStructure
+            // 
+            this.labelSelectedSecondaryStructure.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSelectedSecondaryStructure.Location = new System.Drawing.Point(9, 329);
+            this.labelSelectedSecondaryStructure.Name = "labelSelectedSecondaryStructure";
+            this.labelSelectedSecondaryStructure.Size = new System.Drawing.Size(181, 20);
+            this.labelSelectedSecondaryStructure.TabIndex = 5;
+            this.labelSelectedSecondaryStructure.Text = "Unspecified";
+            this.labelSelectedSecondaryStructure.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(9, 313);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(181, 16);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Selected Secondary Structure / Port";
+            // 
+            // pictureBoxSelectedSecondaryStructure
+            // 
+            this.pictureBoxSelectedSecondaryStructure.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.pictureBoxSelectedSecondaryStructure.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBoxSelectedSecondaryStructure.Location = new System.Drawing.Point(8, 352);
+            this.pictureBoxSelectedSecondaryStructure.Name = "pictureBoxSelectedSecondaryStructure";
+            this.pictureBoxSelectedSecondaryStructure.Padding = new System.Windows.Forms.Padding(1);
+            this.pictureBoxSelectedSecondaryStructure.Size = new System.Drawing.Size(182, 182);
+            this.pictureBoxSelectedSecondaryStructure.TabIndex = 4;
+            this.pictureBoxSelectedSecondaryStructure.TabStop = false;
             // 
             // splitContainerTreeViews
             // 
@@ -409,57 +459,6 @@
             this.treeViewSecondaryStructures.TabIndex = 0;
             this.treeViewSecondaryStructures.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewSecondaryStructures_AfterSelect);
             // 
-            // labelSelectedPrimaryDockingPort
-            // 
-            this.labelSelectedPrimaryDockingPort.AutoEllipsis = true;
-            this.labelSelectedPrimaryDockingPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSelectedPrimaryDockingPort.Location = new System.Drawing.Point(6, 223);
-            this.labelSelectedPrimaryDockingPort.Name = "labelSelectedPrimaryDockingPort";
-            this.labelSelectedPrimaryDockingPort.Size = new System.Drawing.Size(184, 20);
-            this.labelSelectedPrimaryDockingPort.TabIndex = 5;
-            this.labelSelectedPrimaryDockingPort.Text = "Unspecified";
-            this.labelSelectedPrimaryDockingPort.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // pictureBoxSelectedSecondaryStructure
-            // 
-            this.pictureBoxSelectedSecondaryStructure.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.pictureBoxSelectedSecondaryStructure.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBoxSelectedSecondaryStructure.Location = new System.Drawing.Point(8, 352);
-            this.pictureBoxSelectedSecondaryStructure.Name = "pictureBoxSelectedSecondaryStructure";
-            this.pictureBoxSelectedSecondaryStructure.Padding = new System.Windows.Forms.Padding(1);
-            this.pictureBoxSelectedSecondaryStructure.Size = new System.Drawing.Size(182, 182);
-            this.pictureBoxSelectedSecondaryStructure.TabIndex = 4;
-            this.pictureBoxSelectedSecondaryStructure.TabStop = false;
-            // 
-            // labelSelectedSecondaryStructure
-            // 
-            this.labelSelectedSecondaryStructure.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSelectedSecondaryStructure.Location = new System.Drawing.Point(9, 329);
-            this.labelSelectedSecondaryStructure.Name = "labelSelectedSecondaryStructure";
-            this.labelSelectedSecondaryStructure.Size = new System.Drawing.Size(181, 20);
-            this.labelSelectedSecondaryStructure.TabIndex = 5;
-            this.labelSelectedSecondaryStructure.Text = "Unspecified";
-            this.labelSelectedSecondaryStructure.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelSelectedSecondaryDockingPort
-            // 
-            this.labelSelectedSecondaryDockingPort.AutoEllipsis = true;
-            this.labelSelectedSecondaryDockingPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSelectedSecondaryDockingPort.Location = new System.Drawing.Point(6, 537);
-            this.labelSelectedSecondaryDockingPort.Name = "labelSelectedSecondaryDockingPort";
-            this.labelSelectedSecondaryDockingPort.Size = new System.Drawing.Size(184, 20);
-            this.labelSelectedSecondaryDockingPort.TabIndex = 5;
-            this.labelSelectedSecondaryDockingPort.Text = "Unspecified";
-            this.labelSelectedSecondaryDockingPort.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(9, 313);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(181, 16);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Selected Secondary Structure / Port";
-            // 
             // BlueprintEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -482,11 +481,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSelectedPrimaryStructure)).EndInit();
             this.groupBoxRemoveStructure.ResumeLayout(false);
             this.panelToolPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSelectedSecondaryStructure)).EndInit();
             this.splitContainerTreeViews.Panel1.ResumeLayout(false);
             this.splitContainerTreeViews.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerTreeViews)).EndInit();
             this.splitContainerTreeViews.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSelectedSecondaryStructure)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
