@@ -371,20 +371,25 @@ namespace HELLION.DataStructures
 
         public bool RemoveStructure(int? id)
         {
+            return RemoveStructure(GetStructure(id));
+        }
 
-            HEBlueprintStructure structureToDelete = GetStructure(id);
-
-            if (structureToDelete != null)
-                structureToDelete.RemoveStructure(RemoveOrphanedStructures: true);
+        public bool RemoveStructure(HEBlueprintStructure structure)
+        {
+            if (structure != null)
+                structure.Remove(RemoveOrphanedStructures: true);
             else
                 return false;
 
             IsDirty = true;
 
 
-            return Structures.Contains(GetStructure(id)) ? true : false;
+
+            return Structures.Contains(structure) ? true : false;
 
         }
+
+
 
         /// <summary>
         /// Docks the structures that the two specified ports belong to.
@@ -464,7 +469,10 @@ namespace HELLION.DataStructures
             portB.DockedStructure = null;
             portB.DockedPort = null;
 
-            // Add structureB to the Secondary Structures list
+            // Figure out which structure to add to the Secondary Structures list.
+
+
+
             SecondaryStructures.Add(structureB);
 
             IsDirty = true;
@@ -698,9 +706,9 @@ namespace HELLION.DataStructures
             /// the removal operation.
             /// </summary>
             /// <returns>Returns true on success.</returns>
-            public bool RemoveStructure(bool RemoveOrphanedStructures = true)
+            public bool Remove(bool RemoveOrphanedStructures = false)
             {
-                // Not yet implemented.
+                // TODO - Not yet implemented.
 
                 // Make list of directly docked structures
                 // Find local docking ports that are in use

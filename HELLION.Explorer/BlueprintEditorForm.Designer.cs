@@ -313,7 +313,8 @@
             // buttonUndockPort
             // 
             this.buttonUndockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonUndockPort.Location = new System.Drawing.Point(8, 276);
+            this.buttonUndockPort.Enabled = false;
+            this.buttonUndockPort.Location = new System.Drawing.Point(8, 246);
             this.buttonUndockPort.Name = "buttonUndockPort";
             this.buttonUndockPort.Size = new System.Drawing.Size(182, 24);
             this.buttonUndockPort.TabIndex = 1;
@@ -323,10 +324,11 @@
             // 
             // buttonDockPort
             // 
-            this.buttonDockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDockPort.Location = new System.Drawing.Point(8, 246);
+            this.buttonDockPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDockPort.Enabled = false;
+            this.buttonDockPort.Location = new System.Drawing.Point(8, 525);
             this.buttonDockPort.Name = "buttonDockPort";
-            this.buttonDockPort.Size = new System.Drawing.Size(182, 24);
+            this.buttonDockPort.Size = new System.Drawing.Size(183, 24);
             this.buttonDockPort.TabIndex = 1;
             this.buttonDockPort.Text = "Dock";
             this.buttonDockPort.UseVisualStyleBackColor = true;
@@ -354,11 +356,12 @@
             // 
             // labelSelectedSecondaryDockingPort
             // 
+            this.labelSelectedSecondaryDockingPort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelSelectedSecondaryDockingPort.AutoEllipsis = true;
             this.labelSelectedSecondaryDockingPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSelectedSecondaryDockingPort.Location = new System.Drawing.Point(6, 537);
+            this.labelSelectedSecondaryDockingPort.Location = new System.Drawing.Point(8, 502);
             this.labelSelectedSecondaryDockingPort.Name = "labelSelectedSecondaryDockingPort";
-            this.labelSelectedSecondaryDockingPort.Size = new System.Drawing.Size(184, 20);
+            this.labelSelectedSecondaryDockingPort.Size = new System.Drawing.Size(182, 20);
             this.labelSelectedSecondaryDockingPort.TabIndex = 5;
             this.labelSelectedSecondaryDockingPort.Text = "Unspecified";
             this.labelSelectedSecondaryDockingPort.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -376,8 +379,9 @@
             // 
             // labelSelectedSecondaryStructure
             // 
+            this.labelSelectedSecondaryStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelSelectedSecondaryStructure.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSelectedSecondaryStructure.Location = new System.Drawing.Point(9, 329);
+            this.labelSelectedSecondaryStructure.Location = new System.Drawing.Point(9, 294);
             this.labelSelectedSecondaryStructure.Name = "labelSelectedSecondaryStructure";
             this.labelSelectedSecondaryStructure.Size = new System.Drawing.Size(181, 20);
             this.labelSelectedSecondaryStructure.TabIndex = 5;
@@ -386,7 +390,8 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 313);
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label2.Location = new System.Drawing.Point(9, 278);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(181, 16);
             this.label2.TabIndex = 5;
@@ -394,9 +399,10 @@
             // 
             // pictureBoxSelectedSecondaryStructure
             // 
+            this.pictureBoxSelectedSecondaryStructure.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBoxSelectedSecondaryStructure.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.pictureBoxSelectedSecondaryStructure.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBoxSelectedSecondaryStructure.Location = new System.Drawing.Point(8, 352);
+            this.pictureBoxSelectedSecondaryStructure.Location = new System.Drawing.Point(8, 317);
             this.pictureBoxSelectedSecondaryStructure.Name = "pictureBoxSelectedSecondaryStructure";
             this.pictureBoxSelectedSecondaryStructure.Padding = new System.Windows.Forms.Padding(1);
             this.pictureBoxSelectedSecondaryStructure.Size = new System.Drawing.Size(182, 182);
@@ -453,6 +459,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewSecondaryStructures.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.treeViewSecondaryStructures.HideSelection = false;
             this.treeViewSecondaryStructures.Location = new System.Drawing.Point(0, 13);
             this.treeViewSecondaryStructures.Name = "treeViewSecondaryStructures";
             this.treeViewSecondaryStructures.Size = new System.Drawing.Size(699, 83);
@@ -471,7 +478,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(700, 790);
             this.Name = "BlueprintEditorForm";
-            this.Text = "BlueprintEditorForm";
+            this.Text = "Blueprint Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlueprintEditorForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

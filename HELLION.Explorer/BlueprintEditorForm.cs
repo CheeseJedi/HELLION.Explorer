@@ -54,7 +54,6 @@ namespace HELLION.Explorer
             // RefreshDropDownDockingDestinationSource();
 
 
-            IsDirty = false;
         }
 
         #endregion
@@ -71,16 +70,7 @@ namespace HELLION.Explorer
         /// </summary>
         public bool IsDirty
         {
-            get { return _isDirty; }
-            private set
-            {
-                _isDirty = value;
-                // Enable or disable the Apply Changes menu option.
-                //applyChangesToolStripMenuItem.Enabled = value;
-
-                // Update the form name
-                RefreshBlueprintEditorFormTitleText();
-            }
+            get => blueprint != null ? blueprint.IsDirty : false;
         }
 
         /// <summary>
@@ -133,6 +123,7 @@ namespace HELLION.Explorer
                     RefreshLabelSelectedPrimaryDockingPort();
 
                     RefreshDockButtonEnabledStatus();
+                    RefreshUndockButtonEnabledStatus();
 
                 }
             }
@@ -188,6 +179,7 @@ namespace HELLION.Explorer
                     RefreshLabelSelectedSecondaryDockingPort();
 
                     RefreshDockButtonEnabledStatus();
+                    RefreshUndockButtonEnabledStatus();
 
                 }
             }
@@ -388,7 +380,8 @@ namespace HELLION.Explorer
         /// </summary>
         private void RefreshBlueprintEditorFormTitleText()
         {
-            Text = IsDirty ? FormTitleText + "*" : FormTitleText;
+            string newText = "Blueprint Editor [" + FormTitleText + "]";
+            Text = IsDirty ? newText + "*" : newText;
         }
 
         /// <summary>
@@ -586,13 +579,32 @@ namespace HELLION.Explorer
         {
             
             if (SelectedPrimaryStructure != null && SelectedPrimaryDockingPort != null
-                && SelectedSecondaryStructure != null && SelectedSecondaryDockingPort != null)
+                && SelectedSecondaryStructure != null && SelectedSecondaryDockingPort != null
+                && !SelectedPrimaryDockingPort.IsDocked && !SelectedSecondaryDockingPort.IsDocked)
             {
                 buttonDockPort.Enabled = true;
             }
             else buttonDockPort.Enabled = false;
             
         }
+
+        /// <summary>
+        /// Refreshes the enabled status of the Undock button.
+        /// </summary>
+        private void RefreshUndockButtonEnabledStatus()
+        {
+
+            if (SelectedPrimaryStructure != null && SelectedPrimaryDockingPort != null
+                && SelectedPrimaryDockingPort.IsDocked)
+            {
+                buttonUndockPort.Enabled = true;
+            }
+            else buttonUndockPort.Enabled = false;
+
+        }
+
+
+
 
         private void RefreshTreeViews()
         {
@@ -641,6 +653,7 @@ namespace HELLION.Explorer
             RefreshSelectedSecondaryStructure();
 
             RefreshDockButtonEnabledStatus();
+            RefreshUndockButtonEnabledStatus();
         }
 
 
@@ -854,12 +867,14 @@ namespace HELLION.Explorer
                 // Set the focus on the Secondary Structures TreeView.
                 treeViewSecondaryStructures.Focus();
 
+                RefreshBlueprintEditorFormTitleText();
             }
         }
 
         private void buttonRemoveStructure_Click(object sender, EventArgs e)
         {
 
+            RefreshBlueprintEditorFormTitleText();
         }
 
         private void buttonDockPort_Click(object sender, EventArgs e)
