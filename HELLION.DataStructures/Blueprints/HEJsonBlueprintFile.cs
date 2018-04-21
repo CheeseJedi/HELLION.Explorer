@@ -40,7 +40,7 @@ namespace HELLION.DataStructures
             DeserialiseToBlueprintObject();
 
             // Assemble the primary tree hierarchy based on the DockingRoot.
-            BlueprintObject.ReassembleTreeNodeDockingStructure(BlueprintObject.GetDockingRoot(), AttachToBlueprintTreeNode: true);
+            BlueprintObject.ReassembleTreeNodeDockingStructure(BlueprintObject.PrimaryStructureRoot, AttachToBlueprintTreeNode: true);
             RootNode.Nodes.Add(BlueprintObject.RootNode);
 
             // Populate the data view.

@@ -9,20 +9,20 @@
 
         }
 
-        public bool DisplayRootStructureIcon
-        {
-            get { return _displayRootStructureIcon; }
-            set
-            {
-                // Only make the change if it's actually a new value.
-                if (value != _displayRootStructureIcon)
-                {
-                    NodeType = value ? HETreeNodeType.BlueprintRootStructure : HETreeNodeType.BlueprintStructure;
-                }
-            }
-        }
+        //public bool DisplayRootStructureIcon
+        //{
+        //    get { return _displayRootStructureIcon; }
+        //    set
+        //    {
+        //        // Only make the change if it's actually a new value.
+        //        if (value != _displayRootStructureIcon)
+        //        {
+        //            NodeType = value ? HETreeNodeType.BlueprintRootStructure : HETreeNodeType.BlueprintStructure;
+        //        }
+        //    }
+        //}
 
-        protected bool _displayRootStructureIcon = false;
+        //protected bool _displayRootStructureIcon = false;
     }
 
 
