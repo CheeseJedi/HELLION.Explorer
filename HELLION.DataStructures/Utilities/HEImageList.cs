@@ -397,10 +397,12 @@ namespace HELLION.DataStructures
             iconImageList = new ImageList();
 
             // Create ImageList to hold structure (ship/module) images for identification use.
-            structureImageList = new ImageList();
-            // Set the ImageSize property to a larger size 
-            // (the default is 16 x 16).
-            structureImageList.ImageSize = new Size(180, 180);
+            structureImageList = new ImageList
+            {
+                // Set the ImageSize property to a larger size 
+                // (the default is 16 x 16).
+                ImageSize = new Size(180, 180)
+            };
 
             // Process string array of resource names (this includes the namespace name)
             foreach (string embeddedResource in embeddedResourceNames)

@@ -288,7 +288,7 @@ namespace HELLION.DataStructures
                 hierarchyRoot.RootNode.Nodes.Add(port.RootNode);
                 if (port.IsDocked)
                 {
-                    Reassemble(GetStructure(port.DockedStructureID), hierarchyRoot);
+                    Reassemble(port.DockedStructure, hierarchyRoot);
                 }
             }
 

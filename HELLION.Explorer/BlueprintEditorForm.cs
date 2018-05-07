@@ -468,11 +468,22 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
+        /// Refreshes the enabled state of the Save (and SaveAs) menu item(s).
+        /// </summary>
+        private void RefreshFileSaveMenuStatus()
+        {
+            saveToolStripMenuItem.Enabled = IsDirty;
+            // saveAsToolStripMenuItem.Enabled = IsDirty;
+        }
+
+        /// <summary>
         /// Refreshes everything!
         /// </summary>
         public void RefreshEverything()
         {
             RefreshBlueprintEditorFormTitleText();
+            RefreshFileSaveMenuStatus();
+
             RefreshTreeViews();
 
             RefreshSelectedPrimaryStructure();
@@ -570,6 +581,7 @@ namespace HELLION.Explorer
                 treeViewSecondaryStructures.Focus();
 
                 RefreshBlueprintEditorFormTitleText();
+                RefreshFileSaveMenuStatus();
             }
         }
 
@@ -577,6 +589,8 @@ namespace HELLION.Explorer
         {
 
             RefreshBlueprintEditorFormTitleText();
+            RefreshFileSaveMenuStatus();
+
         }
 
         private void buttonDockPort_Click(object sender, EventArgs e)
@@ -732,5 +746,9 @@ namespace HELLION.Explorer
 
         #endregion
 
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
