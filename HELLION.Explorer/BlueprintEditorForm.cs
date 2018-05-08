@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using HELLION.DataStructures;
+using Newtonsoft.Json.Linq;
 
 namespace HELLION.Explorer
 {
@@ -749,6 +750,13 @@ namespace HELLION.Explorer
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+
+
+            HEBlueprint.SerialisationTemplate_Blueprint newTemplate = blueprint.Serialise();
+            JToken newJData = JToken.FromObject(newTemplate);
+
+
+            MessageBox.Show(newJData.ToString());
         }
     }
 }

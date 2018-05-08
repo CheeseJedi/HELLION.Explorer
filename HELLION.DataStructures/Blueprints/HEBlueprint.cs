@@ -411,7 +411,153 @@ namespace HELLION.DataStructures
 
         }
 
+        public SerialisationTemplate_Blueprint Serialise()
+        {
 
+            if (StructureDefinitions == null) throw new NullReferenceException("Unable to serialise - StructureDefinitions is null.");
+
+
+            SerialisationTemplate_Blueprint tp_Blueprint = new SerialisationTemplate_Blueprint();
+
+            // tp_Blueprint.Name = "";
+            // tp_Blueprint.LinkURI = "";
+
+            if (PrimaryStructureRoot == null) throw new NullReferenceException("Unable to serialise - PrimaryStrctureRoot was null.");
+
+            // Define a list to track structures that have been visited and processed to prevent loops.
+            List<HEBlueprintStructure> _visitedStructures = new List<HEBlueprintStructure>();
+
+            // Start at the primary root.
+            CloneStructureTemplates(PrimaryStructureRoot);
+
+            // Return the blueprint serialisation template.
+            return tp_Blueprint;
+
+
+            /// <summary>
+            /// Clones the blueprints structure list in to the new template's structures list.
+            /// </summary>
+            SerialisationTemplate_Structure CloneStructureTemplates(HEBlueprintStructure blueprintStructure)
+            {
+                // Check that this structure hasn't already been processed.
+                if (!_visitedStructures.Contains(blueprintStructure))
+                {
+                    // Add the blueprintStructure to the visited list to prevent it being processed again.
+                    _visitedStructures.Add(blueprintStructure);
+
+                    // Build the new structure's serialisation template.
+                    SerialisationTemplate_Structure structureTemplate = BuildTemplateStructure(
+                        (HEBlueprintStructureType)blueprintStructure.StructureType);
+
+                    // Add the new serialisation template to the blueprint template's structures list.
+                    tp_Blueprint.Structures.Add(structureTemplate);
+
+                    // Set the ID as per the blueprint Structure's ID.
+                    structureTemplate.StructureID = (int)blueprintStructure.StructureID;
+
+                    // Process any ports that are docked to another structure.
+                    foreach (HEBlueprintDockingPort dockedPort in blueprintStructure.DockingPorts
+                        .Where(p => p.IsDocked))
+                    {
+
+                        HEBlueprintStructure nextStructure = dockedPort.DockedStructure 
+                            ?? throw new NullReferenceException("nextStructure was null.");
+
+                        Debug.Print("structureTemplate: " + structureTemplate.StructureType.ToString());
+                        Debug.Print("nextStructure: " + nextStructure.StructureType.ToString());
+                        foreach (var port in nextStructure.DockingPorts)
+                            Debug.Print("Port: " + port.PortName.ToString() 
+                                + " DockedTo: " + (port.IsDocked ? port.DockedStructure.StructureType.ToString() : "Not Docked"));
+
+
+                        // Find the next structures port that connects it to this structure.
+                        HEBlueprintDockingPort nextStructuresPort = nextStructure.GetDockingPort(blueprintStructure)
+                            ?? throw new NullReferenceException("nextStructuresPort was null.");
+
+                        // Add the next structure template via recursion and get a reference to it.
+                        SerialisationTemplate_Structure nextStructureTemplate = 
+                            CloneStructureTemplates(nextStructure)
+                            ?? throw new NullReferenceException("nextStructureTemplate was null.");
+
+
+                        //Find the relevant local template port
+                        IEnumerable<SerialisationTemplate_DockingPort> localPortResults = structureTemplate.DockingPorts
+                            .Where(lp => lp.PortName == dockedPort.PortName);
+
+                        if (localPortResults.Count() > 1) throw new InvalidOperationException("More than one template port where there should be only one.");
+                        if (localPortResults.Count() < 1) throw new InvalidOperationException("Specified port not found.");
+
+                        SerialisationTemplate_DockingPort localTemplatePort = localPortResults.Single();
+
+                        // Find the next structures template port.
+
+                        IEnumerable<SerialisationTemplate_DockingPort> remotePortResults = structureTemplate.DockingPorts
+                        .Where(rp => rp.PortName == nextStructuresPort.PortName);
+
+                        if (remotePortResults.Count() > 1) throw new InvalidOperationException("More than one template port where there should be only one.");
+                        if (remotePortResults.Count() < 1) throw new InvalidOperationException("Specified port not found.");
+
+                        SerialisationTemplate_DockingPort remoteTemplatePort = remotePortResults.Single();
+
+                        // Connect up the ports.
+
+                        // Set local port.
+                        localTemplatePort.DockedStructureID = nextStructureTemplate.StructureID;
+                        localTemplatePort.DockedPortName = remoteTemplatePort.PortName;
+
+                        // Set remote port.
+                        remoteTemplatePort.DockedStructureID = structureTemplate.StructureID;
+                        remoteTemplatePort.DockedPortName = localTemplatePort.PortName;
+
+
+
+                    }
+
+                    return structureTemplate;
+
+
+                }
+                else
+                {
+                    // The structure has been processed previously - find the item and return a 
+                    // reference to it rather than creating it.
+
+                    IEnumerable<SerialisationTemplate_Structure> _results = tp_Blueprint.Structures
+                        .Where(s => s.StructureID == (int)blueprintStructure.StructureID);
+                    
+                    // There should be only one result.
+                    return _results.Count() == 1 ? _results.Single() 
+                        : throw new InvalidOperationException("More or less than a single result where only one was expected.");
+                }
+
+            }
+
+            /// <summary>
+            /// Adds a structure of specified type to the Structures list.
+            /// </summary>
+            SerialisationTemplate_Structure BuildTemplateStructure(HEBlueprintStructureType structureType)
+            {
+                SerialisationTemplate_Structure templateStructure = new SerialisationTemplate_Structure();
+                templateStructure.StructureType = structureType;
+
+                // Find the matching definition type for this structures type.
+                HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = StructureDefinitions
+                    .StructureDefinitions.Where(f => f.SanitisedName == structureType.ToString()).Single();
+
+                foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort dockingPort in defn.DockingPorts)
+                {
+                    SerialisationTemplate_DockingPort newPort = new SerialisationTemplate_DockingPort()
+                    {
+                        PortName = (HEDockingPortType)dockingPort.PortName,
+                        OrderID = (int)dockingPort.OrderID,
+                    };
+                    templateStructure.DockingPorts.Add(newPort);
+                }
+                return templateStructure; 
+            }
+
+
+        }
 
 
         /// <summary>
@@ -718,7 +864,7 @@ namespace HELLION.DataStructures
             /// <returns></returns>
             public HEBlueprintDockingPort GetDockingPort(HEBlueprintStructure dockedStructure)
             {
-                if (dockedStructure == null || DockingPorts.Count > 0) return null;
+                if (dockedStructure == null || !(DockingPorts.Count > 0)) return null;
 
                 IEnumerable<HEBlueprintDockingPort> results = DockingPorts.
                     Where(f => f.DockedStructure == dockedStructure);
@@ -769,10 +915,8 @@ namespace HELLION.DataStructures
 
                 // Loop over all of this structure's ports that are docked to something.
                 foreach (HEBlueprintDockingPort port in DockingPorts.Where(p => p.IsDocked))
-                //foreach (HEBlueprintDockingPort port in DockingPorts.Where(p => p.DockedStructureID != null))
                 {
                     // The port is docked; retrieve the structure by its ID.
-                    //HEBlueprintStructure _result = OwnerObject.GetStructure(port.DockedStructureID);
                     HEBlueprintStructure _result = port.DockedStructure;
 
                     if (!visitedtedStructures.Contains(_result))
@@ -782,8 +926,8 @@ namespace HELLION.DataStructures
 
                         // Recurse if we're including all connected structures.
                         if (includeAllConnected) visitedtedStructures.AddRange(
-                            _result.ConnectedStructures(visitedtedStructures) // );
-                            .Where(s => !visitedtedStructures.Contains(s))); // Not sure this is necessary.
+                            _result.ConnectedStructures(visitedtedStructures)
+                            .Where(s => !visitedtedStructures.Contains(s)));
                     }
                 }
                 return visitedtedStructures;
@@ -865,8 +1009,6 @@ namespace HELLION.DataStructures
             {
                 RootNode.NodeType = IsStructureHierarchyRoot ? HETreeNodeType.BlueprintRootStructure : HETreeNodeType.BlueprintStructure;
             }
-
-
 
             #endregion
 
@@ -1121,29 +1263,29 @@ namespace HELLION.DataStructures
 
         }
 
+        public const decimal StationBlueprintFormatVersion = 0.4m;
+
 
         public class SerialisationTemplate_Blueprint
         {
-            public string __ObjectType = null;
-            public decimal? Version = null;
+            public string __ObjectType = "StationBlueprint";
+            public decimal Version = StationBlueprintFormatVersion;
             public string Name = null;
             public Uri LinkURI = null;
-            public List<SerialisationTemplate_Structure> Structures = null;
+            public List<SerialisationTemplate_Structure> Structures = new List<SerialisationTemplate_Structure>();
         }
         public class SerialisationTemplate_Structure
         {
-            public int? StructureID = null;
-            public HEBlueprintStructureType? StructureType = null;
-            public List<SerialisationTemplate_DockingPort> DockingPorts = null;
-
+            public int StructureID;
+            public HEBlueprintStructureType StructureType;
+            public List<SerialisationTemplate_DockingPort> DockingPorts = new List<SerialisationTemplate_DockingPort>();
         }
         public class SerialisationTemplate_DockingPort
         {
-            public HEDockingPortType? PortName = null;
-            public int? OrderID = null;
+            public HEDockingPortType PortName;
+            public int OrderID;
             public int? DockedStructureID = null;
             public HEDockingPortType? DockedPortName = null;
-
         }
 
 
