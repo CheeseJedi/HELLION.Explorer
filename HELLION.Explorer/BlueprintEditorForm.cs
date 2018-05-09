@@ -726,6 +726,15 @@ namespace HELLION.Explorer
             MessageBox.Show("User selected blueprint properties menu item.", "NonImplemented Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            jsonBlueprintFile.SerialiseFromBlueprintObject();
+
+            //HEBlueprint.SerialisationTemplate_Blueprint newTemplate = blueprint.GetSerialisationTemplate();
+            //JToken newJData = JToken.FromObject(newTemplate);
+            //MessageBox.Show(newJData.ToString());
+        }
+
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
@@ -747,16 +756,5 @@ namespace HELLION.Explorer
 
         #endregion
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-
-
-            HEBlueprint.SerialisationTemplate_Blueprint newTemplate = blueprint.GetSerialisationTemplate();
-            JToken newJData = JToken.FromObject(newTemplate);
-
-
-            MessageBox.Show(newJData.ToString());
-        }
     }
 }

@@ -14,28 +14,27 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
         public HEJsonBlueprintFile(HEBlueprintCollection passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth)
-            : base(passedParent)
+            : this(passedParent)
+        {
+            File = passedFileInfo ?? throw new NullReferenceException();
+
+            if (File.Exists) LoadFile(populateNodeTreeDepth);
+        }
+
+        public HEJsonBlueprintFile(HEBlueprintCollection passedParent) : base(passedParent)
         {
             // Re-assign the OwnerObject (the base class stores this as an object,
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent ?? throw new NullReferenceException();
 
-            File = passedFileInfo ?? throw new NullReferenceException();
-
-            RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: File.Name, newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
+            RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: File.Name, 
+                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
 
             DataViewRootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: "Data View",
-                newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
+                newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText: 
+                "Shows a representation of the Json data that makes up this blueprint.");
 
-            //hierarchyViewRootNode = new HESolarSystemTreeNode("Hierarchy View", HETreeNodeType.BlueprintHierarchyView, 
-            //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.", passedOwner: this);
-
-            RootNode.Nodes.Add(DataViewRootNode);
-
-            //rootNode.Nodes.Add(hierarchyViewRootNode);
-            LoadFile(populateNodeTreeDepth);
         }
-
         public void LoadFile(int populateNodeTreeDepth)
         {
             if (!File.Exists) throw new FileNotFoundException();
@@ -49,12 +48,19 @@ namespace HELLION.DataStructures
             DeserialiseToBlueprintObject();
 
             // Assemble the primary tree hierarchy based on the DockingRoot.
-            BlueprintObject.ReassembleTreeNodeDockingStructure(BlueprintObject.PrimaryStructureRoot, AttachToBlueprintTreeNode: true);
+            BlueprintObject.ReassembleTreeNodeDockingStructure
+                (BlueprintObject.PrimaryStructureRoot, AttachToBlueprintTreeNode: true);
             RootNode.Nodes.Add(BlueprintObject.RootNode);
+
+            
+
+
 
             // Populate the data view.
             DataViewRootNode.JData = jData;
             DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
+            RootNode.Nodes.Add(DataViewRootNode);
+
             // Populate the hierarchy view.
             //BuildHierarchyView();
         }
@@ -65,16 +71,15 @@ namespace HELLION.DataStructures
         /// <param name="newData"></param>
         public void ApplyNewJData(JToken newData)
         {
-            
-            
+            jData = newData;
+
+
             // Clean up blueprint objects and tree nodes
 
-
+            RootNode.Nodes.Remove(BlueprintObject.RootNode);
 
             // Clean up DataView Tree Nodes.
             DataViewRootNode.Nodes.Clear();
-
-
 
             PostLoadOperations();
         }
@@ -124,7 +129,7 @@ namespace HELLION.DataStructures
             JToken newData = JToken.FromObject(BlueprintObject.GetSerialisationTemplate());
             //Validity check?
 
-            jData = newData;
+            ApplyNewJData(newData);
 
             SaveFile(CreateBackup: true);
 

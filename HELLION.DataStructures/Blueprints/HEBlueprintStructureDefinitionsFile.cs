@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace HELLION.DataStructures
 {
@@ -14,37 +15,68 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth) : base(passedParent)
+        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth) : this(passedParent)
         {
-            // Blueprint files
+            // BlueprintStructureDefinitions files
 
-            if (passedFileInfo == null) throw new NullReferenceException();
-            else
-            {
-                File = passedFileInfo;
-
-                RootNode = new HEBlueprintTreeNode(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
-
-                DataViewRootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: "Data View",
-                    newNodeType: HETreeNodeType.DataView, nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
-
-                DefinitionViewRootNode = new HESolarSystemTreeNode(passedOwner: this, nodeName: "Definition View",
-                    nodeType: HETreeNodeType.BlueprintStructureDefinitionView, nodeToolTipText: "Shows a representation of each structure definition and its docking ports.");
-
-                RootNode.Nodes.Add(DataViewRootNode);
-                RootNode.Nodes.Add(DefinitionViewRootNode);
-
-                if (!File.Exists) throw new FileNotFoundException();
-                LoadFile();
-                // Populate the BlueprintStructureDefinitions object.
-                DeserialiseToBlueprintStructureDefinitionsObject();
-                // Populate the data view.
-                DataViewRootNode.JData = jData;
-                DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
-                // Populate the hierarchy view.
-                BuildHierarchyView();
-            }
+            File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
+            if (File.Exists) LoadFile();
         }
+
+        public HEBlueprintStructureDefinitionsFile(object passedParent) : base(passedParent)
+        {
+            OwnerObject = passedParent ?? throw new NullReferenceException("passedParent was null.");
+
+            RootNode = new HEBlueprintTreeNode(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+
+            DataViewRootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: "Data View",
+                newNodeType: HETreeNodeType.DataView, nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
+
+            DefinitionViewRootNode = new HESolarSystemTreeNode(passedOwner: this, nodeName: "Definition View",
+                nodeType: HETreeNodeType.BlueprintStructureDefinitionView, nodeToolTipText: "Shows a representation of each structure definition and its docking ports.");
+
+            RootNode.Nodes.Add(DataViewRootNode);
+            RootNode.Nodes.Add(DefinitionViewRootNode);
+        }
+
+
+        public new void LoadFile()
+        {
+            if (!File.Exists) throw new FileNotFoundException();
+            base.LoadFile();
+            PostLoadOperations();
+        }
+
+        public void PostLoadOperations(int populateNodeTreeDepth = 8)
+        {
+            // Populate the BlueprintStructureDefinitions object.
+            DeserialiseToBlueprintStructureDefinitionsObject();
+            // Populate the data view.
+            DataViewRootNode.JData = jData;
+            DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
+            // Populate the hierarchy view.
+            BuildHierarchyView();
+        }
+
+        /// <summary>
+        /// Handles 
+        /// </summary>
+        /// <param name="newData"></param>
+        public void ApplyNewJData(JToken newData)
+        {
+            jData = newData;
+
+
+            // Clean up blueprint objects and tree nodes
+
+            //RootNode.Nodes.Remove(BlueprintStructureDefinitionsObject.RootNode);
+
+            // Clean up DataView Tree Nodes.
+            DataViewRootNode.Nodes.Clear();
+
+            PostLoadOperations();
+        }
+
 
         /// <summary>
         /// This class overrides the type of root node to represent a blueprint.
@@ -58,13 +90,13 @@ namespace HELLION.DataStructures
         /// This is the actual BlueprintStructureDefinition object - serialised and de-serialised from here.
         /// </summary>
         public HEBlueprintStructureDefinitions BlueprintStructureDefinitionsObject { get; protected set; } = null;
-        
+
         /// <summary>
         /// Builds tree nodes from the GameData nodes, with cross-references
         /// </summary>
         public void BuildHierarchyView()
         {
-            foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition structDefn 
+            foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition structDefn
                 in BlueprintStructureDefinitionsObject.StructureDefinitions
                 .Reverse<HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition>())
             {
@@ -103,9 +135,16 @@ namespace HELLION.DataStructures
 
         public void SerialiseFromBlueprintObject()
         {
-            throw new NotImplementedException("Not implemented yet.");
+            JToken newData = JToken.FromObject(BlueprintStructureDefinitionsObject);
+            //Validity check?
+
+            ApplyNewJData(newData);
+
+            SaveFile(CreateBackup: true);
+
+            // throw new NotImplementedException("Not implemented yet.");        }
         }
+
+
     }
-
-
 }
