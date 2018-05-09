@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace HELLION.DataStructures
 {
@@ -14,6 +16,7 @@ namespace HELLION.DataStructures
     /// The numeric values of these correspond to the game's ItemID in the structures.json
     /// to allow for easier cross-referencing.
     /// </remarks>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum HEBlueprintStructureType
     {
         Unspecified = 0,
@@ -38,6 +41,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// Docking Port Types Enum.
     /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum HEDockingPortType
     {
         Unspecified = 0,
@@ -411,16 +415,16 @@ namespace HELLION.DataStructures
 
         }
 
-        public SerialisationTemplate_Blueprint Serialise()
+        public SerialisationTemplate_Blueprint GetSerialisationTemplate()
         {
 
             if (StructureDefinitions == null) throw new NullReferenceException("Unable to serialise - StructureDefinitions is null.");
 
-
-            SerialisationTemplate_Blueprint tp_Blueprint = new SerialisationTemplate_Blueprint();
-
-            // tp_Blueprint.Name = "";
-            // tp_Blueprint.LinkURI = "";
+            SerialisationTemplate_Blueprint tp_Blueprint = new SerialisationTemplate_Blueprint
+            {
+                Name = Name,
+                LinkURI = LinkURI
+            };
 
             if (PrimaryStructureRoot == null) throw new NullReferenceException("Unable to serialise - PrimaryStrctureRoot was null.");
 
@@ -428,7 +432,7 @@ namespace HELLION.DataStructures
             List<HEBlueprintStructure> _visitedStructures = new List<HEBlueprintStructure>();
 
             // Start at the primary root.
-            CloneStructureTemplates(PrimaryStructureRoot);
+            CloneStructuresToTemplate(PrimaryStructureRoot);
 
             // Return the blueprint serialisation template.
             return tp_Blueprint;
@@ -437,7 +441,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Clones the blueprints structure list in to the new template's structures list.
             /// </summary>
-            SerialisationTemplate_Structure CloneStructureTemplates(HEBlueprintStructure blueprintStructure)
+            SerialisationTemplate_Structure CloneStructuresToTemplate(HEBlueprintStructure blueprintStructure)
             {
                 // Check that this structure hasn't already been processed.
                 if (!_visitedStructures.Contains(blueprintStructure))
@@ -459,24 +463,24 @@ namespace HELLION.DataStructures
                     foreach (HEBlueprintDockingPort dockedPort in blueprintStructure.DockingPorts
                         .Where(p => p.IsDocked))
                     {
-
                         HEBlueprintStructure nextStructure = dockedPort.DockedStructure 
                             ?? throw new NullReferenceException("nextStructure was null.");
 
+                        /*
                         Debug.Print("structureTemplate: " + structureTemplate.StructureType.ToString());
                         Debug.Print("nextStructure: " + nextStructure.StructureType.ToString());
                         foreach (var port in nextStructure.DockingPorts)
                             Debug.Print("Port: " + port.PortName.ToString() 
                                 + " DockedTo: " + (port.IsDocked ? port.DockedStructure.StructureType.ToString() : "Not Docked"));
-
+                        */
 
                         // Find the next structures port that connects it to this structure.
-                        HEBlueprintDockingPort nextStructuresPort = nextStructure.GetDockingPort(blueprintStructure)
-                            ?? throw new NullReferenceException("nextStructuresPort was null.");
+                        HEBlueprintDockingPort nextStructurePort = nextStructure.GetDockingPort(blueprintStructure)
+                            ?? throw new NullReferenceException("nextStructurePort was null.");
 
                         // Add the next structure template via recursion and get a reference to it.
                         SerialisationTemplate_Structure nextStructureTemplate = 
-                            CloneStructureTemplates(nextStructure)
+                            CloneStructuresToTemplate(nextStructure)
                             ?? throw new NullReferenceException("nextStructureTemplate was null.");
 
 
@@ -484,18 +488,22 @@ namespace HELLION.DataStructures
                         IEnumerable<SerialisationTemplate_DockingPort> localPortResults = structureTemplate.DockingPorts
                             .Where(lp => lp.PortName == dockedPort.PortName);
 
-                        if (localPortResults.Count() > 1) throw new InvalidOperationException("More than one template port where there should be only one.");
-                        if (localPortResults.Count() < 1) throw new InvalidOperationException("Specified port not found.");
+                        if (localPortResults.Count() > 1) throw new InvalidOperationException(
+                            "More than one template port where there should be only one.");
+                        if (localPortResults.Count() < 1) throw new InvalidOperationException(
+                            "Specified port not found.");
 
                         SerialisationTemplate_DockingPort localTemplatePort = localPortResults.Single();
 
                         // Find the next structures template port.
 
-                        IEnumerable<SerialisationTemplate_DockingPort> remotePortResults = structureTemplate.DockingPorts
-                        .Where(rp => rp.PortName == nextStructuresPort.PortName);
+                        IEnumerable<SerialisationTemplate_DockingPort> remotePortResults = nextStructureTemplate.DockingPorts
+                        .Where(rp => rp.PortName == nextStructurePort.PortName);
 
-                        if (remotePortResults.Count() > 1) throw new InvalidOperationException("More than one template port where there should be only one.");
-                        if (remotePortResults.Count() < 1) throw new InvalidOperationException("Specified port not found.");
+                        if (remotePortResults.Count() > 1) throw new InvalidOperationException(
+                            "More than one template port where there should be only one.");
+                        if (remotePortResults.Count() < 1) throw new InvalidOperationException(
+                            "Specified port not found.");
 
                         SerialisationTemplate_DockingPort remoteTemplatePort = remotePortResults.Single();
 

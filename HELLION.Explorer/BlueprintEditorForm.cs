@@ -752,7 +752,7 @@ namespace HELLION.Explorer
 
 
 
-            HEBlueprint.SerialisationTemplate_Blueprint newTemplate = blueprint.Serialise();
+            HEBlueprint.SerialisationTemplate_Blueprint newTemplate = blueprint.GetSerialisationTemplate();
             JToken newJData = JToken.FromObject(newTemplate);
 
 

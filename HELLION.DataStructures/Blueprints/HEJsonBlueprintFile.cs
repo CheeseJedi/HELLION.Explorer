@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace HELLION.DataStructures
 {
@@ -32,10 +33,18 @@ namespace HELLION.DataStructures
             RootNode.Nodes.Add(DataViewRootNode);
 
             //rootNode.Nodes.Add(hierarchyViewRootNode);
+            LoadFile(populateNodeTreeDepth);
+        }
 
-
+        public void LoadFile(int populateNodeTreeDepth)
+        {
             if (!File.Exists) throw new FileNotFoundException();
-            LoadFile();
+            base.LoadFile();
+            PostLoadOperations(populateNodeTreeDepth);
+        }
+
+        public void PostLoadOperations(int populateNodeTreeDepth = 8)
+        { 
             // Populate the blueprint object.
             DeserialiseToBlueprintObject();
 
@@ -48,8 +57,28 @@ namespace HELLION.DataStructures
             DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
             // Populate the hierarchy view.
             //BuildHierarchyView();
-
         }
+
+        /// <summary>
+        /// Handles 
+        /// </summary>
+        /// <param name="newData"></param>
+        public void ApplyNewJData(JToken newData)
+        {
+            
+            
+            // Clean up blueprint objects and tree nodes
+
+
+
+            // Clean up DataView Tree Nodes.
+            DataViewRootNode.Nodes.Clear();
+
+
+
+            PostLoadOperations();
+        }
+
 
         /// <summary>
         /// Stores a reference to the parent object, if set using the constructor.
@@ -92,7 +121,14 @@ namespace HELLION.DataStructures
         /// </summary>
         public void SerialiseFromBlueprintObject()
         {
-            throw new NotImplementedException("Not implemented yet.");
+            JToken newData = JToken.FromObject(BlueprintObject.GetSerialisationTemplate());
+            //Validity check?
+
+            jData = newData;
+
+            SaveFile(CreateBackup: true);
+
+            // throw new NotImplementedException("Not implemented yet.");
         }
     }
 }
