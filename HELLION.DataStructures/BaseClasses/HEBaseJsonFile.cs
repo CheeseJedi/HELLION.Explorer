@@ -316,7 +316,7 @@ namespace HELLION.DataStructures
         {
             Debug.Print("SaveFile Called, CreateBackup="+CreateBackup.ToString());
 
-            if (CreateBackup)
+            if (File.Exists && CreateBackup)
             {
                 // Check to see if the backup file already exists
                 if (System.IO.File.Exists(File.FullName + ".bak"))
@@ -338,8 +338,6 @@ namespace HELLION.DataStructures
             {
                 using (StreamWriter sw = new StreamWriter(File.FullName))
                 {
-                    // stuff from the load routine for reference only
-                    
                     // Process the stream with the JSON Text Reader in to a JToken
                     using (JsonTextWriter jtw = new JsonTextWriter(sw))
                     {

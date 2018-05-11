@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using static HELLION.DataStructures.HEBlueprintStructureDefinitions;
 
 namespace HELLION.DataStructures
 {
@@ -17,9 +18,8 @@ namespace HELLION.DataStructures
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
         public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth) : this(passedParent)
         {
-            // BlueprintStructureDefinitions files
-
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
+            RootNode = new HEBlueprintTreeNode(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
             if (File.Exists) LoadFile();
         }
 
@@ -27,7 +27,9 @@ namespace HELLION.DataStructures
         {
             OwnerObject = passedParent ?? throw new NullReferenceException("passedParent was null.");
 
-            RootNode = new HEBlueprintTreeNode(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+            BlueprintStructureDefinitionsObject = new HEBlueprintStructureDefinitions();
+
+            RootNode = new HEBlueprintTreeNode(this, nodeName: "Unsaved", newNodeType: HETreeNodeType.DataFile, nodeToolTipText: "File not yet saved");
 
             DataViewRootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: "Data View",
                 newNodeType: HETreeNodeType.DataView, nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
@@ -37,6 +39,64 @@ namespace HELLION.DataStructures
 
             RootNode.Nodes.Add(DataViewRootNode);
             RootNode.Nodes.Add(DefinitionViewRootNode);
+        }
+
+
+        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, HEBaseJsonFile structuresJsonFile) : base(passedParent)
+        {
+            File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
+            // Check the reference to the Static Data's Structures.json file.
+            if (structuresJsonFile == null) throw new NullReferenceException("structuresJsonFile was null.");
+
+            BlueprintStructureDefinitionsObject = new HEBlueprintStructureDefinitions();
+            GenerateAndSaveNewStructureDefinitionsFile(passedFileInfo, structuresJsonFile);
+
+        }
+
+
+        public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEBaseJsonFile structuresJsonFile)
+        {
+
+            //HEBlueprintStructureDefinitionsFile newSDFile = new HEBlueprintStructureDefinitionsFile(null);
+
+            BlueprintStructureDefinitionsObject.__ObjectType = "BlueprintStructureDefinitions";
+            BlueprintStructureDefinitionsObject.Version = 0.35m;
+
+            // Loop through all the structures in the Structures.Json file
+            foreach (JToken jtStructure in structuresJsonFile.JData)
+            {
+                // Define a new StructureDefinition
+                HEBlueprintStructureDefinition newStructureDefinition = new HEBlueprintStructureDefinition
+                {
+                    SceneName = (string)jtStructure["SceneName"],
+                    DisplayName = (string)jtStructure["SceneName"], // might benefit from renaming to DisplayName
+                    ItemID = (int)jtStructure["ItemID"], // possibly defunct.
+                };
+
+                // Loop through the jtStructure's DockingPort collection.
+                foreach (JToken jtDockingPort in jtStructure["DockingPorts"])
+                {
+                    HEBlueprintStructureDefinitionDockingPort newDockingPortDefinition = new HEBlueprintStructureDefinitionDockingPort
+                    {
+                        PortName = HEDockingPortType.Unspecified,
+                        OrderID = (int)jtDockingPort["OrderID"],
+                        // PortID is irrelevant.
+                    };
+
+                    newStructureDefinition.DockingPorts.Add(newDockingPortDefinition);
+                }
+
+                BlueprintStructureDefinitionsObject.StructureDefinitions.Add(newStructureDefinition);
+
+            }
+
+            SerialiseFromBlueprintStructureDefinitionsObject();
+
+
+
+            SaveFile(CreateBackup: true);
+
+
         }
 
 
@@ -51,11 +111,17 @@ namespace HELLION.DataStructures
         {
             // Populate the BlueprintStructureDefinitions object.
             DeserialiseToBlueprintStructureDefinitionsObject();
-            // Populate the data view.
-            DataViewRootNode.JData = jData;
-            DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
-            // Populate the hierarchy view.
-            BuildHierarchyView();
+            
+            if (DataViewRootNode != null)
+            {
+                // Populate the data view.
+                DataViewRootNode.JData = jData;
+                DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
+
+                // Populate the hierarchy view.
+                BuildHierarchyView();
+            }
+
         }
 
         /// <summary>
@@ -65,17 +131,21 @@ namespace HELLION.DataStructures
         public void ApplyNewJData(JToken newData)
         {
             jData = newData;
-
+            //IsDirty = true;
 
             // Clean up blueprint objects and tree nodes
 
             //RootNode.Nodes.Remove(BlueprintStructureDefinitionsObject.RootNode);
 
             // Clean up DataView Tree Nodes.
-            DataViewRootNode.Nodes.Clear();
+            if (DataViewRootNode != null) DataViewRootNode.Nodes.Clear();
 
             PostLoadOperations();
         }
+
+
+
+
 
 
         /// <summary>
@@ -101,12 +171,12 @@ namespace HELLION.DataStructures
                 .Reverse<HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition>())
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("StructureType: " + structDefn.SanitisedName + Environment.NewLine);
+                sb.Append("StructureType: " + structDefn.DisplayName + Environment.NewLine);
                 sb.Append("ItemID: " + structDefn.ItemID + Environment.NewLine);
                 sb.Append("SceneName: " + structDefn.SceneName + Environment.NewLine);
 
-                HETreeNode newStructNode = new HETreeNode(this, nodeName: structDefn.SanitisedName, newNodeType: HETreeNodeType.BlueprintStructureDefinition,
-                    nodeText: structDefn.SanitisedName, nodeToolTipText: sb.ToString());
+                HETreeNode newStructNode = new HETreeNode(this, nodeName: structDefn.DisplayName, newNodeType: HETreeNodeType.BlueprintStructureDefinition,
+                    nodeText: structDefn.DisplayName, nodeToolTipText: sb.ToString());
 
                 DefinitionViewRootNode.Nodes.Add(newStructNode);
 
@@ -133,16 +203,13 @@ namespace HELLION.DataStructures
             //blueprintStructureDefinitionsObject.ReconnectChildParentStructure();
         }
 
-        public void SerialiseFromBlueprintObject()
+        public void SerialiseFromBlueprintStructureDefinitionsObject()
         {
             JToken newData = JToken.FromObject(BlueprintStructureDefinitionsObject);
             //Validity check?
 
             ApplyNewJData(newData);
 
-            SaveFile(CreateBackup: true);
-
-            // throw new NotImplementedException("Not implemented yet.");        }
         }
 
 

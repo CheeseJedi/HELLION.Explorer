@@ -17,6 +17,9 @@ namespace HELLION.DataStructures
             : this(passedParent)
         {
             File = passedFileInfo ?? throw new NullReferenceException();
+            RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: File.Name,
+                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
+
 
             if (File.Exists) LoadFile(populateNodeTreeDepth);
         }
@@ -27,12 +30,14 @@ namespace HELLION.DataStructures
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent ?? throw new NullReferenceException();
 
-            RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: File.Name, 
-                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
+            RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: "Unsaved", 
+                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: "File not yet saved");
 
             DataViewRootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: "Data View",
                 newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText: 
                 "Shows a representation of the Json data that makes up this blueprint.");
+
+            RootNode.Nodes.Add(DataViewRootNode);
 
         }
         public void LoadFile(int populateNodeTreeDepth)
@@ -59,7 +64,7 @@ namespace HELLION.DataStructures
             // Populate the data view.
             DataViewRootNode.JData = jData;
             DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
-            RootNode.Nodes.Add(DataViewRootNode);
+            ///RootNode.Nodes.Add(DataViewRootNode);
 
             // Populate the hierarchy view.
             //BuildHierarchyView();

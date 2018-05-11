@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 
@@ -571,8 +572,7 @@ namespace HELLION.Explorer
 
 
             }
-            else
-                MessageBox.Show("Something went wrong during SaveFile");
+            else MessageBox.Show("Must have an open document first.");
         }
 
         private void observedGUIDsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -581,7 +581,42 @@ namespace HELLION.Explorer
             {
                 Program.ObservedGuidsForm.Show();
             }
+            else MessageBox.Show("Must have an open document first.");
+
         }
 
+        private void generateStructureDefinitionsStubjsonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Contents to be moved to the HEBlueprints class once complete.
+
+            if (Program.docCurrent != null)
+            {
+
+                if (!Program.docCurrent.GameData.StaticData.DataDictionary.
+                    TryGetValue("Structures.json", out HEBaseJsonFile structuresJsonBaseFile))
+                    throw new InvalidOperationException(
+                        "Unable to access the Structures.json file from the Static Data Dictionary.");
+                else
+                {
+                    // something
+
+                    FileInfo newDefsFileInfo = new FileInfo(@"E:\HELLION\TestArea\Output.json");
+
+
+                    HEBlueprintStructureDefinitionsFile newDefsFile = new HEBlueprintStructureDefinitionsFile
+                        (this, newDefsFileInfo, structuresJsonBaseFile);
+
+                    if (newDefsFile.File.Exists) MessageBox.Show("Tentative Success");
+                    else MessageBox.Show("File not created!");
+
+                }
+
+            }
+            else MessageBox.Show("Must have an open document first.");
+
+
+
+
+        }
     }
-} // End of namespace HELLION.Explorer
+}

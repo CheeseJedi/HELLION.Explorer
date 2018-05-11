@@ -20,6 +20,7 @@ namespace HELLION.DataStructures
     public enum HEBlueprintStructureType
     {
         Unspecified = 0,
+        //BRONTES = 2,
         CIM = 3,
         CTM = 4,
         CLM = 5,
@@ -32,11 +33,70 @@ namespace HELLION.DataStructures
         CRM = 12,
         OUTPOST = 13,
         AM = 14,
+        //Generic_Debris_JuncRoom001 = 15, // 0x0000000F
+        //Generic_Debris_JuncRoom002 = 16, // 0x00000010
+        //Generic_Debris_Corridor001 = 17, // 0x00000011
+        //Generic_Debris_Corridor002 = 18, // 0x00000012
         IC = 19,
+        //MataPrefabs = 20, // 0x00000014
+        //Generic_Debris_Outpost001 = 21, // 0x00000015
         CQM = 22,
+        // Generic_Debris_Spawn1 = 23, // 0x00000017
+        // Generic_Debris_Spawn2 = 24, // 0x00000018
+        // Generic_Debris_Spawn3 = 25, // 0x00000019
         SPM = 26,
+        //STEROPES = 27, // 0x0000001B
         FM = 28,
+        // FlatShipTest = 29, // 0x0000001D
     }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum HEBlueprintStructureSceneName
+    {
+        //SolarSystemSetup = -3,
+        //ItemScene = -2,
+        //None = -1,
+        //Slavica = 1,
+        //AltCorp_Ship_Tamara = 2,
+        AltCorp_CorridorModule = 3,
+        AltCorp_CorridorIntersectionModule = 4,
+        AltCorp_Corridor45TurnModule = 5,
+        AltCorp_Shuttle_SARA = 6,
+        ALtCorp_PowerSupply_Module = 7,
+        AltCorp_LifeSupportModule = 8,
+        AltCorp_Cargo_Module = 9,
+        AltCorp_CorridorVertical = 10, // 0x0000000A
+        AltCorp_Command_Module = 11, // 0x0000000B
+        AltCorp_Corridor45TurnRightModule = 12, // 0x0000000C
+        AltCorp_StartingModule = 13, // 0x0000000D
+        AltCorp_AirLock = 14, // 0x0000000E
+        Generic_Debris_JuncRoom001 = 15, // 0x0000000F
+        Generic_Debris_JuncRoom002 = 16, // 0x00000010
+        Generic_Debris_Corridor001 = 17, // 0x00000011
+        Generic_Debris_Corridor002 = 18, // 0x00000012
+        AltCorp_DockableContainer = 19, // 0x00000013
+        MataPrefabs = 20, // 0x00000014
+        Generic_Debris_Outpost001 = 21, // 0x00000015
+        AltCorp_CrewQuarters_Module = 22, // 0x00000016
+        Generic_Debris_Spawn1 = 23, // 0x00000017
+        Generic_Debris_Spawn2 = 24, // 0x00000018
+        Generic_Debris_Spawn3 = 25, // 0x00000019
+        AltCorp_SolarPowerModule = 26, // 0x0000001A
+        AltCorp_Shuttle_CECA = 27, // 0x0000001B
+        AltCorp_FabricatorModule = 28, // 0x0000001C
+        FlatShipTest = 29, // 0x0000001D
+        //Asteroid01 = 1000, // 0x000003E8
+        //Asteroid02 = 1001, // 0x000003E9
+        //Asteroid03 = 1002, // 0x000003EA
+        //Asteroid04 = 1003, // 0x000003EB
+        //Asteroid05 = 1004, // 0x000003EC
+        //Asteroid06 = 1005, // 0x000003ED
+        //Asteroid07 = 1006, // 0x000003EE
+        //Asteroid08 = 1007, // 0x000003EF
+    }
+
+
+
 
     /// <summary>
     /// Docking Port Types Enum.
@@ -672,7 +732,7 @@ namespace HELLION.DataStructures
 
                 // Find the matching definition type for this structures type.
                 HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = StructureDefinitions
-                    .StructureDefinitions.Where(f => f.SanitisedName == structureType.ToString()).Single();
+                    .StructureDefinitions.Where(f => f.DisplayName == structureType.ToString()).Single();
 
                 foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort dockingPort in defn.DockingPorts)
                 {
@@ -970,7 +1030,7 @@ namespace HELLION.DataStructures
                 if (OwnerObject.StructureDefinitions == null) throw new NullReferenceException();
 
                 HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = OwnerObject.StructureDefinitions
-                    .StructureDefinitions.Where(f => f.SanitisedName == _structureType.ToString()).Single();
+                    .StructureDefinitions.Where(f => f.DisplayName == _structureType.ToString()).Single();
 
                 foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort dockingPort in defn.DockingPorts)
                 {
@@ -1274,7 +1334,7 @@ namespace HELLION.DataStructures
 
         }
 
-        public const decimal StationBlueprintFormatVersion = 0.4m;
+        public const decimal StationBlueprintFormatVersion = 0.35m;
 
 
         public class SerialisationTemplate_Blueprint
