@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static HELLION.DataStructures.HEStationBlueprint;
+
 
 namespace HELLION.DataStructures
 {
@@ -19,6 +21,15 @@ namespace HELLION.DataStructures
         /// </summary>
         [JsonProperty]
         public decimal? Version = null;
+
+        /// <summary>
+        /// The Station's name.
+        /// </summary>
+        /// <remarks>
+        /// To be serialised.
+        /// </remarks>
+        // [JsonProperty]
+        // public string Name = null;
 
         [JsonProperty]
         public Uri LinkURI = null;
@@ -52,7 +63,18 @@ namespace HELLION.DataStructures
             [JsonProperty]
             public string DisplayName = null; // not required by the game spawner
 
-            public string SanitisedName = null;
+            /*
+            public string SanitisedName
+            {
+                get => DisplayName;
+                set
+                {
+                    // Only set the DisplayName if it's null.
+                    if (DisplayName == null)
+                        DisplayName = value;
+                }
+            }
+            */
 
             /// <summary>
             /// To be serialised.
@@ -119,5 +141,8 @@ namespace HELLION.DataStructures
         }
 
     }
+
+
+
 
 }

@@ -1,164 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace HELLION.DataStructures
 {
-    #region Enumerations
-
     /// <summary>
-    /// Structure Types Enum.
+    /// A class to handle station blueprint data structures.
     /// </summary>
-    /// <remarks>
-    /// The numeric values of these correspond to the game's ItemID in the structures.json
-    /// to allow for easier cross-referencing.
-    /// </remarks>
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum HEBlueprintStructureType
+    [JsonObject(MemberSerialization.OptIn)]
+    public class HEStationBlueprint
     {
-        Unspecified = 0,
-        //BRONTES = 2,
-        CIM = 3,
-        CTM = 4,
-        CLM = 5,
-        ARG = 6,
-        PSM = 7,
-        LSM = 8,
-        CBM = 9,
-        CSM = 10,
-        CM = 11,
-        CRM = 12,
-        OUTPOST = 13,
-        AM = 14,
-        //Generic_Debris_JuncRoom001 = 15, // 0x0000000F
-        //Generic_Debris_JuncRoom002 = 16, // 0x00000010
-        //Generic_Debris_Corridor001 = 17, // 0x00000011
-        //Generic_Debris_Corridor002 = 18, // 0x00000012
-        IC = 19,
-        //MataPrefabs = 20, // 0x00000014
-        //Generic_Debris_Outpost001 = 21, // 0x00000015
-        CQM = 22,
-        // Generic_Debris_Spawn1 = 23, // 0x00000017
-        // Generic_Debris_Spawn2 = 24, // 0x00000018
-        // Generic_Debris_Spawn3 = 25, // 0x00000019
-        SPM = 26,
-        //STEROPES = 27, // 0x0000001B
-        FM = 28,
-        // FlatShipTest = 29, // 0x0000001D
-    }
+        public const decimal StationBlueprintFormatVersion = 0.37m;
 
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum HEBlueprintStructureSceneName
-    {
-        //SolarSystemSetup = -3,
-        //ItemScene = -2,
-        //None = -1,
-        //Slavica = 1,
-        //AltCorp_Ship_Tamara = 2,
-        AltCorp_CorridorModule = 3,
-        AltCorp_CorridorIntersectionModule = 4,
-        AltCorp_Corridor45TurnModule = 5,
-        AltCorp_Shuttle_SARA = 6,
-        ALtCorp_PowerSupply_Module = 7,
-        AltCorp_LifeSupportModule = 8,
-        AltCorp_Cargo_Module = 9,
-        AltCorp_CorridorVertical = 10, // 0x0000000A
-        AltCorp_Command_Module = 11, // 0x0000000B
-        AltCorp_Corridor45TurnRightModule = 12, // 0x0000000C
-        AltCorp_StartingModule = 13, // 0x0000000D
-        AltCorp_AirLock = 14, // 0x0000000E
-        Generic_Debris_JuncRoom001 = 15, // 0x0000000F
-        Generic_Debris_JuncRoom002 = 16, // 0x00000010
-        Generic_Debris_Corridor001 = 17, // 0x00000011
-        Generic_Debris_Corridor002 = 18, // 0x00000012
-        AltCorp_DockableContainer = 19, // 0x00000013
-        MataPrefabs = 20, // 0x00000014
-        Generic_Debris_Outpost001 = 21, // 0x00000015
-        AltCorp_CrewQuarters_Module = 22, // 0x00000016
-        Generic_Debris_Spawn1 = 23, // 0x00000017
-        Generic_Debris_Spawn2 = 24, // 0x00000018
-        Generic_Debris_Spawn3 = 25, // 0x00000019
-        AltCorp_SolarPowerModule = 26, // 0x0000001A
-        AltCorp_Shuttle_CECA = 27, // 0x0000001B
-        AltCorp_FabricatorModule = 28, // 0x0000001C
-        FlatShipTest = 29, // 0x0000001D
-        //Asteroid01 = 1000, // 0x000003E8
-        //Asteroid02 = 1001, // 0x000003E9
-        //Asteroid03 = 1002, // 0x000003EA
-        //Asteroid04 = 1003, // 0x000003EB
-        //Asteroid05 = 1004, // 0x000003EC
-        //Asteroid06 = 1005, // 0x000003ED
-        //Asteroid07 = 1006, // 0x000003EE
-        //Asteroid08 = 1007, // 0x000003EF
-    }
-
-
-
-
-    /// <summary>
-    /// Docking Port Types Enum.
-    /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum HEDockingPortType
-    {
-        Unspecified = 0,
-        StandardDockingPortA,
-        StandardDockingPortB,
-        StandardDockingPortC,
-        StandardDockingPortD,
-        AirlockDockingPort,
-        Grapple,
-        IndustrialContainerPortA,
-        IndustrialContainerPortB,
-        IndustrialContainerPortC,
-        IndustrialContainerPortD,
-        CargoDockingPortA,
-        CargoDockingPortB,
-        CargoDock  // Dockable Cargo (IC) module
-    }
-
-    /// <summary>
-    /// Enumeration for the results of a docking operation.
-    /// </summary>
-    public enum HEDockingResultStatus
-    {
-        Success = 0,
-        InvalidPortA,
-        InvalidPortB,
-        InvalidStructurePortA,
-        InvalidStructurePortB,
-        AlreadyDockedPortA,
-        AlreadyDockedPortB,
-        PortAandBNotDocked,
-        PortANotDocked,
-        PortBNotDocked,
-        PortsOnSameStructure,
-        IncompatiblePortTypes,
-        WillCauseOrphanedStructure,
-    }
-
-    #endregion
-
-    /// <summary>
-    /// A class to handle blueprint data structures.
-    /// </summary>
-    public class HEBlueprint
-    {
         #region Constructors
 
         /// <summary>
         /// Default Constructor, called directly by the JToken.ToObject<T>()
         /// </summary>
-        public HEBlueprint()
+        public HEStationBlueprint()
         {
             Structures = new List<HEBlueprintStructure>();
             //SecondaryStructures = new List<HEBlueprintStructure>();
             RootNode = new HEBlueprintTreeNode(passedOwner: this, nodeName: "Hierarchy View",
                 newNodeType: HETreeNodeType.BlueprintHierarchyView,
                 nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+
 
         }
 
@@ -168,12 +38,12 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="ownerObject"></param>
         /// <param name="structureDefs"></param>
-        public HEBlueprint(HEJsonBlueprintFile ownerObject, HEBlueprintStructureDefinitions structureDefs) : this()
+        public HEStationBlueprint(HEJsonBlueprintFile ownerObject, HEBlueprintStructureDefinitions structureDefs) : this()
         {
             OwnerObject = ownerObject ?? throw new NullReferenceException("passedParent was null.");
             StructureDefinitions = structureDefs ?? throw new NullReferenceException("structureDefs was null.");
-            __ObjectType = "StationBlueprint";
-            Version = (decimal)0.3;
+            __ObjectType = BlueprintObjectType.StationBlueprint;
+            Version = StationBlueprintFormatVersion;
 
         }
 
@@ -182,17 +52,15 @@ namespace HELLION.DataStructures
         #region Properties
 
         /// <summary>
-        /// Parent object - not to be included in serialisation.
+        /// A reference to the Parent object.
         /// </summary>
         public HEJsonBlueprintFile OwnerObject { get; set; } = null;
 
-        /// <summary>
-        /// Not to be serialised.
-        /// </summary>
         public HEBlueprintTreeNode RootNode { get; set; } = null;
 
         public HEBlueprintStructureDefinitions StructureDefinitions { get; set; } = null;
 
+        public bool IsTemplate { get; protected set; } = false;
 
         public bool IsDirty { get; protected set; } = false;
 
@@ -223,38 +91,37 @@ namespace HELLION.DataStructures
         #region Serialised Properties
 
         /// <summary>
-        /// Type of object (should be "StationBlueprint")
+        /// Type of object - to aid in class identification during de-serialisation in-game.
+        /// Should be either "StationBlueprint" for a blueprint object or "StructureDefinitions"
+        /// for a StructureDefinitions template object.)
         /// </summary>
-        /// <remarks>
-        /// To be serialised.
-        /// </remarks>
-        public string __ObjectType { get; set; } = null;
+        [JsonProperty]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public BlueprintObjectType? __ObjectType { get; set; } = null;
 
         /// <summary>
-        /// The Blueprint version.
+        /// The Hellion Station Blueprint Format version number.
         /// </summary>
         /// <remarks>
-        /// Should reflect the version of the StructureDefinitions.json file.
-        /// To be serialised.
+        /// Should reflect the version no. of the StructureDefinitions.json file.
         /// </remarks>
+        [JsonProperty]
         public decimal? Version { get; set; } = null;
 
         /// <summary>
-        /// The Station's name.
+        /// The Station's name as displayed in-game.
         /// </summary>
-        /// <remarks>
-        /// To be serialised.
-        /// </remarks>
+        [JsonProperty]
         public string Name { get; set; } = null;
 
         /// <summary>
-        /// The link URI for the blueprint source.
+        /// The link URI for the blueprint data source.
         /// </summary>
         /// <remarks>
-        /// If this is generates in Hellion Explorer, this will be a link to the GitHub Repo.
+        /// If this is generated in Hellion Explorer, this will be a link to the GitHub Repo.
         /// If the blueprint originated from HSP, this will be a link to the station in HSP.
-        /// To be serialised.
         /// </remarks>
+        [JsonProperty]
         public Uri LinkURI { get; set; } = null;
 
         /// <summary>
@@ -264,6 +131,7 @@ namespace HELLION.DataStructures
         /// May contain secondary structures during the process of editing.
         /// To be serialised.
         /// </remarks>
+        [JsonProperty]
         public List<HEBlueprintStructure> Structures { get; set; } = null;
 
         #endregion
@@ -423,13 +291,14 @@ namespace HELLION.DataStructures
         /// Adds a new structure to the Secondary Structures list.
         /// </summary>
         /// <returns>Returns true if the added structure is in the Structures list once created.</returns>
-        public HEBlueprintStructure AddStructure(HEBlueprintStructureType structureType)
+        public HEBlueprintStructure AddStructure(HEBlueprintStructureSceneID sceneID)
         {
+            
             HEBlueprintStructure newStructure = new HEBlueprintStructure
             {
-                StructureType = structureType,
+                SceneID = sceneID,
 
-                StructureID = Structures.Count() // + 2000,
+                StructureID = Structures.Count()
             };
             // Set this blueprint as the owner.
             newStructure.OwnerObject = this;
@@ -450,6 +319,8 @@ namespace HELLION.DataStructures
             IsDirty = true;
 
             return newStructure;
+            
+
         }
 
         public bool RemoveStructure(int? id)
@@ -551,7 +422,7 @@ namespace HELLION.DataStructures
 
             portB.DockedStructure = null;
             portB.DockedPort = null;
-            
+
             //portB.OwnerObject.IsStructureHierarchyRoot = true;
 
             // Figure out which structure to add to the Secondary Structures list.
@@ -559,7 +430,7 @@ namespace HELLION.DataStructures
             if (structureA.IsConnectedToPrimaryStructure)
             {
                 if (structureB.IsConnectedToPrimaryStructure) throw new InvalidOperationException("Both structures connected to primary.");
-                
+
                 // structureB is not connected to the Primary.
                 // Check if structureB is connected to a secondary root.
                 if (structureB.GetStructureRoot() != null) throw new InvalidOperationException("structureB is connected to a root.");
@@ -591,6 +462,12 @@ namespace HELLION.DataStructures
             return HEDockingResultStatus.Success;
         }
 
+
+
+
+
+
+        /*
         /// <summary>
         /// Generates a serialisation template for this blueprint.
         /// </summary>
@@ -646,13 +523,13 @@ namespace HELLION.DataStructures
                         HEBlueprintStructure nextStructure = dockedPort.DockedStructure
                             ?? throw new NullReferenceException("nextStructure was null.");
 
-                        /*
+                        
                         Debug.Print("structureTemplate: " + structureTemplate.StructureType.ToString());
                         Debug.Print("nextStructure: " + nextStructure.StructureType.ToString());
                         foreach (var port in nextStructure.DockingPorts)
                             Debug.Print("Port: " + port.PortName.ToString() 
                                 + " DockedTo: " + (port.IsDocked ? port.DockedStructure.StructureType.ToString() : "Not Docked"));
-                        */
+                        
 
                         // Find the next structures port that connects it to this structure.
                         HEBlueprintDockingPort nextStructurePort = nextStructure.GetDockingPort(blueprintStructure)
@@ -732,7 +609,9 @@ namespace HELLION.DataStructures
 
                 // Find the matching definition type for this structures type.
                 HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = StructureDefinitions
-                    .StructureDefinitions.Where(f => f.DisplayName == structureType.ToString()).Single();
+                    .StructureDefinitions.Where(f => (f.DisplayName == structureType.ToString()
+                    
+                    )).Single();
 
                 foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort dockingPort in defn.DockingPorts)
                 {
@@ -748,7 +627,7 @@ namespace HELLION.DataStructures
 
 
         }
-
+        */
 
         #endregion
 
@@ -758,9 +637,191 @@ namespace HELLION.DataStructures
 
         #endregion
 
+        #region Enumerations
+
+        /// <summary>
+        /// Defines  types of Blueprint Object Type.
+        /// </summary>
+        public enum BlueprintObjectType
+        {
+            Unspecified = 0,
+            Unknown,
+            BlueprintStructureDefinitions,
+            StationBlueprint,
+        }
+
+        /// <summary>
+        /// The primary Enum for referencing the structures and their IDs and Descriptions.
+        /// </summary>
+        public enum HEBlueprintStructureSceneID
+        {
+            //SolarSystemSetup = -3,
+            //ItemScene = -2,
+            //None = -1,
+
+            Unspecified = 0,
+
+            //Slavica = 1,
+            //[Description("BRONTES")]
+            //AltCorp_Ship_Tamara = 2,
+
+            [Description("CIM")]
+            AltCorp_CorridorModule = 3,
+            [Description("CTM")]
+            AltCorp_CorridorIntersectionModule = 4,
+            [Description("CLM")]
+            AltCorp_Corridor45TurnModule = 5,
+
+            [Description("ARGES")]
+            AltCorp_Shuttle_SARA = 6,
+            [Description("PSM")]
+            ALtCorp_PowerSupply_Module = 7,
+            [Description("LSM")]
+            AltCorp_LifeSupportModule = 8,
+            [Description("CBM")]
+            AltCorp_Cargo_Module = 9,
+
+            [Description("CSM")]
+            AltCorp_CorridorVertical = 10, // 0x0000000A
+            [Description("CM")]
+            AltCorp_Command_Module = 11, // 0x0000000B
+            [Description("CRM")]
+            AltCorp_Corridor45TurnRightModule = 12, // 0x0000000C
+            [Description("OUTPOST")]
+            AltCorp_StartingModule = 13, // 0x0000000D
+            [Description("AM")]
+            AltCorp_AirLock = 14, // 0x0000000E
+
+            Generic_Debris_JuncRoom001 = 15, // 0x0000000F
+            Generic_Debris_JuncRoom002 = 16, // 0x00000010
+            Generic_Debris_Corridor001 = 17, // 0x00000011
+            Generic_Debris_Corridor002 = 18, // 0x00000012
+
+            [Description("IC")]
+            AltCorp_DockableContainer = 19, // 0x00000013
+
+            //MataPrefabs = 20, // 0x00000014
+            //Generic_Debris_Outpost001 = 21, // 0x00000015
+
+            [Description("CQM")]
+            AltCorp_CrewQuarters_Module = 22, // 0x00000016
+
+            Generic_Debris_Spawn1 = 23, // 0x00000017
+            Generic_Debris_Spawn2 = 24, // 0x00000018
+            Generic_Debris_Spawn3 = 25, // 0x00000019
+
+            [Description("SPM")]
+            AltCorp_SolarPowerModule = 26, // 0x0000001A
+            [Description("STEROPES")]
+            AltCorp_Shuttle_CECA = 27, // 0x0000001B
+            [Description("FM")]
+            AltCorp_FabricatorModule = 28, // 0x0000001C
+            //FlatShipTest = 29, // 0x0000001D
+            //Asteroid01 = 1000, // 0x000003E8
+            //Asteroid02 = 1001, // 0x000003E9
+            //Asteroid03 = 1002, // 0x000003EA
+            //Asteroid04 = 1003, // 0x000003EB
+            //Asteroid05 = 1004, // 0x000003EC
+            //Asteroid06 = 1005, // 0x000003ED
+            //Asteroid07 = 1006, // 0x000003EE
+            //Asteroid08 = 1007, // 0x000003EF
+        }
+
+        /// <summary>
+        /// Docking Port Types Enum.
+        /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum HEDockingPortType
+        {
+            Unspecified = 0,
+            StandardDockingPortA,
+            StandardDockingPortB,
+            StandardDockingPortC,
+            StandardDockingPortD,
+            AirlockDockingPort,
+            Grapple,    // LEGACY ITEM - DEPRECATED
+            IndustrialContainerPortA,
+            IndustrialContainerPortB,
+            IndustrialContainerPortC,
+            IndustrialContainerPortD,
+            CargoDockingPortA,
+            CargoDockingPortB,
+            CargoDock,  // Dockable Cargo (IC) module
+            Anchor,
+            DerelictPort1,
+            DerelictPort2,
+        }
+
+        /// <summary>
+        /// Enumeration for the results of a docking operation.
+        /// </summary>
+        public enum HEDockingResultStatus
+        {
+            Success = 0,
+            InvalidPortA,
+            InvalidPortB,
+            InvalidStructurePortA,
+            InvalidStructurePortB,
+            AlreadyDockedPortA,
+            AlreadyDockedPortB,
+            PortAandBNotDocked,
+            PortANotDocked,
+            PortBNotDocked,
+            PortsOnSameStructure,
+            IncompatiblePortTypes,
+            WillCauseOrphanedStructure,
+        }
+
+        /// <summary>
+        /// LEGACY Structure Types Enum.
+        /// </summary>
+        /// <remarks>
+        /// The numeric values of these correspond to the game's ItemID in the structures.json
+        /// to allow for easier cross-referencing.
+        /// </remarks>
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum aHEBlueprintStructureType
+        {
+            Unspecified = 0,
+            //BRONTES = 2,
+            CIM = 3,
+            CTM = 4,
+            CLM = 5,
+            ARG = 6,
+            PSM = 7,
+            LSM = 8,
+            CBM = 9,
+            CSM = 10,
+            CM = 11,
+            CRM = 12,
+            OUTPOST = 13,
+            AM = 14,
+            Generic_Debris_JuncRoom001 = 15, // 0x0000000F
+            Generic_Debris_JuncRoom002 = 16, // 0x00000010
+            Generic_Debris_Corridor001 = 17, // 0x00000011
+            Generic_Debris_Corridor002 = 18, // 0x00000012
+            IC = 19, // 0x00000013
+            //MataPrefabs = 20, // 0x00000014
+            //Generic_Debris_Outpost001 = 21, // 0x00000015
+            CQM = 22, // 0x00000016
+            // Generic_Debris_Spawn1 = 23, // 0x00000017
+            // Generic_Debris_Spawn2 = 24, // 0x00000018
+            // Generic_Debris_Spawn3 = 25, // 0x00000019
+            SPM = 26, // 0x0000001A
+            STEROPES = 27, // 0x0000001B
+            FM = 28, // 0x0000001C
+            // FlatShipTest = 29, // 0x0000001D
+        }
+
+
+
+        #endregion
+
+
         /// <summary>
         /// A class to define structures (modules/ships) within the blueprint.
         /// </summary>
+        [JsonObject(MemberSerialization.OptIn)]
         public class HEBlueprintStructure
         {
             #region Constructors
@@ -785,7 +846,7 @@ namespace HELLION.DataStructures
             /// Constructor.
             /// </summary>
             /// <param name="ownerObject"></param>
-            public HEBlueprintStructure(HEBlueprint ownerObject = null) : this()
+            public HEBlueprintStructure(HEStationBlueprint ownerObject = null) : this()
             {
                 OwnerObject = ownerObject;
 
@@ -798,7 +859,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Parent object - not to be included in serialisation.
             /// </summary>
-            public HEBlueprint OwnerObject { get; set; } = null;
+            public HEStationBlueprint OwnerObject { get; set; } = null;
 
             /// <summary>
             /// Not to be serialised.
@@ -843,7 +904,7 @@ namespace HELLION.DataStructures
                     if (this == OwnerObject.PrimaryStructureRoot) return true;
 
                     // Full check.
-                    if (ConnectedStructures(new List<HEBlueprintStructure>{this})
+                    if (ConnectedStructures(new List<HEBlueprintStructure> { this })
                         .Contains(OwnerObject.PrimaryStructureRoot)) return true;
 
                     // This structure wasn't in the PrimaryStructureRoot's list of connected structures.
@@ -853,11 +914,19 @@ namespace HELLION.DataStructures
 
             #endregion
 
+            /// <summary>
+            /// Legacy de-serialisation helper.
+            /// </summary>
+            // public int? ItemID { set => SceneID = value; }
+
             #region Serialised Properties
 
             /// <summary>
-            /// The ID of the structure.
+            /// The unique ID of this structure - set if the object is a blueprint. 
+            /// If a template this will be null as there is no docking hierarchy represented
+            /// in a template.
             /// </summary>
+            [JsonProperty]
             public int? StructureID
             {
                 get => _structureID;
@@ -875,8 +944,81 @@ namespace HELLION.DataStructures
             }
 
             /// <summary>
+            /// The SceneID of the structure - Critical! used by the in-game deserialiser to determine
+            /// the type of structure (ship/module) to spawn. Critical! 
+            /// </summary>
+            [JsonProperty]
+            public HEBlueprintStructureSceneID? SceneID
+            {
+                get => _sceneID;
+                set
+                {
+                    if (_sceneID != value)
+                    {
+                        _sceneID = value;
+
+                        // Update the RootNode's BaseNodeName.
+                        RootNode.BaseNodeName = value.GetEnumDescription();
+
+                    }
+
+
+                }
+            }
+
+            /// <summary>
+            /// The SceneName of the Structure. 
+            /// Shadow Property - also comes from the SceneID field using the SceneID enum.
+            /// </summary>
+            [JsonProperty]
+            [JsonConverter(typeof(StringEnumConverter))]
+            public HEBlueprintStructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
+            // public bool ShouldSerializeSceneName() { return OwnerObject == null || (OwnerObject != null && OwnerObject.IsTemplate) ? true : false; }
+
+            [JsonProperty]
+            // [JsonConverter(typeof(SceneIDStringEnumConverter))] 
+            public String StructureType
+            {
+                get => SceneID.GetEnumDescription();
+                set
+                {
+                    if (value != null && value.Length > 0)
+                    {
+
+                        // Attempt to parse the given description to an available one in the enum.
+                        HEBlueprintStructureSceneID descriptionParseResult = value.ParseToEnumDescriptionOrEnumerator<HEBlueprintStructureSceneID>();
+
+                        if (descriptionParseResult != HEBlueprintStructureSceneID.Unspecified)
+                        {
+                            SceneID = descriptionParseResult;
+                        }
+                        // else throw new Exception();
+
+                    }
+
+                }
+            }
+
+            [JsonProperty]
+            public float? StandbyPowerRequirement { get; set; } = null;
+
+            [JsonProperty]
+            public float? NominalPowerRequirement { get; set; } = null;
+
+            [JsonProperty]
+            public float? NominalPowerContribution { get; set; } = null;
+
+            [JsonProperty]
+            public float? NominalAirVolume { get; set; } = null;
+
+
+
+            /*
+            /// <summary>
             /// The structure type - a value from the HEBlueprintStructureType enum.
             /// </summary>
+            [JsonProperty]
+            [JsonConverter(typeof(StringEnumConverter))]
             public HEBlueprintStructureType? StructureType
             {
                 get => _structureType;
@@ -887,10 +1029,12 @@ namespace HELLION.DataStructures
                     //RootNode.BaseNodeText = RootNode.Name;
                 }
             }
+            */
 
             /// <summary>
             /// The list of docking ports for this individual structure.
             /// </summary>
+            [JsonProperty]
             public List<HEBlueprintDockingPort> DockingPorts { get; set; } = null;
 
             #endregion
@@ -951,13 +1095,13 @@ namespace HELLION.DataStructures
             {
                 // Is this structure a root itself?
                 if (OwnerObject.PrimaryStructureRoot == this || OwnerObject.SecondaryStructureRoots.Contains(this)) return this;
-                
+
                 // Is this structure connected to the Primary Structure?
                 if (IsConnectedToPrimaryStructure) return OwnerObject.PrimaryStructureRoot;
 
                 // Full test - the intersection of this structure's connected structures list, and 
                 // the Secondary Structures list.
-                IEnumerable<HEBlueprintStructure> results = ConnectedStructures(new List<HEBlueprintStructure>{this})
+                IEnumerable<HEBlueprintStructure> results = ConnectedStructures(new List<HEBlueprintStructure> { this })
                     .Intersect(OwnerObject.SecondaryStructureRoots);
 
                 if (results.Count() > 1) throw new InvalidOperationException("More than one root found.");
@@ -1030,7 +1174,8 @@ namespace HELLION.DataStructures
                 if (OwnerObject.StructureDefinitions == null) throw new NullReferenceException();
 
                 HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition defn = OwnerObject.StructureDefinitions
-                    .StructureDefinitions.Where(f => f.DisplayName == _structureType.ToString()).Single();
+                    .StructureDefinitions.Where(f => f.ItemID == (int)SceneID).Single();
+
 
                 foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort dockingPort in defn.DockingPorts)
                 {
@@ -1085,8 +1230,9 @@ namespace HELLION.DataStructures
 
             #region Fields
 
-            protected HEBlueprintStructureType? _structureType = null;
             protected int? _structureID = null;
+            protected HEBlueprintStructureSceneID? _sceneID = null;
+            //protected HEBlueprintStructureType? _structureType = null;
             protected int? _previousStructureID = null;
             protected bool _isStructureHierarchyRoot = false;
 
@@ -1098,6 +1244,7 @@ namespace HELLION.DataStructures
         /// A class to define the docking ports of a structure (module/ship) within the 
         /// blueprint.
         /// </summary>
+        [JsonObject(MemberSerialization.OptIn)]
         public class HEBlueprintDockingPort
         {
             #region Constructors
@@ -1219,6 +1366,8 @@ namespace HELLION.DataStructures
             /// <summary>
             /// The (standardised) name of the docking port.
             /// </summary>
+            [JsonProperty]
+            [JsonConverter(typeof(StringEnumConverter))]
             public HEDockingPortType? PortName
             {
                 get => _portName;
@@ -1237,6 +1386,7 @@ namespace HELLION.DataStructures
             /// The OrderId of the docking port - these are used by the game deserialiser to spawn
             /// blueprints.
             /// </summary>
+            [JsonProperty]
             public int? OrderID { get; set; } = null;
 
             /// <summary>
@@ -1247,6 +1397,7 @@ namespace HELLION.DataStructures
             /// This should only be set initially by the JToken.ToObject()
             /// Attempts to set the DockedStructure object.
             /// </remarks>
+            [JsonProperty]
             public int? DockedStructureID
             {
                 get => _dockedStructureID;
@@ -1263,12 +1414,20 @@ namespace HELLION.DataStructures
             }
 
             /// <summary>
+            /// Whether this docking port is locked (and not advertised to the docking system.)
+            /// </summary>
+            [JsonProperty]
+            public bool? Locked { get; set; } = null;
+
+            /// <summary>
             /// The name of the port this port is docked to.
             /// </summary>
             /// <remarks>
             /// This is to be serialised.
             /// Updates the DockedStructureID.
             /// </remarks>
+            [JsonProperty]
+            [JsonConverter(typeof(StringEnumConverter))]
             public HEDockingPortType? DockedPortName
             {
                 get => _dockedPortName;
@@ -1282,6 +1441,8 @@ namespace HELLION.DataStructures
                     }
                 }
             }
+
+
 
             #endregion
 
@@ -1334,9 +1495,54 @@ namespace HELLION.DataStructures
 
         }
 
-        public const decimal StationBlueprintFormatVersion = 0.35m;
 
+        /// <summary>
+        /// Defines optional parameters for a station blueprint structure.
+        /// </summary>
+        /// <remarks>
+        /// Can also be attached to a blueprint directly.
+        /// </remarks>
+        [JsonObject(MemberSerialization.OptOut)]
+        public class HEBlueprintStructureAuxData
+        {
+            // Optional parameters - structure level
+            public bool? Invulnerable = null;                   // Invulnerable or will take damage.
+            public bool? SystemsOnline = null;                  // Spawns powered on.
+            public bool? PowerGeneratorsOnline = null;          // Power generators (solar panels/reactors) spawn powered on.
+            public bool? DoorsLocked = null;                    // Doors are locked.
+            public bool? DockingPortsLocked = null;             // Docking ports are locked (not advertised to docking systems).
+            public bool? CryoPodsDisabled = null;               // Cryo pods are deactivated (non interact-able)
+            public bool? DockingReleaseHandlesDisabled = null;  // Modules' docking release handles are visible.
+            public bool? TextLabelEditingDisabled = null;       // Text labels (doors part boxes) are editable.
+            public bool? SecurityPanelsDisabled = null;         // Security panel(s) are disabled or deactivated.
+            public bool? SystemPartsInteractionDisabled = null; // Dynamic Object Parts in systems cannot be interacted with.
 
+            /// <summary>
+            /// Default constructor - able to pre-set values for a prefab.
+            /// </summary>
+            /// <param name="isPrefabStation"></param>
+            public HEBlueprintStructureAuxData(bool isPrefabStation = false)
+            {
+                SetPrefabStation(isPrefabStation);
+            }
+
+            public void SetPrefabStation(bool isPrefabStation)
+            {
+                Invulnerable = isPrefabStation;
+                SystemsOnline = isPrefabStation;
+                PowerGeneratorsOnline = isPrefabStation;
+                DoorsLocked = false;    // Current prefabs don't (usually) have locked doors.
+                DockingPortsLocked = isPrefabStation;
+                CryoPodsDisabled = isPrefabStation;
+                DockingReleaseHandlesDisabled = isPrefabStation;
+                TextLabelEditingDisabled = isPrefabStation;
+                SecurityPanelsDisabled = isPrefabStation;
+                SystemPartsInteractionDisabled = isPrefabStation;
+
+            }
+        }
+
+        /*
         public class SerialisationTemplate_Blueprint
         {
             public string __ObjectType = "StationBlueprint";
@@ -1358,11 +1564,124 @@ namespace HELLION.DataStructures
             public int? DockedStructureID = null;
             public HEDockingPortType? DockedPortName = null;
         }
-
-
-
-
+        */              
     }
 
+    /*
+    public class SceneIDStringEnumConverter : StringEnumConverter
+    {
 
+        
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            throw new NotImplementedException();
+        }
+        
+
+        
+        /// <summary>
+        /// Reads the JSON representation of the object.
+        /// </summary>
+        /// <param name="reader">The <see cref="JsonReader"/> to read from.</param>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="existingValue">The existing value of object being read.</param>
+        /// <param name="serializer">The calling serializer.</param>
+        /// <returns>The object value.</returns>
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+
+            bool isNullable = ReflectionUtils.IsNullableType(objectType);
+            Type t = isNullable ? Nullable.GetUnderlyingType(objectType) : objectType;
+
+            if (t != typeof(HEBlueprintStructureSceneID))
+                throw new Exception("Was called, but wrong type.");
+
+            try
+            {
+                if (reader.TokenType == JsonToken.String)
+                {
+                    string enumText = reader.Value.ToString();
+
+                    if (enumText == string.Empty && isNullable)
+                    {
+                        return null;
+                    }
+
+                    HEBlueprintStructureSceneID descriptionParseResult = EnumExtensions.ParseToEnumDescriptionOrEnumerator<HEBlueprintStructureSceneID>(enumText);
+                    if (descriptionParseResult != HEBlueprintStructureSceneID.Unspecified) return descriptionParseResult;
+
+                    return Enum.TryParse(enumText, out HEBlueprintStructureSceneID result) ? (object)result : null;
+
+
+                    //return EnumUtils.ParseEnum(t, enumText, !AllowIntegerValues);
+                }
+
+                if (reader.TokenType == JsonToken.Integer)
+                {
+                    if (!AllowIntegerValues)
+                    {
+                        throw new JsonSerializationException(String.Format("Integer value {0} is not allowed.", reader.Value));
+                    }
+
+                    return (HEBlueprintStructureSceneID)reader.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new JsonSerializationException(String.Format("Error converting value {0} to type '{1}'.{2}{3}",
+                    reader.Value, objectType, Environment.NewLine, ex));
+            }
+
+            // we don't actually expect to get here.
+            throw new JsonSerializationException(String.Format("Unexpected token {0} when parsing enum.", reader.TokenType));
+        }
+
+        internal static class ValidationUtils
+        {
+            public static void ArgumentNotNull(object value, string parameterName)
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(parameterName);
+                }
+            }
+        }
+
+
+        internal static class ReflectionUtils
+        {
+
+            public static bool IsNullable(Type t)
+            {
+                ValidationUtils.ArgumentNotNull(t, nameof(t));
+
+                if (t.IsValueType)
+                {
+                    return IsNullableType(t);
+                }
+
+                return true;
+            }
+
+            public static bool IsNullableType(Type t)
+            {
+                ValidationUtils.ArgumentNotNull(t, nameof(t));
+
+                return (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
+            }
+        }
+    }
+    */
 }

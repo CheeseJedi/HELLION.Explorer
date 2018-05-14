@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace HELLION.DataStructures
@@ -9,6 +11,8 @@ namespace HELLION.DataStructures
     /// </summary>
     public class HEJsonBlueprintFile : HEBaseJsonFile
     {
+        
+        
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
@@ -71,7 +75,7 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Handles 
+        /// 
         /// </summary>
         /// <param name="newData"></param>
         public void ApplyNewJData(JToken newData)
@@ -113,14 +117,14 @@ namespace HELLION.DataStructures
         /// <summary>
         /// This is the actual blueprint - serialised and de-serialised from here.
         /// </summary>
-        public HEBlueprint BlueprintObject { get; protected set; } = null;
+        public HEStationBlueprint BlueprintObject { get; protected set; } = null;
 
         /// <summary>
         /// De-serialises the JData to the blueprint object.
         /// </summary>
         public void DeserialiseToBlueprintObject()
         {
-            BlueprintObject = jData.ToObject<HEBlueprint>();
+            BlueprintObject = jData.ToObject<HEStationBlueprint>();
             BlueprintObject.OwnerObject = this;
             //BlueprintObject.StructureDefinitions = ;
             BlueprintObject.PostDeserialisationInit();
@@ -131,14 +135,20 @@ namespace HELLION.DataStructures
         /// </summary>
         public void SerialiseFromBlueprintObject()
         {
-            JToken newData = JToken.FromObject(BlueprintObject.GetSerialisationTemplate());
+            JToken newData = JToken.FromObject(BlueprintObject); // .GetSerialisationTemplate()
             //Validity check?
 
             ApplyNewJData(newData);
 
-            SaveFile(CreateBackup: true);
+            //SaveFile(CreateBackup: true);
 
-            // throw new NotImplementedException("Not implemented yet.");
         }
+
+
+
+
+
+
+
     }
 }
