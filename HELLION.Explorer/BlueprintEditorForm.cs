@@ -48,7 +48,7 @@ namespace HELLION.Explorer
             FormTitleText = passedSourceNode.Name;
             RefreshBlueprintEditorFormTitleText();
 
-            jsonBlueprintFile = (HEJsonBlueprintFile)passedSourceNode.OwnerObject;
+            jsonBlueprintFile = (HEStationBlueprintFile)passedSourceNode.OwnerObject;
             blueprint = jsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("jsonBlueprintFile.BlueprintObject was null.");
 
             GraftTreeInboundFromMainForm();
@@ -751,7 +751,7 @@ namespace HELLION.Explorer
         #region Fields
 
         private string FormTitleText = null;
-        private HEJsonBlueprintFile jsonBlueprintFile = null;
+        private HEStationBlueprintFile jsonBlueprintFile = null;
         private HEStationBlueprint blueprint = null;
         private HEBlueprintTreeNode _selectedPrimaryStructureNode = null;
         private HEBlueprintTreeNode _selectedSecondaryStructureNode = null;

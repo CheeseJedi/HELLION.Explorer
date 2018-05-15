@@ -33,12 +33,12 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Constructor that takes a HEJsonBlueprintFile Owner Object and reference to the 
+        /// Constructor that takes a HEStationonBlueprintFile Owner Object and reference to the 
         /// structure definitions object.
         /// </summary>
         /// <param name="ownerObject"></param>
         /// <param name="structureDefs"></param>
-        public HEStationBlueprint(HEJsonBlueprintFile ownerObject, HEBlueprintStructureDefinitions structureDefs) : this()
+        public HEStationBlueprint(HEStationBlueprintFile ownerObject, HEBlueprintStructureDefinitions structureDefs) : this()
         {
             OwnerObject = ownerObject ?? throw new NullReferenceException("passedParent was null.");
             StructureDefinitions = structureDefs ?? throw new NullReferenceException("structureDefs was null.");
@@ -54,7 +54,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// A reference to the Parent object.
         /// </summary>
-        public HEJsonBlueprintFile OwnerObject { get; set; } = null;
+        public HEStationBlueprintFile OwnerObject { get; set; } = null;
 
         public HEBlueprintTreeNode RootNode { get; set; } = null;
 
@@ -125,6 +125,14 @@ namespace HELLION.DataStructures
         public Uri LinkURI { get; set; } = null;
 
         /// <summary>
+        /// Auxiliary data for this blueprint. If this is set it applies to all structures in
+        /// the blueprint. Individual structures can also implement an AuxData that will over-
+        /// ride the blueprint level AuxData.
+        /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+        public HEBlueprintStructureAuxData AuxData { get; set; } = null;
+
+        /// <summary>
         /// The list of all structures in the blueprint.
         /// </summary>
         /// <remarks>
@@ -143,10 +151,13 @@ namespace HELLION.DataStructures
         /// </summary>
         public void PostDeserialisationInit()
         {
-            ReconnectChildToParentObjectHierarchy();
-            ReconnectDockedObjects();
+            if (__ObjectType != null && __ObjectType == BlueprintObjectType.StationBlueprint)
+            {
+                ReconnectChildToParentObjectHierarchy();
+                ReconnectDockedObjects();
 
-            SetPrimaryStructureRoot();
+                SetPrimaryStructureRoot();
+            }
         }
 
         /// <summary>
@@ -293,7 +304,7 @@ namespace HELLION.DataStructures
         /// <returns>Returns true if the added structure is in the Structures list once created.</returns>
         public HEBlueprintStructure AddStructure(HEBlueprintStructureSceneID sceneID)
         {
-            
+
             HEBlueprintStructure newStructure = new HEBlueprintStructure
             {
                 SceneID = sceneID,
@@ -319,7 +330,7 @@ namespace HELLION.DataStructures
             IsDirty = true;
 
             return newStructure;
-            
+
 
         }
 
@@ -461,11 +472,6 @@ namespace HELLION.DataStructures
 
             return HEDockingResultStatus.Success;
         }
-
-
-
-
-
 
         /*
         /// <summary>
@@ -700,8 +706,8 @@ namespace HELLION.DataStructures
             [Description("IC")]
             AltCorp_DockableContainer = 19, // 0x00000013
 
-            //MataPrefabs = 20, // 0x00000014
-            //Generic_Debris_Outpost001 = 21, // 0x00000015
+            MataPrefabs = 20, // 0x00000014
+            Generic_Debris_Outpost001 = 21, // 0x00000015
 
             [Description("CQM")]
             AltCorp_CrewQuarters_Module = 22, // 0x00000016
@@ -716,7 +722,7 @@ namespace HELLION.DataStructures
             AltCorp_Shuttle_CECA = 27, // 0x0000001B
             [Description("FM")]
             AltCorp_FabricatorModule = 28, // 0x0000001C
-            //FlatShipTest = 29, // 0x0000001D
+            FlatShipTest = 29, // 0x0000001D
             //Asteroid01 = 1000, // 0x000003E8
             //Asteroid02 = 1001, // 0x000003E9
             //Asteroid03 = 1002, // 0x000003EA
@@ -772,51 +778,148 @@ namespace HELLION.DataStructures
             WillCauseOrphanedStructure,
         }
 
-        /// <summary>
-        /// LEGACY Structure Types Enum.
-        /// </summary>
-        /// <remarks>
-        /// The numeric values of these correspond to the game's ItemID in the structures.json
-        /// to allow for easier cross-referencing.
-        /// </remarks>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum aHEBlueprintStructureType
-        {
-            Unspecified = 0,
-            //BRONTES = 2,
-            CIM = 3,
-            CTM = 4,
-            CLM = 5,
-            ARG = 6,
-            PSM = 7,
-            LSM = 8,
-            CBM = 9,
-            CSM = 10,
-            CM = 11,
-            CRM = 12,
-            OUTPOST = 13,
-            AM = 14,
-            Generic_Debris_JuncRoom001 = 15, // 0x0000000F
-            Generic_Debris_JuncRoom002 = 16, // 0x00000010
-            Generic_Debris_Corridor001 = 17, // 0x00000011
-            Generic_Debris_Corridor002 = 18, // 0x00000012
-            IC = 19, // 0x00000013
-            //MataPrefabs = 20, // 0x00000014
-            //Generic_Debris_Outpost001 = 21, // 0x00000015
-            CQM = 22, // 0x00000016
-            // Generic_Debris_Spawn1 = 23, // 0x00000017
-            // Generic_Debris_Spawn2 = 24, // 0x00000018
-            // Generic_Debris_Spawn3 = 25, // 0x00000019
-            SPM = 26, // 0x0000001A
-            STEROPES = 27, // 0x0000001B
-            FM = 28, // 0x0000001C
-            // FlatShipTest = 29, // 0x0000001D
-        }
-
-
 
         #endregion
 
+        public Dictionary<HEBlueprintStructureSceneID, Dictionary<HEDockingPortType, int>> DockingPortHints 
+            = new Dictionary<HEBlueprintStructureSceneID, Dictionary<HEDockingPortType, int>>()
+        {
+            
+            { HEBlueprintStructureSceneID.AltCorp_CorridorModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.StandardDockingPortB, 2 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+            
+            { HEBlueprintStructureSceneID.AltCorp_CorridorIntersectionModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.StandardDockingPortB, 3 },
+                { HEDockingPortType.StandardDockingPortC, 2 },
+                { HEDockingPortType.Anchor, 4}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_Corridor45TurnModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.StandardDockingPortB, 2 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_Shuttle_SARA, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.AirlockDockingPort, 1 },
+                { HEDockingPortType.Anchor, 2}
+            } },
+
+            { HEBlueprintStructureSceneID.ALtCorp_PowerSupply_Module, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 2 },
+                { HEDockingPortType.StandardDockingPortB, 1 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_LifeSupportModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.StandardDockingPortB, 2 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_Cargo_Module, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.IndustrialContainerPortA, 4 },
+                { HEDockingPortType.IndustrialContainerPortB, 5 },
+                { HEDockingPortType.IndustrialContainerPortC, 7 },
+                { HEDockingPortType.IndustrialContainerPortD, 6 },
+                { HEDockingPortType.CargoDockingPortA, 2 },
+                { HEDockingPortType.CargoDockingPortB, 3 },
+                { HEDockingPortType.Anchor, 8}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_CorridorVertical, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.StandardDockingPortB, 2 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_Command_Module, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 3 },
+                { HEDockingPortType.StandardDockingPortB, 2 },
+                { HEDockingPortType.StandardDockingPortC, 1 },
+                { HEDockingPortType.StandardDockingPortD, 4 },
+                { HEDockingPortType.Anchor, 5}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_Corridor45TurnRightModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.StandardDockingPortB, 2 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_StartingModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 2 },
+                { HEDockingPortType.StandardDockingPortB, 1 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_JuncRoom001, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.DerelictPort1, 1 },
+                { HEDockingPortType.DerelictPort2, 2 }
+            } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_JuncRoom002, new Dictionary<HEDockingPortType, int> { } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_Corridor001, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.DerelictPort1, 1 }
+            } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_Corridor002, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.DerelictPort1, 1 },
+                { HEDockingPortType.DerelictPort2, 2 }
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_AirLock, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.AirlockDockingPort, 1 },
+                { HEDockingPortType.StandardDockingPortA, 2 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_DockableContainer, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.Anchor, 2}
+            } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_Outpost001, new Dictionary<HEDockingPortType, int> { } },
+
+            { HEBlueprintStructureSceneID.AltCorp_CrewQuarters_Module, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.Anchor, 2}
+            } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_Spawn1, new Dictionary<HEDockingPortType, int> { } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_Spawn2, new Dictionary<HEDockingPortType, int> { } },
+
+            { HEBlueprintStructureSceneID.Generic_Debris_Spawn3, new Dictionary<HEDockingPortType, int> { } },
+
+            { HEBlueprintStructureSceneID.AltCorp_SolarPowerModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.StandardDockingPortB, 2 },
+                { HEDockingPortType.Anchor, 3}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_Shuttle_CECA, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.Anchor, 1}
+            } },
+
+            { HEBlueprintStructureSceneID.AltCorp_FabricatorModule, new Dictionary<HEDockingPortType, int> {
+                { HEDockingPortType.StandardDockingPortA, 1 },
+                { HEDockingPortType.Anchor, 2}
+            } },
+
+            { HEBlueprintStructureSceneID.MataPrefabs, new Dictionary<HEDockingPortType, int> { } },
+
+            { HEBlueprintStructureSceneID.FlatShipTest, new Dictionary<HEDockingPortType, int> { } },
+
+        };
+        
+        
 
         /// <summary>
         /// A class to define structures (modules/ships) within the blueprint.
@@ -833,7 +936,7 @@ namespace HELLION.DataStructures
             {
                 DockingPorts = new List<HEBlueprintDockingPort>();
                 RootNode = new HEBlueprintStructureTreeNode(passedOwner: this,
-                    nodeName: StructureType.ToString());
+                    nodeName: StructureType?.ToString() ?? "Error");
 
                 //String.Format("[{0:000}] {1} ", StructureID, StructureType));
 
@@ -917,7 +1020,13 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Legacy de-serialisation helper.
             /// </summary>
-            // public int? ItemID { set => SceneID = value; }
+            /*
+            public int? ItemID
+            {
+                set => SceneID = (HEBlueprintStructureSceneID)Enum
+                    .Parse(typeof(HEBlueprintStructureSceneID), value.ToString());
+            }
+            */
 
             #region Serialised Properties
 
@@ -958,7 +1067,7 @@ namespace HELLION.DataStructures
                         _sceneID = value;
 
                         // Update the RootNode's BaseNodeName.
-                        RootNode.BaseNodeName = value.GetEnumDescription();
+                        //RootNode.BaseNodeName = value.GetEnumDescription();
 
                     }
 
@@ -976,10 +1085,9 @@ namespace HELLION.DataStructures
             // public bool ShouldSerializeSceneName() { return OwnerObject == null || (OwnerObject != null && OwnerObject.IsTemplate) ? true : false; }
 
             [JsonProperty]
-            // [JsonConverter(typeof(SceneIDStringEnumConverter))] 
             public String StructureType
             {
-                get => SceneID.GetEnumDescription();
+                get => SceneID?.GetEnumDescription(); // ?? HEBlueprintStructureSceneID.Unspecified.ToString();
                 set
                 {
                     if (value != null && value.Length > 0)
@@ -999,18 +1107,25 @@ namespace HELLION.DataStructures
                 }
             }
 
-            [JsonProperty]
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
             public float? StandbyPowerRequirement { get; set; } = null;
 
-            [JsonProperty]
-            public float? NominalPowerRequirement { get; set; } = null;
+            // [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            // public float? NominalPowerRequirement { get; set; } = null;
 
-            [JsonProperty]
-            public float? NominalPowerContribution { get; set; } = null;
+            // [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            // public float? NominalPowerContribution { get; set; } = null;
 
-            [JsonProperty]
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
             public float? NominalAirVolume { get; set; } = null;
 
+            /// <summary>
+            /// Auxiliary data for this blueprint. If this is set it applies to all structures in
+            /// the blueprint. Individual structures can also implement an AuxData that will over-
+            /// ride the blueprint level AuxData.
+            /// </summary>
+            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            public HEBlueprintStructureAuxData AuxData { get; set; } = null;
 
 
             /*
@@ -1390,6 +1505,12 @@ namespace HELLION.DataStructures
             public int? OrderID { get; set; } = null;
 
             /// <summary>
+            /// Whether this docking port is locked (and not advertised to the docking system.)
+            /// </summary>
+            [JsonProperty]
+            public bool? Locked { get; set; } = null;
+
+            /// <summary>
             /// The ID of the structure this port is docked to.
             /// </summary>
             /// <remarks>
@@ -1414,12 +1535,6 @@ namespace HELLION.DataStructures
             }
 
             /// <summary>
-            /// Whether this docking port is locked (and not advertised to the docking system.)
-            /// </summary>
-            [JsonProperty]
-            public bool? Locked { get; set; } = null;
-
-            /// <summary>
             /// The name of the port this port is docked to.
             /// </summary>
             /// <remarks>
@@ -1441,8 +1556,6 @@ namespace HELLION.DataStructures
                     }
                 }
             }
-
-
 
             #endregion
 
@@ -1513,7 +1626,7 @@ namespace HELLION.DataStructures
             public bool? DockingPortsLocked = null;             // Docking ports are locked (not advertised to docking systems).
             public bool? CryoPodsDisabled = null;               // Cryo pods are deactivated (non interact-able)
             public bool? DockingReleaseHandlesDisabled = null;  // Modules' docking release handles are visible.
-            public bool? TextLabelEditingDisabled = null;       // Text labels (doors part boxes) are editable.
+            public bool? TextLabelEditingDisabled = null;       // Text labels (doors, parts boxes) are editable.
             public bool? SecurityPanelsDisabled = null;         // Security panel(s) are disabled or deactivated.
             public bool? SystemPartsInteractionDisabled = null; // Dynamic Object Parts in systems cannot be interacted with.
 
@@ -1521,12 +1634,12 @@ namespace HELLION.DataStructures
             /// Default constructor - able to pre-set values for a prefab.
             /// </summary>
             /// <param name="isPrefabStation"></param>
-            public HEBlueprintStructureAuxData(bool isPrefabStation = false)
+            public HEBlueprintStructureAuxData(bool? isPrefabStation = null)
             {
                 SetPrefabStation(isPrefabStation);
             }
 
-            public void SetPrefabStation(bool isPrefabStation)
+            public void SetPrefabStation(bool? isPrefabStation)
             {
                 Invulnerable = isPrefabStation;
                 SystemsOnline = isPrefabStation;
@@ -1539,6 +1652,20 @@ namespace HELLION.DataStructures
                 SecurityPanelsDisabled = isPrefabStation;
                 SystemPartsInteractionDisabled = isPrefabStation;
 
+            }
+
+            public void ResetAuxData()
+            {
+                Invulnerable = null;
+                SystemsOnline = null;
+                PowerGeneratorsOnline = null;
+                DoorsLocked = null;
+                DockingPortsLocked = null;
+                CryoPodsDisabled = null;
+                DockingReleaseHandlesDisabled = null;
+                TextLabelEditingDisabled = null;
+                SecurityPanelsDisabled = null;
+                SystemPartsInteractionDisabled = null;
             }
         }
 
@@ -1684,4 +1811,48 @@ namespace HELLION.DataStructures
         }
     }
     */
-}
+
+    /*
+    /// <summary>
+    /// LEGACY Structure Types Enum.
+    /// </summary>
+    /// <remarks>
+    /// The numeric values of these correspond to the game's ItemID in the structures.json
+    /// to allow for easier cross-referencing.
+    /// </remarks>
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum aHEBlueprintStructureType
+    {
+        Unspecified = 0,
+        //BRONTES = 2,
+        CIM = 3,
+        CTM = 4,
+        CLM = 5,
+        ARG = 6,
+        PSM = 7,
+        LSM = 8,
+        CBM = 9,
+        CSM = 10,
+        CM = 11,
+        CRM = 12,
+        OUTPOST = 13,
+        AM = 14,
+        Generic_Debris_JuncRoom001 = 15, // 0x0000000F
+        Generic_Debris_JuncRoom002 = 16, // 0x00000010
+        Generic_Debris_Corridor001 = 17, // 0x00000011
+        Generic_Debris_Corridor002 = 18, // 0x00000012
+        IC = 19, // 0x00000013
+        //MataPrefabs = 20, // 0x00000014
+        //Generic_Debris_Outpost001 = 21, // 0x00000015
+        CQM = 22, // 0x00000016
+        // Generic_Debris_Spawn1 = 23, // 0x00000017
+        // Generic_Debris_Spawn2 = 24, // 0x00000018
+        // Generic_Debris_Spawn3 = 25, // 0x00000019
+        SPM = 26, // 0x0000001A
+        STEROPES = 27, // 0x0000001B
+        FM = 28, // 0x0000001C
+        // FlatShipTest = 29, // 0x0000001D
+    }
+    */
+
+    }

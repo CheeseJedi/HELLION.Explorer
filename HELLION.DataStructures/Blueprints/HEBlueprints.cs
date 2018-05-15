@@ -3,12 +3,12 @@ using System.IO;
 
 namespace HELLION.DataStructures
 {
-    public class HEBlueprints
+    public class HEBlueprintsHandler
     {
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public HEBlueprints()
+        public HEBlueprintsHandler()
         {
             RootNode = new HEBlueprintsViewTreeNode(passedOwner: this);
 
@@ -68,7 +68,7 @@ namespace HELLION.DataStructures
         /// </summary>
         public HEBlueprintStructureDefinitionsFile StructureDefinitionsFile { get; protected set; } = null;
 
-
+        //public HEStationonBlueprintFile sd { get; protected set; } = null;
 
 
     }

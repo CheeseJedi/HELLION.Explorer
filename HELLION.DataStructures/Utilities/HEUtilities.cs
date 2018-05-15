@@ -227,6 +227,7 @@ namespace HELLION.DataStructures
         /// </remarks>
         public static string GetEnumDescription(this Enum value)
         {
+            if (value == null) return null;
             DescriptionAttribute[] da = (DescriptionAttribute[])(value.GetType().GetField(value.ToString()))
                 .GetCustomAttributes(typeof(DescriptionAttribute), false);
             return da.Length > 0 ? da[0].Description : value.ToString();

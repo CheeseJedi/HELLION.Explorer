@@ -16,11 +16,11 @@ namespace HELLION.DataStructures
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="passedCollectionType"></param>
         /// <param name="autoPopulateTreeDepth"></param>
-        public HEBlueprintCollection(HEBlueprints passedParent, DirectoryInfo passedDirectoryInfo,
+        public HEBlueprintCollection(HEBlueprintsHandler passedParent, DirectoryInfo passedDirectoryInfo,
              int autoPopulateTreeDepth = 0) : base()
         {
             // Set up the data dictionary
-            DataDictionary = new Dictionary<string, HEJsonBlueprintFile>();
+            DataDictionary = new Dictionary<string, HEStationBlueprintFile>();
 
             OwnerObject = passedParent ?? throw new NullReferenceException("passedParent was null.");
             DataDirectoryInfo = passedDirectoryInfo ?? throw new NullReferenceException("passedDirectoryInfo was null.");
@@ -38,12 +38,12 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Public property to access the parent object.
         /// </summary>
-        public new HEBlueprints OwnerObject { get; protected set; } = null;
+        public new HEBlueprintsHandler OwnerObject { get; protected set; } = null;
             
         /// <summary>
         /// The Data Dictionary holds HEBaseJsonFile objects, with the file name as the key.
         /// </summary>
-        public new Dictionary<string, HEJsonBlueprintFile> DataDictionary { get; protected set; } = null;
+        public new Dictionary<string, HEStationBlueprintFile> DataDictionary { get; protected set; } = null;
 
         /// <summary>
         /// The root node of the Blueprint file collection - each data file will have it's
@@ -66,8 +66,8 @@ namespace HELLION.DataStructures
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
-                    // Create a new HEJsonBlueprintFile and populate the path.
-                    HEJsonBlueprintFile tempBlueprintFile = new HEJsonBlueprintFile(this, dataFile, PopulateNodeTreeDepth);
+                    // Create a new HEStationonBlueprintFile and populate the path.
+                    HEStationBlueprintFile tempBlueprintFile = new HEStationBlueprintFile(this, dataFile, PopulateNodeTreeDepth);
                     // Add the file to the Data Dictionary 
                     DataDictionary.Add(dataFile.Name, tempBlueprintFile);
 

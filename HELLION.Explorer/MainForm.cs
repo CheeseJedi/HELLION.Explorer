@@ -587,7 +587,7 @@ namespace HELLION.Explorer
 
         private void generateStructureDefinitionsStubjsonToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Contents to be moved to the HEBlueprints class once complete.
+            // Contents to be moved to the HEBlueprintsHandler class once complete.
 
             if (Program.docCurrent != null)
             {
@@ -603,7 +603,7 @@ namespace HELLION.Explorer
                     FileInfo newDefsFileInfo = new FileInfo(@"E:\HELLION\TestArea\Output.json");
 
 
-                    HEBlueprintStructureDefinitionsFile newDefsFile = new HEBlueprintStructureDefinitionsFile
+                    HEStationBlueprintFile newDefsFile = new HEStationBlueprintFile
                         (this, newDefsFileInfo, structuresJsonBaseFile);
 
                     if (newDefsFile.File.Exists) MessageBox.Show("Tentative Success");
