@@ -87,6 +87,7 @@
     <Compile Include="Blueprints\HEBlueprintsViewTreeNode.cs" />
     <Compile Include="Blueprints\HEStationBlueprint.cs" />
     <Compile Include="Blueprints\HEStationBlueprintFile.cs" />
+    <Compile Include="Blueprints\StaticDataHelper.cs" />
     <Compile Include="DocumentWorkspace\HEDocumentWorkspace.cs" />
     <Compile Include="DocumentWorkspace\HEGameData.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -243,7 +244,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

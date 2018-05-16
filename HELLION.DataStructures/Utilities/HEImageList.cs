@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
-using static HELLION.DataStructures.HEStationBlueprint;
+using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.DataStructures
 {
@@ -279,68 +279,68 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="sceneID"></param>
         /// <returns></returns>
-        public static int GetStructureImageIndexBySceneID(HEBlueprintStructureSceneID sceneID)
+        public static int GetStructureImageIndexBySceneID(HEStructureSceneID sceneID)
         {
             switch (sceneID)
             {
-                case HEBlueprintStructureSceneID.AltCorp_CorridorModule:
+                case HEStructureSceneID.AltCorp_CorridorModule:
                     return (int)HEStructuresImageNames.STRUCT_CIM;
 
-                case HEBlueprintStructureSceneID.AltCorp_CorridorIntersectionModule:
+                case HEStructureSceneID.AltCorp_CorridorIntersectionModule:
                     return (int)HEStructuresImageNames.STRUCT_CTM;
 
-                case HEBlueprintStructureSceneID.AltCorp_Corridor45TurnModule:
+                case HEStructureSceneID.AltCorp_Corridor45TurnModule:
                     return (int)HEStructuresImageNames.STRUCT_CLM;
 
-                case HEBlueprintStructureSceneID.AltCorp_Shuttle_SARA:
+                case HEStructureSceneID.AltCorp_Shuttle_SARA:
                     return (int)HEStructuresImageNames.STRUCT_ARG;
 
-                case HEBlueprintStructureSceneID.ALtCorp_PowerSupply_Module:
+                case HEStructureSceneID.ALtCorp_PowerSupply_Module:
                     return (int)HEStructuresImageNames.STRUCT_PSM;
 
-                case HEBlueprintStructureSceneID.AltCorp_LifeSupportModule:
+                case HEStructureSceneID.AltCorp_LifeSupportModule:
                     return (int)HEStructuresImageNames.STRUCT_LSM;
 
-                case HEBlueprintStructureSceneID.AltCorp_Cargo_Module:
+                case HEStructureSceneID.AltCorp_Cargo_Module:
                     return (int)HEStructuresImageNames.STRUCT_CBM;
 
-                case HEBlueprintStructureSceneID.AltCorp_CorridorVertical:
+                case HEStructureSceneID.AltCorp_CorridorVertical:
                     return (int)HEStructuresImageNames.STRUCT_CSM;
 
-                case HEBlueprintStructureSceneID.AltCorp_Command_Module:
+                case HEStructureSceneID.AltCorp_Command_Module:
                     return (int)HEStructuresImageNames.STRUCT_CM;
 
-                case HEBlueprintStructureSceneID.AltCorp_Corridor45TurnRightModule:
+                case HEStructureSceneID.AltCorp_Corridor45TurnRightModule:
                     return (int)HEStructuresImageNames.STRUCT_CRM;
 
-                case HEBlueprintStructureSceneID.AltCorp_StartingModule:
+                case HEStructureSceneID.AltCorp_StartingModule:
                     return (int)HEStructuresImageNames.STRUCT_OUTPOST;
 
-                case HEBlueprintStructureSceneID.AltCorp_AirLock:
+                case HEStructureSceneID.AltCorp_AirLock:
                     return (int)HEStructuresImageNames.STRUCT_AM;
 
-                case HEBlueprintStructureSceneID.Generic_Debris_JuncRoom001:
-                case HEBlueprintStructureSceneID.Generic_Debris_JuncRoom002:
-                case HEBlueprintStructureSceneID.Generic_Debris_Corridor001:
-                case HEBlueprintStructureSceneID.Generic_Debris_Corridor002:
+                case HEStructureSceneID.Generic_Debris_JuncRoom001:
+                case HEStructureSceneID.Generic_Debris_JuncRoom002:
+                case HEStructureSceneID.Generic_Debris_Corridor001:
+                case HEStructureSceneID.Generic_Debris_Corridor002:
                     return (int)HEStructuresImageNames.STRUCT_Unspecified;
 
-                case HEBlueprintStructureSceneID.AltCorp_DockableContainer:
+                case HEStructureSceneID.AltCorp_DockableContainer:
                     return (int)HEStructuresImageNames.STRUCT_IC;
 
-                case HEBlueprintStructureSceneID.AltCorp_CrewQuarters_Module:
+                case HEStructureSceneID.AltCorp_CrewQuarters_Module:
                     return (int)HEStructuresImageNames.STRUCT_CQM;
 
-                case HEBlueprintStructureSceneID.AltCorp_SolarPowerModule:
+                case HEStructureSceneID.AltCorp_SolarPowerModule:
                     return (int)HEStructuresImageNames.STRUCT_SPM;
 
-                case HEBlueprintStructureSceneID.AltCorp_Shuttle_CECA:
+                case HEStructureSceneID.AltCorp_Shuttle_CECA:
                     return (int)HEStructuresImageNames.STRUCT_Unspecified;
 
-                case HEBlueprintStructureSceneID.AltCorp_FabricatorModule:
+                case HEStructureSceneID.AltCorp_FabricatorModule:
                     return (int)HEStructuresImageNames.STRUCT_FM;
 
-                case HEBlueprintStructureSceneID.Unspecified:
+                case HEStructureSceneID.Unspecified:
                 default:
                     return (int)HEStructuresImageNames.STRUCT_Unspecified;
 

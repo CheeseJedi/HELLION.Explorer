@@ -5,6 +5,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.HEBlueprintStructureDefinitions;
 using static HELLION.DataStructures.HEStationBlueprint;
+using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.DataStructures
 {

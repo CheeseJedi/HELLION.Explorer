@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.HEStationBlueprint;
+using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.DataStructures
 {
@@ -103,7 +102,7 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// 
+        /// Applies new JData and triggers the PostLoadOperations method.
         /// </summary>
         /// <param name="newData"></param>
         public void ApplyNewJData(JToken newData)
@@ -159,7 +158,7 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Not yet implemented.
+        /// Serialises the JData to from blueprint object.
         /// </summary>
         public void SerialiseFromBlueprintObject()
         {
@@ -168,15 +167,15 @@ namespace HELLION.DataStructures
 
             ApplyNewJData(newData);
 
-            //SaveFile(CreateBackup: true);
-
         }
 
-
+        /// <summary>
+        /// Generates a new StructureDefinitions.json file.
+        /// </summary>
+        /// <param name="passedFileInfo"></param>
+        /// <param name="structuresJsonFile"></param>
         public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEBaseJsonFile structuresJsonFile)
         {
-
-            //HEBlueprintStructureDefinitionsFile newSDFile = new HEBlueprintStructureDefinitionsFile(null);
 
             BlueprintObject.__ObjectType = BlueprintObjectType.BlueprintStructureDefinitions;
             BlueprintObject.Version = StationBlueprintFormatVersion;
@@ -184,66 +183,56 @@ namespace HELLION.DataStructures
                 StationBlueprintFormatVersion, DateTime.Now);
             BlueprintObject.LinkURI = new Uri(@"https://github.com/CheeseJedi/Hellion-Station-Blueprint-Format");
 
-            //BlueprintObject.AuxData = new HEBlueprintStructureAuxData(null);
+            BlueprintObject.AuxData = new HEBlueprintStructureAuxData(null);
 
             // Loop through all the structures in the Structures.Json file
             foreach (JToken jtStructure in structuresJsonFile.JData)
             {
-                // Define a new Structure
+                // Create a new Structure definition
                 HEBlueprintStructure nsd = new HEBlueprintStructure               
                 {
-                    SceneID = (HEBlueprintStructureSceneID)Enum
-                        .Parse(typeof(HEBlueprintStructureSceneID), (string)jtStructure["ItemID"]),
+                    SceneID = (HEStructureSceneID)Enum
+                        .Parse(typeof(HEStructureSceneID), (string)jtStructure["ItemID"]),
 
-                    // SceneName = (string)jtStructure["SceneName"],
-                    // DisplayName = (string)jtStructure["SceneName"], // might benefit from renaming to DisplayName
-                    // ItemID = (int)jtStructure["ItemID"], // possibly defunct.
+                    AuxData = new HEBlueprintStructureAuxData(null),
+
+                                    // Calculate the total (nominal) air volume.
+                    NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume")),
+
+                    // Look up the Power requirement for this module.
+                    // Select subsystem type 13 (usually with RoomID of -1)
+                    StandbyPowerRequirement = (float)jtStructure.SelectToken(
+                        "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Standby"),
+
+                    // NominalPowerRequirement = (float)jtStructure.SelectToken(
+                    //  "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Nominal"),
+
+                    // Need to locate the info probably from the generators system.
+                    // Not currently set.
+                    //NominalPowerContribution = null;
+
 
                 };
-
-                nsd.AuxData = new HEBlueprintStructureAuxData(null);
-
-                // Calculate the total (nominal) air volume.
-                nsd.NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume"));
-
-                // Look up the Power requirement for this module.
-                // Select subsystem type 13 with RoomID of -1
-                nsd.StandbyPowerRequirement = (float)jtStructure.SelectToken("$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Standby");
-                // nsd.NominalPowerRequirement = (float)jtStructure.SelectToken("$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Nominal");
-
-                // Need to locate the info probably from the generators system.
-                // Not currently set.
-                //nsd.NominalPowerContribution = null;
-
-
-
-
-
-
 
                 // Loop through the jtStructure's DockingPort collection.
                 foreach (JToken jtDockingPort in jtStructure["DockingPorts"])
                 {
                     HEBlueprintDockingPort newDockingPortDefinition = new HEBlueprintDockingPort
                     {
-                        // We don't know the port names in advance so this is set to unspecified.
-                        // This could be fed from a lookup dictionary or other similar structure
-                        // in future to reduce the manual work updating the StructureDefinitions.
-                        PortName = HEDockingPortType.Unspecified,
-
                         // OrderID is critical as this is what the game uses as the key to match
                         // the ports in-game.
                         OrderID = (int)jtDockingPort["OrderID"],
 
+                        // Look up the correct port name for this structure and orderID
+                        PortName = GetDockingPortType((HEStructureSceneID)nsd.SceneID, 
+                            orderID: (int)jtDockingPort["OrderID"]),
+
                         // Default locked/unlocked status is preserved.
                         Locked = (bool)jtDockingPort["Locked"],
-                        // PortID is irrelevant.
                     };
 
                     nsd.DockingPorts.Add(newDockingPortDefinition);
                 }
-
-                
 
                 BlueprintObject.Structures.Add(nsd);
 

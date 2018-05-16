@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.DataStructures
 {
@@ -14,7 +14,7 @@ namespace HELLION.DataStructures
     [JsonObject(MemberSerialization.OptIn)]
     public class HEStationBlueprint
     {
-        public const decimal StationBlueprintFormatVersion = 0.37m;
+        public const decimal StationBlueprintFormatVersion = 0.38m;
 
         #region Constructors
 
@@ -302,7 +302,7 @@ namespace HELLION.DataStructures
         /// Adds a new structure to the Secondary Structures list.
         /// </summary>
         /// <returns>Returns true if the added structure is in the Structures list once created.</returns>
-        public HEBlueprintStructure AddStructure(HEBlueprintStructureSceneID sceneID)
+        public HEBlueprintStructure AddStructure(HEStructureSceneID sceneID)
         {
 
             HEBlueprintStructure newStructure = new HEBlueprintStructure
@@ -657,108 +657,6 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// The primary Enum for referencing the structures and their IDs and Descriptions.
-        /// </summary>
-        public enum HEBlueprintStructureSceneID
-        {
-            //SolarSystemSetup = -3,
-            //ItemScene = -2,
-            //None = -1,
-
-            Unspecified = 0,
-
-            //Slavica = 1,
-            //[Description("BRONTES")]
-            //AltCorp_Ship_Tamara = 2,
-
-            [Description("CIM")]
-            AltCorp_CorridorModule = 3,
-            [Description("CTM")]
-            AltCorp_CorridorIntersectionModule = 4,
-            [Description("CLM")]
-            AltCorp_Corridor45TurnModule = 5,
-
-            [Description("ARGES")]
-            AltCorp_Shuttle_SARA = 6,
-            [Description("PSM")]
-            ALtCorp_PowerSupply_Module = 7,
-            [Description("LSM")]
-            AltCorp_LifeSupportModule = 8,
-            [Description("CBM")]
-            AltCorp_Cargo_Module = 9,
-
-            [Description("CSM")]
-            AltCorp_CorridorVertical = 10, // 0x0000000A
-            [Description("CM")]
-            AltCorp_Command_Module = 11, // 0x0000000B
-            [Description("CRM")]
-            AltCorp_Corridor45TurnRightModule = 12, // 0x0000000C
-            [Description("OUTPOST")]
-            AltCorp_StartingModule = 13, // 0x0000000D
-            [Description("AM")]
-            AltCorp_AirLock = 14, // 0x0000000E
-
-            Generic_Debris_JuncRoom001 = 15, // 0x0000000F
-            Generic_Debris_JuncRoom002 = 16, // 0x00000010
-            Generic_Debris_Corridor001 = 17, // 0x00000011
-            Generic_Debris_Corridor002 = 18, // 0x00000012
-
-            [Description("IC")]
-            AltCorp_DockableContainer = 19, // 0x00000013
-
-            MataPrefabs = 20, // 0x00000014
-            Generic_Debris_Outpost001 = 21, // 0x00000015
-
-            [Description("CQM")]
-            AltCorp_CrewQuarters_Module = 22, // 0x00000016
-
-            Generic_Debris_Spawn1 = 23, // 0x00000017
-            Generic_Debris_Spawn2 = 24, // 0x00000018
-            Generic_Debris_Spawn3 = 25, // 0x00000019
-
-            [Description("SPM")]
-            AltCorp_SolarPowerModule = 26, // 0x0000001A
-            [Description("STEROPES")]
-            AltCorp_Shuttle_CECA = 27, // 0x0000001B
-            [Description("FM")]
-            AltCorp_FabricatorModule = 28, // 0x0000001C
-            FlatShipTest = 29, // 0x0000001D
-            //Asteroid01 = 1000, // 0x000003E8
-            //Asteroid02 = 1001, // 0x000003E9
-            //Asteroid03 = 1002, // 0x000003EA
-            //Asteroid04 = 1003, // 0x000003EB
-            //Asteroid05 = 1004, // 0x000003EC
-            //Asteroid06 = 1005, // 0x000003ED
-            //Asteroid07 = 1006, // 0x000003EE
-            //Asteroid08 = 1007, // 0x000003EF
-        }
-
-        /// <summary>
-        /// Docking Port Types Enum.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum HEDockingPortType
-        {
-            Unspecified = 0,
-            StandardDockingPortA,
-            StandardDockingPortB,
-            StandardDockingPortC,
-            StandardDockingPortD,
-            AirlockDockingPort,
-            Grapple,    // LEGACY ITEM - DEPRECATED
-            IndustrialContainerPortA,
-            IndustrialContainerPortB,
-            IndustrialContainerPortC,
-            IndustrialContainerPortD,
-            CargoDockingPortA,
-            CargoDockingPortB,
-            CargoDock,  // Dockable Cargo (IC) module
-            Anchor,
-            DerelictPort1,
-            DerelictPort2,
-        }
-
-        /// <summary>
         /// Enumeration for the results of a docking operation.
         /// </summary>
         public enum HEDockingResultStatus
@@ -778,148 +676,8 @@ namespace HELLION.DataStructures
             WillCauseOrphanedStructure,
         }
 
-
         #endregion
 
-        public Dictionary<HEBlueprintStructureSceneID, Dictionary<HEDockingPortType, int>> DockingPortHints 
-            = new Dictionary<HEBlueprintStructureSceneID, Dictionary<HEDockingPortType, int>>()
-        {
-            
-            { HEBlueprintStructureSceneID.AltCorp_CorridorModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.StandardDockingPortB, 2 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-            
-            { HEBlueprintStructureSceneID.AltCorp_CorridorIntersectionModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.StandardDockingPortB, 3 },
-                { HEDockingPortType.StandardDockingPortC, 2 },
-                { HEDockingPortType.Anchor, 4}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_Corridor45TurnModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.StandardDockingPortB, 2 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_Shuttle_SARA, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.AirlockDockingPort, 1 },
-                { HEDockingPortType.Anchor, 2}
-            } },
-
-            { HEBlueprintStructureSceneID.ALtCorp_PowerSupply_Module, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 2 },
-                { HEDockingPortType.StandardDockingPortB, 1 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_LifeSupportModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.StandardDockingPortB, 2 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_Cargo_Module, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.IndustrialContainerPortA, 4 },
-                { HEDockingPortType.IndustrialContainerPortB, 5 },
-                { HEDockingPortType.IndustrialContainerPortC, 7 },
-                { HEDockingPortType.IndustrialContainerPortD, 6 },
-                { HEDockingPortType.CargoDockingPortA, 2 },
-                { HEDockingPortType.CargoDockingPortB, 3 },
-                { HEDockingPortType.Anchor, 8}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_CorridorVertical, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.StandardDockingPortB, 2 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_Command_Module, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 3 },
-                { HEDockingPortType.StandardDockingPortB, 2 },
-                { HEDockingPortType.StandardDockingPortC, 1 },
-                { HEDockingPortType.StandardDockingPortD, 4 },
-                { HEDockingPortType.Anchor, 5}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_Corridor45TurnRightModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.StandardDockingPortB, 2 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_StartingModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 2 },
-                { HEDockingPortType.StandardDockingPortB, 1 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_JuncRoom001, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.DerelictPort1, 1 },
-                { HEDockingPortType.DerelictPort2, 2 }
-            } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_JuncRoom002, new Dictionary<HEDockingPortType, int> { } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_Corridor001, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.DerelictPort1, 1 }
-            } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_Corridor002, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.DerelictPort1, 1 },
-                { HEDockingPortType.DerelictPort2, 2 }
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_AirLock, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.AirlockDockingPort, 1 },
-                { HEDockingPortType.StandardDockingPortA, 2 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_DockableContainer, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.Anchor, 2}
-            } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_Outpost001, new Dictionary<HEDockingPortType, int> { } },
-
-            { HEBlueprintStructureSceneID.AltCorp_CrewQuarters_Module, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.Anchor, 2}
-            } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_Spawn1, new Dictionary<HEDockingPortType, int> { } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_Spawn2, new Dictionary<HEDockingPortType, int> { } },
-
-            { HEBlueprintStructureSceneID.Generic_Debris_Spawn3, new Dictionary<HEDockingPortType, int> { } },
-
-            { HEBlueprintStructureSceneID.AltCorp_SolarPowerModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.StandardDockingPortB, 2 },
-                { HEDockingPortType.Anchor, 3}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_Shuttle_CECA, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.Anchor, 1}
-            } },
-
-            { HEBlueprintStructureSceneID.AltCorp_FabricatorModule, new Dictionary<HEDockingPortType, int> {
-                { HEDockingPortType.StandardDockingPortA, 1 },
-                { HEDockingPortType.Anchor, 2}
-            } },
-
-            { HEBlueprintStructureSceneID.MataPrefabs, new Dictionary<HEDockingPortType, int> { } },
-
-            { HEBlueprintStructureSceneID.FlatShipTest, new Dictionary<HEDockingPortType, int> { } },
-
-        };
-        
-        
 
         /// <summary>
         /// A class to define structures (modules/ships) within the blueprint.
@@ -1057,7 +815,7 @@ namespace HELLION.DataStructures
             /// the type of structure (ship/module) to spawn. Critical! 
             /// </summary>
             [JsonProperty]
-            public HEBlueprintStructureSceneID? SceneID
+            public HEStructureSceneID? SceneID
             {
                 get => _sceneID;
                 set
@@ -1081,7 +839,7 @@ namespace HELLION.DataStructures
             /// </summary>
             [JsonProperty]
             [JsonConverter(typeof(StringEnumConverter))]
-            public HEBlueprintStructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
+            public HEStructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
             // public bool ShouldSerializeSceneName() { return OwnerObject == null || (OwnerObject != null && OwnerObject.IsTemplate) ? true : false; }
 
             [JsonProperty]
@@ -1094,9 +852,9 @@ namespace HELLION.DataStructures
                     {
 
                         // Attempt to parse the given description to an available one in the enum.
-                        HEBlueprintStructureSceneID descriptionParseResult = value.ParseToEnumDescriptionOrEnumerator<HEBlueprintStructureSceneID>();
+                        HEStructureSceneID descriptionParseResult = value.ParseToEnumDescriptionOrEnumerator<HEStructureSceneID>();
 
-                        if (descriptionParseResult != HEBlueprintStructureSceneID.Unspecified)
+                        if (descriptionParseResult != HEStructureSceneID.Unspecified)
                         {
                             SceneID = descriptionParseResult;
                         }
@@ -1346,7 +1104,7 @@ namespace HELLION.DataStructures
             #region Fields
 
             protected int? _structureID = null;
-            protected HEBlueprintStructureSceneID? _sceneID = null;
+            protected HEStructureSceneID? _sceneID = null;
             //protected HEBlueprintStructureType? _structureType = null;
             protected int? _previousStructureID = null;
             protected bool _isStructureHierarchyRoot = false;
@@ -1636,21 +1394,21 @@ namespace HELLION.DataStructures
             /// <param name="isPrefabStation"></param>
             public HEBlueprintStructureAuxData(bool? isPrefabStation = null)
             {
-                SetPrefabStation(isPrefabStation);
+                SetAllBools(isPrefabStation);
             }
 
-            public void SetPrefabStation(bool? isPrefabStation)
+            public void SetAllBools(bool? value)
             {
-                Invulnerable = isPrefabStation;
-                SystemsOnline = isPrefabStation;
-                PowerGeneratorsOnline = isPrefabStation;
-                DoorsLocked = false;    // Current prefabs don't (usually) have locked doors.
-                DockingPortsLocked = isPrefabStation;
-                CryoPodsDisabled = isPrefabStation;
-                DockingReleaseHandlesDisabled = isPrefabStation;
-                TextLabelEditingDisabled = isPrefabStation;
-                SecurityPanelsDisabled = isPrefabStation;
-                SystemPartsInteractionDisabled = isPrefabStation;
+                Invulnerable = value;
+                SystemsOnline = value;
+                PowerGeneratorsOnline = value;
+                DoorsLocked = value;    // Current prefabs don't (usually) have locked doors.
+                DockingPortsLocked = value;
+                CryoPodsDisabled = value;
+                DockingReleaseHandlesDisabled = value;
+                TextLabelEditingDisabled = value;
+                SecurityPanelsDisabled = value;
+                SystemPartsInteractionDisabled = value;
 
             }
 
@@ -1669,190 +1427,6 @@ namespace HELLION.DataStructures
             }
         }
 
-        /*
-        public class SerialisationTemplate_Blueprint
-        {
-            public string __ObjectType = "StationBlueprint";
-            public decimal Version = StationBlueprintFormatVersion;
-            public string Name = null;
-            public Uri LinkURI = null;
-            public List<SerialisationTemplate_Structure> Structures = new List<SerialisationTemplate_Structure>();
-        }
-        public class SerialisationTemplate_Structure
-        {
-            public int StructureID;
-            public HEBlueprintStructureType StructureType;
-            public List<SerialisationTemplate_DockingPort> DockingPorts = new List<SerialisationTemplate_DockingPort>();
-        }
-        public class SerialisationTemplate_DockingPort
-        {
-            public HEDockingPortType PortName;
-            public int OrderID;
-            public int? DockedStructureID = null;
-            public HEDockingPortType? DockedPortName = null;
-        }
-        */              
     }
 
-    /*
-    public class SceneIDStringEnumConverter : StringEnumConverter
-    {
-
-        
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool CanConvert(Type objectType)
-        {
-            throw new NotImplementedException();
-        }
-        
-
-        
-        /// <summary>
-        /// Reads the JSON representation of the object.
-        /// </summary>
-        /// <param name="reader">The <see cref="JsonReader"/> to read from.</param>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="existingValue">The existing value of object being read.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        /// <returns>The object value.</returns>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-
-            bool isNullable = ReflectionUtils.IsNullableType(objectType);
-            Type t = isNullable ? Nullable.GetUnderlyingType(objectType) : objectType;
-
-            if (t != typeof(HEBlueprintStructureSceneID))
-                throw new Exception("Was called, but wrong type.");
-
-            try
-            {
-                if (reader.TokenType == JsonToken.String)
-                {
-                    string enumText = reader.Value.ToString();
-
-                    if (enumText == string.Empty && isNullable)
-                    {
-                        return null;
-                    }
-
-                    HEBlueprintStructureSceneID descriptionParseResult = EnumExtensions.ParseToEnumDescriptionOrEnumerator<HEBlueprintStructureSceneID>(enumText);
-                    if (descriptionParseResult != HEBlueprintStructureSceneID.Unspecified) return descriptionParseResult;
-
-                    return Enum.TryParse(enumText, out HEBlueprintStructureSceneID result) ? (object)result : null;
-
-
-                    //return EnumUtils.ParseEnum(t, enumText, !AllowIntegerValues);
-                }
-
-                if (reader.TokenType == JsonToken.Integer)
-                {
-                    if (!AllowIntegerValues)
-                    {
-                        throw new JsonSerializationException(String.Format("Integer value {0} is not allowed.", reader.Value));
-                    }
-
-                    return (HEBlueprintStructureSceneID)reader.Value;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new JsonSerializationException(String.Format("Error converting value {0} to type '{1}'.{2}{3}",
-                    reader.Value, objectType, Environment.NewLine, ex));
-            }
-
-            // we don't actually expect to get here.
-            throw new JsonSerializationException(String.Format("Unexpected token {0} when parsing enum.", reader.TokenType));
-        }
-
-        internal static class ValidationUtils
-        {
-            public static void ArgumentNotNull(object value, string parameterName)
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(parameterName);
-                }
-            }
-        }
-
-
-        internal static class ReflectionUtils
-        {
-
-            public static bool IsNullable(Type t)
-            {
-                ValidationUtils.ArgumentNotNull(t, nameof(t));
-
-                if (t.IsValueType)
-                {
-                    return IsNullableType(t);
-                }
-
-                return true;
-            }
-
-            public static bool IsNullableType(Type t)
-            {
-                ValidationUtils.ArgumentNotNull(t, nameof(t));
-
-                return (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>));
-            }
-        }
-    }
-    */
-
-    /*
-    /// <summary>
-    /// LEGACY Structure Types Enum.
-    /// </summary>
-    /// <remarks>
-    /// The numeric values of these correspond to the game's ItemID in the structures.json
-    /// to allow for easier cross-referencing.
-    /// </remarks>
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum aHEBlueprintStructureType
-    {
-        Unspecified = 0,
-        //BRONTES = 2,
-        CIM = 3,
-        CTM = 4,
-        CLM = 5,
-        ARG = 6,
-        PSM = 7,
-        LSM = 8,
-        CBM = 9,
-        CSM = 10,
-        CM = 11,
-        CRM = 12,
-        OUTPOST = 13,
-        AM = 14,
-        Generic_Debris_JuncRoom001 = 15, // 0x0000000F
-        Generic_Debris_JuncRoom002 = 16, // 0x00000010
-        Generic_Debris_Corridor001 = 17, // 0x00000011
-        Generic_Debris_Corridor002 = 18, // 0x00000012
-        IC = 19, // 0x00000013
-        //MataPrefabs = 20, // 0x00000014
-        //Generic_Debris_Outpost001 = 21, // 0x00000015
-        CQM = 22, // 0x00000016
-        // Generic_Debris_Spawn1 = 23, // 0x00000017
-        // Generic_Debris_Spawn2 = 24, // 0x00000018
-        // Generic_Debris_Spawn3 = 25, // 0x00000019
-        SPM = 26, // 0x0000001A
-        STEROPES = 27, // 0x0000001B
-        FM = 28, // 0x0000001C
-        // FlatShipTest = 29, // 0x0000001D
-    }
-    */
-
-    }
+}
