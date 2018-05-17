@@ -20,7 +20,7 @@ namespace HELLION.DataStructures
             Unspecified = 0,
 
             //Slavica = 1,
-            //[Description("BRONTES")]
+            //[Description("BRO")] // AltCorp Brontes?
             //AltCorp_Ship_Tamara = 2,
 
             [Description("CIM")]
@@ -30,8 +30,8 @@ namespace HELLION.DataStructures
             [Description("CLM")]
             AltCorp_Corridor45TurnModule = 5,
 
-            [Description("ARGES")]
-            AltCorp_Shuttle_SARA = 6,
+            [Description("ARG")]
+            AltCorp_Shuttle_SARA = 6, // AltCorp Arges (aka Mule)
             [Description("PSM")]
             ALtCorp_PowerSupply_Module = 7,
             [Description("LSM")]
@@ -70,11 +70,13 @@ namespace HELLION.DataStructures
 
             [Description("SPM")]
             AltCorp_SolarPowerModule = 26, // 0x0000001A
-            [Description("STEROPES")]
-            AltCorp_Shuttle_CECA = 27, // 0x0000001B
+            [Description("STE")]
+            AltCorp_Shuttle_CECA = 27, // 0x0000001B // AltCorp Steropes.
             [Description("FM")]
             AltCorp_FabricatorModule = 28, // 0x0000001C
             FlatShipTest = 29, // 0x0000001D
+            // ActaeonProbe = 30, // 0x0000001E
+
             //Asteroid01 = 1000, // 0x000003E8
             //Asteroid02 = 1001, // 0x000003E9
             //Asteroid03 = 1002, // 0x000003EA

@@ -200,7 +200,7 @@ namespace HELLION.DataStructures
                     NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume")),
 
                     // Look up the Power requirement for this module.
-                    // Select subsystem type 13 (usually with RoomID of -1)
+                    // Select subsystem type 13 (VesselBasePowerConsumer) usually with RoomID of -1
                     StandbyPowerRequirement = (float)jtStructure.SelectToken(
                         "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Standby"),
 
