@@ -144,19 +144,22 @@ namespace HELLION.CrewSync
 
             if (!ProcessCommandLineArguments(args)) return;
 
+            Console.Write("Loading save file...");
             if (!FileOpen()) return;
+            Console.WriteLine(" Complete.");
 
-            DateTime steamQueryStart = DateTime.Now;
-            Console.WriteLine("Querying Steam Public API for group membership...");
+            DateTime operationStartTime = DateTime.Now;
+            Console.Write("Querying Steam Public API for group membership...");
             string groupName = SteamIntegration.GetGroupName((long)groupID64);
             if (!RetrieveSteamGroupMembership()) return;
-            Console.WriteLine("Steam Group {0} ({1}) has {2} member(s).{3}Operation completed in {4} second(s).", 
-                groupID64, groupName, groupMembers.Count, Environment.NewLine, DateTime.Now - steamQueryStart);
+            Console.WriteLine(" Complete.");
+            Console.WriteLine("Steam Group {0} ({1}) has {2} member(s).", 
+                groupID64, groupName, groupMembers.Count);
 
 
+            TimeSpan timeElapsed = DateTime.Now - operationStartTime;
 
-
-
+            Console.WriteLine("Operation completed in {0}.{1} second(s).", timeElapsed.Seconds, timeElapsed.Milliseconds);
 
 #if DEBUG
             Console.WriteLine("Press enter to continue...");
