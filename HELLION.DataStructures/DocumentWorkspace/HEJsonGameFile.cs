@@ -12,7 +12,7 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEJsonGameFile : HEBaseJsonFile
+    public class HEJsonGameFile : HEUIJsonFile
     {
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.

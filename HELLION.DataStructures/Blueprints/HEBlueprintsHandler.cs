@@ -20,6 +20,7 @@ namespace HELLION.DataStructures
 
             // Create the object.
             StructureDefinitionsFile = new HEBlueprintStructureDefinitionsFile(this, structureDefinitionsFileInfo, populateNodeTreeDepth: 8);
+            // StructureDefinitionsFile = new HEStationBlueprintFile(this, structureDefinitionsFileInfo, populateNodeTreeDepth: 8);
 
             if (StructureDefinitionsFile.RootNode == null)
                 throw new NullReferenceException("StructureDefinitionsFile rootNode was null.");
@@ -68,7 +69,7 @@ namespace HELLION.DataStructures
         /// </summary>
         public HEBlueprintStructureDefinitionsFile StructureDefinitionsFile { get; protected set; } = null;
 
-        //public HEStationonBlueprintFile sd { get; protected set; } = null;
+        //public HEStationBlueprintFile StructureDefinitionsFile { get; protected set; } = null;
 
 
     }

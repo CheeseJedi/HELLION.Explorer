@@ -12,7 +12,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// 
     /// </summary>
-    public class HEBlueprintStructureDefinitionsFile : HEBaseJsonFile
+    public class HEBlueprintStructureDefinitionsFile : HEUIJsonFile
     {
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
@@ -44,7 +44,7 @@ namespace HELLION.DataStructures
         }
 
 
-        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, HEBaseJsonFile structuresJsonFile) : base(passedParent)
+        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile) : base(passedParent)
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
             // Check the reference to the Static Data's Structures.json file.
@@ -56,7 +56,7 @@ namespace HELLION.DataStructures
         }
 
 
-        public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEBaseJsonFile structuresJsonFile)
+        public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile)
         {
 
             //HEBlueprintStructureDefinitionsFile newSDFile = new HEBlueprintStructureDefinitionsFile(null);

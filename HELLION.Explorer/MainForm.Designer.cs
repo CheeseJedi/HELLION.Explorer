@@ -57,6 +57,7 @@
             this.cleanupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.repairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.steamUtilitiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setDataFolderLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verifyDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,6 +67,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.saveTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateStructureDefinitionsStubjsonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -99,7 +101,6 @@
             this.jsonDataViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.generateStructureDefinitionsStubjsonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -334,6 +335,7 @@
             this.cleanupToolStripMenuItem,
             this.repairToolStripMenuItem,
             this.toolStripSeparator5,
+            this.steamUtilitiesToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
@@ -360,6 +362,12 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             this.toolStripSeparator5.Visible = false;
+            // 
+            // steamUtilitiesToolStripMenuItem
+            // 
+            this.steamUtilitiesToolStripMenuItem.Name = "steamUtilitiesToolStripMenuItem";
+            this.steamUtilitiesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.steamUtilitiesToolStripMenuItem.Text = "Steam Utilities";
             // 
             // optionsToolStripMenuItem
             // 
@@ -425,9 +433,16 @@
             // saveTestToolStripMenuItem
             // 
             this.saveTestToolStripMenuItem.Name = "saveTestToolStripMenuItem";
-            this.saveTestToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.saveTestToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
             this.saveTestToolStripMenuItem.Text = "SaveTest";
             this.saveTestToolStripMenuItem.Click += new System.EventHandler(this.saveTestToolStripMenuItem_Click);
+            // 
+            // generateStructureDefinitionsStubjsonToolStripMenuItem
+            // 
+            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Name = "generateStructureDefinitionsStubjsonToolStripMenuItem";
+            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
+            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Text = "Generate StructureDefinitionsStub.json";
+            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Click += new System.EventHandler(this.generateStructureDefinitionsStubjsonToolStripMenuItem_Click);
             // 
             // openFileDialog1
             // 
@@ -742,13 +757,6 @@
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Visible = false;
             // 
-            // generateStructureDefinitionsStubjsonToolStripMenuItem
-            // 
-            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Name = "generateStructureDefinitionsStubjsonToolStripMenuItem";
-            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
-            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Text = "Generate StructureDefinitionsStub.json";
-            this.generateStructureDefinitionsStubjsonToolStripMenuItem.Click += new System.EventHandler(this.generateStructureDefinitionsStubjsonToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -858,6 +866,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem generateStructureDefinitionsStubjsonToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem steamUtilitiesToolStripMenuItem;
     }
 } // End of namespace HELLION.Explorer
 

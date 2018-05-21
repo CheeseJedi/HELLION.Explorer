@@ -92,7 +92,7 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.Planet:
                 case HETreeNodeType.Moon:
                     // These come from the Static Data - handled by the CelestialBodies.json member of the DataDictionary
-                    if (!GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEBaseJsonFile celestialBodiesJsonBaseFile))
+                    if (!GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEUIJsonFile celestialBodiesJsonBaseFile))
                         throw new InvalidOperationException("Unable to access the CelestialBodies.json from the Static Data Dictionary.");
                     else
                     {

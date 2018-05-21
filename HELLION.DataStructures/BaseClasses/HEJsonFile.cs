@@ -15,31 +15,28 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEBaseJsonFile
+    public class HEJsonFile
     {
         /// <summary>
-        /// Default constructor, not used directly but required by the derived class.
+        /// Default constructor, not used directly but used by derived classes.
         /// </summary>
-        public HEBaseJsonFile(object ownerObject)
+        public HEJsonFile(object ownerObject)
         {
-            OwnerObject = ownerObject ?? throw new NullReferenceException();
+            OwnerObject = ownerObject;
+            if (OwnerObject == null) Debug.Print("OwnerObject was null.");
         }
 
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEBaseJsonFile(object ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : this(ownerObject)
+        public HEJsonFile(object ownerObject, FileInfo passedFileInfo) : this(ownerObject) // , int populateNodeTreeDepth
         {
-            File = passedFileInfo ?? throw new NullReferenceException();
-            RootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+            File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
 
-            if (!File.Exists) throw new FileNotFoundException();
-            else
+            if (File.Exists)
             {
                 LoadFile();
-                RootNode.JData = jData;
-                RootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
             }
         }
 
@@ -87,14 +84,6 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Public property for read-only access to the root node of the tree.
-        /// </summary>
-        /// <remarks>
-        /// Casts the RootNode to an HEGameDataTreeNode.
-        /// </remarks>
-        public HEGameDataTreeNode RootNode { get; protected set; } = null;
-
-        /// <summary>
         /// Used to determine whether the file is loaded.
         /// </summary>
         public bool IsLoaded { get; protected set; } = false;
@@ -102,7 +91,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Used to determine whether there was an error on load.
         /// </summary>
-        public bool LoadError
+        public virtual bool LoadError
         {
             get
             {
@@ -117,7 +106,7 @@ namespace HELLION.DataStructures
                         // Set the load error flag
                         loadError = true;
                         // Change the node type so that the icon changes to the error type
-                        RootNode.NodeType = HETreeNodeType.DataFileError;
+                        //RootNode.NodeType = HETreeNodeType.DataFileError;
                         /*
                         // Fire the event
                         OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Load Error in file {0}", File.FullName)));
@@ -266,7 +255,7 @@ namespace HELLION.DataStructures
                         if (jData.Type == JTokenType.Array || jData.Type == JTokenType.Object)
                         {
                             numObj = jData.Count();
-                            Debug.Print(File.Name + " loading and is detected as an " + jData.Type.ToString() + ", " + numObj.ToString() + " JTokens loaded.");
+                            Console.WriteLine(File.Name + " loaded; detected as " + jData.Type.ToString() + ", " + numObj.ToString() + " JToken(s) detected.");
                         }
                         else
                         {
@@ -361,7 +350,7 @@ namespace HELLION.DataStructures
         /// Handles closing of this file, and de-allocation of it's objects
         /// </summary>
         /// <returns></returns>
-        public bool Close()
+        public virtual bool Close()
         {
             if (IsDirty)
             {
@@ -373,7 +362,7 @@ namespace HELLION.DataStructures
                 IsLoaded = false;
                 File = null;
                 jData = null;
-                RootNode = null;
+                //RootNode = null;
                 return true;
             }
         }

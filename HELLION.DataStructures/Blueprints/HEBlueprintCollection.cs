@@ -41,7 +41,7 @@ namespace HELLION.DataStructures
         public new HEBlueprintsHandler OwnerObject { get; protected set; } = null;
             
         /// <summary>
-        /// The Data Dictionary holds HEBaseJsonFile objects, with the file name as the key.
+        /// The Data Dictionary holds HEUIJsonFile objects, with the file name as the key.
         /// </summary>
         public new Dictionary<string, HEStationBlueprintFile> DataDictionary { get; protected set; } = null;
 

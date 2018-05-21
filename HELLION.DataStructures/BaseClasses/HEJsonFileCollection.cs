@@ -26,7 +26,7 @@ namespace HELLION.DataStructures
         {
 
             // Set up the data dictionary
-            DataDictionary = new Dictionary<string, HEBaseJsonFile>();
+            DataDictionary = new Dictionary<string, HEUIJsonFile>();
 
             // Check validity - if good load the data set
             OwnerObject = passedParent ?? throw new InvalidOperationException("passedParent was null.");
@@ -45,9 +45,9 @@ namespace HELLION.DataStructures
         public HEGameData OwnerObject { get; protected set; } = null;
             
         /// <summary>
-        /// The Data Dictionary holds HEBaseJsonFile objects, with the file name as the key.
+        /// The Data Dictionary holds HEUIJsonFile objects, with the file name as the key.
         /// </summary>
-        public Dictionary<string, HEBaseJsonFile> DataDictionary { get; protected set; } = null;
+        public Dictionary<string, HEUIJsonFile> DataDictionary { get; protected set; } = null;
 
         /// <summary>
         /// Public property to access the DirectoryInfo used to build the file collection.
@@ -94,15 +94,15 @@ namespace HELLION.DataStructures
                 // Set up a list to monitor tasks running asynchronously
                 //List<Task> tasks = new List<Task>();
 
-                //HEBaseJsonFile tempFile = null;
+                //HEUIJsonFile tempFile = null;
 
                 foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
                     
-                    // Create a new HEBaseJsonFile and populate the path.
-                    HEBaseJsonFile tempJsonFile = new HEBaseJsonFile(this, dataFile, PopulateNodeTreeDepth);
+                    // Create a new HEUIJsonFile and populate the path.
+                    HEUIJsonFile tempJsonFile = new HEUIJsonFile(this, dataFile, PopulateNodeTreeDepth);
                     // Add the file to the Data Dictionary 
                     DataDictionary.Add(dataFile.Name, tempJsonFile);
 
@@ -140,9 +140,9 @@ namespace HELLION.DataStructures
 
                 if (DataDictionary != null)
                 {
-                    foreach (KeyValuePair<string, HEBaseJsonFile> keyValuePair in DataDictionary)
+                    foreach (KeyValuePair<string, HEUIJsonFile> keyValuePair in DataDictionary)
                     {
-                        HEBaseJsonFile jsonBaseFile = keyValuePair.Value;
+                        HEUIJsonFile jsonBaseFile = keyValuePair.Value;
 
                         if (jsonBaseFile != null)
                         {

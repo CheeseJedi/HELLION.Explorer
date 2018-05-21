@@ -10,7 +10,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// Defines a class to load HSBF blueprint files.
     /// </summary>
-    public class HEStationBlueprintFile : HEBaseJsonFile
+    public class HEStationBlueprintFile : HEUIJsonFile
     {
         #region Constructors
 
@@ -46,7 +46,7 @@ namespace HELLION.DataStructures
 
         }
 
-        public HEStationBlueprintFile(object passedParent, FileInfo passedFileInfo, HEBaseJsonFile structuresJsonFile) : base(passedParent)
+        public HEStationBlueprintFile(object passedParent, FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile) : base(passedParent)
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
             // Check the reference to the Static Data's Structures.json file.
@@ -174,7 +174,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedFileInfo"></param>
         /// <param name="structuresJsonFile"></param>
-        public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEBaseJsonFile structuresJsonFile)
+        public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile)
         {
 
             BlueprintObject.__ObjectType = BlueprintObjectType.BlueprintStructureDefinitions;

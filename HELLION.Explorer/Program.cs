@@ -455,7 +455,7 @@ namespace HELLION.Explorer
                 // Set up the GuidManager
                 HEGuidManager.ClearObservedGuidsList();
                 // Add the Celestial Bodies GUIDs.
-                if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEBaseJsonFile celestialBodiesJsonBaseFile))
+                if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEUIJsonFile celestialBodiesJsonBaseFile))
                 {
                     HEGuidManager.PopulateObservedGuidsList(celestialBodiesJsonBaseFile.JData);
                 }

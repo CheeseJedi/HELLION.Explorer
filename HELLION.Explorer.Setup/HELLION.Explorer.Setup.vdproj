@@ -21,8 +21,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_13278B24993817D8EA0D912C893B01A2"
-        "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+        "MsmKey" = "8:_07F3B2B8D21DC71C68E5A88D1AF2DD19"
+        "OwnerKey" = "8:_F41197E61B1243CA9CFB4722ECC0DF14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_07F3B2B8D21DC71C68E5A88D1AF2DD19"
+        "OwnerKey" = "8:_D2210E58FE3D4763AE870704279AB893"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -33,19 +39,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_72C57A9A7B1D096EFF1A36E2AF184140"
-        "OwnerKey" = "8:_C3752FB98C65D3B6DA01B9F748BB3008"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_72C57A9A7B1D096EFF1A36E2AF184140"
+        "MsmKey" = "8:_98F5D29C322268871F4CCD44584C3092"
         "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_C3752FB98C65D3B6DA01B9F748BB3008"
+        "MsmKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
+        "OwnerKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
+        "OwnerKey" = "8:_D2210E58FE3D4763AE870704279AB893"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
         "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -57,6 +69,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D2210E58FE3D4763AE870704279AB893"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
+        "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
+        "OwnerKey" = "8:_D2210E58FE3D4763AE870704279AB893"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F41197E61B1243CA9CFB4722ECC0DF14"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
         "MsmSig" = "8:_UNDEFINED"
@@ -64,19 +100,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_13278B24993817D8EA0D912C893B01A2"
+        "OwnerKey" = "8:_F41197E61B1243CA9CFB4722ECC0DF14"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C3752FB98C65D3B6DA01B9F748BB3008"
+        "OwnerKey" = "8:_D2210E58FE3D4763AE870704279AB893"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_72C57A9A7B1D096EFF1A36E2AF184140"
+        "OwnerKey" = "8:_98F5D29C322268871F4CCD44584C3092"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -211,14 +259,34 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_13278B24993817D8EA0D912C893B01A2"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18119A1531594708AF2906D76735C170"
+            {
+            "SourcePath" = "8:..\\HELLION.Explorer\\HELLION.Explorer.ico"
+            "TargetName" = "8:HELLION.Explorer.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_98F5D29C322268871F4CCD44584C3092"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_13278B24993817D8EA0D912C893B01A2"
+                    "_98F5D29C322268871F4CCD44584C3092"
                     {
                     "Name" = "8:FastColoredTextBox.dll"
                     "Attributes" = "3:512"
@@ -242,34 +310,14 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18119A1531594708AF2906D76735C170"
-            {
-            "SourcePath" = "8:..\\HELLION.Explorer\\HELLION.Explorer.ico"
-            "TargetName" = "8:HELLION.Explorer.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_72C57A9A7B1D096EFF1A36E2AF184140"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AD9E342F192FB9BA326200C4B15663AF"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_72C57A9A7B1D096EFF1A36E2AF184140"
+                    "_AD9E342F192FB9BA326200C4B15663AF"
                     {
                     "Name" = "8:Newtonsoft.Json.dll"
                     "Attributes" = "3:512"
@@ -293,14 +341,14 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C3752FB98C65D3B6DA01B9F748BB3008"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D53F3B8B8514AFF52CC28DA8D85166FA"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.0.5.110, Culture=neutral, processorArchitecture=AMD64"
+            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.0.5.543, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_C3752FB98C65D3B6DA01B9F748BB3008"
+                    "_D53F3B8B8514AFF52CC28DA8D85166FA"
                     {
                     "Name" = "8:HELLION.DataStructures.dll"
                     "Attributes" = "3:512"
@@ -993,7 +1041,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C94CC3BB5A4A43FFACA2121E609E803E"
             {
-            "SourcePath" = "8:..\\HELLION.Explorer\\obj\\x64\\Debug\\HELLION.Explorer.exe"
+            "SourcePath" = "8:..\\HELLION.Explorer\\obj\\Debug\\HELLION.Explorer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
@@ -1014,6 +1062,62 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{7A7A978C-1502-45A3-94C3-F6B6D4F5B5DD}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_D2210E58FE3D4763AE870704279AB893"
+            {
+            "SourcePath" = "8:..\\HELLION.CrewSync\\obj\\Debug\\HELLION.CrewSync.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{B5930D07-E21A-410F-BFFA-ED70A144A655}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F41197E61B1243CA9CFB4722ECC0DF14"
+            {
+            "SourcePath" = "8:..\\HELLION.StationBlueprintEditor\\obj\\Debug\\HELLION.StationBlueprintEditor.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{EE667242-57F1-48DA-8C40-84C9EDA05AF4}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

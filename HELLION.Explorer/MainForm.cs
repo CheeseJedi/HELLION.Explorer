@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 
@@ -159,7 +161,7 @@ namespace HELLION.Explorer
                 {
                     // Select the node the user has clicked.
                     treeView1.SelectedNode = node;
-                    
+
                     // Determine node type and activate appropriate jump to menu items.
                     Type t = node.GetType();
                     if (t.Equals(typeof(HEGameDataTreeNode)))
@@ -364,7 +366,7 @@ namespace HELLION.Explorer
 
                             // Update node counts, this may need to be triggered from the parent(s) also.
                             //tempNode.UpdateCounts();
-                            
+
                             // Expand the current node
                             tempGameDataNode.Expand();
                         }
@@ -564,7 +566,7 @@ namespace HELLION.Explorer
 
         private void saveTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
             if (Program.docCurrent != null) //  && Program.docCurrent.IsDirty)
             {
                 // Currently always returns false
@@ -593,7 +595,7 @@ namespace HELLION.Explorer
             {
 
                 if (!Program.docCurrent.GameData.StaticData.DataDictionary.
-                    TryGetValue("Structures.json", out HEBaseJsonFile structuresJsonBaseFile))
+                    TryGetValue("Structures.json", out HEUIJsonFile structuresJsonBaseFile))
                     throw new InvalidOperationException(
                         "Unable to access the Structures.json file from the Static Data Dictionary.");
                 else
@@ -618,5 +620,84 @@ namespace HELLION.Explorer
 
 
         }
+
+
+
+        private void playerNameBySteamID64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string result = HEUtilities.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
+            MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
+
+        }
+
+        private void _playerNameBySteamID64()
+        {
+            string result = HEUtilities.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
+            MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
+
+        }
+
+
+
+        private void groupID64ByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string groupName = HEUtilities.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
+
+            long? result = SteamIntegration.GetGroupID(groupName);
+
+            MessageBox.Show((result != null ? result.ToString() : "No result."), "GroupID64:");
+
+        }
+
+        private void _groupID64ByGroupName()
+        {
+            string groupName = HEUtilities.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
+
+            long? result = SteamIntegration.GetGroupID(groupName);
+
+            MessageBox.Show((result != null ? result.ToString() : "No result."), "GroupID64:");
+
+        }
+
+
+
+        private void groupMembersByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+
+        private void groupMembersByGroupID64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+
+        private void _groupMembersByGroupID64()
+        {
+            string result = HEUtilities.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam Group Members", null);
+
+            List<long> iDs = SteamIntegration.GetGroupMembers(result);
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("Results for lookup of membership of Steam Group:  " + result);
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+
+            foreach (long iD in iDs)
+            {
+                sb.Append("Player SteamID64: " + iD.ToString() + " " + SteamIntegration.GetPlayerName(iD) + Environment.NewLine);
+            }
+
+            sb.Append(Environment.NewLine);
+            sb.Append(String.Format("Group contains {0} member(s).", iDs.Count));
+            sb.Append(Environment.NewLine);
+
+            MessageBox.Show(sb.ToString());
+
+
+        }
+
     }
 }

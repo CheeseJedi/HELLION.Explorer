@@ -269,8 +269,6 @@ namespace HELLION.DataStructures
         }
 
 
-
-
         /// <summary>
         /// Returns the values of an enum of given type T
         /// usage: var values = EnumUtil.GetValues<Foos>();
