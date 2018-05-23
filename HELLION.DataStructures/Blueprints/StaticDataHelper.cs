@@ -7,7 +7,6 @@ namespace HELLION.DataStructures
 {
     public static class StaticDataHelper
     {
-
         /// <summary>
         /// The primary Enum for referencing the structures and their IDs and Descriptions.
         /// </summary>
@@ -110,7 +109,6 @@ namespace HELLION.DataStructures
             DerelictPort1,
             DerelictPort2,
         }
-
 
         public static Dictionary<HEStructureSceneID, Dictionary<int, HEDockingPortType>> DockingPortHints
             = new Dictionary<HEStructureSceneID, Dictionary<int, HEDockingPortType>>()
@@ -250,7 +248,6 @@ namespace HELLION.DataStructures
 
         };
 
-
         public static HEDockingPortType GetDockingPortType(HEStructureSceneID sceneID, int orderID)
         {
             // Attempt to locate the correct port Dictionary by sceneID.
@@ -265,16 +262,40 @@ namespace HELLION.DataStructures
             return HEDockingPortType.Unspecified;
         }
 
-
-        public static void test()
+        public enum AuthorisedPersonRank
         {
-            // HEDockingPortType test = HEStructureSceneID.AltCorp_Cargo_Module.GetDockingPortType(orderID: 2).ToString();
+            None = 0, // 0
+            CommandingOfficer, // 1
+            ExecutiveOfficer,
+            Crewman, // 3
         }
 
+        public class AuthorisedPerson
+        {
+            public AuthorisedPersonRank Rank;
+            public long PlayerGUID;
+            public long SteamID;
+            public string Name;
+        }
+
+        public class AuthorisedPersonSteamIDComparer : IEqualityComparer<AuthorisedPerson>
+        {
+            public bool Equals(AuthorisedPerson item1, AuthorisedPerson item2)
+            {
+                if (object.ReferenceEquals(item1, item2))
+                    return true;
+                if (item1 == null || item2 == null)
+                    return false;
+                return item1.SteamID.Equals(item2.SteamID);
+            }
+            public int GetHashCode(AuthorisedPerson item)
+            {
+                //int hCode = bx.Height ^ bx.Length ^ bx.Width;
+                return item.SteamID.GetHashCode();
+            }
+        }
 
     }
-
-
 
     /*
     public class SceneIDStringEnumConverter : StringEnumConverter

@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json.Linq;
+
 /// <summary>
 /// Defines a derived HETreeNode to handle objects in the Solar System view.
 /// Also defines a node sorter that sorts by Semi-Major axis instead of by name which is

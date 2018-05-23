@@ -307,15 +307,16 @@ namespace HELLION.DataStructures
 
             if (File.Exists && CreateBackup)
             {
+                string backupFullName = File.FullName + ".bak";
                 // Check to see if the backup file already exists
-                if (System.IO.File.Exists(File.FullName + ".bak"))
+                if (System.IO.File.Exists(backupFullName))
                 {
                     // It does, so remove it.
-                    Debug.Print("Deleting " + File.FullName + ".bak");
-                    System.IO.File.Delete(File.FullName + ".bak");
+                    Debug.Print("Deleting " + backupFullName);
+                    System.IO.File.Delete(backupFullName);
                 }
                 // MainFile already exists, create a backup copy (.save.bak)
-                System.IO.File.Move(File.FullName, File.FullName + ".bak");
+                System.IO.File.Move(File.FullName, backupFullName);
             }
             else
             {
