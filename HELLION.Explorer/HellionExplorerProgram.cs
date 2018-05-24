@@ -1154,7 +1154,6 @@ namespace HELLION.Explorer
 
         #endregion
 
-
         /// <summary>
         /// Returns a single TreeNode with a given path.
         /// </summary>
@@ -1211,7 +1210,7 @@ namespace HELLION.Explorer
             Console.WriteLine(Application.ProductName + " - " + Application.ProductVersion);
 
             #if DEBUG
-            Console.WriteLine("Mode=Debug");
+                Console.WriteLine("Mode=Debug");
             #else
                 Console.WriteLine("Mode=Release"); 
             #endif

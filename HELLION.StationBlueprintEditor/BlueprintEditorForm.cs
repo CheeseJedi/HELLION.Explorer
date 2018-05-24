@@ -5,22 +5,22 @@ using HELLION.DataStructures;
 using static HELLION.DataStructures.HEStationBlueprint;
 using static HELLION.DataStructures.StaticDataHelper;
 
-namespace HELLION.Explorer
+namespace HELLION.StationBlueprintEditor
 {
-    public partial class BlueprintEditorForm : Form
+    public partial class StationBlueprintEditorForm : Form
     {
         #region Constructors
 
         /// <summary>
         /// Basic Constructor.
         /// </summary>
-        public BlueprintEditorForm()
+        public StationBlueprintEditorForm()
         {
             InitializeComponent();
-            Icon = Program.MainForm.Icon;
+            Icon = StationBlueprintEditorProgram.MainForm.Icon;
 
-            treeViewPrimaryStructure.ImageList = Program.hEImageList.IconImageList;
-            treeViewSecondaryStructures.ImageList = Program.hEImageList.IconImageList;
+            treeViewPrimaryStructure.ImageList = StationBlueprintEditorProgram.hEImageList.IconImageList;
+            treeViewSecondaryStructures.ImageList = StationBlueprintEditorProgram.hEImageList.IconImageList;
 
             treeViewPrimaryStructure.ShowNodeToolTips = true;
             treeViewSecondaryStructures.ShowNodeToolTips = true;
@@ -40,7 +40,7 @@ namespace HELLION.Explorer
         /// Constructor that takes a HEBlueprintTreeNode.
         /// </summary>
         /// <param name="passedSourceNode"></param>
-        public BlueprintEditorForm(HEBlueprintTreeNode passedSourceNode) : this()
+        public StationBlueprintEditorForm(HEBlueprintTreeNode passedSourceNode) : this()
         {
             SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.Name;
@@ -327,7 +327,7 @@ namespace HELLION.Explorer
         private void RefreshPictureBoxSelectedPrimaryStructure()
         {
             pictureBoxSelectedPrimaryStructure.Image = SelectedPrimaryStructure == null ? null
-                : Program.hEImageList.StructureImageList.Images[
+                : StationBlueprintEditorProgram.hEImageList.StructureImageList.Images[
                     HEImageList.GetStructureImageIndexBySceneID(SelectedPrimaryStructure.SceneID.Value)];
         }
 
@@ -358,7 +358,7 @@ namespace HELLION.Explorer
         private void RefreshPictureBoxSelectedSecondaryStructure()
         {
             pictureBoxSelectedSecondaryStructure.Image = SelectedSecondaryStructure == null ? null
-                : Program.hEImageList.StructureImageList.Images[
+                : StationBlueprintEditorProgram.hEImageList.StructureImageList.Images[
                     HEImageList.GetStructureImageIndexBySceneID(SelectedSecondaryStructure.SceneID.Value)];
         }
 
@@ -681,8 +681,8 @@ namespace HELLION.Explorer
 
 
             // Remove the current JsonDataViewForm from the jsonDataViews list
-            Program.blueprintEditorForms.Remove(this);
-            GC.Collect();
+            //StationBlueprintEditorProgram.blueprintEditorForms.Remove(this);
+            //GC.Collect();
 
         }
 

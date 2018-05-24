@@ -1,6 +1,6 @@
-﻿namespace HELLION.Explorer
+﻿namespace HELLION.StationBlueprintEditor
 {
-    partial class BlueprintEditorForm
+    partial class StationBlueprintEditorForm
     {
         /// <summary>
         /// Required designer variable.
@@ -466,7 +466,7 @@
             this.treeViewSecondaryStructures.TabIndex = 0;
             this.treeViewSecondaryStructures.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeViewSecondaryStructures_AfterSelect);
             // 
-            // BlueprintEditorForm
+            // StationBlueprintEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -477,7 +477,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(700, 790);
-            this.Name = "BlueprintEditorForm";
+            this.Name = "StationBlueprintEditorForm";
             this.Text = "Blueprint Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlueprintEditorForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);

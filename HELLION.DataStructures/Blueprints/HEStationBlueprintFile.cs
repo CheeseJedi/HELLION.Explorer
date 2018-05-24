@@ -46,6 +46,12 @@ namespace HELLION.DataStructures
 
         }
 
+        /// <summary>
+        /// Constructor used to generate a StructuresDefinition.json file.
+        /// </summary>
+        /// <param name="passedParent"></param>
+        /// <param name="passedFileInfo"></param>
+        /// <param name="structuresJsonFile"></param>
         public HEStationBlueprintFile(object passedParent, FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile) : base(passedParent)
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
@@ -57,10 +63,43 @@ namespace HELLION.DataStructures
 
         }
 
+        #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Stores a reference to the parent object, if set using the constructor.
+        /// </summary>
+        public new HEBlueprintCollection OwnerObject{ get; protected set; }
+
+        /// <summary>
+        /// This class overrides the type of root node to represent a blueprint.
+        /// </summary>
+        public new HEBlueprintTreeNode RootNode { get; protected set; } = null;
+
+        /// <summary>
+        /// A reference to the DataView's root node.
+        /// </summary>
+        public HEGameDataTreeNode DataViewRootNode { get; protected set; } = null;
+
+        /// <summary>
+        /// A reference to the hierarchy view root node.
+        /// </summary>
+        public HESolarSystemTreeNode HierarchyViewRootNode { get; protected set; } = null;
+
+        /// <summary>
+        /// This is the actual blueprint - serialised and de-serialised from here.
+        /// </summary>
+        public HEStationBlueprint BlueprintObject { get; protected set; } = null;
 
         #endregion
 
+        #region Methods
+
+        /// <summary>
+        /// Loads the file.
+        /// </summary>
+        /// <param name="populateNodeTreeDepth"></param>
         public void LoadFile(int populateNodeTreeDepth)
         {
             if (!File.Exists) throw new FileNotFoundException();
@@ -68,12 +107,16 @@ namespace HELLION.DataStructures
             PostLoadOperations(populateNodeTreeDepth);
         }
 
+        /// <summary>
+        /// Called after a file is loaded.
+        /// </summary>
+        /// <param name="populateNodeTreeDepth"></param>
         public void PostLoadOperations(int populateNodeTreeDepth = 8)
-        { 
+        {
             // Populate the blueprint object.
             DeserialiseToBlueprintObject();
 
-            
+
             if (BlueprintObject.__ObjectType != null && BlueprintObject.__ObjectType == BlueprintObjectType.StationBlueprint)
             {
                 // Assemble the primary tree hierarchy based on the DockingRoot.
@@ -120,32 +163,6 @@ namespace HELLION.DataStructures
             PostLoadOperations();
         }
 
-
-        /// <summary>
-        /// Stores a reference to the parent object, if set using the constructor.
-        /// </summary>
-        public new HEBlueprintCollection OwnerObject{ get; protected set; }
-
-        /// <summary>
-        /// This class overrides the type of root node to represent a blueprint.
-        /// </summary>
-        public new HEBlueprintTreeNode RootNode { get; protected set; } = null;
-
-        /// <summary>
-        /// A reference to the DataView's root node.
-        /// </summary>
-        public HEGameDataTreeNode DataViewRootNode { get; protected set; } = null;
-
-        /// <summary>
-        /// A reference to the hierarchy view root node.
-        /// </summary>
-        public HESolarSystemTreeNode HierarchyViewRootNode { get; protected set; } = null;
-
-        /// <summary>
-        /// This is the actual blueprint - serialised and de-serialised from here.
-        /// </summary>
-        public HEStationBlueprint BlueprintObject { get; protected set; } = null;
-
         /// <summary>
         /// De-serialises the JData to the blueprint object.
         /// </summary>
@@ -166,7 +183,6 @@ namespace HELLION.DataStructures
             //Validity check?
 
             ApplyNewJData(newData);
-
         }
 
         /// <summary>
@@ -176,7 +192,6 @@ namespace HELLION.DataStructures
         /// <param name="structuresJsonFile"></param>
         public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile)
         {
-
             BlueprintObject.__ObjectType = BlueprintObjectType.BlueprintStructureDefinitions;
             BlueprintObject.Version = StationBlueprintFormatVersion;
             BlueprintObject.Name = String.Format("Hellion Station Blueprint Format - Structure Definitions Template Version {0} Generated {1}",
@@ -189,14 +204,14 @@ namespace HELLION.DataStructures
             foreach (JToken jtStructure in structuresJsonFile.JData)
             {
                 // Create a new Structure definition
-                HEBlueprintStructure nsd = new HEBlueprintStructure               
+                HEBlueprintStructure nsd = new HEBlueprintStructure
                 {
                     SceneID = (HEStructureSceneID)Enum
                         .Parse(typeof(HEStructureSceneID), (string)jtStructure["ItemID"]),
 
                     AuxData = new HEBlueprintStructureAuxData(null),
 
-                                    // Calculate the total (nominal) air volume.
+                    // Calculate the total (nominal) air volume.
                     NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume")),
 
                     // Look up the Power requirement for this module.
@@ -224,7 +239,7 @@ namespace HELLION.DataStructures
                         OrderID = (int)jtDockingPort["OrderID"],
 
                         // Look up the correct port name for this structure and orderID
-                        PortName = GetDockingPortType((HEStructureSceneID)nsd.SceneID, 
+                        PortName = GetDockingPortType((HEStructureSceneID)nsd.SceneID,
                             orderID: (int)jtDockingPort["OrderID"]),
 
                         // Default locked/unlocked status is preserved.
@@ -243,6 +258,8 @@ namespace HELLION.DataStructures
             SaveFile(CreateBackup: true);
 
         }
+
+        #endregion
 
     }
 }
