@@ -7,14 +7,14 @@ using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.StationBlueprintEditor
 {
-    public partial class StationBlueprintEditorForm : Form
+    public partial class BlueprintEditorForm : Form
     {
         #region Constructors
 
         /// <summary>
         /// Basic Constructor.
         /// </summary>
-        public StationBlueprintEditorForm()
+        public BlueprintEditorForm()
         {
             InitializeComponent();
             Icon = StationBlueprintEditorProgram.MainForm.Icon;
@@ -40,7 +40,7 @@ namespace HELLION.StationBlueprintEditor
         /// Constructor that takes a HEBlueprintTreeNode.
         /// </summary>
         /// <param name="passedSourceNode"></param>
-        public StationBlueprintEditorForm(HEBlueprintTreeNode passedSourceNode) : this()
+        public BlueprintEditorForm(HEBlueprintTreeNode passedSourceNode) : this()
         {
             SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.Name;
