@@ -24,7 +24,7 @@ namespace HELLION.Explorer
     /// addition it represents docked ships (includes modules) in their hierarchical structure
     /// as these are represented as trees within the Dedicated Server.
     /// </remarks>
-    static class Program
+    static class HellionExplorerProgram
     {
         #region Form Related Objects
 

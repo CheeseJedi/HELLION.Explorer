@@ -76,11 +76,11 @@ namespace HELLION.Explorer
             if (haveQueryControlsBeenModified)
             {
                 haveQueryControlsBeenModified = false;
-                Program.EditFind(NewQuery: true);
+                HellionExplorerProgram.EditFind(NewQuery: true);
             }
             else
             {
-                Program.EditFind();
+                HellionExplorerProgram.EditFind();
             }
         }
 
@@ -89,11 +89,11 @@ namespace HELLION.Explorer
             if (haveQueryControlsBeenModified)
             {
                 haveQueryControlsBeenModified = false;
-                Program.EditFind(NewQuery: true, JumpToResultsSet: true);
+                HellionExplorerProgram.EditFind(NewQuery: true, JumpToResultsSet: true);
             }
             else
             {
-                Program.EditFind(JumpToResultsSet: true);
+                HellionExplorerProgram.EditFind(JumpToResultsSet: true);
             }
             Hide();
         }

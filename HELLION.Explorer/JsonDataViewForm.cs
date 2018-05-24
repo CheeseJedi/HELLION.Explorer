@@ -47,7 +47,7 @@ namespace HELLION.Explorer
         public JsonDataViewForm()
         {
             InitializeComponent();
-            Icon = Program.MainForm.Icon;
+            Icon = HellionExplorerProgram.MainForm.Icon;
             fastColoredTextBox1.Language = Language.JS;
             applyChangesToolStripMenuItem.Enabled = false;
         }
@@ -90,7 +90,7 @@ namespace HELLION.Explorer
                 }
             }
             // Remove the current JsonDataViewForm from the jsonDataViews list
-            Program.jsonDataViews.Remove(this);
+            HellionExplorerProgram.jsonDataViews.Remove(this);
             GC.Collect();
         }
 

@@ -13,15 +13,14 @@ namespace HELLION.DataStructures.Utilities
             Mode = mode;
             LogFile = logFile;
             if (Mode == LoggingOperationType.LogFileOnly ||
-                Mode == LoggingOperationType.ConsoleAndLogFile ||
-                Mode == LoggingOperationType.ConsoleAndCachedLogFile)
+                Mode == LoggingOperationType.ConsoleAndLogFile)
             {
                 if (LogFile == null) throw new NullReferenceException("Operation mode requires a log file but none was specified. LogFile was null.");
                 if (LogFile.Exists) throw new InvalidOperationException("Specified log file already exists.");
             }
             DefaultLevel = defaultLevel;
             // if (Mode == LoggingOperationType.ConsoleAndCachedLogFile)
-            _logCache = new StringBuilder();
+            _logBuffer = new StringBuilder();
 
         }
 
@@ -40,16 +39,26 @@ namespace HELLION.DataStructures.Utilities
 
                     switch ( _mode)
                     {
-                        case LoggingOperationType.ConsoleAndCachedLogFile:
+                        case LoggingOperationType.ConsoleAndBufferedLogFile:
                         case LoggingOperationType.ConsoleAndLogFile:
                         case LoggingOperationType.LogFileOnly:
                             // Check validity of LogFile FileInfo
                             if (LogFile == null || !LogFile.Directory.Exists)
                             {
-                                throw new InvalidOperationException("Problem with logging file path.");
+                                throw new InvalidOperationException("Failed to activate logging, problem with log file path.");
                             }
+
+
                             break;
                     }
+
+
+                    // Check the buffer and flush if necessary
+
+                    
+
+
+
 
                 }
             }
@@ -89,27 +98,27 @@ namespace HELLION.DataStructures.Utilities
 
         public void WriteLine(string msg, LoggingLevel msgLvl = LoggingLevel.Default)
         {
-            string logLine = String.Format("{0:G}: {1}", DateTime.Now, msg);
+            string logLine = DateTime.UtcNow.ToString("yyyyMMddTHHmmss: ") + msg + Environment.NewLine;
+
+            _logBuffer.Append(logLine);
 
             // First switch - for writing to console.
             switch (Mode)
             {
                 case LoggingOperationType.ConsoleOnly:
                 case LoggingOperationType.ConsoleAndLogFile:
-                case LoggingOperationType.ConsoleAndCachedLogFile:
 
                     if (msgLvl == LoggingLevel.Default ||
                        (msgLvl == LoggingLevel.Verbose && DefaultLevel == LoggingLevel.Verbose))
                     {
-                        Console.WriteLine(logLine);
+                        Console.WriteLine(msg);
                     }
-
                     break;
                 default:
                     break;
             }
 
-            // Second switch - for writing to a file or cached file.
+            // Second switch - for writing to a file.
             switch (Mode)
             {
                 case LoggingOperationType.ConsoleAndLogFile:
@@ -117,40 +126,37 @@ namespace HELLION.DataStructures.Utilities
 
                     if (msgLvl == LoggingLevel.Default || msgLvl == LoggingLevel.Verbose)
                     {
-                        WriteLineToFile(logLine);
-                    }
-                    break;
-                case LoggingOperationType.ConsoleAndCachedLogFile:
-
-                    if (msgLvl == LoggingLevel.Default || msgLvl == LoggingLevel.Verbose)
-                    {
-                        _logCache.Append(logLine);
+                        FlushBuffer();
                     }
                     break;
                 default:
                     break;
-
             }
 
+            //if (msgLvl == LoggingLevel.Default)
+            //{
+            //    Console.WriteLine(logLine);
+            //    WriteLineToFile(logLine);
+            //}
+            //else if (msgLvl == LoggingLevel.Verbose)
+            //{
+            //    if (DefaultLevel == LoggingLevel.Verbose)
+            //    {
+            //        Console.WriteLine(logLine);
+            //    }
+            //    WriteLineToFile(logLine);
+            //}
 
+        }
 
-
-
-
-            if (msgLvl == LoggingLevel.Default)
+        public void FlushBuffer()
+        {
+            if (Mode == LoggingOperationType.ConsoleAndBufferedLogFile
+                || Mode == LoggingOperationType.ConsoleAndLogFile
+                || Mode == LoggingOperationType.LogFileOnly)
             {
-                Console.WriteLine(logLine);
-                WriteLineToFile(logLine);
+                WriteLineToFile(_logBuffer.ToString());
             }
-            else if (msgLvl == LoggingLevel.Verbose)
-            {
-                if (DefaultLevel == LoggingLevel.Verbose)
-                {
-                    Console.WriteLine(logLine);
-                }
-                WriteLineToFile(logLine);
-            }
-
         }
 
         #endregion
@@ -158,7 +164,7 @@ namespace HELLION.DataStructures.Utilities
         #region Fields
 
         private LoggingOperationType _mode;
-        private StringBuilder _logCache = null;
+        private StringBuilder _logBuffer = null;
 
         #endregion
 
@@ -174,10 +180,10 @@ namespace HELLION.DataStructures.Utilities
         public enum LoggingOperationType
         {
             Unspecified = 0,
-            ConsoleAndLogFile,
             ConsoleOnly,
             LogFileOnly,
-            ConsoleAndCachedLogFile,
+            ConsoleAndLogFile,
+            ConsoleAndBufferedLogFile,
         }
 
         #endregion

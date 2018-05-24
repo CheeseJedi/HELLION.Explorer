@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,10 +13,16 @@ namespace HELLION.CrewSync
 {
     static class CrewSyncProgram
     {
-        
+        /// <summary>
+        /// Logging handler object.
+        /// </summary>
         internal static LogFileHandler Logging = new LogFileHandler();
-        
-        
+
+        /// <summary>
+        /// The suffix appended to the current time date to create a unique log file name.
+        /// </summary>
+        internal const string LogFileNameSuffix = "_HELLION.CrewSync";
+
         /// <summary>
         /// The Hellion Dedicated Server file we're working on.
         /// </summary>
@@ -75,8 +82,8 @@ namespace HELLION.CrewSync
                     + ".exe <full path to .save file to process> "
                     + "/prefix <the name prefix of vessel to apply to> "
                     + "/groupid64 <the GroupID64 of the Steam Group> "
-                    + "[/logfilepath <full path to log file directory>]"
-                    + "[/nobackup] [/verbose]";
+                    + "[/logfolder <path to log file directory>] "
+                    + "[/nobackup] [/verbose] ";
 
                 for (int i = 0; i < arguments.Length; i++)
                 {
@@ -85,86 +92,91 @@ namespace HELLION.CrewSync
                     {
                         // It's a .save file
                         hellionSaveFileInfo = new FileInfo(arguments[i]);
-                        Console.WriteLine("Argument: Save File " + hellionSaveFileInfo.FullName);
+                        Logging.WriteLine("Argument: Save File " + hellionSaveFileInfo.FullName);
 
                         if (!hellionSaveFileInfo.Exists)
                         {
-                            Console.WriteLine("Specified Save File does not exist.");
+                            Logging.WriteLine("Specified Save File does not exist.");
+                            PauseIfDebuggerAttached();
                             return false;
                         }
-
                     }
                     else if (arguments[i].Equals("/prefix", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        // It's the /prefix argument, increment i by one to prevent the next element being
-                        // processed in case there are other(?) arguments.
+                        // Increment i by one to prevent the next element being processed in case there are other(?) arguments.
                         i++;
                         groupPrefix = arguments[i].ToUpper();
-                        Console.WriteLine("Argument: Vessel Prefix " + groupPrefix);
+                        Logging.WriteLine("Argument: Vessel Prefix " + groupPrefix);
 
                         if (String.IsNullOrEmpty(groupPrefix))
                         {
-                            Console.WriteLine("Invalid prefix.");
+                            Logging.WriteLine("Invalid prefix.");
+                            PauseIfDebuggerAttached();
                             return false;
                         }
 
                     }
                     else if (arguments[i].Equals("/groupid64", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        // It's the /groupid64 argument, increment i by one to prevent the next element being
-                        // processed in case there are other(?) arguments.
+                        // Increment i by one to prevent the next element being processed in case there are other(?) arguments.
                         i++;
                         groupID64 = Convert.ToInt64(arguments[i]);
-                        Console.WriteLine("Argument: Steam GroupID64 " + groupID64);
+                        Logging.WriteLine("Argument: Steam GroupID64 " + groupID64);
                         if (!(groupID64 > 0))
                         {
-                            Console.WriteLine("Problem with Steam GroupID64.");
+                            Logging.WriteLine("Problem with Steam GroupID64.");
+                            PauseIfDebuggerAttached();
                             return false;
                         }
                     }
-                    else if (arguments[i].Equals("/logfilepath", StringComparison.CurrentCultureIgnoreCase))
+                    else if (arguments[i].Equals("/logfolder", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        // It's the /logfilepath argument, increment i by one to prevent the next element being
-                        // processed in case there are other(?) arguments.
+                        // Increment i by one to prevent the next element being processed in case there are other(?) arguments.
                         i++;
                         DirectoryInfo _loggingPath = new DirectoryInfo(arguments[i]);
-                        Console.WriteLine("Argument: Log File Path " + _loggingPath.FullName);
+                        Logging.WriteLine("Argument: Log File Path " + _loggingPath.FullName);
                         if (!(_loggingPath.Exists))
                         {
-                            Console.WriteLine("Invalid logging path specified.");
+                            Logging.WriteLine("Invalid logging path specified.");
+                            PauseIfDebuggerAttached();
                             return false;
                         }
-                        Logging.LogFile = new FileInfo(Path.Combine(_loggingPath.FullName, Logging.GenerateLogFileName()));
-                        Console.WriteLine("Logging to: " + Logging.LogFile.FullName);
+                        Logging.LogFile = new FileInfo(Path.Combine(_loggingPath.FullName, Logging.GenerateLogFileName(LogFileNameSuffix)));
+                        Logging.WriteLine("Logging to: " + Logging.LogFile.FullName);
 
                         Logging.Mode = LogFileHandler.LoggingOperationType.ConsoleAndLogFile;
-
 
                     }
                     else if (arguments[i].Equals("/nobackup", StringComparison.CurrentCultureIgnoreCase))
                     {
                         createBackup = false;
-                        Console.WriteLine("Argument: No backup file will be created.");
+                        Logging.WriteLine("Argument: Backup file will NOT be created.");
                     }
                     else if (arguments[i].Equals("/verbose", StringComparison.CurrentCultureIgnoreCase))
                     {
                         verboseOutput = true;
-                        Console.WriteLine("Argument: Verbose output ON.");
+                        Logging.WriteLine("Argument: Verbose output ON.");
                     }
                     else if (arguments[i].Equals("/?") || arguments[i].ToLower().Contains("help"))
                     {
-                        Console.WriteLine(helpText);
+                        Logging.WriteLine(helpText);
+                        PauseIfDebuggerAttached();
+                        return false;
                     }
                     else
                     {
-                        Console.WriteLine("Unexpected Argument: " + arguments[i]);
-                        Console.WriteLine("Use /? or /help to show available arguments.");
+                        Logging.WriteLine("Unexpected Argument: " + arguments[i]);
+                        Logging.WriteLine("Use /? or /help to show available arguments.");
+                        PauseIfDebuggerAttached();
                         return false;
                     }
                 }
-
+                // We got here so everything checked out so far.
                 return true;
             }
+            Logging.WriteLine("No parameters specified.");
+            Logging.WriteLine("Use /? or /help to show available arguments.");
+            PauseIfDebuggerAttached();
             return false;
         }
         
@@ -198,9 +210,12 @@ namespace HELLION.CrewSync
             return (groupMembers.Count > 0) ? true : false;
         }
 
+        /// <summary>
+        /// Builds the master crew list.
+        /// </summary>
+        /// <returns></returns>
         internal static bool BuildCrewList()
         {
-
             List<AuthorisedPerson> _tmpList = new List<AuthorisedPerson>();
 
             JToken _playersCollection = hellionSaveFile.JData["Players"];
@@ -221,24 +236,23 @@ namespace HELLION.CrewSync
                     _tmpList.Add(newPerson);
                 }
                 if (verboseOutput)
-                    Console.WriteLine(" {0} SteamID64: {1,-17} GUID: {2,-19} PlayerName: {3}",
-                        markerChar, player["SteamId"], player["GUID"], player["Name"]);
-
+                    Logging.WriteLine(String.Format(" {0} SteamID64: {1,-17} GUID: {2,-19} PlayerName: {3}",
+                        markerChar, player["SteamId"], player["GUID"], player["Name"]));
             }
             crewList = _tmpList;
 
-            Console.WriteLine("Save file Players collection contains {0} member(s).", _playersCollection.Children().Count());
-            Console.WriteLine("{0} Player(s) are members of the group and were added to the Master Crew List.", _tmpList.Count);
-
-            // foreach (AuthorizedPerson person in tmpList) Console.WriteLine(JToken.FromObject(person).ToString());
-
+            Logging.WriteLine(String.Format("Save file Players collection contains {0} member(s).", _playersCollection.Children().Count()));
+            Logging.WriteLine(String.Format("{0} Player(s) are members of the group and were added to the Master Crew List.", _tmpList.Count));
 
             return true;
         }
 
+        /// <summary>
+        /// Builds the filtered master vessel list.
+        /// </summary>
+        /// <returns></returns>
         internal static bool BuildVesselList()
         {
-
             List<JToken> _tmpList = new List<JToken>();
 
             JToken _shipsCollection = hellionSaveFile.JData["Ships"];
@@ -251,16 +265,16 @@ namespace HELLION.CrewSync
                     markerChar = "@";
                     _tmpList.Add(vessel);
                 }
-                Console.WriteLine(" {0} Reg: {1,-25} GUID: {2,-13} Name: {3}", 
-                    markerChar, vessel["Registration"], vessel["GUID"], vessel["Name"] );
-
+                if (verboseOutput)
+                    Logging.WriteLine(String.Format(" {0} Reg: {1,-25} GUID: {2,-13} Name: {3}", 
+                        markerChar, vessel["Registration"], vessel["GUID"], vessel["Name"]));
             }
             vesselList = _tmpList;
 
-            Console.WriteLine("Save file Ships collection contains {0} vessel(s).", _shipsCollection.Children().Count());
-            Console.WriteLine("{0} Vessels(s) have name prefixes that match and have been added to the Master Vessel List.", _tmpList.Count);
+            Logging.WriteLine(String.Format("Save file Ships collection contains {0} vessel(s).", _shipsCollection.Children().Count()));
+            Logging.WriteLine(String.Format("{0} Vessels(s) have name prefixes that match and have been added to the Master Vessel List.", _tmpList.Count));
 
-            // foreach (AuthorizedPerson person in tmpList) Console.WriteLine(JToken.FromObject(person).ToString());
+            // foreach (AuthorizedPerson person in tmpList) Logging.WriteLine(JToken.FromObject(person).ToString());
 
 
             return true;
@@ -274,23 +288,32 @@ namespace HELLION.CrewSync
         {
             foreach (JToken vessel in vesselList)
             {
-                // Check there's an owner - a ship with no owner won't get updated.
-                Console.WriteLine("Vessel: {0}  Commanding Officer: {1}", vessel["Name"], GetCommandingOfficerName(vessel));
+                // Check there's an owner - a ship with no owner or crew won't get updated.
                 if (vessel["AuthorizedPersonel"].Children().Count() > 0)
                 {
                     // Convert the authorised personnel JToken to a list
-                    List<AuthorisedPerson> _vesselAuthorisedPersonnel = vessel["AuthorizedPersonel"].ToObject<List<AuthorisedPerson>>();
-                    Console.WriteLine("_vesselAuthorisedPersonnel count {0}", _vesselAuthorisedPersonnel.Count);
+                    List<AuthorisedPerson> _vesselAuthorisedPersonnel = vessel["AuthorizedPersonel"]
+                        .ToObject<List<AuthorisedPerson>>();
 
-                    // Create a list of all members of the Master Crew List except this vessel's CO and those that are already on ships crew.
+                    Logging.WriteLine(String.Format("Vessel: {0}  Commanding Officer: {1}  Existing Crew: {2}",
+                        vessel["Name"], GetCommandingOfficerName(vessel), _vesselAuthorisedPersonnel.Count));
+
+                    // Create a list of all members of the Master Crew List except 
+                    // this vessel's CO and those that are already on ships crew.
                     List<AuthorisedPerson> _PlayersToAdd = crewList
                         .Except(_vesselAuthorisedPersonnel, new AuthorisedPersonSteamIDComparer())
-                        .Where(p => p.Rank != AuthorisedPersonRank.CommandingOfficer) //   GetCommandingOfficer(vessel) })
+                        .Where(p => p.Rank != AuthorisedPersonRank.CommandingOfficer)
                         .ToList();
-                    Console.WriteLine("Players to add {0}", _PlayersToAdd.Count);
+
+                    Logging.WriteLine(String.Format("Adding {0} Players to vessel crew.", _PlayersToAdd.Count));
 
                     foreach (var player in _PlayersToAdd)
+                    {
+                        if (verboseOutput) Logging.WriteLine(" + " + player.SteamID + " " + player.Name);
                         AddAuthorisedPerson(vessel, player);
+                    }
+
+                    Logging.WriteLine("Done.");
                 }
             }
             return true;
@@ -302,7 +325,6 @@ namespace HELLION.CrewSync
             {
                 JToken _serialisedPerson = JToken.FromObject(person);
                 vessel["AuthorizedPersonel"].Last.AddAfterSelf(_serialisedPerson);
-                Console.WriteLine(" + " + person.SteamID + " " + person.Name);
             }
 
             /// <summary>
@@ -317,69 +339,82 @@ namespace HELLION.CrewSync
 
         }
 
+        /// <summary>
+        /// Pauses if the program is running with an attached debugger.
+        /// </summary>
+        internal static void PauseIfDebuggerAttached()
+        {
+            if (Debugger.IsAttached)
+            {
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
+        }
 
-
+        /// <summary>
+        /// Main.
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
-            Console.WriteLine(Application.ProductName + " - " + Application.ProductVersion);
-
-#if DEBUG
-                Console.WriteLine("Mode=Debug");
-#else
-                Console.WriteLine("Mode=Release"); 
-#endif
+            // Make a record of the starting time.
             DateTime operationStartTime = DateTime.Now;
+            Logging.WriteLine(Application.ProductName + " - " + Application.ProductVersion);
+#if DEBUG
+            Logging.WriteLine("Mode=Debug");
+#else
+            Logging.WriteLine("Mode=Release"); 
+#endif
+            Logging.WriteLine("Part of HELLION.Explorer - https://github.com/CheeseJedi/HELLION.Explorer");
 
-            if (!ProcessCommandLineArguments(args))
-            {
-                Console.WriteLine("Problem processing command line arguments.");
-                Console.WriteLine("Press enter to continue...");
-                Console.ReadLine();
-                return;
-            }
+            if (!ProcessCommandLineArguments(args)) return;
 
-            Console.Write("Loading save file...");
+            Logging.WriteLine("Loading save file...");
             if (!FileOpen())
             {
-                Console.WriteLine("Problem loading save file.");
-                Console.WriteLine("Press enter to continue...");
-                Console.ReadLine();
+                Logging.WriteLine("Problem loading save file.");
+                PauseIfDebuggerAttached();
                 return;
             }
-            Console.WriteLine("  Complete.");
+            Logging.WriteLine("Complete.");
 
-            Console.Write("Querying Steam Public API for group membership...");
+            Logging.WriteLine("Querying Steam Public API for group membership...");
             string groupName = SteamIntegration.GetGroupName((long)groupID64);
             if (!RetrieveSteamGroupMembership())
             {
-                Console.WriteLine("Problem querying Steam.");
+                Logging.WriteLine("Problem querying Steam.");
+                PauseIfDebuggerAttached();
                 return;
             }
-            Console.WriteLine("  Complete.");
-            Console.WriteLine("Steam Group {0} ({1}) has {2} member(s).", 
-                groupID64, groupName, groupMembers.Count);
+            Logging.WriteLine("Complete.");
+            Logging.WriteLine(String.Format("Steam Group {0} ({1}) has {2} member(s).", 
+                groupID64, groupName, groupMembers.Count));
 
-            Console.WriteLine("Building in-game player list...");
+            Logging.WriteLine("Building in-game player list...");
             // Build in-game character list containing only members of the steam group.
             BuildCrewList();
-            Console.WriteLine("Complete.");
+            Logging.WriteLine("Complete.");
 
-            Console.WriteLine("Building in-game vessel list...");
+            Logging.WriteLine("Building in-game vessel list...");
             // Build list of vessels whose names contain the specified prefix.
             BuildVesselList();
-            Console.WriteLine("Complete.");
+            Logging.WriteLine("Complete.");
 
-            Console.WriteLine("Processing vessel list...");
+            Logging.WriteLine("Processing vessel list...");
             ProcessVesselList();
-            Console.WriteLine("Complete.");
+            Logging.WriteLine("Complete.");
 
             // Save the changes.
             FileSave();
 
-
             TimeSpan timeElapsed = DateTime.Now - operationStartTime;
 
-            Console.WriteLine("Operation completed in {0}.{1} second(s).", timeElapsed.Seconds, timeElapsed.Milliseconds);
+            Logging.WriteLine(String.Format("Operation completed in {0}.{1} second(s).",
+                timeElapsed.Seconds, timeElapsed.Milliseconds));
+
+            Logging.FlushBuffer();
+
+
 
 #if DEBUG
             Console.WriteLine("Press enter to continue...");
@@ -388,10 +423,6 @@ namespace HELLION.CrewSync
 
 
         }
-
         
     }
-
-
-
 }

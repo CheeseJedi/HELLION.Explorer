@@ -17,10 +17,10 @@ namespace HELLION.Explorer
         public BlueprintEditorForm()
         {
             InitializeComponent();
-            Icon = HellionExplorerProgram.MainForm.Icon;
+            Icon = Program.MainForm.Icon;
 
-            treeViewPrimaryStructure.ImageList = HellionExplorerProgram.hEImageList.IconImageList;
-            treeViewSecondaryStructures.ImageList = HellionExplorerProgram.hEImageList.IconImageList;
+            treeViewPrimaryStructure.ImageList = Program.hEImageList.IconImageList;
+            treeViewSecondaryStructures.ImageList = Program.hEImageList.IconImageList;
 
             treeViewPrimaryStructure.ShowNodeToolTips = true;
             treeViewSecondaryStructures.ShowNodeToolTips = true;
@@ -327,7 +327,7 @@ namespace HELLION.Explorer
         private void RefreshPictureBoxSelectedPrimaryStructure()
         {
             pictureBoxSelectedPrimaryStructure.Image = SelectedPrimaryStructure == null ? null
-                : HellionExplorerProgram.hEImageList.StructureImageList.Images[
+                : Program.hEImageList.StructureImageList.Images[
                     HEImageList.GetStructureImageIndexBySceneID(SelectedPrimaryStructure.SceneID.Value)];
         }
 
@@ -358,7 +358,7 @@ namespace HELLION.Explorer
         private void RefreshPictureBoxSelectedSecondaryStructure()
         {
             pictureBoxSelectedSecondaryStructure.Image = SelectedSecondaryStructure == null ? null
-                : HellionExplorerProgram.hEImageList.StructureImageList.Images[
+                : Program.hEImageList.StructureImageList.Images[
                     HEImageList.GetStructureImageIndexBySceneID(SelectedSecondaryStructure.SceneID.Value)];
         }
 
@@ -681,7 +681,7 @@ namespace HELLION.Explorer
 
 
             // Remove the current JsonDataViewForm from the jsonDataViews list
-            HellionExplorerProgram.blueprintEditorForms.Remove(this);
+            Program.blueprintEditorForms.Remove(this);
             GC.Collect();
 
         }

@@ -28,7 +28,7 @@ namespace HELLION.Explorer
         private void frmMainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // User closed the window - call the exit routine
-            Program.ControlledExit();
+            HellionExplorerProgram.ControlledExit();
         }
 
         #endregion
@@ -38,39 +38,39 @@ namespace HELLION.Explorer
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // User selected MainFile, Exit - call the exit routine
-            Program.ControlledExit();
+            HellionExplorerProgram.ControlledExit();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //opens a file
-            Program.FileOpen();
+            HellionExplorerProgram.FileOpen();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.FileSave();
+            HellionExplorerProgram.FileSave();
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.FileSaveAs();
+            HellionExplorerProgram.FileSaveAs();
         }
 
         private void revertToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.FileRevert();
+            HellionExplorerProgram.FileRevert();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show About Dialog Box
-            MessageBox.Show(Program.GenerateAboutBoxText(), "About " + Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(HellionExplorerProgram.GenerateAboutBoxText(), "About " + Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void setDataFolderLocationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.SetGameDataFolder();
+            HellionExplorerProgram.SetGameDataFolder();
         }
 
         private void navigationPaneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -78,62 +78,62 @@ namespace HELLION.Explorer
             // Show/hide the Navigation Pane
 
             // Change the state of the bViewShowNavigationPane
-            Program._viewShowNavigationPane = !Program._viewShowNavigationPane;
+            HellionExplorerProgram._viewShowNavigationPane = !HellionExplorerProgram._viewShowNavigationPane;
 
-            splitContainer1.Panel1Collapsed = !Program._viewShowNavigationPane;
-            navigationPaneToolStripMenuItem.Checked = Program._viewShowNavigationPane;
+            splitContainer1.Panel1Collapsed = !HellionExplorerProgram._viewShowNavigationPane;
+            navigationPaneToolStripMenuItem.Checked = HellionExplorerProgram._viewShowNavigationPane;
         }
 
         private void dynamicListPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show/hide the Dynamic list (list view control)
 
-            Program._viewShowDynamicList = !Program._viewShowDynamicList;
+            HellionExplorerProgram._viewShowDynamicList = !HellionExplorerProgram._viewShowDynamicList;
 
-            splitContainer2.Panel1Collapsed = !Program._viewShowDynamicList;
+            splitContainer2.Panel1Collapsed = !HellionExplorerProgram._viewShowDynamicList;
 
-            Program._viewShowInfoPane = !splitContainer2.Panel1Collapsed;
+            HellionExplorerProgram._viewShowInfoPane = !splitContainer2.Panel1Collapsed;
 
 
-            dynamicListPaneToolStripMenuItem.Checked = Program._viewShowDynamicList;
-            infoPaneToolStripMenuItem.Checked = Program._viewShowInfoPane;
+            dynamicListPaneToolStripMenuItem.Checked = HellionExplorerProgram._viewShowDynamicList;
+            infoPaneToolStripMenuItem.Checked = HellionExplorerProgram._viewShowInfoPane;
         }
 
         private void infoPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Show/hide the info pane
-            Program._viewShowInfoPane = !Program._viewShowInfoPane;
+            HellionExplorerProgram._viewShowInfoPane = !HellionExplorerProgram._viewShowInfoPane;
 
-            splitContainer2.Panel2Collapsed = !Program._viewShowInfoPane;
-            Program._viewShowDynamicList = !splitContainer2.Panel1Collapsed;
+            splitContainer2.Panel2Collapsed = !HellionExplorerProgram._viewShowInfoPane;
+            HellionExplorerProgram._viewShowDynamicList = !splitContainer2.Panel1Collapsed;
 
-            dynamicListPaneToolStripMenuItem.Checked = Program._viewShowDynamicList;
-            infoPaneToolStripMenuItem.Checked = Program._viewShowInfoPane;
+            dynamicListPaneToolStripMenuItem.Checked = HellionExplorerProgram._viewShowDynamicList;
+            infoPaneToolStripMenuItem.Checked = HellionExplorerProgram._viewShowInfoPane;
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.FileClose();
+            HellionExplorerProgram.FileClose();
         }
 
         private void updatecheckToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.hEUpdateChecker.CheckForUpdates();
+            HellionExplorerProgram.hEUpdateChecker.CheckForUpdates();
         }
 
         private void verifyDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.VerifyGameDataFolder();
+            HellionExplorerProgram.VerifyGameDataFolder();
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.ShowFindForm();
+            HellionExplorerProgram.ShowFindForm();
         }
 
         private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.FindForm.MainFormFindNextActivated();
+            HellionExplorerProgram.FindForm.MainFormFindNextActivated();
         }
 
         #endregion
@@ -148,9 +148,9 @@ namespace HELLION.Explorer
             }
 
             // Update the object path + name + Tag in the object identifier bar
-            Program.RefreshSelectedOjectPathBarText(e.Node);
-            Program.RefreshListView(e.Node);
-            Program.RefreshSelectedObjectSummaryText(e.Node);
+            HellionExplorerProgram.RefreshSelectedOjectPathBarText(e.Node);
+            HellionExplorerProgram.RefreshListView(e.Node);
+            HellionExplorerProgram.RefreshSelectedObjectSummaryText(e.Node);
 
             // Show menu only if the right mouse button is clicked.
             if (e.Button == MouseButtons.Right)
@@ -343,10 +343,10 @@ namespace HELLION.Explorer
 
         private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (Program.MainForm.treeView1.SelectedNode != null)
+            if (HellionExplorerProgram.MainForm.treeView1.SelectedNode != null)
             {
                 // Cast the TreeNode to an HETreeNode to determine it's type
-                HETreeNode tempHETreeNode = (HETreeNode)Program.MainForm.treeView1.SelectedNode;
+                HETreeNode tempHETreeNode = (HETreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
 
                 switch (tempHETreeNode.NodeType)
                 {
@@ -358,7 +358,7 @@ namespace HELLION.Explorer
                     case HETreeNodeType.JsonValue:
                         // We're in the Game Data section
 
-                        HEGameDataTreeNode tempGameDataNode = (HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode;
+                        HEGameDataTreeNode tempGameDataNode = (HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
                         if (!tempGameDataNode.ChildNodesLoaded)
                         {
                             // Load next level
@@ -384,7 +384,7 @@ namespace HELLION.Explorer
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Update the object information panel
-            if (Program.docCurrent != null) // && Program.docCurrent.IsFileReady)
+            if (HellionExplorerProgram.docCurrent != null) // && Program.docCurrent.IsFileReady)
             {
 
                 TreeNode node = null;
@@ -406,9 +406,9 @@ namespace HELLION.Explorer
                 else
                 {
                     // Update the object path + name + Tag in the object identifier bar
-                    Program.RefreshSelectedOjectPathBarText(node);
+                    HellionExplorerProgram.RefreshSelectedOjectPathBarText(node);
                     //Program.RefreshListView(node);
-                    Program.RefreshSelectedObjectSummaryText(node);
+                    HellionExplorerProgram.RefreshSelectedObjectSummaryText(node);
                 }
             }
         }
@@ -416,7 +416,7 @@ namespace HELLION.Explorer
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             // Drill down on double click
-            if (Program.docCurrent == null) throw new NullReferenceException("docCurrent was null.");
+            if (HellionExplorerProgram.docCurrent == null) throw new NullReferenceException("docCurrent was null.");
             else
             {
                 // Create a node to represent the currently selected item
@@ -462,7 +462,7 @@ namespace HELLION.Explorer
         private void loadNextLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load next level
-            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode;
+            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 1);
             //tempNode.UpdateCounts();
         }
@@ -470,7 +470,7 @@ namespace HELLION.Explorer
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load all levels (up to depth of 15)
-            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode;
+            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 15);
             //tempNode.UpdateCounts();
             tempNode.Expand();
@@ -479,23 +479,23 @@ namespace HELLION.Explorer
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Tell the node to expand all child items
-            Program.MainForm.treeView1.SelectedNode.ExpandAll();
+            HellionExplorerProgram.MainForm.treeView1.SelectedNode.ExpandAll();
         }
 
         private void collapseAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Tell the node to expand all child items
-            Program.MainForm.treeView1.SelectedNode.Collapse();
+            HellionExplorerProgram.MainForm.treeView1.SelectedNode.Collapse();
         }
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.CreateNewJsonDataView((HEGameDataTreeNode)Program.MainForm.treeView1.SelectedNode);
+            HellionExplorerProgram.CreateNewJsonDataView((HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
         }
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            Program.CreateNewBlueprintEditor((HEBlueprintTreeNode)Program.MainForm.treeView1.SelectedNode);
+            HellionExplorerProgram.CreateNewBlueprintEditor((HEBlueprintTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
         }
 
         private void thisObjectInSolarSystemViewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -510,9 +510,9 @@ namespace HELLION.Explorer
                     treeView1.SelectedNode = node.LinkedSolarSystemNode;
 
                     // Trigger refresh
-                    Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
-                    Program.RefreshListView(treeView1.SelectedNode);
-                    Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
                 }
                 else throw new InvalidOperationException("Unexpected node type " + t.ToString());
             }
@@ -530,9 +530,9 @@ namespace HELLION.Explorer
                     treeView1.SelectedNode = node.LinkedGameDataNode;
 
                     // Trigger refresh
-                    Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
-                    Program.RefreshListView(treeView1.SelectedNode);
-                    Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
                 }
                 else throw new InvalidOperationException("Unexpected node type " + t.ToString());
             }
@@ -545,9 +545,9 @@ namespace HELLION.Explorer
             treeView1.SelectedNode = node.GetParentCelestialBody();
 
             // Trigger refresh
-            Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
-            Program.RefreshListView(treeView1.SelectedNode);
-            Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
         }
 
         private void rootOfDockingTreeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -557,9 +557,9 @@ namespace HELLION.Explorer
             treeView1.SelectedNode = node.GetRootOfDockingTree();
 
             // Trigger refresh
-            Program.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
-            Program.RefreshListView(treeView1.SelectedNode);
-            Program.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
         }
 
         #endregion
@@ -567,10 +567,10 @@ namespace HELLION.Explorer
         private void saveTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-            if (Program.docCurrent != null) //  && Program.docCurrent.IsDirty)
+            if (HellionExplorerProgram.docCurrent != null) //  && Program.docCurrent.IsDirty)
             {
                 // Currently always returns false
-                bool result = Program.docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+                bool result = HellionExplorerProgram.docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
 
 
             }
@@ -579,9 +579,9 @@ namespace HELLION.Explorer
 
         private void observedGUIDsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Program.docCurrent != null)
+            if (HellionExplorerProgram.docCurrent != null)
             {
-                Program.ObservedGuidsForm.Show();
+                HellionExplorerProgram.ObservedGuidsForm.Show();
             }
             else MessageBox.Show("Must have an open document first.");
 
@@ -591,10 +591,10 @@ namespace HELLION.Explorer
         {
             // Contents to be moved to the HEBlueprintsHandler class once complete.
 
-            if (Program.docCurrent != null)
+            if (HellionExplorerProgram.docCurrent != null)
             {
 
-                if (!Program.docCurrent.GameData.StaticData.DataDictionary.
+                if (!HellionExplorerProgram.docCurrent.GameData.StaticData.DataDictionary.
                     TryGetValue("Structures.json", out HEUIJsonFile structuresJsonBaseFile))
                     throw new InvalidOperationException(
                         "Unable to access the Structures.json file from the Static Data Dictionary.");
