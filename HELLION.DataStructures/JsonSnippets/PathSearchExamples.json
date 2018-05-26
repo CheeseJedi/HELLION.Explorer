@@ -1,4 +1,8 @@
 [
-	"AllShips": "Game Data>*>Ships>Array>*"
-	"AllDynamicObjects": "Game Data>*>Ships>Array>*>DynamicObjects>Array>*"
+  {
+    "AllShips": "Game Data>*>Ships>Array>*"
+  },
+  {
+    "AllDynamicObjects": "Game Data>*>Ships>Array>*>DynamicObjects>Array>*"
+  }
 ]

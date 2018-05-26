@@ -15,7 +15,7 @@ namespace HELLION.DataStructures
     /// May need to be expanded to handle additional functions related to new
     /// coordinate generation, for moving or spawning of ships/modules.
     /// </remarks>
-    public class HEOrbitalData
+    public class OrbitalData
     {
         public long ParentGUID { get; set; } = 0;
         public double Eccentricity { get; set; } = 0;
@@ -29,7 +29,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Basic constructor used to initialise an empty object.
         /// </summary>
-        public HEOrbitalData()
+        public OrbitalData()
         { }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace HELLION.DataStructures
         /// Not suitable for Celestial Bodies - they will need handling differently.
         /// </remarks>
         /// <param name=""></param>
-        public HEOrbitalData(JObject orbitData)
+        public OrbitalData(JObject orbitData)
         {
             if (orbitData != null)
             {
@@ -72,8 +72,8 @@ namespace HELLION.DataStructures
         /// Constructor that copies its parameters from another object, used by the
         /// Clone() routine to 'shallow clone' the object
         /// </summary>
-        /// <param name="another">The HEOrbitalData object to be cloned.</param>
-        private HEOrbitalData(HEOrbitalData another)
+        /// <param name="another">The OrbitalData object to be cloned.</param>
+        private OrbitalData(OrbitalData another)
         {
             ParentGUID = another.ParentGUID;
             // VesselID = another.VesselID;
@@ -88,12 +88,12 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Builds and returns a clone of the current HEOrbitalData object
+        /// Builds and returns a clone of the current OrbitalData object
         /// </summary>
         /// <returns></returns>
-        public HEOrbitalData Clone()
+        public OrbitalData Clone()
         {
-            return new HEOrbitalData(this);
+            return new OrbitalData(this);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace HELLION.DataStructures
         /// coordinates to be used in spawning or moving of objects.
         /// </summary>
         /// <returns></returns>
-        public HEOrbitalData FuzzyClone()
+        public OrbitalData FuzzyClone()
         {
             throw new NotImplementedException("Fuzzy clone is not yet implemented.");
         }

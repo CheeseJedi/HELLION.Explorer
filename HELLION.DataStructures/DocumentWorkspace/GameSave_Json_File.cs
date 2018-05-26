@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-//using System.Runtime.CompilerServices;
+﻿using System.IO;
 
 namespace HELLION.DataStructures
 {
@@ -12,13 +10,13 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEJsonGameFile : HEUIJsonFile
+    public class GameSave_Json_File : Json_File_UI
     {
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEJsonGameFile(object passedParentObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : base(passedParentObject, passedFileInfo, populateNodeTreeDepth)
+        public GameSave_Json_File(Json_File_Parent passedParentObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : base(passedParentObject, passedFileInfo, populateNodeTreeDepth)
         {
             RootNode.BaseNodeName = File.Name;
             RootNode.NodeType = HETreeNodeType.SaveFile;

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace HELLION.DataStructures
@@ -12,13 +8,11 @@ namespace HELLION.DataStructures
     /// A class to hold miscellaneous static utility functions not complex enough to warrant their 
     /// own individual class.
     /// </summary>
-    public static class HEUtilities
+    public static class General
     {
-
         // Fonts in .Forms TreeViews are BROKEN! Memory leaks aplenty
         // public static Font fntRegular = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Regular);
         // public static Font fntItalic = new Font(familyName: "Segoe UI", emSize: 9.75f, style: FontStyle.Italic);
-
 
         /// <summary>
         /// Returns a System.Drawing.Color object for a given string, computed from the hash of the string.
@@ -33,7 +27,6 @@ namespace HELLION.DataStructures
             HSLColor hslColor = new HSLColor(hue: iHue, saturation: 200.0, luminosity: 80.0);
             return hslColor;
         }
-
 
         /// <summary>
         /// Based on an example from https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
@@ -214,142 +207,4 @@ namespace HELLION.DataStructures
         } // End of HSLColor
 
     }
-
-    public static class EnumExtensions
-    {
-        /// <summary>
-        /// Gets an Enum description from its value.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns>Returns the description, or the element name if there isn't a description.</returns>
-        /// <remarks>
-        /// From: http://www.luispedrofonseca.com/unity-quick-tips-enum-description-extension-method/
-        /// </remarks>
-        public static string GetEnumDescription(this Enum value)
-        {
-            if (value == null) return null;
-            DescriptionAttribute[] da = (DescriptionAttribute[])(value.GetType().GetField(value.ToString()))
-                .GetCustomAttributes(typeof(DescriptionAttribute), false);
-            return da.Length > 0 ? da[0].Description : value.ToString();
-        }
-
-        /// <summary>
-        /// Attempts to parse a value to either an Enum's description or if that fails a regular parse.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="description"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// Adapted From: https://stackoverflow.com/questions/4249632/string-to-enum-with-description
-        /// </remarks>
-        public static T ParseToEnumDescriptionOrEnumerator<T>(this string description) // this?
-        {
-            MemberInfo[] fields = typeof(T).GetFields();
-
-            foreach (var field in fields)
-            {
-                DescriptionAttribute[] attributes = (DescriptionAttribute[])field.GetCustomAttributes(typeof(DescriptionAttribute), false);
-
-                // Attempt to parse to the enumerator's description.
-                if (attributes != null && attributes.Length > 0 && attributes[0].Description == description)
-                    return (T)Enum.Parse(typeof(T), field.Name);
-            }
-
-            try
-            {
-                // Not found, attempt regular parse.
-                return (T)Enum.Parse(typeof(T), description);
-            }
-            catch (NotSupportedException)
-            {
-                // Unable to parse, return the default for the type.
-                return default;
-            }
-           
-        }
-
-
-        /// <summary>
-        /// Returns the values of an enum of given type T
-        /// usage: var values = EnumUtil.GetValues<Foos>();
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public static IEnumerable<T> GetValues<T>()
-        {
-            return Enum.GetValues(typeof(T)).Cast<T>();
-        }
-
-    }
-
-    public static class StringExtensions
-    {
-        public static bool Contains(this string str1, string str2, StringComparison compType)
-        {
-            return str1?.IndexOf(str2, compType) >= 0;
-        }
-    }
-
-
-    /// <summary>
-    /// A static class for reflection type functions.
-    /// </summary>
-    /// <remarks>
-    /// Based on the post by Azerothian in the following thread:
-    /// https://stackoverflow.com/questions/930433/apply-properties-values-from-one-object-to-another-of-the-same-type-automaticall
-    /// </remarks>
-    public static class Reflection
-    {
-        /// <summary>
-        /// Extension for 'Object' that copies the properties to a destination object.
-        /// </summary>
-        /// <param name="source">The source.</param>
-        /// <param name="destination">The destination.</param>
-        public static void CopyProperties(this object source, object destination)
-        {
-            // If any this null throw an exception
-            if (source == null || destination == null)
-                throw new Exception("Source or/and Destination Objects are null");
-            // Getting the Types of the objects
-            Type typeDest = destination.GetType();
-            Type typeSrc = source.GetType();
-
-            // Iterate the Properties of the source instance and  
-            // populate them from their desination counterparts  
-            PropertyInfo[] srcProps = typeSrc.GetProperties();
-            foreach (PropertyInfo srcProp in srcProps)
-            {
-                if (!srcProp.CanRead)
-                {
-                    continue;
-                }
-                PropertyInfo targetProperty = typeDest.GetProperty(srcProp.Name);
-                if (targetProperty == null)
-                {
-                    continue;
-                }
-                if (!targetProperty.CanWrite)
-                {
-                    continue;
-                }
-                if (targetProperty.GetSetMethod(true) != null && targetProperty.GetSetMethod(true).IsPrivate)
-                {
-                    continue;
-                }
-                if ((targetProperty.GetSetMethod().Attributes & MethodAttributes.Static) != 0)
-                {
-                    continue;
-                }
-                if (!targetProperty.PropertyType.IsAssignableFrom(srcProp.PropertyType))
-                {
-                    continue;
-                }
-                // Passed all tests, lets set the value
-                targetProperty.SetValue(destination, srcProp.GetValue(source, null), null);
-            }
-        }
-    }
-
-
-
 }

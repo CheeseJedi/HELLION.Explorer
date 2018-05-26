@@ -6,7 +6,7 @@ using static HELLION.DataStructures.StaticDataHelper;
 namespace HELLION.DataStructures
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class HEBlueprintStructureDefinitions
+    public class OLD_BlueprintStructureDefinitions
     {
         /// <summary>
         /// Object Type Def: should always be BlueprintStructureDefinitions
@@ -46,7 +46,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Basic Constructor.
         /// </summary>
-        public HEBlueprintStructureDefinitions()
+        public OLD_BlueprintStructureDefinitions()
         {
             StructureDefinitions = new List<HEBlueprintStructureDefinition>();
         }
@@ -93,7 +93,7 @@ namespace HELLION.DataStructures
             /// <summary>
             /// Parent object - not to be included in serialisation.
             /// </summary>
-            public HEBlueprintStructureDefinitions Parent = null;
+            public OLD_BlueprintStructureDefinitions Parent = null;
 
             /// <summary>
             /// Constructor.

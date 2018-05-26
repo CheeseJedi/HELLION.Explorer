@@ -1,14 +1,12 @@
 ﻿namespace HELLION.DataStructures
 {
-    public class HEBlueprintCollectionTreeNode : HEGameDataTreeNode
+    public class Blueprint_FileCollection_TreeNode : Json_TreeNode
     {
-        public HEBlueprintCollectionTreeNode(HEBlueprintCollection passedOwner = null, string nodeName = null,
+        public Blueprint_FileCollection_TreeNode(Blueprint_FileCollection passedOwner = null, string nodeName = null,
              string nodeText = null, string nodeToolTipText = null)
             : base(passedOwner, nodeName, HETreeNodeType.BlueprintCollection, nodeText, nodeToolTipText)
         {
 
         }
     }
-
-
 }

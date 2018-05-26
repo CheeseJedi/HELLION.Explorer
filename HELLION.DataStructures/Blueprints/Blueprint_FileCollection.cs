@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace HELLION.DataStructures
 {
-    public class HEBlueprintCollection : HEJsonFileCollection
+    public class Blueprint_FileCollection : Json_FileCollection
     {
 
         /// <summary>
@@ -16,17 +16,17 @@ namespace HELLION.DataStructures
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="passedCollectionType"></param>
         /// <param name="autoPopulateTreeDepth"></param>
-        public HEBlueprintCollection(HEBlueprintsHandler passedParent, DirectoryInfo passedDirectoryInfo,
+        public Blueprint_FileCollection(BlueprintsHandler_UI passedParent, DirectoryInfo passedDirectoryInfo,
              int autoPopulateTreeDepth = 0) : base()
         {
             // Set up the data dictionary
-            DataDictionary = new Dictionary<string, HEStationBlueprintFile>();
+            DataDictionary = new Dictionary<string, StationBlueprint_File>();
 
             OwnerObject = passedParent ?? throw new NullReferenceException("passedParent was null.");
             DataDirectoryInfo = passedDirectoryInfo ?? throw new NullReferenceException("passedDirectoryInfo was null.");
             if (!DataDirectoryInfo.Exists) throw new DirectoryNotFoundException("DataDirectoryInfo reports the passed folder doesn't exist.");
 
-            RootNode = new HEBlueprintCollectionTreeNode(passedOwner: this, nodeName: DataDirectoryInfo.Name,
+            RootNode = new Blueprint_FileCollection_TreeNode(passedOwner: this, nodeName: DataDirectoryInfo.Name,
                 nodeToolTipText: DataDirectoryInfo.FullName);
                 
             if (RootNode == null ) throw new InvalidOperationException("RootNode failed to create.");
@@ -38,18 +38,18 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Public property to access the parent object.
         /// </summary>
-        public new HEBlueprintsHandler OwnerObject { get; protected set; } = null;
+        public new BlueprintsHandler_UI OwnerObject { get; protected set; } = null;
             
         /// <summary>
-        /// The Data Dictionary holds HEUIJsonFile objects, with the file name as the key.
+        /// The Data Dictionary holds Json_File_UI objects, with the file name as the key.
         /// </summary>
-        public new Dictionary<string, HEStationBlueprintFile> DataDictionary { get; protected set; } = null;
+        public new Dictionary<string, StationBlueprint_File> DataDictionary { get; protected set; } = null;
 
         /// <summary>
         /// The root node of the Blueprint file collection - each data file will have it's
         /// own tree attached as child nodes to this node.
         /// </summary>
-        public new HEBlueprintCollectionTreeNode RootNode { get; set; } = null;
+        public new Blueprint_FileCollection_TreeNode RootNode { get; set; } = null;
 
         /// <summary>
         /// The load routine for the static data file collection
@@ -67,7 +67,7 @@ namespace HELLION.DataStructures
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
                     // Create a new HEStationonBlueprintFile and populate the path.
-                    HEStationBlueprintFile tempBlueprintFile = new HEStationBlueprintFile(this, dataFile, PopulateNodeTreeDepth);
+                    StationBlueprint_File tempBlueprintFile = new StationBlueprint_File(this, dataFile, PopulateNodeTreeDepth);
                     // Add the file to the Data Dictionary 
                     DataDictionary.Add(dataFile.Name, tempBlueprintFile);
 

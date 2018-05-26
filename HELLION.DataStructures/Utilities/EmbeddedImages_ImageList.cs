@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Reflection;
+using System.Windows.Forms;
 using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.DataStructures
@@ -13,8 +13,10 @@ namespace HELLION.DataStructures
     /// Currently incomplete and requires manual re-generation of multiple lists if the contents
     /// of the Images folder changes in any way.
     /// </remarks>
-    public class HEImageList
+    public class EmbeddedImages_ImageList
     {
+        #region Enumerations
+
         /// <summary>
         /// This enum is used to look up the images that are embedded resources in this library
         /// and determine the index of a known image name.
@@ -154,6 +156,7 @@ namespace HELLION.DataStructures
             STRUCT_Unspecified,
         }
 
+        #endregion
 
         /// <summary>
         /// Returns the defined image list index for the node type.

@@ -164,7 +164,7 @@ namespace HELLION.Explorer
 
                     // Determine node type and activate appropriate jump to menu items.
                     Type t = node.GetType();
-                    if (t.Equals(typeof(HEGameDataTreeNode)))
+                    if (t.Equals(typeof(Json_TreeNode)))
                     {
                         // We're working with a GAME DATA node
 
@@ -189,8 +189,8 @@ namespace HELLION.Explorer
                         rootOfDockingTreeToolStripMenuItem.Enabled = false;
                         parentCelestialBodyToolStripMenuItem.Enabled = false;
 
-                        // Cast the node to an HEGameDataTreeNode type
-                        HEGameDataTreeNode gDnode = (HEGameDataTreeNode)treeView1.SelectedNode;
+                        // Cast the node to an Json_TreeNode type
+                        Json_TreeNode gDnode = (Json_TreeNode)treeView1.SelectedNode;
 
                         // Disable the LoadNextLevel item if it's already been loaded.
                         if (gDnode.ChildNodesLoaded) loadNextLevelToolStripMenuItem.Enabled = false;
@@ -209,7 +209,7 @@ namespace HELLION.Explorer
                             thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
                         }
                     }
-                    else if (t.Equals(typeof(HESolarSystemTreeNode)))
+                    else if (t.Equals(typeof(SolarSystem_TreeNode)))
                     {
                         // We're working with a SOLAR SYSTEM node
 
@@ -227,8 +227,8 @@ namespace HELLION.Explorer
                         thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
                         thisObjectInSolarSystemViewToolStripMenuItem.Checked = true;
 
-                        // Cast the node as an HESolarSystemTreeNode type
-                        HESolarSystemTreeNode sSnode = (HESolarSystemTreeNode)treeView1.SelectedNode;
+                        // Cast the node as an SolarSystem_TreeNode type
+                        SolarSystem_TreeNode sSnode = (SolarSystem_TreeNode)treeView1.SelectedNode;
 
                         if (sSnode.GUID == -1 || sSnode.NodeType == HETreeNodeType.SolarSystemView
                             || sSnode.NodeType == HETreeNodeType.BlueprintHierarchyView)
@@ -263,7 +263,7 @@ namespace HELLION.Explorer
                         }
                     }
 
-                    else if (t.Equals(typeof(HEBlueprintTreeNode)))
+                    else if (t.Equals(typeof(Blueprint_TreeNode)))
                     {
 
                         // Some decision making logic needed here
@@ -358,7 +358,7 @@ namespace HELLION.Explorer
                     case HETreeNodeType.JsonValue:
                         // We're in the Game Data section
 
-                        HEGameDataTreeNode tempGameDataNode = (HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+                        Json_TreeNode tempGameDataNode = (Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
                         if (!tempGameDataNode.ChildNodesLoaded)
                         {
                             // Load next level
@@ -462,7 +462,7 @@ namespace HELLION.Explorer
         private void loadNextLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load next level
-            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+            Json_TreeNode tempNode = (Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 1);
             //tempNode.UpdateCounts();
         }
@@ -470,7 +470,7 @@ namespace HELLION.Explorer
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load all levels (up to depth of 15)
-            HEGameDataTreeNode tempNode = (HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+            Json_TreeNode tempNode = (Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 15);
             //tempNode.UpdateCounts();
             tempNode.Expand();
@@ -490,12 +490,12 @@ namespace HELLION.Explorer
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.CreateNewJsonDataView((HEGameDataTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+            HellionExplorerProgram.CreateNewJsonDataView((Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
         }
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.CreateNewBlueprintEditor((HEBlueprintTreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+            HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
         }
 
         private void thisObjectInSolarSystemViewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -504,9 +504,9 @@ namespace HELLION.Explorer
             else
             {
                 Type t = treeView1.SelectedNode.GetType();
-                if (t.Equals(typeof(HEGameDataTreeNode)))
+                if (t.Equals(typeof(Json_TreeNode)))
                 {
-                    HEGameDataTreeNode node = (HEGameDataTreeNode)treeView1.SelectedNode;
+                    Json_TreeNode node = (Json_TreeNode)treeView1.SelectedNode;
                     treeView1.SelectedNode = node.LinkedSolarSystemNode;
 
                     // Trigger refresh
@@ -524,9 +524,9 @@ namespace HELLION.Explorer
             else
             {
                 Type t = treeView1.SelectedNode.GetType();
-                if (t.Equals(typeof(HESolarSystemTreeNode)))
+                if (t.Equals(typeof(SolarSystem_TreeNode)))
                 {
-                    HESolarSystemTreeNode node = (HESolarSystemTreeNode)treeView1.SelectedNode;
+                    SolarSystem_TreeNode node = (SolarSystem_TreeNode)treeView1.SelectedNode;
                     treeView1.SelectedNode = node.LinkedGameDataNode;
 
                     // Trigger refresh
@@ -541,7 +541,7 @@ namespace HELLION.Explorer
         private void parentCelestialBodyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // This is only applicable in the Solar System View
-            HESolarSystemTreeNode node = (HESolarSystemTreeNode)treeView1.SelectedNode;
+            SolarSystem_TreeNode node = (SolarSystem_TreeNode)treeView1.SelectedNode;
             treeView1.SelectedNode = node.GetParentCelestialBody();
 
             // Trigger refresh
@@ -553,7 +553,7 @@ namespace HELLION.Explorer
         private void rootOfDockingTreeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // This is only applicable in the Solar System View
-            HESolarSystemTreeNode node = (HESolarSystemTreeNode)treeView1.SelectedNode;
+            SolarSystem_TreeNode node = (SolarSystem_TreeNode)treeView1.SelectedNode;
             treeView1.SelectedNode = node.GetRootOfDockingTree();
 
             // Trigger refresh
@@ -589,13 +589,12 @@ namespace HELLION.Explorer
 
         private void generateStructureDefinitionsStubjsonToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Contents to be moved to the HEBlueprintsHandler class once complete.
+            // Contents to be moved to the BlueprintsHandler_UI class once complete.
 
             if (HellionExplorerProgram.docCurrent != null)
             {
-
                 if (!HellionExplorerProgram.docCurrent.GameData.StaticData.DataDictionary.
-                    TryGetValue("Structures.json", out HEUIJsonFile structuresJsonBaseFile))
+                    TryGetValue("Structures.json", out Json_File_UI structuresJsonBaseFile))
                     throw new InvalidOperationException(
                         "Unable to access the Structures.json file from the Static Data Dictionary.");
                 else
@@ -604,15 +603,12 @@ namespace HELLION.Explorer
 
                     FileInfo newDefsFileInfo = new FileInfo(@"E:\HELLION\TestArea\Output.json");
 
-
-                    HEStationBlueprintFile newDefsFile = new HEStationBlueprintFile
-                        (this, newDefsFileInfo, structuresJsonBaseFile);
+                    StructureDefinitions_File newDefsFile = 
+                        new StructureDefinitions_File(newDefsFileInfo, structuresJsonBaseFile);
 
                     if (newDefsFile.File.Exists) MessageBox.Show("Tentative Success");
                     else MessageBox.Show("File not created!");
-
                 }
-
             }
             else MessageBox.Show("Must have an open document first.");
 
@@ -625,14 +621,14 @@ namespace HELLION.Explorer
 
         private void playerNameBySteamID64ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string result = HEUtilities.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
+            string result = General.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
             MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
 
         }
 
         private void _playerNameBySteamID64()
         {
-            string result = HEUtilities.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
+            string result = General.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
             MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
 
         }
@@ -641,7 +637,7 @@ namespace HELLION.Explorer
 
         private void groupID64ByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string groupName = HEUtilities.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
+            string groupName = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
 
             long? result = SteamIntegration.GetGroupID(groupName);
 
@@ -651,7 +647,7 @@ namespace HELLION.Explorer
 
         private void _groupID64ByGroupName()
         {
-            string groupName = HEUtilities.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
+            string groupName = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
 
             long? result = SteamIntegration.GetGroupID(groupName);
 
@@ -675,7 +671,7 @@ namespace HELLION.Explorer
 
         private void _groupMembersByGroupID64()
         {
-            string result = HEUtilities.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam Group Members", null);
+            string result = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam Group Members", null);
 
             List<long> iDs = SteamIntegration.GetGroupMembers(result);
 

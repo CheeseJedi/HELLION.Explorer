@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.HEBlueprintStructureDefinitions;
-using static HELLION.DataStructures.HEStationBlueprint;
+using static HELLION.DataStructures.StationBlueprint;
 using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.DataStructures
@@ -12,95 +10,111 @@ namespace HELLION.DataStructures
     /// <summary>
     /// 
     /// </summary>
-    public class HEBlueprintStructureDefinitionsFile : HEUIJsonFile
+    public class StructureDefinitions_File : StationBlueprint_File, Json_File_Parent
     {
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, int populateNodeTreeDepth) : this(passedParent)
+        public StructureDefinitions_File(object passedParent, FileInfo passedFileInfo) : base(null)
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
-            RootNode = new HEBlueprintTreeNode(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+            // RootNode = new Blueprint_TreeNode(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
             if (File.Exists) LoadFile();
         }
 
-        public HEBlueprintStructureDefinitionsFile(object passedParent) : base(passedParent)
+        /// <summary>
+        /// Constructor used to build a new StructureDefinitions.json file.
+        /// </summary>
+        /// <param name="passedParent"></param>
+        /// <param name="outputFileInfo"></param>
+        /// <param name="structuresJsonFile"></param>
+        public StructureDefinitions_File(FileInfo outputFileInfo, Json_File_UI structuresJsonFile) : base(null)
         {
-            OwnerObject = passedParent ?? throw new NullReferenceException("passedParent was null.");
-
-            BlueprintStructureDefinitionsObject = new HEBlueprintStructureDefinitions();
-
-            RootNode = new HEBlueprintTreeNode(this, nodeName: "Unsaved", newNodeType: HETreeNodeType.DataFile, nodeToolTipText: "File not yet saved");
-
-            DataViewRootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: "Data View",
-                newNodeType: HETreeNodeType.DataView, nodeToolTipText: "Shows a representation of the Json data that makes up this blueprint.");
-
-            DefinitionViewRootNode = new HESolarSystemTreeNode(passedOwner: this, nodeName: "Definition View",
-                nodeType: HETreeNodeType.BlueprintStructureDefinitionView, nodeToolTipText: "Shows a representation of each structure definition and its docking ports.");
-
-            RootNode.Nodes.Add(DataViewRootNode);
-            RootNode.Nodes.Add(DefinitionViewRootNode);
-        }
-
-
-        public HEBlueprintStructureDefinitionsFile(object passedParent, FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile) : base(passedParent)
-        {
-            File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
+            File = outputFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
             // Check the reference to the Static Data's Structures.json file.
             if (structuresJsonFile == null) throw new NullReferenceException("structuresJsonFile was null.");
 
-            BlueprintStructureDefinitionsObject = new HEBlueprintStructureDefinitions();
-            GenerateAndSaveNewStructureDefinitionsFile(passedFileInfo, structuresJsonFile);
+            // BlueprintStructureDefinitionsObject = new HEBlueprintStructureDefinitions();
+            GenerateAndSaveNewStructureDefinitionsFile(outputFileInfo, structuresJsonFile);
 
         }
 
-
-        public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, HEUIJsonFile structuresJsonFile)
+        /// <summary>
+        /// Generates a new StructureDefinitions.json file.
+        /// </summary>
+        /// <param name="passedFileInfo"></param>
+        /// <param name="structuresJsonFile"></param>
+        public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, Json_File_UI structuresJsonFile)
         {
+            BlueprintObject.__ObjectType = BlueprintObjectType.BlueprintStructureDefinitions;
+            BlueprintObject.Version = StationBlueprintFormatVersion;
+            BlueprintObject.Name = String.Format("Hellion Station Blueprint Format - Structure Definitions Template Version {0} Generated {1}",
+                StationBlueprintFormatVersion, DateTime.Now);
+            BlueprintObject.LinkURI = new Uri(@"https://github.com/CheeseJedi/Hellion-Station-Blueprint-Format");
 
-            //HEBlueprintStructureDefinitionsFile newSDFile = new HEBlueprintStructureDefinitionsFile(null);
-
-            BlueprintStructureDefinitionsObject.__ObjectType = "BlueprintStructureDefinitions";
-            BlueprintStructureDefinitionsObject.Version = 0.35m;
+            BlueprintObject.AuxData = new HEBlueprintStructureAuxData(null);
 
             // Loop through all the structures in the Structures.Json file
             foreach (JToken jtStructure in structuresJsonFile.JData)
             {
-                // Define a new StructureDefinition
-                HEBlueprintStructureDefinition newStructureDefinition = new HEBlueprintStructureDefinition
+                // Create a new Structure definition
+                BlueprintStructure nsd = new BlueprintStructure
                 {
-                    SceneName = (string)jtStructure["SceneName"],
-                    DisplayName = (string)jtStructure["SceneName"], // might benefit from renaming to DisplayName
-                    ItemID = (int)jtStructure["ItemID"], // possibly defunct.
+                    SceneID = (HEStructureSceneID)Enum
+                        .Parse(typeof(HEStructureSceneID), (string)jtStructure["ItemID"]),
+
+                    AuxData = new HEBlueprintStructureAuxData(null),
+
+                    // Calculate the total (nominal) air volume.
+                    NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume")),
+
+                    // Look up the Power requirement for this module.
+                    // Select subsystem type 13 (VesselBasePowerConsumer) usually with RoomID of -1
+                    StandbyPowerRequirement = (float)jtStructure.SelectToken(
+                        "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Standby"),
+
+                    // NominalPowerRequirement = (float)jtStructure.SelectToken(
+                    //  "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Nominal"),
+
+                    // Need to locate the info probably from the generators system.
+                    // Not currently set.
+                    //NominalPowerContribution = null;
+
+
                 };
 
                 // Loop through the jtStructure's DockingPort collection.
                 foreach (JToken jtDockingPort in jtStructure["DockingPorts"])
                 {
-                    HEBlueprintStructureDefinitionDockingPort newDockingPortDefinition = new HEBlueprintStructureDefinitionDockingPort
+                    HEBlueprintDockingPort newDockingPortDefinition = new HEBlueprintDockingPort
                     {
-                        PortName = HEDockingPortType.Unspecified,
+                        // OrderID is critical as this is what the game uses as the key to match
+                        // the ports in-game.
                         OrderID = (int)jtDockingPort["OrderID"],
-                        // PortID is irrelevant.
+
+                        // Look up the correct port name for this structure and orderID
+                        PortName = GetDockingPortType((HEStructureSceneID)nsd.SceneID,
+                            orderID: (int)jtDockingPort["OrderID"]),
+
+                        // Default locked/unlocked status is preserved.
+                        Locked = (bool)jtDockingPort["Locked"],
                     };
 
-                    newStructureDefinition.DockingPorts.Add(newDockingPortDefinition);
+                    nsd.DockingPorts.Add(newDockingPortDefinition);
                 }
 
-                BlueprintStructureDefinitionsObject.StructureDefinitions.Add(newStructureDefinition);
+                BlueprintObject.Structures.Add(nsd);
 
             }
 
-            SerialiseFromBlueprintStructureDefinitionsObject();
-
-
+            SerialiseFromBlueprintObject();
 
             SaveFile(CreateBackup: true);
 
-
         }
 
+        /*
 
         public new void LoadFile()
         {
@@ -145,18 +159,13 @@ namespace HELLION.DataStructures
             PostLoadOperations();
         }
 
-
-
-
-
-
         /// <summary>
         /// This class overrides the type of root node to represent a blueprint.
         /// </summary>
         public new HETreeNode RootNode { get; protected set; } = null;
 
-        public HEGameDataTreeNode DataViewRootNode { get; protected set; } = null;
-        public HESolarSystemTreeNode DefinitionViewRootNode { get; protected set; } = null;
+        public Json_TreeNode DataViewRootNode { get; protected set; } = null;
+        public SolarSystem_TreeNode DefinitionViewRootNode { get; protected set; } = null;
 
         /// <summary>
         /// This is the actual BlueprintStructureDefinition object - serialised and de-serialised from here.
@@ -214,6 +223,6 @@ namespace HELLION.DataStructures
 
         }
 
-
+        */
     }
 }

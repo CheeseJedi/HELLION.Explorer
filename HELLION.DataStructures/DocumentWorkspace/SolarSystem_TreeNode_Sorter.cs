@@ -12,7 +12,7 @@ namespace HELLION.DataStructures
     /// Create a node sorter that implements the IComparer interface to sort HEOrbitalObjTreeNodes
     /// by Semi-Major axis.
     /// </summary>
-    public class HETNSorterSemiMajorAxis : IComparer
+    public class SolarSystem_TreeNode_Sorter : IComparer
     {
         /// <summary>
         /// Compare the values of SemiMajorAxis.
@@ -22,10 +22,8 @@ namespace HELLION.DataStructures
         /// <returns></returns>
         public int Compare(object x, object y)
         {
-            HESolarSystemTreeNode nodeX = x as HESolarSystemTreeNode;
-            HESolarSystemTreeNode nodeY = y as HESolarSystemTreeNode;
-
-            // int iResult = Comparer<double>.Default.Compare(nodeX.SemiMajorAxis, nodeY.SemiMajorAxis);
+            SolarSystem_TreeNode nodeX = x as SolarSystem_TreeNode;
+            SolarSystem_TreeNode nodeY = y as SolarSystem_TreeNode;
 
             if (nodeX != null && nodeY != null)
             {
@@ -38,6 +36,5 @@ namespace HELLION.DataStructures
                 return 0;
             }
         }
-    } // End of HETNSorterSemiMajorAxis
-
+    }
 }

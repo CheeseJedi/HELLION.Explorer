@@ -10,7 +10,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// A class for handling in-game GUIDs.
     /// </summary>
-    public static class HEGuidManager
+    public static class GuidManager
     {
         public static List<long> ObservedGuids { get => observedGuids; }
 

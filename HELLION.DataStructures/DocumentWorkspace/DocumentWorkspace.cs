@@ -1,14 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Diagnostics;
 using System.Windows.Forms;
-//using System.Drawing;
-//using System.Collections.Generic; // for IEnumerable
-//using System.Linq;
-//using System.Text;
-//using Newtonsoft.Json;
-//using Newtonsoft.Json.Linq;
-//using static HELLION.DataStructures.HEUtilities;
 
 namespace HELLION.DataStructures
 {
@@ -20,7 +12,7 @@ namespace HELLION.DataStructures
     /// custom node tree representing the orbital objects and retrieving data from the tree
     /// to populate the dynamic list and full data from the source.
     /// </remarks>
-    public class HEDocumentWorkspace
+    public class DocumentWorkspace
     {
         /// <summary>
         /// Constructor that takes a FileInfo and a DirectoryInfo.
@@ -31,18 +23,18 @@ namespace HELLION.DataStructures
         /// <param name="passedListView"></param>
         /// <param name="passedTreeView"></param>
         /// <param name="passedImageList"></param>
-        public HEDocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo, TreeView passedTreeView, ListView passedListView, HEImageList passedHEImageList)
+        public DocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo, TreeView passedTreeView, ListView passedListView, EmbeddedImages_ImageList passedHEImageList)
         {
             // Initialise the GameData, SolarSystem and SearchHandler objects.
             if (passedFileInfo == null || passedDirectoryInfo == null
                 || !passedFileInfo.Exists || !passedDirectoryInfo.Exists)
-                throw new InvalidOperationException("HEDocumentWorkspace Constructor: A problem occurred with a passed parameter - something doesn't exist.");
+                throw new InvalidOperationException("DocumentWorkspace Constructor: A problem occurred with a passed parameter - something doesn't exist.");
             else
             {
-                GameData = new HEGameData(passedFileInfo, passedDirectoryInfo);
-                SolarSystem = new HESolarSystem(GameData);
-                SearchHandler = new HESearchHandler(GameData, SolarSystem);
-                Blueprints = new HEBlueprintsHandler();
+                GameData = new GameData(passedFileInfo, passedDirectoryInfo);
+                SolarSystem = new SolarSystem(GameData);
+                SearchHandler = new SearchHandler(GameData, SolarSystem);
+                Blueprints = new BlueprintsHandler_UI();
 
                 // Add the parameters related to the MainForm controls.
                 mainFormTreeView = passedTreeView ?? throw new NullReferenceException("passedTreeView was null.");
@@ -56,28 +48,27 @@ namespace HELLION.DataStructures
             }
         }
 
-
         /// <summary>
-        /// The HEGameData object that is responsible for loading the save file and all the static data files and then
+        /// The GameData object that is responsible for loading the save file and all the static data files and then
         /// building node trees representing the raw data.
         /// </summary>
-        public HEGameData GameData { get; private set; } = null;
+        public GameData GameData { get; private set; } = null;
 
         /// <summary>
-        /// The HESolarSystem object that is responsible for building the Solar System node tree, made up of celestial
+        /// The SolarSystem object that is responsible for building the Solar System node tree, made up of celestial
         /// bodies, asteroids, ships (which includes modules at this point) and players.
         /// </summary>
-        public HESolarSystem SolarSystem { get; private set; } = null;
+        public SolarSystem SolarSystem { get; private set; } = null;
 
         /// <summary>
-        /// The HESearchHandler object that implements search.
+        /// The SearchHandler object that implements search.
         /// </summary>
-        public HESearchHandler SearchHandler { get; private set; } = null;
+        public SearchHandler SearchHandler { get; private set; } = null;
 
         /// <summary>
-        /// The HEBlueprintsHandler object that handles loading and displaying blueprints.
+        /// The BlueprintsHandler_UI object that handles loading and displaying blueprints.
         /// </summary>
-        public HEBlueprintsHandler Blueprints { get; private set; } = null;
+        public BlueprintsHandler_UI Blueprints { get; private set; } = null;
 
         /// <summary>
         /// The .save file that is being opened.
@@ -122,7 +113,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Stores a reference to the main program's ImageList for icon use.
         /// </summary>
-        private HEImageList mainProgramHEImageList = null;
+        private EmbeddedImages_ImageList mainProgramHEImageList = null;
 
         /// <summary>
         /// Handles closing of the document workspace.
@@ -166,9 +157,9 @@ namespace HELLION.DataStructures
         private void InitialiseTreeView(TreeView passedTreeView, ImageList passedImageList)
         {
             passedTreeView.ImageList = passedImageList;
-            passedTreeView.ImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
-            passedTreeView.SelectedImageIndex = (int)HEImageList.HEIconsImageNames.Flag_16x;
-            passedTreeView.TreeViewNodeSorter = new HETNSorterSemiMajorAxis();
+            passedTreeView.ImageIndex = (int)EmbeddedImages_ImageList.HEIconsImageNames.Flag_16x;
+            passedTreeView.SelectedImageIndex = (int)EmbeddedImages_ImageList.HEIconsImageNames.Flag_16x;
+            passedTreeView.TreeViewNodeSorter = new SolarSystem_TreeNode_Sorter();
             passedTreeView.ShowNodeToolTips = true;
         }
 

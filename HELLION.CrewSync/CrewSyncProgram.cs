@@ -26,7 +26,7 @@ namespace HELLION.CrewSync
         /// <summary>
         /// The Hellion Dedicated Server file we're working on.
         /// </summary>
-        internal static HEJsonFile hellionSaveFile = null;
+        internal static Json_File hellionSaveFile = null;
 
         /// <summary>
         /// The FileInfo object for the 
@@ -186,7 +186,7 @@ namespace HELLION.CrewSync
         /// <returns></returns>
         internal static bool FileOpen()
         {
-            hellionSaveFile = new HEJsonFile(null, hellionSaveFileInfo);
+            hellionSaveFile = new Json_File(null, hellionSaveFileInfo);
 
             if (hellionSaveFile.LoadError) return false;
             return true;

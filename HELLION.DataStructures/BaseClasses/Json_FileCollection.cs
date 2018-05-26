@@ -10,9 +10,9 @@ namespace HELLION.DataStructures
     /// Defines an object that contains a dictionary of HEJsonBaseFiles representing the 
     /// json files in a specified folder.
     /// </summary>
-    public class HEJsonFileCollection
+    public class Json_FileCollection : Json_File_Parent
     {
-        public HEJsonFileCollection()
+        public Json_FileCollection()
         {
 
         }
@@ -22,11 +22,10 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="autoPopulateTree"></param>
-        public HEJsonFileCollection(HEGameData passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
+        public Json_FileCollection(Json_File_Parent passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
         {
-
             // Set up the data dictionary
-            DataDictionary = new Dictionary<string, HEUIJsonFile>();
+            DataDictionary = new Dictionary<string, Json_File_UI>();
 
             // Check validity - if good load the data set
             OwnerObject = passedParent ?? throw new InvalidOperationException("passedParent was null.");
@@ -42,12 +41,12 @@ namespace HELLION.DataStructures
         /// <summary>
         /// A reference to the 'Owning' object.
         /// </summary>
-        public HEGameData OwnerObject { get; protected set; } = null;
+        public Json_File_Parent OwnerObject { get; protected set; } = null;
             
         /// <summary>
-        /// The Data Dictionary holds HEUIJsonFile objects, with the file name as the key.
+        /// The Data Dictionary holds Json_File_UI objects, with the file name as the key.
         /// </summary>
-        public Dictionary<string, HEUIJsonFile> DataDictionary { get; protected set; } = null;
+        public Dictionary<string, Json_File_UI> DataDictionary { get; protected set; } = null;
 
         /// <summary>
         /// Public property to access the DirectoryInfo used to build the file collection.
@@ -94,15 +93,15 @@ namespace HELLION.DataStructures
                 // Set up a list to monitor tasks running asynchronously
                 //List<Task> tasks = new List<Task>();
 
-                //HEUIJsonFile tempFile = null;
+                //Json_File_UI tempFile = null;
 
                 foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
                     
-                    // Create a new HEUIJsonFile and populate the path.
-                    HEUIJsonFile tempJsonFile = new HEUIJsonFile(this, dataFile, PopulateNodeTreeDepth);
+                    // Create a new Json_File_UI and populate the path.
+                    Json_File_UI tempJsonFile = new Json_File_UI(this, dataFile, PopulateNodeTreeDepth);
                     // Add the file to the Data Dictionary 
                     DataDictionary.Add(dataFile.Name, tempJsonFile);
 
@@ -140,9 +139,9 @@ namespace HELLION.DataStructures
 
                 if (DataDictionary != null)
                 {
-                    foreach (KeyValuePair<string, HEUIJsonFile> keyValuePair in DataDictionary)
+                    foreach (KeyValuePair<string, Json_File_UI> keyValuePair in DataDictionary)
                     {
-                        HEUIJsonFile jsonBaseFile = keyValuePair.Value;
+                        Json_File_UI jsonBaseFile = keyValuePair.Value;
 
                         if (jsonBaseFile != null)
                         {

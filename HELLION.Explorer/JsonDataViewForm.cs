@@ -40,9 +40,9 @@ namespace HELLION.Explorer
 
         private string FormTitleText = null;
 
-        private HEGameDataTreeNode sourceNode = null;
+        private Json_TreeNode sourceNode = null;
 
-        public HEGameDataTreeNode SourceNode => sourceNode;
+        public Json_TreeNode SourceNode => sourceNode;
 
         public JsonDataViewForm()
         {
@@ -52,7 +52,7 @@ namespace HELLION.Explorer
             applyChangesToolStripMenuItem.Enabled = false;
         }
 
-        public JsonDataViewForm(HEGameDataTreeNode passedSourceNode) : this()
+        public JsonDataViewForm(Json_TreeNode passedSourceNode) : this()
         {
             sourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.FullPath;

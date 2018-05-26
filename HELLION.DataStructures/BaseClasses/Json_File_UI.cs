@@ -4,20 +4,20 @@ using System.IO;
 namespace HELLION.DataStructures
 {
     /// <summary>
-    /// A derived JsonFile class that has a HETreeNode for UI display purposes.
+    /// A derived Json_File class that has a HETreeNode for UI display purposes.
     /// </summary>
     /// <remarks>
-    /// Used directly in the HEJsonFileCollection and is also inherited by the HEJsonGameFile class.
+    /// Used directly in the Json_FileCollection and is also inherited by the HEJsonGameFile class.
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEUIJsonFile : HEJsonFile
+    public class Json_File_UI : Json_File
     {
         /// <summary>
         /// Basic constructor.
         /// </summary>
         /// <param name="ownerObject"></param>
-        public HEUIJsonFile(object ownerObject) : base(ownerObject)
+        public Json_File_UI(Json_File_Parent ownerObject) : base(ownerObject)
         {
 
         }
@@ -26,11 +26,11 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEUIJsonFile(object ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
+        public Json_File_UI(Json_File_Parent ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
             : base(ownerObject, passedFileInfo)
         {
             File = passedFileInfo ?? throw new NullReferenceException();
-            RootNode = new HEGameDataTreeNode(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+            RootNode = new Json_TreeNode(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
 
             if (!File.Exists) throw new FileNotFoundException();
             else
@@ -45,9 +45,9 @@ namespace HELLION.DataStructures
         /// Public property for read-only access to the root node of the tree.
         /// </summary>
         /// <remarks>
-        /// Casts the RootNode to an HEGameDataTreeNode.
+        /// Casts the RootNode to an Json_TreeNode.
         /// </remarks>
-        public HEGameDataTreeNode RootNode { get; protected set; } = null;
+        public Json_TreeNode RootNode { get; protected set; } = null;
 
         /// <summary>
         /// Used to determine whether there was an error on load.

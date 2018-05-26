@@ -1,5 +1,5 @@
 {
-  "ParentGUID": <GUID of the target ship, must be a Mule/Arg>,
+  "ParentGUID": null,  // <GUID of the target ship, must be a Mule/Arg>,
   "ParentType": 2,
   "LocalPosition": [
 	-0.094124145805835724,

@@ -15,7 +15,7 @@ namespace HELLION.Explorer
         public ObservedGuidsForm()
         {
             InitializeComponent();
-            listBox1.DataSource = DataStructures.HEGuidManager.ObservedGuids;
+            listBox1.DataSource = DataStructures.GuidManager.ObservedGuids;
             //listBox1.DisplayMember = 
 
         }

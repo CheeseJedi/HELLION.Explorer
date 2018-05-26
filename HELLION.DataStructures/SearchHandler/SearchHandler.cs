@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HELLION.DataStructures
@@ -11,7 +9,7 @@ namespace HELLION.DataStructures
     /// <summary>
     /// A class to handle searches and present search results.
     /// </summary>
-    public class HESearchHandler
+    public class SearchHandler
     {
         /// <summary>
         /// Defines the available search operator types.
@@ -29,22 +27,22 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Public property for the root node of the Search Handler tree.
         /// </summary>
-        public HESearchHandlerTreeNode RootNode => rootNode;
+        public SearchHandler_TreeNode RootNode => rootNode;
 
         /// <summary>
         /// Field for root node of the Game Data tree.
         /// </summary>
-        private HESearchHandlerTreeNode rootNode = null;
+        private SearchHandler_TreeNode rootNode = null;
 
         /// <summary>
         /// Stores a reference to the GameData object.
         /// </summary>
-        private HEGameData gameData = null;
+        private GameData gameData = null;
 
         /// <summary>
         /// Stores a reference to the Solar System object.
         /// </summary>
-        private HESolarSystem solarSystem = null;
+        private SolarSystem solarSystem = null;
 
         /// <summary>
         /// Public property to access to access the current search operator.
@@ -77,12 +75,12 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedGameData"></param>
         /// <param name="passedSolarSystem"></param>
-        public HESearchHandler(HEGameData passedGameData, HESolarSystem passedSolarSystem)
+        public SearchHandler(GameData passedGameData, SolarSystem passedSolarSystem)
         {
             gameData = passedGameData ?? throw new NullReferenceException("passedGameData was null.");
             solarSystem = passedSolarSystem ?? throw new NullReferenceException("passedSolarSystem was null.");
             
-            rootNode = new HESearchHandlerTreeNode("Search", HETreeNodeType.SearchHandler, passedOwner: this);
+            rootNode = new SearchHandler_TreeNode("Search", HETreeNodeType.SearchHandler, passedOwner: this);
             
             searchOperators = new List<HESearchOperator>();
 
@@ -112,14 +110,14 @@ namespace HELLION.DataStructures
         public class HESearchOperator
         {
             /// <summary>
-            /// Constructor that takes a HESearchHandler reference to it's parent.
+            /// Constructor that takes a SearchHandler reference to it's parent.
             /// </summary>
             /// <param name="passedParent"></param>
-            public HESearchOperator(HESearchHandler passedParent, HESearchOperatorFlags passedOperatorFlags)
+            public HESearchOperator(SearchHandler passedParent, HESearchOperatorFlags passedOperatorFlags)
             {
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
                 OperatorFlags = passedOperatorFlags;
-                _rootNode = new HESearchHandlerTreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName, passedOwner: this);
+                _rootNode = new SearchHandler_TreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName, passedOwner: this);
                 parent.rootNode.Nodes.Add(_rootNode);
                 parent.searchOperators.Add(this);
             }
@@ -142,9 +140,9 @@ namespace HELLION.DataStructures
             protected HETreeNode _rootNode = null;
 
             /// <summary>
-            /// Stores a reference to this object's parent, the HESearchHandler
+            /// Stores a reference to this object's parent, the SearchHandler
             /// </summary>
-            protected HESearchHandler parent = null;
+            protected SearchHandler parent = null;
 
             /// <summary>
             /// Public property to get the results list.
@@ -344,7 +342,7 @@ namespace HELLION.DataStructures
 
         public class HEFindOperator : HESearchOperator
         {
-            public HEFindOperator(HESearchHandler passedParent) : base(passedParent)
+            public HEFindOperator(SearchHandler passedParent) : base(passedParent)
             {
                 rootNode.NodeType = HETreeNodeType.SearchResultsSet;
                 rootNode.Name = "Find Results";
@@ -375,7 +373,7 @@ namespace HELLION.DataStructures
 
         public class HEFindNodesByPathOperator : HESearchOperator
         {
-            public HEFindNodesByPathOperator(HESearchHandler passedParent) : base(passedParent)
+            public HEFindNodesByPathOperator(SearchHandler passedParent) : base(passedParent)
             {
                 rootNode.NodeType = HETreeNodeType.SearchResultsSet;
                 rootNode.Name = "Find Path Results";

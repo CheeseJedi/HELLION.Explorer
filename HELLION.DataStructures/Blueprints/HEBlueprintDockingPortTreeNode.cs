@@ -1,8 +1,8 @@
 ﻿namespace HELLION.DataStructures
 {
-    public class HEBlueprintDockingPortTreeNode : HEBlueprintTreeNode
+    public class HEBlueprintDockingPortTreeNode : Blueprint_TreeNode
     {
-        public HEBlueprintDockingPortTreeNode(HEStationBlueprint.HEBlueprintDockingPort passedOwner = null, string nodeName = null,
+        public HEBlueprintDockingPortTreeNode(StationBlueprint.HEBlueprintDockingPort passedOwner = null, string nodeName = null,
             string nodeText = null, string nodeToolTipText = null)
             : base(passedOwner, nodeName, HETreeNodeType.BlueprintDockingPort, nodeText, nodeToolTipText)
         {

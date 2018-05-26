@@ -13,7 +13,7 @@ namespace HELLION.DataStructures
     /// Defines a sub-derived TreeNode class to hold some additional parameters used to speed up working
     /// with the nodes by storing frequently used values.
     /// </summary>
-    public class HESolarSystemTreeNode : HETreeNode
+    public class SolarSystem_TreeNode : HETreeNode
     {
         /// <summary>
         /// Constructor that takes a minimum of a name, but also optionally a type and text (display name) - inherits the base constructor
@@ -22,24 +22,24 @@ namespace HELLION.DataStructures
         /// <param name="nodeType">HETreeNodeType of the new node; defaults to Unknown.</param>
         /// <param name="nodeText">The Text (DisplayName) of the node - uses the Name if omitted.</param>
         /// <param name="nodeToolTipText">The ToolTip text displayed; defaults to the nodeText if omitted.</param>
-        public HESolarSystemTreeNode(object passedOwner, string nodeName = null,
+        public SolarSystem_TreeNode(object passedOwner, string nodeName = null,
             HETreeNodeType nodeType = HETreeNodeType.Unknown, string nodeText = "", string nodeToolTipText = "")
             : base(passedOwner, nodeName, nodeType, nodeText, nodeToolTipText)
         {
-            OrbitData = new HEOrbitalData();
+            OrbitData = new OrbitalData();
         }
 
         /// <summary>
-        /// Constructor that takes a link to an HEGameDataTreeNode and an HETreeNodeType.
+        /// Constructor that takes a link to an Json_TreeNode and an HETreeNodeType.
         /// </summary>
         /// <remarks>
-        /// Uses the HEGameDataTreeNode's Tag field, cast to a JObject, to generate name, GUID
+        /// Uses the Json_TreeNode's Tag field, cast to a JObject, to generate name, GUID
         /// and other properties.
         /// The Inherits the base() constructor and sets properties directly.
         /// </remarks>
         /// <param name="gameDataNodeToLink"></param>
         /// <param name="nodeType"></param>
-        public HESolarSystemTreeNode(HEGameDataTreeNode gameDataNodeToLink, HETreeNodeType nodeType) : base(gameDataNodeToLink)
+        public SolarSystem_TreeNode(Json_TreeNode gameDataNodeToLink, HETreeNodeType nodeType) : base(gameDataNodeToLink)
         {
             // Check the gameDataNodeToLink isn't null.
             // if (gameDataNodeToLink == null) throw new NullReferenceException("gameDataNodeToLink was null.");
@@ -86,14 +86,14 @@ namespace HELLION.DataStructures
                     // It's a Celestial Body - the orbital data is not in an OrbitalData sub-object, but directly
                     // as properties of this JObject.
 
-                    OrbitData = new HEOrbitalData(linkedGameDataJson);
+                    OrbitData = new OrbitalData(linkedGameDataJson);
 
                     break;
                 case HETreeNodeType.Player:
                     // It's a player - doesn't have orbital data but may have a parent GUID if in a ship/module.
 
                     // Ensure OrbitData is null.
-                    OrbitData = new HEOrbitalData();
+                    OrbitData = new OrbitalData();
 
                     tempToken = linkedGameDataJson["ParentGUID"];
                     if (tempToken != null) OrbitData.ParentGUID = (long)linkedGameDataJson["ParentGUID"];
@@ -108,7 +108,7 @@ namespace HELLION.DataStructures
                 case HETreeNodeType.Ship:
                     // Ships also need to set the docking info if present.
 
-                    OrbitData = new HEOrbitalData((JObject)linkedGameDataJson["OrbitData"]);
+                    OrbitData = new OrbitalData((JObject)linkedGameDataJson["OrbitData"]);
 
                     tempToken = linkedGameDataJson["DockedToShipGUID"];
                     if (tempToken != null)
@@ -132,7 +132,7 @@ namespace HELLION.DataStructures
                     break;
                 default:
                     // It's a regular orbital object with it's parameters in an OrbitData sub-object.
-                    OrbitData = new HEOrbitalData((JObject)linkedGameDataJson["OrbitData"]);
+                    OrbitData = new OrbitalData((JObject)linkedGameDataJson["OrbitData"]);
                     break;
             }
             // Generate a ToolTipText for this node - done last as it references other data.
@@ -195,7 +195,7 @@ namespace HELLION.DataStructures
         /// Celestial Bodies do not populate this information as theirs is stored in a slightly
         /// different format, as they come from the Static Data rather than the .save file.
         /// </remarks>
-        public HEOrbitalData OrbitData { get; set; } = null;
+        public OrbitalData OrbitData { get; set; } = null;
 
         /// <summary>
         /// If this ship/module is docked TO another, the other ship's 
@@ -217,7 +217,7 @@ namespace HELLION.DataStructures
         /// Used to store a reference to the tree node in the Game Data that this was created
         /// from and is cross-linked to.
         /// </summary>
-        public HEGameDataTreeNode LinkedGameDataNode { get; set; } = null;
+        public Json_TreeNode LinkedGameDataNode { get; set; } = null;
 
         /// <summary>
         /// Generates a tool tip text for the current Solar System node.
@@ -239,9 +239,9 @@ namespace HELLION.DataStructures
         /// Gets the current object's parent Celestial Body.
         /// </summary>
         /// <returns></returns>
-        public HESolarSystemTreeNode GetParentCelestialBody()
+        public SolarSystem_TreeNode GetParentCelestialBody()
         {
-            HESolarSystemTreeNode parent = (HESolarSystemTreeNode)Parent;
+            SolarSystem_TreeNode parent = (SolarSystem_TreeNode)Parent;
             if (parent == null)
             {
                 if (GUID == -1)
@@ -272,16 +272,16 @@ namespace HELLION.DataStructures
         /// Gets the top most node in a docked node tree.
         /// </summary>
         /// <returns></returns>
-        public HESolarSystemTreeNode GetRootOfDockingTree()
+        public SolarSystem_TreeNode GetRootOfDockingTree()
         {
             if (DockedToShipGUID == 0)
             {
                 // We're not docked to anything so we are the root, job done!
-                return (HESolarSystemTreeNode)this;
+                return (SolarSystem_TreeNode)this;
             }
             else
             {
-                HESolarSystemTreeNode parent = (HESolarSystemTreeNode)Parent;
+                SolarSystem_TreeNode parent = (SolarSystem_TreeNode)Parent;
                 if (parent == null) throw new NullReferenceException("parent was null.");
                 else
                 {
@@ -298,7 +298,7 @@ namespace HELLION.DataStructures
         public bool IsDockedToParent()
         {
             // Cast Parent as a solar system node.
-            HESolarSystemTreeNode parent = (HESolarSystemTreeNode)Parent;
+            SolarSystem_TreeNode parent = (SolarSystem_TreeNode)Parent;
             if (parent == null) throw new NullReferenceException("parent was null.");
             else
             {
@@ -310,30 +310,30 @@ namespace HELLION.DataStructures
     }
 
     /// <summary>
-    /// Extends the HEGameDataTreeNode with the ability to generate a new cross-linked
-    /// HESolarSystemTreeNode from itself, used by the Solar System builder.
+    /// Extends the Json_TreeNode with the ability to generate a new cross-linked
+    /// SolarSystem_TreeNode from itself, used by the Solar System builder.
     /// </summary>
-    public partial class HEGameDataTreeNode : HETreeNode
+    public partial class Json_TreeNode : HETreeNode
     {
         /// <summary>
         /// Used to store a reference to the tree node in the Solar System that was created
         /// from this node and is cross-linked to.
         /// </summary>
-        public HESolarSystemTreeNode LinkedSolarSystemNode { get; set; } = null;
+        public SolarSystem_TreeNode LinkedSolarSystemNode { get; set; } = null;
 
         /// <summary>
-        /// Creates and returns a cross-linked HESolarSystemTreeNode from this HEGameDataTreeNode.
+        /// Creates and returns a cross-linked SolarSystem_TreeNode from this Json_TreeNode.
         /// </summary>
         /// <param name="nodeType"></param>
         /// <remarks>
-        /// Utilises a HESolarSystemTreeNode constructor that takes a reference to an HEGameDataTreeNode
+        /// Utilises a SolarSystem_TreeNode constructor that takes a reference to an Json_TreeNode
         /// and uses the JToken within it's Tag field to set various properties but MUST be passed a valid
         /// HETreeNodeType.
         /// </remarks>
         /// <returns></returns>
-        public HESolarSystemTreeNode CreateLinkedSolarSystemNode(HETreeNodeType nodeType)
+        public SolarSystem_TreeNode CreateLinkedSolarSystemNode(HETreeNodeType nodeType)
         {
-            LinkedSolarSystemNode = new HESolarSystemTreeNode(this, nodeType);
+            LinkedSolarSystemNode = new SolarSystem_TreeNode(this, nodeType);
             return LinkedSolarSystemNode;
         }
     }

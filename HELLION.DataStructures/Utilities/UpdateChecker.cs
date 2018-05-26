@@ -15,14 +15,14 @@ namespace HELLION.DataStructures
     /// <remarks>
     /// This will likely be fleshed out a little further in future.
     /// </remarks>
-    public class HEUpdateChecker
+    public class UpdateChecker
     {
         /// <summary>
         /// Default constructor - requires GitHub Username and Repo name.
         /// </summary>
         /// <param name="gitHubUserName">GitHub User name</param>
         /// <param name="repositoryName">GitHub Repository name</param>
-        public HEUpdateChecker (string gitHubUserName, string repositoryName)
+        public UpdateChecker (string gitHubUserName, string repositoryName)
         {
             // Only proceed if both the username and repository name have non-empty strings.
             if (gitHubUserName != "" && repositoryName != "")

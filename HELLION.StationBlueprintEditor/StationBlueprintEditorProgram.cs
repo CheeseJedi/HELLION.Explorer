@@ -50,31 +50,31 @@ namespace HELLION.StationBlueprintEditor
         /// </summary>
         internal static FileInfo saveFileInfo = null;
 
-        internal static HEUIJsonFile file;
+        internal static StructureDefinitions_File structureDefinitionsFile = null;
 
         /// <summary>
         /// Defines an object to hold the current open document
         /// </summary>
-        internal static HEStationBlueprintFile docCurrent = null;
+        internal static StationBlueprint_File docCurrent = null;
 
         #endregion
 
         #region Misc Objects
 
         /// <summary>
-        /// Initialise an HEUpdateChecker object and specify the GitHub user name and repository name.
+        /// Initialise an UpdateChecker object and specify the GitHub user name and repository name.
         /// </summary>
-        internal static HEUpdateChecker hEUpdateChecker = new HEUpdateChecker
+        internal static UpdateChecker hEUpdateChecker = new UpdateChecker
             ("CheeseJedi", "HELLION.StationBlueprintEditor");
 
         /// <summary>
-        /// Initialises an HEImageList object to supply the image list to the tree view and
+        /// Initialises an EmbeddedImages_ImageList object to supply the image list to the tree view and
         /// list view controls, plus anywhere else the images may be used.
         /// </summary>
-        internal static HEImageList hEImageList = new HEImageList();
+        internal static EmbeddedImages_ImageList hEImageList = new EmbeddedImages_ImageList();
 
         /// <summary>
-        /// Defines an ImageList and set it to the HEImageList
+        /// Defines an ImageList and set it to the EmbeddedImages_ImageList
         /// </summary>
         internal static ImageList ilObjectTypesImageList = hEImageList.IconImageList;
 
@@ -167,7 +167,7 @@ namespace HELLION.StationBlueprintEditor
             sb.Append(sNL2);
 
             // Add version information for HELLION.DataStructures.dll
-            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEUtilities)).GetName();
+            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(General)).GetName();
             sb.Append(anHELLIONDataStructures.Name);
             sb.Append("   Version ");
             sb.Append(anHELLIONDataStructures.Version);
@@ -249,7 +249,7 @@ namespace HELLION.StationBlueprintEditor
         #region File Menu Methods
 
         /// <summary>
-        /// Loads a .save file in to memory - passes details on to the HEDocumentWorkspace and
+        /// Loads a .save file in to memory - passes details on to the DocumentWorkspace and
         /// tells it to load.
         /// </summary>
         /// <param name="sFileName"></param>
@@ -276,8 +276,8 @@ namespace HELLION.StationBlueprintEditor
                 // Create a new OpenFileDialog box and set some parameters
                 var openFileDialog1 = new OpenFileDialog()
                 {
-                    Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
-                    Title = "Open .save file",
+                    Filter = "Hellion Station Blueprint Files (Json)|*.json|All files|*.*",
+                    Title = "Open Station Blueprint file",
                     CheckFileExists = true
                 };
 
@@ -313,7 +313,7 @@ namespace HELLION.StationBlueprintEditor
             saveFileInfo = new FileInfo(sFileName);
             //dataDirectoryInfo = new DirectoryInfo(Properties.HELLION.Explorer.Default.sGameDataFolder);
 
-            if (saveFileInfo.Exists && dataDirectoryInfo.Exists)
+            if (saveFileInfo.Exists) // && dataDirectoryInfo.Exists)
             {
                 // Set the status strip message
                 //MainForm.toolStripStatusLabel1.Text = ("Loading file: " + saveFileInfo.FullName);
@@ -328,9 +328,9 @@ namespace HELLION.StationBlueprintEditor
                 //MainForm.treeView1.BeginUpdate();
 
                 // Create a new DocumentWorkspace
-                //docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
+                //docCurrent = new DocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
 
-                docCurrent = new HEStationBlueprintFile(null, saveFileInfo, 0);
+                docCurrent = new StationBlueprint_File(null, saveFileInfo);
 
                 // Trigger a refresh on each of the node trees.
                 //docCurrent.SolarSystem.RootNode.RefreshToolTipText(includeSubtrees: true);
@@ -505,13 +505,16 @@ namespace HELLION.StationBlueprintEditor
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
 
+            // Initialise the StructureDefinitions file.
+            structureDefinitionsFile = new StructureDefinitions_File(null, new FileInfo(@"E:\HELLION\TestArea\Output.json"));
+
             // Initialise the main form
             MainForm = new StationBlueprintEditorForm();
 
 
             // Set the form's icon
             var exe = System.Reflection.Assembly.GetExecutingAssembly();
-            var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HELLION.Explorer.ico");
+            var iconStream = exe.GetManifestResourceStream("HELLION.StationBlueprintEditor.HELLION.StationBlueprintEditor.ico");
             if (iconStream != null) MainForm.Icon = new Icon(iconStream);
 
             // Update the main form's title text - this adds the application name

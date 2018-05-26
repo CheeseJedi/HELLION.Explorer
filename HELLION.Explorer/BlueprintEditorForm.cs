@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using HELLION.DataStructures;
-using static HELLION.DataStructures.HEStationBlueprint;
+using static HELLION.DataStructures.StationBlueprint;
 using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.Explorer
@@ -37,16 +37,16 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
-        /// Constructor that takes a HEBlueprintTreeNode.
+        /// Constructor that takes a Blueprint_TreeNode.
         /// </summary>
         /// <param name="passedSourceNode"></param>
-        public BlueprintEditorForm(HEBlueprintTreeNode passedSourceNode) : this()
+        public BlueprintEditorForm(Blueprint_TreeNode passedSourceNode) : this()
         {
             SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.Name;
             RefreshBlueprintEditorFormTitleText();
 
-            jsonBlueprintFile = (HEStationBlueprintFile)passedSourceNode.OwnerObject;
+            jsonBlueprintFile = (StationBlueprint_File)passedSourceNode.OwnerObject;
             blueprint = jsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("jsonBlueprintFile.BlueprintObject was null.");
 
             GraftTreeInboundFromMainForm();
@@ -60,7 +60,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// The node that the editor was opened from.
         /// </summary>
-        public HEBlueprintTreeNode SourceNode { get; private set; } = null;
+        public Blueprint_TreeNode SourceNode { get; private set; } = null;
 
         /// <summary>
         /// Determines whether the text has been changed.
@@ -73,7 +73,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected tree node in the Primary Structure TreeView.
         /// </summary>
-        public HEBlueprintTreeNode SelectedPrimaryStructureNode
+        public Blueprint_TreeNode SelectedPrimaryStructureNode
         {
             get => _selectedPrimaryStructureNode;
             set
@@ -86,18 +86,18 @@ namespace HELLION.Explorer
                     {
                         // Figure out whether it's a Structure node or a Docking Port node.
                         Type parentType = _selectedPrimaryStructureNode.OwnerObject.GetType();
-                        if (parentType == typeof(HEStationBlueprint.HEBlueprintDockingPort))
+                        if (parentType == typeof(StationBlueprint.HEBlueprintDockingPort))
                         {
                             // Docking Port node, need find the parent structure.
-                            SelectedPrimaryDockingPort = (HEStationBlueprint.HEBlueprintDockingPort)_selectedPrimaryStructureNode.OwnerObject;
+                            SelectedPrimaryDockingPort = (StationBlueprint.HEBlueprintDockingPort)_selectedPrimaryStructureNode.OwnerObject;
 
                             SelectedPrimaryStructure = SelectedPrimaryDockingPort?.OwnerObject;
 
                         }
-                        else if (parentType == typeof(HEStationBlueprint.HEBlueprintStructure))
+                        else if (parentType == typeof(StationBlueprint.BlueprintStructure))
                         {
                             SelectedPrimaryDockingPort = null;
-                            SelectedPrimaryStructure = (HEStationBlueprint.HEBlueprintStructure)_selectedPrimaryStructureNode.OwnerObject;
+                            SelectedPrimaryStructure = (StationBlueprint.BlueprintStructure)_selectedPrimaryStructureNode.OwnerObject;
                         }
                         else throw new InvalidOperationException("Unrecognised OwnerObject type.");
                     }
@@ -129,7 +129,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected tree node in the Secondary Structures TreeView.
         /// </summary>
-        public HEBlueprintTreeNode SelectedSecondaryStructureNode
+        public Blueprint_TreeNode SelectedSecondaryStructureNode
         {
             get => _selectedSecondaryStructureNode;
             set
@@ -142,18 +142,18 @@ namespace HELLION.Explorer
                     {
                         // Figure out whether it's a Structure node or a Docking Port node.
                         Type parentType = _selectedSecondaryStructureNode.OwnerObject.GetType();
-                        if (parentType == typeof(HEStationBlueprint.HEBlueprintDockingPort))
+                        if (parentType == typeof(StationBlueprint.HEBlueprintDockingPort))
                         {
                             // Docking Port node, need find the parent structure.
-                            SelectedSecondaryDockingPort = (HEStationBlueprint.HEBlueprintDockingPort)_selectedSecondaryStructureNode.OwnerObject;
+                            SelectedSecondaryDockingPort = (StationBlueprint.HEBlueprintDockingPort)_selectedSecondaryStructureNode.OwnerObject;
 
                             SelectedSecondaryStructure = SelectedSecondaryDockingPort?.OwnerObject;
 
                         }
-                        else if (parentType == typeof(HEStationBlueprint.HEBlueprintStructure))
+                        else if (parentType == typeof(StationBlueprint.BlueprintStructure))
                         {
                             SelectedSecondaryDockingPort = null;
-                            SelectedSecondaryStructure = (HEStationBlueprint.HEBlueprintStructure)_selectedSecondaryStructureNode.OwnerObject;
+                            SelectedSecondaryStructure = (StationBlueprint.BlueprintStructure)_selectedSecondaryStructureNode.OwnerObject;
                         }
                         else throw new InvalidOperationException("Unrecognised OwnerObject type.");
                     }
@@ -187,7 +187,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected structure.
         /// </summary>
-        public HEStationBlueprint.HEBlueprintStructure SelectedPrimaryStructure
+        public StationBlueprint.BlueprintStructure SelectedPrimaryStructure
         {
             get => _currentStructure;
             private set
@@ -211,7 +211,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected docking port.
         /// </summary>
-        public HEStationBlueprint.HEBlueprintDockingPort SelectedPrimaryDockingPort
+        public StationBlueprint.HEBlueprintDockingPort SelectedPrimaryDockingPort
         {
             get => _currentDockingPort;
             private set
@@ -251,7 +251,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// This list is populated with structures that are available for a docking.
         /// </summary>
-        public List<HEBlueprint.HEBlueprintStructure> DestinationStructureList
+        public List<HEBlueprint.BlueprintStructure> DestinationStructureList
         {
             get => destinationStructureList;
             private set
@@ -268,7 +268,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the selected destination structure for docking.
         /// </summary>
-        public HEStationBlueprint.HEBlueprintStructure SelectedSecondaryStructure
+        public StationBlueprint.BlueprintStructure SelectedSecondaryStructure
         {
             get => _destinationStructure;
             private set
@@ -290,7 +290,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the selected destination structures target docking port for docking.
         /// </summary>
-        public HEStationBlueprint.HEBlueprintDockingPort SelectedSecondaryDockingPort
+        public StationBlueprint.HEBlueprintDockingPort SelectedSecondaryDockingPort
         {
             get => _destinationDockingPort;
             private set
@@ -328,7 +328,7 @@ namespace HELLION.Explorer
         {
             pictureBoxSelectedPrimaryStructure.Image = SelectedPrimaryStructure == null ? null
                 : HellionExplorerProgram.hEImageList.StructureImageList.Images[
-                    HEImageList.GetStructureImageIndexBySceneID(SelectedPrimaryStructure.SceneID.Value)];
+                    EmbeddedImages_ImageList.GetStructureImageIndexBySceneID(SelectedPrimaryStructure.SceneID.Value)];
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace HELLION.Explorer
         {
             pictureBoxSelectedSecondaryStructure.Image = SelectedSecondaryStructure == null ? null
                 : HellionExplorerProgram.hEImageList.StructureImageList.Images[
-                    HEImageList.GetStructureImageIndexBySceneID(SelectedSecondaryStructure.SceneID.Value)];
+                    EmbeddedImages_ImageList.GetStructureImageIndexBySceneID(SelectedSecondaryStructure.SceneID.Value)];
         }
 
         /// <summary>
@@ -440,7 +440,7 @@ namespace HELLION.Explorer
             blueprint.PrimaryStructureRoot.RootNode.ExpandAll();
 
             // Add secondary structures.
-            foreach (HEStationBlueprint.HEBlueprintStructure _secondaryStructure in blueprint.SecondaryStructureRoots)
+            foreach (StationBlueprint.BlueprintStructure _secondaryStructure in blueprint.SecondaryStructureRoots)
             {
                 treeViewSecondaryStructures.Nodes.Add(_secondaryStructure.RootNode);
                 _secondaryStructure.RootNode.ExpandAll();
@@ -502,7 +502,7 @@ namespace HELLION.Explorer
         /// </summary>
         private void GraftTreeInboundFromMainForm()
         {
-            HEBlueprintTreeNode drn = blueprint.PrimaryStructureRoot.RootNode;
+            Blueprint_TreeNode drn = blueprint.PrimaryStructureRoot.RootNode;
             if (drn != null)
             {
                 blueprint.RootNode.Nodes.Remove(drn);
@@ -521,7 +521,7 @@ namespace HELLION.Explorer
         /// </summary>
         private void GraftTreeOutboundToMainForm()
         {
-            HEBlueprintTreeNode drn = blueprint.PrimaryStructureRoot.RootNode;
+            Blueprint_TreeNode drn = blueprint.PrimaryStructureRoot.RootNode;
             if (drn != null)
             {
                 treeViewPrimaryStructure.Nodes.Remove(drn);
@@ -566,7 +566,7 @@ namespace HELLION.Explorer
                 HEBlueprintStructureType newStructureType = (HEBlueprintStructureType)Enum.Parse(
                     typeof(HEBlueprintStructureType), (string)comboBoxStructureList.SelectedItem);
 
-                HEStationBlueprint.HEBlueprintStructure newStructure = blueprint.AddStructure(newStructureType);
+                StationBlueprint.BlueprintStructure newStructure = blueprint.AddStructure(newStructureType);
 
                 // Refresh tree views
 
@@ -601,9 +601,9 @@ namespace HELLION.Explorer
             HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
             HEBlueprintDockingPort b = SelectedSecondaryDockingPort ?? throw new NullReferenceException("SelectedSecondaryDockingPort was null.");
 
-            HEDockingResultStatus result = blueprint.DockPorts(a, b);
+            DockingResultStatus result = blueprint.DockPorts(a, b);
 
-            if (result == HEDockingResultStatus.Success) SelectedSecondaryStructureNode = null;
+            if (result == DockingResultStatus.Success) SelectedSecondaryStructureNode = null;
             else MessageBox.Show("Result: " + result.ToString(), "Docking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             RefreshEverything();
@@ -613,9 +613,9 @@ namespace HELLION.Explorer
         {
             HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
 
-            HEDockingResultStatus result = blueprint.UndockPort(a);
+            DockingResultStatus result = blueprint.UndockPort(a);
 
-            if (result == HEDockingResultStatus.Success) SelectedSecondaryStructureNode = null;
+            if (result == DockingResultStatus.Success) SelectedSecondaryStructureNode = null;
             else MessageBox.Show("Result: " + result.ToString(), "Undocking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             RefreshEverything();
@@ -633,7 +633,7 @@ namespace HELLION.Explorer
         private void treeViewPrimaryStructure_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            SelectedPrimaryStructureNode = (HEBlueprintTreeNode)treeViewPrimaryStructure.SelectedNode;
+            SelectedPrimaryStructureNode = (Blueprint_TreeNode)treeViewPrimaryStructure.SelectedNode;
         }
 
         /// <summary>
@@ -644,7 +644,7 @@ namespace HELLION.Explorer
         private void treeViewSecondaryStructures_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            SelectedSecondaryStructureNode = (HEBlueprintTreeNode)treeViewSecondaryStructures.SelectedNode;
+            SelectedSecondaryStructureNode = (Blueprint_TreeNode)treeViewSecondaryStructures.SelectedNode;
         }
 
         /// <summary>
@@ -749,14 +749,14 @@ namespace HELLION.Explorer
         #region Fields
 
         private string FormTitleText = null;
-        private HEStationBlueprintFile jsonBlueprintFile = null;
-        private HEStationBlueprint blueprint = null;
-        private HEBlueprintTreeNode _selectedPrimaryStructureNode = null;
-        private HEBlueprintTreeNode _selectedSecondaryStructureNode = null;
-        private HEStationBlueprint.HEBlueprintStructure _currentStructure = null;
-        private HEStationBlueprint.HEBlueprintDockingPort _currentDockingPort = null;
-        private HEStationBlueprint.HEBlueprintStructure _destinationStructure = null;
-        private HEStationBlueprint.HEBlueprintDockingPort _destinationDockingPort = null;
+        private StationBlueprint_File jsonBlueprintFile = null;
+        private StationBlueprint blueprint = null;
+        private Blueprint_TreeNode _selectedPrimaryStructureNode = null;
+        private Blueprint_TreeNode _selectedSecondaryStructureNode = null;
+        private StationBlueprint.BlueprintStructure _currentStructure = null;
+        private StationBlueprint.HEBlueprintDockingPort _currentDockingPort = null;
+        private StationBlueprint.BlueprintStructure _destinationStructure = null;
+        private StationBlueprint.HEBlueprintDockingPort _destinationDockingPort = null;
 
         #endregion
 

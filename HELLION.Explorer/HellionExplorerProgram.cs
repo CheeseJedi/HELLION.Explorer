@@ -14,12 +14,12 @@ namespace HELLION.Explorer
     /// This is the main class that implements the HELLION Explorer program.
     /// </summary>
     /// <remarks>
-    /// The primary object of note is the HEDocumentWorkspace, of which there is only a single
+    /// The primary object of note is the DocumentWorkspace, of which there is only a single
     /// instance at a time, created during a File Open operation.
-    /// BROAD ACHITECTURE OVERVIEW -- The HEDocumentWorkspace creates two main objects: 
+    /// BROAD ACHITECTURE OVERVIEW -- The DocumentWorkspace creates two main objects: 
     /// 1. An HEGameDataobject which is responsible for both loading the .save file, all the
     /// Static Data files, and generating the HETreeNode trees representing the data.
-    /// 2. An HESolarSystem object which is responsible for generating the Solar System view of
+    /// 2. An SolarSystem object which is responsible for generating the Solar System view of
     /// hierarchical objects, representing the orbital structure of the objects in the game. In
     /// addition it represents docked ships (includes modules) in their hierarchical structure
     /// as these are represented as trees within the Dedicated Server.
@@ -70,7 +70,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Defines an object to hold the current open document
         /// </summary>
-        internal static HEDocumentWorkspace docCurrent = null;
+        internal static DocumentWorkspace docCurrent = null;
 
         #endregion
 
@@ -106,19 +106,19 @@ namespace HELLION.Explorer
         #region Misc Objects
 
         /// <summary>
-        /// Initialise an HEUpdateChecker object and specify the GitHub user name and repository name.
+        /// Initialise an UpdateChecker object and specify the GitHub user name and repository name.
         /// </summary>
-        internal static HEUpdateChecker hEUpdateChecker = new HEUpdateChecker
+        internal static UpdateChecker hEUpdateChecker = new UpdateChecker
             ("CheeseJedi", "HELLION.Explorer");
 
         /// <summary>
-        /// Initialises an HEImageList object to supply the image list to the tree view and
+        /// Initialises an EmbeddedImages_ImageList object to supply the image list to the tree view and
         /// list view controls, plus anywhere else the images may be used.
         /// </summary>
-        internal static HEImageList hEImageList = new HEImageList();
+        internal static EmbeddedImages_ImageList hEImageList = new EmbeddedImages_ImageList();
 
         /// <summary>
-        /// Defines an ImageList and set it to the HEImageList
+        /// Defines an ImageList and set it to the EmbeddedImages_ImageList
         /// </summary>
         internal static ImageList ilObjectTypesImageList = hEImageList.IconImageList;
 
@@ -130,7 +130,7 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="nSelectedNode"></param>
-        internal static void CreateNewJsonDataView(HEGameDataTreeNode nSelectedNode)
+        internal static void CreateNewJsonDataView(Json_TreeNode nSelectedNode)
         {
             if (nSelectedNode != null && nSelectedNode.JData != null)
             {
@@ -164,7 +164,7 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="selectedNode"></param>
-        internal static void CreateNewBlueprintEditor(HEBlueprintTreeNode selectedNode)
+        internal static void CreateNewBlueprintEditor(Blueprint_TreeNode selectedNode)
         {
             if (selectedNode != null)
             {
@@ -283,7 +283,7 @@ namespace HELLION.Explorer
             sb.Append(sNL2);
 
             // Add version information for HELLION.DataStructures.dll
-            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(HEUtilities)).GetName();
+            var anHELLIONDataStructures = System.Reflection.Assembly.GetAssembly(typeof(General)).GetName();
             sb.Append(anHELLIONDataStructures.Name);
             sb.Append("   Version ");
             sb.Append(anHELLIONDataStructures.Version);
@@ -371,7 +371,7 @@ namespace HELLION.Explorer
         #region File Menu Methods
 
         /// <summary>
-        /// Loads a .save file in to memory - passes details on to the HEDocumentWorkspace and
+        /// Loads a .save file in to memory - passes details on to the DocumentWorkspace and
         /// tells it to load.
         /// </summary>
         /// <param name="sFileName"></param>
@@ -450,17 +450,17 @@ namespace HELLION.Explorer
                 MainForm.treeView1.BeginUpdate();
 
                 // Create a new DocumentWorkspace
-                docCurrent = new HEDocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
+                docCurrent = new DocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
 
                 // Set up the GuidManager
-                HEGuidManager.ClearObservedGuidsList();
+                GuidManager.ClearObservedGuidsList();
                 // Add the Celestial Bodies GUIDs.
-                if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out HEUIJsonFile celestialBodiesJsonBaseFile))
+                if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out Json_File_UI celestialBodiesJsonBaseFile))
                 {
-                    HEGuidManager.PopulateObservedGuidsList(celestialBodiesJsonBaseFile.JData);
+                    GuidManager.PopulateObservedGuidsList(celestialBodiesJsonBaseFile.JData);
                 }
                 // Add the GUIDs from the save file.
-                HEGuidManager.PopulateObservedGuidsList(docCurrent.GameData.SaveFile.JData);
+                GuidManager.PopulateObservedGuidsList(docCurrent.GameData.SaveFile.JData);
 
                 ObservedGuidsForm = new ObservedGuidsForm();
                 ObservedGuidsForm.Hide();
@@ -599,7 +599,7 @@ namespace HELLION.Explorer
             ObservedGuidsForm.Close();
             ObservedGuidsForm = null;
             // Clear the GuidManager observed GUIDs list
-            HEGuidManager.ClearObservedGuidsList();
+            GuidManager.ClearObservedGuidsList();
 
             // Close down any jsonDataView windows.
             while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
@@ -684,12 +684,12 @@ namespace HELLION.Explorer
 
             if (NewQuery)
             {
-                HESearchHandler.HESearchOperatorFlags operatorFlags = 0;
-                if (FindForm.PathSearchValue) operatorFlags |= HESearchHandler.HESearchOperatorFlags.ByPath;
+                SearchHandler.HESearchOperatorFlags operatorFlags = 0;
+                if (FindForm.PathSearchValue) operatorFlags |= SearchHandler.HESearchOperatorFlags.ByPath;
                 if (FindForm.MatchCaseValue)
                 {
                     Debug.Print("Match Case ON");
-                    operatorFlags |= HESearchHandler.HESearchOperatorFlags.MatchCase;
+                    operatorFlags |= SearchHandler.HESearchOperatorFlags.MatchCase;
                 }
 
                 Debug.Print("OPERATOR_FLAGS=" + operatorFlags);
@@ -924,7 +924,7 @@ namespace HELLION.Explorer
                             Name = "<PARENT>",
                             Text = "<" + nSelectedNode.Parent.Text + ">",
                             Tag = nSelectedNode.Parent,
-                            ImageIndex = HEImageList.GetIconImageIndexByNodeType(nodeParent.NodeType)
+                            ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(nodeParent.NodeType)
                         };
                         // Add the item
                         MainForm.listView1.Items.Add(liParentItem);
@@ -942,7 +942,7 @@ namespace HELLION.Explorer
                             Name = "<CURRENT>",
                             Text = "<" + nSelectedNode.Text + ">",
                             Tag = nSelectedNode,
-                            ImageIndex = HEImageList.GetIconImageIndexByNodeType(nSelectedHETNNode.NodeType)
+                            ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(nSelectedHETNNode.NodeType)
                         };
                         // Add the item
                         MainForm.listView1.Items.Add(liCurrentItem);
@@ -951,7 +951,7 @@ namespace HELLION.Explorer
 
                 if (nSelectedHETNNode.NodeType == HETreeNodeType.SearchResultsSet)
                 {
-                    HESearchHandlerTreeNode nSelectedHESearchHandlerNode = (HESearchHandlerTreeNode)nSelectedNode;
+                    SearchHandler_TreeNode nSelectedHESearchHandlerNode = (SearchHandler_TreeNode)nSelectedNode;
 
                     if (nSelectedHESearchHandlerNode.ParentSearchOperator.Results != null)
                     {
@@ -973,7 +973,7 @@ namespace HELLION.Explorer
                                 Tag = listItem
                             };
 
-                            liNewItem.ImageIndex = HEImageList.GetIconImageIndexByNodeType(listItem.NodeType);
+                            liNewItem.ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(listItem.NodeType);
 
                             // Add the item
                             MainForm.listView1.Items.Add(liNewItem);
@@ -1000,7 +1000,7 @@ namespace HELLION.Explorer
                             Tag = nodeChild
                         };
 
-                        liNewItem.ImageIndex = HEImageList.GetIconImageIndexByNodeType(nodeChild.NodeType);
+                        liNewItem.ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(nodeChild.NodeType);
 
                         // Add the item
                         MainForm.listView1.Items.Add(liNewItem);
@@ -1055,7 +1055,7 @@ namespace HELLION.Explorer
                     || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
                 {
 
-                    HESolarSystemTreeNode nSelectedOrbitalObjNode = (HESolarSystemTreeNode)nSelectedNode;
+                    SolarSystem_TreeNode nSelectedOrbitalObjNode = (SolarSystem_TreeNode)nSelectedNode;
 
                     sb1.Append("GUID: " + nSelectedOrbitalObjNode.GUID.ToString());
                     sb1.Append(Environment.NewLine);
@@ -1066,11 +1066,11 @@ namespace HELLION.Explorer
                     sb1.Append("DockedToShipGUID: " + nSelectedOrbitalObjNode.DockedToShipGUID.ToString());
 
                     /*
-                    HESolarSystemTreeNode tempNode = null;
+                    SolarSystem_TreeNode tempNode = null;
                     TreeNode[] tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(nSelectedOrbitalObjNode.DockedToShipGUID.ToString(), searchAllChildren: true);
                     if (tempNodes.Length > 0)
                     {
-                        tempNode = (HESolarSystemTreeNode)tempNodes[0];
+                        tempNode = (SolarSystem_TreeNode)tempNodes[0];
 
                         if (tempNode == null) throw new NullReferenceException("tempNode was null.");
                         else
@@ -1093,7 +1093,7 @@ namespace HELLION.Explorer
                     tempNodes = null;
                     tempNode = null;
                     tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(nSelectedOrbitalObjNode.OrbitData.ParentGUID.ToString(), searchAllChildren: true);
-                    if (tempNodes.Length > 0) tempNode = (HESolarSystemTreeNode)tempNodes[0];
+                    if (tempNodes.Length > 0) tempNode = (SolarSystem_TreeNode)tempNodes[0];
                     if (tempNode != null)
                     {
                         sb1.Append(" (" + tempNode.Text + ")");
@@ -1204,7 +1204,7 @@ namespace HELLION.Explorer
         /// The main entry point for the application.
         /// </summary>
         /// <param name="args"></param>
-    [STAThread]
+        [STAThread]
         static void Main(string[] args)
         {
             Console.WriteLine(Application.ProductName + " - " + Application.ProductVersion);

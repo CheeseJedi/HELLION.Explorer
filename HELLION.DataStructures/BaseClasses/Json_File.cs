@@ -11,16 +11,16 @@ namespace HELLION.DataStructures
     /// Defines a class to load and hold data from a JSON file and associated metadata.
     /// </summary>
     /// <remarks>
-    /// Used directly in the HEJsonFileCollection and is also inherited by the HEJsonGameFile class.
+    /// Used directly in the Json_FileCollection and is also inherited by the HEJsonGameFile class.
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class HEJsonFile
+    public class Json_File
     {
         /// <summary>
         /// Default constructor, not used directly but used by derived classes.
         /// </summary>
-        public HEJsonFile(object ownerObject)
+        public Json_File(Json_File_Parent ownerObject)
         {
             OwnerObject = ownerObject;
             if (OwnerObject == null) Debug.Print("OwnerObject was null.");
@@ -30,7 +30,7 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public HEJsonFile(object ownerObject, FileInfo passedFileInfo) : this(ownerObject) // , int populateNodeTreeDepth
+        public Json_File(Json_File_Parent ownerObject, FileInfo passedFileInfo) : this(ownerObject) // , int populateNodeTreeDepth
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
 
@@ -46,7 +46,7 @@ namespace HELLION.DataStructures
         /// <remarks>
         /// Set by the constructor.
         /// </remarks>
-        public object OwnerObject { get; protected set; } = null;
+        public Json_File_Parent OwnerObject { get; protected set; } = null;
 
         /// <summary>
         /// FileInfo object that represents the file on disk that is to be worked with.
@@ -367,6 +367,14 @@ namespace HELLION.DataStructures
                 return true;
             }
         }
+
+    }
+
+    /// <summary>
+    /// Defines an interface to allow different classes to be a parent of a Json_File
+    /// </summary>
+    public interface Json_File_Parent
+    {
 
     }
 }

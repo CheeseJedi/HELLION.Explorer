@@ -8,7 +8,7 @@ namespace HELLION.DataStructures
     /// Implements the Game Data view node tree, comprised of the sub-trees
     /// of the Save File and each of the .json files in the Data folder (the Static Data).
     /// </summary>
-    public class HEGameData 
+    public class GameData : Json_File_Parent
     {
         /// <summary>
         /// Public property to get the root node of the Game Data tree.
@@ -17,15 +17,15 @@ namespace HELLION.DataStructures
 
         /// <summary>
         /// Public property to get the SaveFile sub-object as this is not settable outside
-        /// of the HEGameData class. Set at object creation through the constructor.
+        /// of the GameData class. Set at object creation through the constructor.
         /// </summary>
-        public HEJsonGameFile SaveFile => saveFile;
+        public GameSave_Json_File SaveFile => saveFile;
 
         /// <summary>
         /// Public property to get the StaticData object as this is not settable outside
-        /// of the HEGameData class. Set at object creation through the constructor.
+        /// of the GameData class. Set at object creation through the constructor.
         /// </summary>
-        public HEJsonFileCollection StaticData => staticData;
+        public Json_FileCollection StaticData => staticData;
 
         /// <summary>
         /// The root node of the Game Data tree.
@@ -35,13 +35,13 @@ namespace HELLION.DataStructures
         /// <summary>
         /// The SaveFile object.
         /// </summary>
-        private HEJsonGameFile saveFile = null;
+        private GameSave_Json_File saveFile = null;
 
         /// <summary>
         /// the StaticDataFileCollection object which enumerates the Data folder and builds  
         /// node trees to a preconfigured depth of each of the .json files in that folder.
         /// </summary>
-        private HEJsonFileCollection staticData = null;
+        private Json_FileCollection staticData = null;
 
         /// <summary>
         /// Constructor that takes a FileInfo and a DirectoryInfo representing the save file
@@ -49,7 +49,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="SaveFileInfo">The FileInfo representing the save file.</param>
         /// <param name="StaticDataFolderInfo">The DirectoryInfo representing the Data folder.</param>
-        public HEGameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
+        public GameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
         {
             rootNode = new HETreeNode(ownerObject: this, nodeName: "Game Data", newNodeType: HETreeNodeType.DataView);
             if (SaveFileInfo != null && SaveFileInfo.Exists)
@@ -57,7 +57,7 @@ namespace HELLION.DataStructures
                 Debug.Print("File evaluated {0}", SaveFileInfo.Name);
 
                 // FINDME
-                saveFile = new HEJsonGameFile(this, SaveFileInfo, populateNodeTreeDepth: 5);
+                saveFile = new GameSave_Json_File(this, SaveFileInfo, populateNodeTreeDepth: 5);
 
                 // Pre-load in several levels of node.
                 saveFile.RootNode.CreateChildNodesFromjData(3);
@@ -68,7 +68,7 @@ namespace HELLION.DataStructures
 
             if (StaticDataFolderInfo != null && StaticDataFolderInfo.Exists)
             {
-                staticData = new HEJsonFileCollection(this, StaticDataFolderInfo, autoPopulateTreeDepth: 1);
+                staticData = new Json_FileCollection(this, StaticDataFolderInfo, autoPopulateTreeDepth: 1);
                 if (staticData.RootNode == null) throw new Exception("StaticData rootNode was null");
                 else RootNode.Nodes.Add(staticData.RootNode);
             }
