@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Document
 {
     /// <summary>
     /// Defines a class to load and hold data from a JSON .save file and associated metadata.

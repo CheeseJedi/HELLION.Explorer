@@ -6,6 +6,10 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using HELLION.DataStructures;
+using HELLION.DataStructures.Blueprints;
+using HELLION.DataStructures.Document;
+using HELLION.DataStructures.Search;
+using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json.Linq;
 
 namespace HELLION.Explorer

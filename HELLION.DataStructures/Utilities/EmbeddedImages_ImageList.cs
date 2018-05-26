@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using static HELLION.DataStructures.StaticDataHelper;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Utilities
 {
     /// <summary>
     /// A class to implement loading and enumeration of icon images embedded in this library.

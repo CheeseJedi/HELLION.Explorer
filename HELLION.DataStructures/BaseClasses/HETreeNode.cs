@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using static HELLION.DataStructures.EmbeddedImages_ImageList;
+using static HELLION.DataStructures.Utilities.EmbeddedImages_ImageList;
 
 namespace HELLION.DataStructures
 {

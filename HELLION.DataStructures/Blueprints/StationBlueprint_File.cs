@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using HELLION.DataStructures.Document;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.StationBlueprint;
+using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Blueprints
 {
     /// <summary>
     /// Defines a class to load HSBF blueprint files.
@@ -13,33 +14,38 @@ namespace HELLION.DataStructures
         #region Constructors
 
         /// <summary>
-        /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
+        /// Basic constructor - attempts to set the parent.
         /// </summary>
-        /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public StationBlueprint_File(Json_File_Parent passedParent, FileInfo structDefsFileInfo) : this(passedParent)
-        {
-            File = structDefsFileInfo ?? throw new NullReferenceException();
-            RootNode = new Blueprint_TreeNode(passedOwner: this, nodeName: File.Name,
-                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
-
-            if (File.Exists) LoadFile(0);
-        }
-
+        /// <param name="passedParent"></param>
         public StationBlueprint_File(Json_File_Parent passedParent) : base(passedParent)
         {
             // Re-assign the OwnerObject (the base class stores this as an object,
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent; // ?? throw new NullReferenceException();
 
-            RootNode = new Blueprint_TreeNode(passedOwner: this, nodeName: "Unsaved", 
+            RootNode = new Blueprint_TreeNode(passedOwner: this, nodeName: "Unsaved",
                 newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: "File not yet saved");
 
             DataViewRootNode = new Json_TreeNode(ownerObject: this, nodeName: "Data View",
-                newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText: 
+                newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText:
                 "Shows a representation of the Json data that makes up this blueprint.");
 
             RootNode.Nodes.Add(DataViewRootNode);
         }
+
+        /// <summary>
+        /// General use constructor - takes a FileInfo and, if the file exists, triggers the load.
+        /// </summary>
+        /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
+        public StationBlueprint_File(Json_File_Parent passedParent, FileInfo structDefsFileInfo, int populateNodeTreeDepth = 0) : this(passedParent)
+        {
+            File = structDefsFileInfo ?? throw new NullReferenceException();
+            RootNode = new Blueprint_TreeNode(passedOwner: this, nodeName: File.Name,
+                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
+
+            if (File.Exists) LoadFile(populateNodeTreeDepth);
+        }
+
 
         /*
         /// <summary>
@@ -59,9 +65,6 @@ namespace HELLION.DataStructures
 
         }
         */
-
-
-
 
         #endregion
 

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using static HELLION.DataStructures.StaticDataHelper;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Blueprints
 {
     /// <summary>
     /// A class to handle station blueprint data structures.

@@ -1,4 +1,6 @@
-﻿namespace HELLION.DataStructures
+﻿using HELLION.DataStructures.Document;
+
+namespace HELLION.DataStructures.Blueprints
 {
     public class Blueprint_FileCollection_TreeNode : Json_TreeNode
     {

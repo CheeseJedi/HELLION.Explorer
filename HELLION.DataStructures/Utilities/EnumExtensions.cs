@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Utilities
 {
     public static class EnumExtensions
     {

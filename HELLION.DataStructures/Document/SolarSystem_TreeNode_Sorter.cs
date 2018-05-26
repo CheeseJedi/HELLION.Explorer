@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// Also defines a node sorter that sorts by Semi-Major axis instead of by name which is
 /// the default on a TreeView control, and a class to hold the orbital data.
 /// </summary>
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Document
 {
     /// <summary>
     /// Create a node sorter that implements the IComparer interface to sort HEOrbitalObjTreeNodes

@@ -1,4 +1,4 @@
-﻿namespace HELLION.DataStructures
+﻿namespace HELLION.DataStructures.Blueprints
 {
     public class Blueprint_TreeNode : HETreeNode
     {

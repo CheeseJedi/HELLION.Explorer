@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Blueprints
 {
     public class Blueprint_FileCollection : Json_FileCollection
     {

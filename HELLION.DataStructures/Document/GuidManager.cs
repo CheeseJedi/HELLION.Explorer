@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Document
 {
     /// <summary>
     /// A class for handling in-game GUIDs.

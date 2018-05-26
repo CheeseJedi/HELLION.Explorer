@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.EmbeddedImages_ImageList;
+using static HELLION.DataStructures.Utilities.EmbeddedImages_ImageList;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Document
 {
     /// <summary>
     /// Derives an HETreeNode for use in the Game Data that can self-build child nodes

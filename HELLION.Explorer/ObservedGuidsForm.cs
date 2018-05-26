@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using HELLION.DataStructures.Document;
 
 namespace HELLION.Explorer
 {
@@ -15,7 +9,7 @@ namespace HELLION.Explorer
         public ObservedGuidsForm()
         {
             InitializeComponent();
-            listBox1.DataSource = DataStructures.GuidManager.ObservedGuids;
+            listBox1.DataSource = GuidManager.ObservedGuids;
             //listBox1.DisplayMember = 
 
         }

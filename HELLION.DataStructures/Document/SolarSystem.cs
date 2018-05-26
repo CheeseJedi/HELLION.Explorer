@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Document
 {
     /// <summary>
     /// Implements the Solar System view node tree.

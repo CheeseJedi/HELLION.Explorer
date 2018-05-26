@@ -101,20 +101,20 @@
     <Compile Include="Blueprints\StationBlueprint.cs" />
     <Compile Include="Blueprints\StationBlueprint_File.cs" />
     <Compile Include="Blueprints\StructureDefinitions_File.cs" />
-    <Compile Include="DocumentWorkspace\DocumentWorkspace.cs" />
-    <Compile Include="DocumentWorkspace\GameData.cs" />
-    <Compile Include="DocumentWorkspace\GameSave_Json_File.cs" />
-    <Compile Include="DocumentWorkspace\GuidManager.cs" />
-    <Compile Include="DocumentWorkspace\Json_TreeNode.cs" />
-    <Compile Include="DocumentWorkspace\SolarSystem.cs" />
-    <Compile Include="DocumentWorkspace\SolarSystem_TreeNode.cs" />
-    <Compile Include="DocumentWorkspace\SolarSystem_TreeNode_Sorter.cs" />
+    <Compile Include="Document\DocumentWorkspace.cs" />
+    <Compile Include="Document\GameData.cs" />
+    <Compile Include="Document\GameSave_Json_File.cs" />
+    <Compile Include="Document\GuidManager.cs" />
+    <Compile Include="Document\Json_TreeNode.cs" />
+    <Compile Include="Document\SolarSystem.cs" />
+    <Compile Include="Document\SolarSystem_TreeNode.cs" />
+    <Compile Include="Document\SolarSystem_TreeNode_Sorter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Blueprints\HEBlueprintTreeNode.cs" />
     <Compile Include="BaseClasses\HETreeNode.cs" />
     <Compile Include="BaseClasses\HETreeNodeType.cs" />
-    <Compile Include="SearchHandler\SearchHandler.cs" />
-    <Compile Include="SearchHandler\SearchHandler_TreeNode.cs" />
+    <Compile Include="Search\SearchHandler.cs" />
+    <Compile Include="Search\SearchHandler_TreeNode.cs" />
     <Compile Include="Utilities\EmbeddedImages_ImageList.cs" />
     <Compile Include="Utilities\EnumExtensions.cs" />
     <Compile Include="Utilities\General.cs" />
@@ -261,7 +261,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

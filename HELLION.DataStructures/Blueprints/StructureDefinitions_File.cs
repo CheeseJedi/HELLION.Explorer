@@ -2,10 +2,10 @@
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.StationBlueprint;
+using static HELLION.DataStructures.Blueprints.StationBlueprint;
 using static HELLION.DataStructures.StaticDataHelper;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Blueprints
 {
     /// <summary>
     /// 

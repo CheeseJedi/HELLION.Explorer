@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Utilities
 {
     public static class StringExtensions
     {

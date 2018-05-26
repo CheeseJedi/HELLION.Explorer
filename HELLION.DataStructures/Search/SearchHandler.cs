@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using HELLION.DataStructures.Document;
+using HELLION.DataStructures.Utilities;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Search
 {
     /// <summary>
     /// A class to handle searches and present search results.

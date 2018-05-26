@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Utilities
 {
     /// <summary>
     /// A class to hold miscellaneous static utility functions not complex enough to warrant their 

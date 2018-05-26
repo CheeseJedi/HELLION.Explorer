@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using static HELLION.DataStructures.StaticDataHelper;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Blueprints
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class OLD_BlueprintStructureDefinitions

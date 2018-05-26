@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using HELLION.DataStructures;
-using static HELLION.DataStructures.StationBlueprint;
+using HELLION.DataStructures.Blueprints;
+using HELLION.DataStructures.Utilities;
+using static HELLION.DataStructures.Blueprints.StationBlueprint;
 using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.StationBlueprintEditor

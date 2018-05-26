@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
 using HELLION.DataStructures;
+using HELLION.DataStructures.Document;
 
 namespace HELLION.Explorer
 {

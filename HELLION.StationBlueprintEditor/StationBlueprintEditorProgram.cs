@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HELLION.DataStructures;
+using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json.Linq;
 
@@ -244,7 +242,6 @@ namespace HELLION.StationBlueprintEditor
         }
 
         #endregion
-
 
         #region File Menu Methods
 
@@ -492,7 +489,6 @@ namespace HELLION.StationBlueprintEditor
         }
 
         #endregion
-
 
 
         /// <summary>

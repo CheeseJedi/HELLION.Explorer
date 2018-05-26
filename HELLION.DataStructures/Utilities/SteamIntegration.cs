@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Xml;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Utilities
 {
     public static class SteamIntegration
     {

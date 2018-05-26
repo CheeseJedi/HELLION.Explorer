@@ -7,7 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Utilities
 {
     /// <summary>
     /// A class to handle GitHub lookups in order to notify the user of newer version.

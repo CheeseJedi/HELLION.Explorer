@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Blueprints
 {
     public class BlueprintsHandler_UI : BlueprintsHandler
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using HELLION.DataStructures.Document;
 
 namespace HELLION.DataStructures
 {

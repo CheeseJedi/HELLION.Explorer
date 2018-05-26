@@ -1,4 +1,4 @@
-﻿namespace HELLION.DataStructures
+﻿namespace HELLION.DataStructures.Blueprints
 {
     public class HEBlueprintDockingPortTreeNode : Blueprint_TreeNode
     {

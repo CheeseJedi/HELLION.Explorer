@@ -1,8 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using HELLION.DataStructures.Blueprints;
+using HELLION.DataStructures.Search;
+using HELLION.DataStructures.Utilities;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Document
 {
     /// <summary>
     /// Definition for a workspace for a HELLION Save (.save) JSON file.

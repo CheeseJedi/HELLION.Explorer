@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Utilities
 {
     /// <summary>
     /// A static class for reflection type functions.

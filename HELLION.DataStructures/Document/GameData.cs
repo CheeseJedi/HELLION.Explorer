@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Document
 {
     /// <summary>
     /// Implements the Game Data view node tree, comprised of the sub-trees

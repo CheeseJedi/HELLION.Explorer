@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Blueprints
 {
     public class BlueprintsHandler
     {
@@ -14,7 +14,7 @@ namespace HELLION.DataStructures
             if (!structureDefinitionsFileInfo.Exists) throw new FileNotFoundException("structureDefinitionsFileInfo doesn't exist.");
 
             // Create the object.
-            StructureDefinitionsFile = new StructureDefinitions_File(this, structureDefinitionsFileInfo, populateNodeTreeDepth: 8);
+            StructureDefinitionsFile = new StructureDefinitions_File(this, structureDefinitionsFileInfo);
             // StructureDefinitionsFile = new StationBlueprint_File(this, structureDefinitionsFileInfo, populateNodeTreeDepth: 8);
 
             if (StructureDefinitionsFile.RootNode == null)

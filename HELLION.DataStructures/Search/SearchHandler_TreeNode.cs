@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace HELLION.DataStructures
+namespace HELLION.DataStructures.Search
 {
     public class SearchHandler_TreeNode : HETreeNode
     {
         public SearchHandler.HESearchOperator ParentSearchOperator { get => _parentSearchOperator; }
         
         private SearchHandler.HESearchOperator _parentSearchOperator = null;
-
         
         public SearchHandler_TreeNode(string nodeName, HETreeNodeType newNodeType = HETreeNodeType.Unknown, 
             string nodeText = "", string nodeToolTipText = "", object passedOwner = null)
