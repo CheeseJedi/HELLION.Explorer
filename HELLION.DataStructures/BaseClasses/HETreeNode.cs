@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using static HELLION.DataStructures.Utilities.EmbeddedImages_ImageList;
+using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
 
 namespace HELLION.DataStructures
 {
@@ -58,7 +58,7 @@ namespace HELLION.DataStructures
         public new string Name
         {
             get => base.Name;
-            protected set
+            set
             {
                 if (base.Name != value)
                 {
@@ -297,7 +297,7 @@ namespace HELLION.DataStructures
         /// Generates a name for the node.
         /// </summary>
         /// <returns></returns>
-        protected string GenerateBaseNodeName()
+        protected virtual string GenerateBaseNodeName()
         {
             return "Unnamed node " + DateTime.Now.ToString();
         }
@@ -408,4 +408,6 @@ namespace HELLION.DataStructures
         #endregion
 
     }
+
+
 }

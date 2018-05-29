@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -13,7 +15,7 @@ namespace HELLION.DataStructures.Blueprints
     /// A class to handle station blueprint data structures.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class StationBlueprint
+    public class StationBlueprint : Iparent_Base_TN
     {
         public const decimal StationBlueprintFormatVersion = 0.38m;
 
@@ -25,10 +27,9 @@ namespace HELLION.DataStructures.Blueprints
         public StationBlueprint()
         {
             Structures = new List<BlueprintStructure>();
-            //SecondaryStructures = new List<BlueprintStructure>();
-            RootNode = new Blueprint_TreeNode(passedOwner: this, nodeName: "Hierarchy View",
-                newNodeType: HETreeNodeType.BlueprintHierarchyView,
-                nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+            RootNode = new Blueprint_TN(passedOwner: this, nodeName: "Hierarchy View",
+                newNodeType: HETreeNodeType.BlueprintHierarchyView); 
+                //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public StationBlueprint_File OwnerObject { get; set; } = null;
 
-        public Blueprint_TreeNode RootNode { get; set; } = null;
+        public Blueprint_TN RootNode { get; set; } = null;
 
         public StationBlueprint StructureDefinitions { get; set; } = null;
 
@@ -149,6 +150,7 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public void PostDeserialisationInit()
         {
+            Debug.Print("got to PostDeserialisation.");
             if (__ObjectType != null && __ObjectType == BlueprintObjectType.StationBlueprint)
             {
                 ReconnectChildToParentObjectHierarchy();
@@ -164,9 +166,6 @@ namespace HELLION.DataStructures.Blueprints
         private void ReconnectChildToParentObjectHierarchy()
         {
             if (OwnerObject == null) throw new NullReferenceException("ParentJsonBlueprintFile was null.");
-
-            //StructureDefinitions = OwnerObject.OwnerObject //.OwnerObject
-            //    .StructureDefinitionsFile.BlueprintStructureDefinitionsObject;
 
             foreach (BlueprintStructure structure in Structures)
             {
@@ -219,9 +218,15 @@ namespace HELLION.DataStructures.Blueprints
             foreach (BlueprintStructure structure in Structures)
             {
                 structure.OwnerObject.RootNode.Nodes.Remove(structure.RootNode);
+                structure.RootNode.Refresh();
+
+                // Rebuild name.
+                //structure.
+
                 foreach (HEBlueprintDockingPort port in structure.DockingPorts)
                 {
                     port.OwnerObject.RootNode.Nodes.Remove(port.RootNode);
+                    port.RootNode.Refresh();
                 }
             }
 
@@ -679,7 +684,7 @@ namespace HELLION.DataStructures.Blueprints
         /// A class to define structures (modules/ships) within the blueprint.
         /// </summary>
         [JsonObject(MemberSerialization.OptIn)]
-        public class BlueprintStructure
+        public class BlueprintStructure : Iparent_Base_TN
         {
             #region Constructors
 
@@ -689,8 +694,10 @@ namespace HELLION.DataStructures.Blueprints
             public BlueprintStructure()
             {
                 DockingPorts = new List<HEBlueprintDockingPort>();
-                RootNode = new BlueprintStructure_TreeNode(passedOwner: this,
-                    nodeName: StructureType?.ToString() ?? "Error");
+                RootNode = new BlueprintStructure_TN(passedOwner: this);
+                //    , nodeName: StructureType?.ToString() ?? "Error");
+
+                // RefreshNodeName();
 
                 //String.Format("[{0:000}] {1} ", StructureID, StructureType));
 
@@ -721,7 +728,7 @@ namespace HELLION.DataStructures.Blueprints
             /// <summary>
             /// Not to be serialised.
             /// </summary>
-            public BlueprintStructure_TreeNode RootNode { get; set; } = null;
+            public BlueprintStructure_TN RootNode { get; set; } = null;
 
             /// <summary>
             /// Used to determine whether this structure is a hierarchy root.
@@ -821,11 +828,12 @@ namespace HELLION.DataStructures.Blueprints
                         _sceneID = value;
 
                         // Update the RootNode's BaseNodeName.
-                        //RootNode.BaseNodeName = value.GetEnumDescription();
 
+
+                        //RootNode.Name = value.GetEnumDescription();
+                        // RootNode.RefreshText();  // This should now be handled by the P
+                        
                     }
-
-
                 }
             }
 
@@ -1073,8 +1081,9 @@ namespace HELLION.DataStructures.Blueprints
                     //RootNode.DisplayRootStructureIcon = (StructureID != null && StructureID == 0) ? true : false;
 
                     // RootNode.BaseNodeName = StructureType.ToString();
-                    RootNode.PrefixNodeName = String.Format("[{0:000}] ", (int)StructureID);
-                    RootNode.RefreshName();
+                    RootNode.Text_Prefix = String.Format("[{0:000}] ", (int)StructureID);
+                    //RootNode.RefreshText();
+                    //RootNode.RefreshName();
 
                     // Update Docking Port nodes for this node.
                     if (DockingPorts.Count > 0)
@@ -1115,7 +1124,7 @@ namespace HELLION.DataStructures.Blueprints
         /// blueprint.
         /// </summary>
         [JsonObject(MemberSerialization.OptIn)]
-        public class HEBlueprintDockingPort
+        public class HEBlueprintDockingPort : Iparent_Base_TN
         {
             #region Constructors
 
@@ -1124,10 +1133,10 @@ namespace HELLION.DataStructures.Blueprints
             /// </summary>
             public HEBlueprintDockingPort()
             {
-                RootNode = new HEBlueprintDockingPortTreeNode(passedOwner: this,
+                RootNode = new BlueprintDockingPort_TN(passedOwner: this,
                     nodeName: PortName.ToString())
                 {
-                    PrefixNodeName = OwnerObject != null && OwnerObject.StructureID != null ?
+                    Text_Prefix = OwnerObject != null && OwnerObject.StructureID != null ?
                         String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] "
                 };
                 //RootNode.RefreshName();
@@ -1163,7 +1172,7 @@ namespace HELLION.DataStructures.Blueprints
             /// <summary>
             /// Not to be serialised.
             /// </summary>
-            public HEBlueprintDockingPortTreeNode RootNode { get; set; } = null;
+            public BlueprintDockingPort_TN RootNode { get; set; } = null;
 
 
             /// <summary>
@@ -1246,7 +1255,7 @@ namespace HELLION.DataStructures.Blueprints
                     if (_portName != value)
                     {
                         _portName = value;
-                        RootNode.BaseNodeName = _portName.ToString();
+                        RootNode.Name = _portName.ToString();
                         //RootNode.BaseNodeText = RootNode.Name;
                     }
                 }
@@ -1344,8 +1353,11 @@ namespace HELLION.DataStructures.Blueprints
 
             public void RefreshAfterParentStructureIDChange()
             {
-                RootNode.PrefixNodeName = OwnerObject != null ? String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] ";
-                RootNode.RefreshName();
+                RootNode.Text_Prefix = OwnerObject != null ? String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] ";
+                RootNode.Name = _portName.ToString();
+
+                //RootNode.RefreshText();
+                //RootNode.RefreshName();
             }
 
             #endregion

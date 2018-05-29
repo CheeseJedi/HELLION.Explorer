@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using HELLION.DataStructures.Document;
+using HELLION.DataStructures.UI;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
@@ -23,8 +25,8 @@ namespace HELLION.DataStructures.Blueprints
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent; // ?? throw new NullReferenceException();
 
-            RootNode = new Blueprint_TreeNode(passedOwner: this, nodeName: "Unsaved",
-                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: "File not yet saved");
+            RootNode = new Blueprint_TN(passedOwner: this, nodeName: "Unsaved",
+                newNodeType: HETreeNodeType.Blueprint); //, nodeToolTipText: "File not yet saved");
 
             DataViewRootNode = new Json_TreeNode(ownerObject: this, nodeName: "Data View",
                 newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText:
@@ -40,12 +42,12 @@ namespace HELLION.DataStructures.Blueprints
         public StationBlueprint_File(Json_File_Parent passedParent, FileInfo structDefsFileInfo, int populateNodeTreeDepth = 0) : this(passedParent)
         {
             File = structDefsFileInfo ?? throw new NullReferenceException();
-            RootNode = new Blueprint_TreeNode(passedOwner: this, nodeName: File.Name,
-                newNodeType: HETreeNodeType.Blueprint, nodeToolTipText: File.FullName);
+            RootNode = new Blueprint_TN(passedOwner: this, nodeName: File.Name,
+                newNodeType: HETreeNodeType.Blueprint); //, nodeToolTipText: File.FullName);
 
             if (File.Exists) LoadFile(populateNodeTreeDepth);
+            else Debug.Print("File {0} doesn't exist", File.FullName);
         }
-
 
         /*
         /// <summary>
@@ -78,7 +80,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <summary>
         /// This class overrides the type of root node to represent a blueprint.
         /// </summary>
-        public new Blueprint_TreeNode RootNode { get; protected set; } = null;
+        public new Blueprint_TN RootNode { get; protected set; } = null;
 
         /// <summary>
         /// A reference to the DataView's root node.
@@ -119,17 +121,12 @@ namespace HELLION.DataStructures.Blueprints
             // Populate the blueprint object.
             DeserialiseToBlueprintObject();
 
-
             if (BlueprintObject.__ObjectType != null && BlueprintObject.__ObjectType == BlueprintObjectType.StationBlueprint)
             {
                 // Assemble the primary tree hierarchy based on the DockingRoot.
                 BlueprintObject.ReassembleTreeNodeDockingStructure
                     (BlueprintObject.PrimaryStructureRoot, AttachToBlueprintTreeNode: true);
                 RootNode.Nodes.Add(BlueprintObject.RootNode);
-
-
-
-
 
                 // Populate the data view.
                 DataViewRootNode.JData = jData;
@@ -138,13 +135,7 @@ namespace HELLION.DataStructures.Blueprints
 
                 // Populate the hierarchy view.
                 //BuildHierarchyView();
-
-
-
-
             }
-
-
         }
 
         /// <summary>
@@ -171,10 +162,13 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public void DeserialiseToBlueprintObject()
         {
+            Debug.Print("Got to Deserialisation.");
             BlueprintObject = jData.ToObject<StationBlueprint>();
             BlueprintObject.OwnerObject = this;
             //BlueprintObject.StructureDefinitions = ;
             BlueprintObject.PostDeserialisationInit();
+            Debug.Print("BlueprintObject.");
+
         }
 
         /// <summary>
@@ -188,9 +182,7 @@ namespace HELLION.DataStructures.Blueprints
             ApplyNewJData(newData);
         }
 
-
         #endregion
-
     }
 
 }

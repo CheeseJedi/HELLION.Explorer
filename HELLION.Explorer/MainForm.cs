@@ -266,7 +266,7 @@ namespace HELLION.Explorer
                         }
                     }
 
-                    else if (t.Equals(typeof(Blueprint_TreeNode)))
+                    else if (t.Equals(typeof(Blueprint_TN)))
                     {
 
                         // Some decision making logic needed here
@@ -498,7 +498,7 @@ namespace HELLION.Explorer
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+            HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
         }
 
         private void thisObjectInSolarSystemViewToolStripMenuItem_Click(object sender, EventArgs e)

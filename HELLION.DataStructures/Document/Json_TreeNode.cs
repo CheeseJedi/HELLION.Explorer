@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.Utilities.EmbeddedImages_ImageList;
+using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
 
 namespace HELLION.DataStructures.Document
 {

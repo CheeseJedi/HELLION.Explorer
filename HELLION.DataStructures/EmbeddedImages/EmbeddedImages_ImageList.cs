@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using static HELLION.DataStructures.StaticDataHelper;
 
-namespace HELLION.DataStructures.Utilities
+namespace HELLION.DataStructures.EmbeddedImages
 {
     /// <summary>
     /// A class to implement loading and enumeration of icon images embedded in this library.
@@ -420,25 +420,21 @@ namespace HELLION.DataStructures.Utilities
             // Process string array of resource names (this includes the namespace name)
             foreach (string embeddedResource in embeddedResourceNames)
             {
-                
-                if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Icons16x."))
+                if (embeddedResource.Contains(entryAssemblyName + ".EmbeddedImages.Icons16x."))
                 {
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
                     iconImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }
-                
-                else if (embeddedResource.Contains(entryAssemblyName + "._EmbeddedImages.Structures180x."))
+                else if (embeddedResource.Contains(entryAssemblyName + ".EmbeddedImages.Structures180x."))
                 {
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
                     structureImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }
-                
                 else
                 {
                     // not an image reference
-                    throw new InvalidOperationException();
+                    Debug.Print("Embedded resource {0}", embeddedResource);
                 }
-                
             }
         }
     }

@@ -23,7 +23,7 @@ namespace HELLION.DataStructures
         public Json_File(Json_File_Parent ownerObject)
         {
             OwnerObject = ownerObject;
-            if (OwnerObject == null) Debug.Print("OwnerObject was null.");
+            if (OwnerObject == null) Debug.Print("Json_File: OwnerObject was null.");
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Used to activate extended logging to the Debug window in VS.
         /// </summary>
-        protected bool logToDebug = false;
+        protected bool logToDebug = true;
 
         /// <summary>
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>

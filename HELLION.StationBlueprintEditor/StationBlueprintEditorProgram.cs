@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
+using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json.Linq;
 
@@ -329,11 +330,24 @@ namespace HELLION.StationBlueprintEditor
 
                 docCurrent = new StationBlueprint_File(null, saveFileInfo);
 
+
+                MainForm.JsonBlueprintFile = docCurrent;
+                MainForm.Blueprint = docCurrent.BlueprintObject;
+
+
+                //Blueprint = JsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("JsonBlueprintFile.BlueprintObject was null.");
+
                 // Trigger a refresh on each of the node trees.
                 //docCurrent.SolarSystem.RootNode.RefreshToolTipText(includeSubtrees: true);
                 //docCurrent.GameData.RootNode.RefreshToolTipText(includeSubtrees: true);
                 //docCurrent.Blueprints.RootNode.RefreshToolTipText(includeSubtrees: true);
                 //docCurrent.SearchHandler.RootNode.RefreshToolTipText(includeSubtrees: true);
+
+                Debug.Print(docCurrent.BlueprintObject.Name);
+
+                MainForm.RefreshEverything();
+
+
 
                 // Enable the Save and Save As menu items.
                 //MainForm.saveToolStripMenuItem.Enabled = true;
@@ -416,23 +430,53 @@ namespace HELLION.StationBlueprintEditor
             // Handles closing of files and cleanup of the document workspace.
 
             // isFileDirty check before exiting
-            if (docCurrent.IsDirty)
+            if (docCurrent != null && docCurrent.IsDirty)
             {
                 // Unsaved changes, prompt user to save
-                string sMessage = docCurrent.File.FullName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
+                string sMessage = docCurrent.File.FullName + " has been modified." + Environment.NewLine + "Do you want to save changes to this Blueprint before exiting?";
                 const string sCaption = "Unsaved Changes";
-                var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Cancel) return;
 
-                // If the yes button was pressed ...
-                if (result == DialogResult.Yes)
+
+                switch (result)
                 {
-                    // User selected Yes, call save routine
-                    MessageBox.Show("User selected Yes to save changes", "Unsaved Changes Dialog", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    MessageBox.Show("Saving is not yet implemented.");
+                    case DialogResult.Cancel:
+                        //e.Cancel = true;
+                        return;
+                    // If the yes button was pressed ...
+                    case DialogResult.Yes:
+                        MessageBox.Show("User selected to save changes.", "NonImplemented Notice",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // Save operation to be triggered here.
+
+
+
+                        break;
+
                 }
+
+                // Close the file
+
+
+
             }
+
+
+
+
+            // TODO: More work to be done here to handle cleanup, and calling the save
+
+
+            //GraftTreeOutboundToMainForm();
+
+
+            // Remove the current JsonDataViewForm from the jsonDataViews list
+            //StationBlueprintEditorProgram.blueprintEditorForms.Remove(this);
+            //GC.Collect();
+
 
 
 
@@ -490,7 +534,6 @@ namespace HELLION.StationBlueprintEditor
 
         #endregion
 
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -501,7 +544,7 @@ namespace HELLION.StationBlueprintEditor
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());
 
-            // Initialise the StructureDefinitions file.
+            // Initialise the StructureDefinitions file - temporary setup!
             structureDefinitionsFile = new StructureDefinitions_File(null, new FileInfo(@"E:\HELLION\TestArea\Output.json"));
 
             // Initialise the main form

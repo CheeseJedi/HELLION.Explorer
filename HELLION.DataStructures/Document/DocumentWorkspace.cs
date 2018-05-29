@@ -2,8 +2,8 @@
 using System.IO;
 using System.Windows.Forms;
 using HELLION.DataStructures.Blueprints;
+using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Search;
-using HELLION.DataStructures.Utilities;
 
 namespace HELLION.DataStructures.Document
 {

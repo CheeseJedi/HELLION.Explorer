@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using HELLION.DataStructures.Document;
+using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures
 {
@@ -12,7 +13,7 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class Json_File_UI : Json_File
+    public class Json_File_UI : Json_File, Iparent_Base_TN
     {
         /// <summary>
         /// Basic constructor.

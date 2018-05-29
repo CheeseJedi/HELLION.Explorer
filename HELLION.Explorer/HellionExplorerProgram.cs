@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.Document;
+using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Search;
 using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json.Linq;
@@ -168,7 +169,7 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="selectedNode"></param>
-        internal static void CreateNewBlueprintEditor(Blueprint_TreeNode selectedNode)
+        internal static void CreateNewBlueprintEditor(Blueprint_TN selectedNode)
         {
             if (selectedNode != null)
             {

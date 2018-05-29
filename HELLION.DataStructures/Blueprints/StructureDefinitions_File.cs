@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -19,8 +20,9 @@ namespace HELLION.DataStructures.Blueprints
         public StructureDefinitions_File(object passedParent, FileInfo passedFileInfo) : base(null)
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
-            // RootNode = new Blueprint_TreeNode(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+            // RootNode = new Blueprint_TN(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
             if (File.Exists) LoadFile();
+            else Debug.Print("Structure definitions initialised but file {0} doesn't exist.", passedFileInfo.FullName);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
+using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Utilities;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
 using static HELLION.DataStructures.StaticDataHelper;
@@ -39,10 +40,10 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
-        /// Constructor that takes a Blueprint_TreeNode.
+        /// Constructor that takes a Blueprint_TN.
         /// </summary>
         /// <param name="passedSourceNode"></param>
-        public BlueprintEditorForm(Blueprint_TreeNode passedSourceNode) : this()
+        public BlueprintEditorForm(Blueprint_TN passedSourceNode) : this()
         {
             SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.Name;
@@ -62,7 +63,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// The node that the editor was opened from.
         /// </summary>
-        public Blueprint_TreeNode SourceNode { get; private set; } = null;
+        public Blueprint_TN SourceNode { get; private set; } = null;
 
         /// <summary>
         /// Determines whether the text has been changed.
@@ -75,7 +76,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected tree node in the Primary Structure TreeView.
         /// </summary>
-        public Blueprint_TreeNode SelectedPrimaryStructureNode
+        public Blueprint_TN SelectedPrimaryStructureNode
         {
             get => _selectedPrimaryStructureNode;
             set
@@ -131,7 +132,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected tree node in the Secondary Structures TreeView.
         /// </summary>
-        public Blueprint_TreeNode SelectedSecondaryStructureNode
+        public Blueprint_TN SelectedSecondaryStructureNode
         {
             get => _selectedSecondaryStructureNode;
             set
@@ -500,11 +501,11 @@ namespace HELLION.Explorer
         #region TreeNode Grafting Methods
 
         /// <summary>
-        /// Grafts a node tree inbound from the Main Form.
+        /// Grafts a node tree inbound from the Main Form. OLD
         /// </summary>
         private void GraftTreeInboundFromMainForm()
         {
-            Blueprint_TreeNode drn = blueprint.PrimaryStructureRoot.RootNode;
+            Blueprint_TN drn = blueprint.PrimaryStructureRoot.RootNode;
             if (drn != null)
             {
                 blueprint.RootNode.Nodes.Remove(drn);
@@ -513,22 +514,22 @@ namespace HELLION.Explorer
 
                 //treeViewPrimaryStructure.Nodes.Add(drn);
 
-                drn.RefreshToolTipText(includeSubtrees: true);
+                //drn.RefreshToolTipText(includeSubTrees: true);
                 drn.ExpandAll();
             }
         }
 
         /// <summary>
-        /// Grafts a node tree outbound from the Main Form.
+        /// Grafts a node tree outbound from the Main Form. OLD
         /// </summary>
         private void GraftTreeOutboundToMainForm()
         {
-            Blueprint_TreeNode drn = blueprint.PrimaryStructureRoot.RootNode;
+            Blueprint_TN drn = blueprint.PrimaryStructureRoot.RootNode;
             if (drn != null)
             {
                 treeViewPrimaryStructure.Nodes.Remove(drn);
                 blueprint.RootNode.Nodes.Add(drn);
-                drn.RefreshToolTipText(includeSubtrees: true);
+                //drn.RefreshToolTipText(includeSubTrees: true);
                 drn.Collapse();
             }
         }
@@ -635,7 +636,7 @@ namespace HELLION.Explorer
         private void treeViewPrimaryStructure_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            SelectedPrimaryStructureNode = (Blueprint_TreeNode)treeViewPrimaryStructure.SelectedNode;
+            SelectedPrimaryStructureNode = (Blueprint_TN)treeViewPrimaryStructure.SelectedNode;
         }
 
         /// <summary>
@@ -646,7 +647,7 @@ namespace HELLION.Explorer
         private void treeViewSecondaryStructures_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            SelectedSecondaryStructureNode = (Blueprint_TreeNode)treeViewSecondaryStructures.SelectedNode;
+            SelectedSecondaryStructureNode = (Blueprint_TN)treeViewSecondaryStructures.SelectedNode;
         }
 
         /// <summary>
@@ -753,8 +754,8 @@ namespace HELLION.Explorer
         private string FormTitleText = null;
         private StationBlueprint_File jsonBlueprintFile = null;
         private StationBlueprint blueprint = null;
-        private Blueprint_TreeNode _selectedPrimaryStructureNode = null;
-        private Blueprint_TreeNode _selectedSecondaryStructureNode = null;
+        private Blueprint_TN _selectedPrimaryStructureNode = null;
+        private Blueprint_TN _selectedSecondaryStructureNode = null;
         private StationBlueprint.BlueprintStructure _currentStructure = null;
         private StationBlueprint.HEBlueprintDockingPort _currentDockingPort = null;
         private StationBlueprint.BlueprintStructure _destinationStructure = null;
