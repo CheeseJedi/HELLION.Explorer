@@ -18,10 +18,10 @@ namespace HELLION.DataStructures.Document
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
         public GameSave_Json_File(Json_File_Parent passedParentObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : base(passedParentObject, passedFileInfo, populateNodeTreeDepth)
         {
-            RootNode.BaseNodeName = File.Name;
+            RootNode.Name = File.Name;
             RootNode.NodeType = HETreeNodeType.SaveFile;
-            RootNode.BaseNodeText = File.Name;
-            RootNode.BaseNodeToolTipText = File.FullName;
+            //RootNode.BaseNodeText = File.Name;
+            //RootNode.BaseNodeToolTipText = File.FullName;
         }
     }
 }

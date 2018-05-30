@@ -505,7 +505,7 @@ namespace HELLION.Explorer
         /// </summary>
         private void GraftTreeInboundFromMainForm()
         {
-            Blueprint_TN drn = blueprint.PrimaryStructureRoot.RootNode;
+            Blueprint_TN drn = (Blueprint_TN)blueprint.PrimaryStructureRoot.RootNode;
             if (drn != null)
             {
                 blueprint.RootNode.Nodes.Remove(drn);
@@ -524,7 +524,7 @@ namespace HELLION.Explorer
         /// </summary>
         private void GraftTreeOutboundToMainForm()
         {
-            Blueprint_TN drn = blueprint.PrimaryStructureRoot.RootNode;
+            Blueprint_TN drn = (Blueprint_TN)blueprint.PrimaryStructureRoot.RootNode;
             if (drn != null)
             {
                 treeViewPrimaryStructure.Nodes.Remove(drn);

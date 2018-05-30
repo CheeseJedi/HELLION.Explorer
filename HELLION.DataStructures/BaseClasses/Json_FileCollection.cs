@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures
 {
@@ -10,7 +11,7 @@ namespace HELLION.DataStructures
     /// Defines an object that contains a dictionary of HEJsonBaseFiles representing the 
     /// json files in a specified folder.
     /// </summary>
-    public class Json_FileCollection : Json_File_Parent
+    public class Json_FileCollection : Json_File_Parent, Iparent_Base_TN
     {
         public Json_FileCollection()
         {

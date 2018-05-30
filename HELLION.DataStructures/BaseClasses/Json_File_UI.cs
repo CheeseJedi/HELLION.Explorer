@@ -32,14 +32,18 @@ namespace HELLION.DataStructures
             : base(ownerObject, passedFileInfo)
         {
             File = passedFileInfo ?? throw new NullReferenceException();
-            RootNode = new Json_TreeNode(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+            RootNode = new Json_TreeNode(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile);
+                //, nodeToolTipText: File.FullName);
 
             if (!File.Exists) throw new FileNotFoundException();
             else
             {
                 LoadFile();
-                RootNode.JData = jData;
-                RootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
+
+                // Cast the root node as the appropriate type to use it's methods.
+                Json_TreeNode tmpNode = (Json_TreeNode)RootNode;
+                tmpNode.JData = jData;
+                tmpNode.CreateChildNodesFromjData(populateNodeTreeDepth);
             }
         }
 
@@ -49,7 +53,7 @@ namespace HELLION.DataStructures
         /// <remarks>
         /// Casts the RootNode to an Json_TreeNode.
         /// </remarks>
-        public Json_TreeNode RootNode { get; protected set; } = null;
+        public Base_TN RootNode { get; set; } = null;
 
         /// <summary>
         /// Used to determine whether there was an error on load.

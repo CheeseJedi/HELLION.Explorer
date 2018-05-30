@@ -26,8 +26,8 @@ namespace HELLION.DataStructures.Blueprints
             DataDirectoryInfo = passedDirectoryInfo ?? throw new NullReferenceException("passedDirectoryInfo was null.");
             if (!DataDirectoryInfo.Exists) throw new DirectoryNotFoundException("DataDirectoryInfo reports the passed folder doesn't exist.");
 
-            RootNode = new Blueprint_FileCollection_TreeNode(passedOwner: this, nodeName: DataDirectoryInfo.Name,
-                nodeToolTipText: DataDirectoryInfo.FullName);
+            RootNode = new Blueprint_FileCollection_TN(passedOwner: this, nodeName: DataDirectoryInfo.Name);
+                //(, nodeToolTipText: DataDirectoryInfo.FullName);)
                 
             if (RootNode == null ) throw new InvalidOperationException("RootNode failed to create.");
 
@@ -49,7 +49,7 @@ namespace HELLION.DataStructures.Blueprints
         /// The root node of the Blueprint file collection - each data file will have it's
         /// own tree attached as child nodes to this node.
         /// </summary>
-        public new Blueprint_FileCollection_TreeNode RootNode { get; set; } = null;
+        public new Blueprint_FileCollection_TN RootNode { get; set; } = null;
 
         /// <summary>
         /// The load routine for the static data file collection

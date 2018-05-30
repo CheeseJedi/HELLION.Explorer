@@ -93,7 +93,7 @@
     <Compile Include="Blueprints\BlueprintsHandler_UI.cs" />
     <Compile Include="Blueprints\BlueprintStructure_TN.cs" />
     <Compile Include="Blueprints\Blueprint_FileCollection.cs" />
-    <Compile Include="Blueprints\Blueprint_FileCollection_TreeNode.cs" />
+    <Compile Include="Blueprints\Blueprint_FileCollection_TN.cs" />
     <Compile Include="Blueprints\Blueprint_TN.cs" />
     <Compile Include="Blueprints\HEBlueprintHierarchyViewTreeNode.cs" />
     <Compile Include="Blueprints\HEBlueprintsViewTreeNode.cs" />
@@ -265,7 +265,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

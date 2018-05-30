@@ -55,7 +55,7 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public StationBlueprint_File OwnerObject { get; set; } = null;
 
-        public Blueprint_TN RootNode { get; set; } = null;
+        public Base_TN RootNode { get; set; } = null;
 
         public StationBlueprint StructureDefinitions { get; set; } = null;
 
@@ -728,7 +728,7 @@ namespace HELLION.DataStructures.Blueprints
             /// <summary>
             /// Not to be serialised.
             /// </summary>
-            public BlueprintStructure_TN RootNode { get; set; } = null;
+            public Base_TN RootNode { get; set; } = null;
 
             /// <summary>
             /// Used to determine whether this structure is a hierarchy root.
@@ -1172,7 +1172,7 @@ namespace HELLION.DataStructures.Blueprints
             /// <summary>
             /// Not to be serialised.
             /// </summary>
-            public BlueprintDockingPort_TN RootNode { get; set; } = null;
+            public Base_TN RootNode { get; set; } = null;
 
 
             /// <summary>

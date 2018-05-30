@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using HELLION.DataStructures.UI;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
 
@@ -10,7 +11,7 @@ namespace HELLION.DataStructures.Document
     /// Derives an HETreeNode for use in the Game Data that can self-build child nodes
     /// based on the JToken stored in the node's Tag field.
     /// </summary>
-    public partial class Json_TreeNode : HETreeNode
+    public partial class Json_TreeNode : Base_TN
     {
         /// <summary>
         /// Constructor that takes a minimum of a name, but also optionally a type and text (display name).
@@ -19,9 +20,9 @@ namespace HELLION.DataStructures.Document
         /// <param name="nodeType">Type of the new node (HETreeNodeType enum)</param>
         /// <param name="nodeText">Text of the new node (Display Name). If not specified this defaults to the node's name.</param>
         /// <param name="nodeToolTipText">Tool tip text of the new node. If not specified this defaults to the node's text.</param>
-        public Json_TreeNode(object ownerObject, string nodeName = null, HETreeNodeType newNodeType = HETreeNodeType.Unknown,
-             string nodeText = null, string nodeToolTipText = null)
-            : base(ownerObject, nodeName, newNodeType, nodeText, nodeToolTipText)
+        public Json_TreeNode(Iparent_Base_TN ownerObject, string nodeName = null, HETreeNodeType newNodeType = HETreeNodeType.Unknown)
+             //, string nodeText = null, string nodeToolTipText = null)
+            : base(ownerObject, nodeName, newNodeType) //, nodeText, nodeToolTipText)
         {
 
         }
@@ -31,7 +32,7 @@ namespace HELLION.DataStructures.Document
         /// </summary>
         /// <param name="json"></param>
         /// <param name="nodeName">Accepts a passed Name, if not provided a name will be auto-generated.</param>
-        public Json_TreeNode(object ownerObject, JToken passedJson, string nodeName = "") : base(ownerObject)
+        public Json_TreeNode(Iparent_Base_TN ownerObject, JToken passedJson, string nodeName = "") : base(ownerObject)
         {
             JData = passedJson ?? throw new NullReferenceException("Passed Json data was null.");
 

@@ -8,7 +8,7 @@ using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
 
 namespace HELLION.DataStructures.UI
 {
-    public class Base_TN : TreeNode
+    public class Base_TN : TreeNode, Iparent_Base_TN
     {
         #region Constructors
 
@@ -124,8 +124,6 @@ namespace HELLION.DataStructures.UI
                 }
             }
         }
-
-
 
         #endregion
 

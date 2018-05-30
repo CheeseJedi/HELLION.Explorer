@@ -28,9 +28,9 @@ namespace HELLION.DataStructures.Blueprints
             RootNode = new Blueprint_TN(passedOwner: this, nodeName: "Unsaved",
                 newNodeType: HETreeNodeType.Blueprint); //, nodeToolTipText: "File not yet saved");
 
-            DataViewRootNode = new Json_TreeNode(ownerObject: this, nodeName: "Data View",
-                newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText:
-                "Shows a representation of the Json data that makes up this blueprint.");
+            DataViewRootNode = new Json_TreeNode(ownerObject: this, nodeName: "Data View");
+                //newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText:
+                //"Shows a representation of the Json data that makes up this blueprint.");
 
             RootNode.Nodes.Add(DataViewRootNode);
         }

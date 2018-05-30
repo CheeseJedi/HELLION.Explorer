@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using HELLION.DataStructures.UI;
 using Newtonsoft.Json.Linq;
 
 /// <summary>
@@ -313,7 +314,7 @@ namespace HELLION.DataStructures.Document
     /// Extends the Json_TreeNode with the ability to generate a new cross-linked
     /// SolarSystem_TreeNode from itself, used by the Solar System builder.
     /// </summary>
-    public partial class Json_TreeNode : HETreeNode
+    public partial class Json_TreeNode : Base_TN
     {
         /// <summary>
         /// Used to store a reference to the tree node in the Solar System that was created

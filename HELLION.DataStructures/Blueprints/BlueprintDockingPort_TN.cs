@@ -16,7 +16,7 @@ namespace HELLION.DataStructures.Blueprints
         /// Generates a name for the TreeNode.
         /// </summary>
         /// <returns></returns>
-        protected override string GenerateName()
+        protected new string GenerateName()
         {
             // Generate a name based on the current docking port names.
             StationBlueprint.HEBlueprintDockingPort port = (StationBlueprint.HEBlueprintDockingPort)OwnerObject;
@@ -27,7 +27,7 @@ namespace HELLION.DataStructures.Blueprints
         /// Generates a fresh ToolTipText.
         /// </summary>
         /// <returns></returns>
-        protected override string GenerateToolTipText()
+        protected new string GenerateToolTipText()
         {
             StringBuilder sb = new StringBuilder();
 
