@@ -166,8 +166,8 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public new HETreeNode RootNode { get; protected set; } = null;
 
-        public Json_TreeNode DataViewRootNode { get; protected set; } = null;
-        public SolarSystem_TreeNode DefinitionViewRootNode { get; protected set; } = null;
+        public Json_TN DataViewRootNode { get; protected set; } = null;
+        public SolarSystem_TN DefinitionViewRootNode { get; protected set; } = null;
 
         /// <summary>
         /// This is the actual BlueprintStructureDefinition object - serialised and de-serialised from here.

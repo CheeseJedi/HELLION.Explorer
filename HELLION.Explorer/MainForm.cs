@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.Document;
+using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 
 namespace HELLION.Explorer
@@ -158,7 +159,7 @@ namespace HELLION.Explorer
             // Show menu only if the right mouse button is clicked.
             if (e.Button == MouseButtons.Right)
             {
-                HETreeNode node = (HETreeNode)e.Node;
+                Base_TN node = (Base_TN)e.Node;
                 // Get the node that the user has clicked.
                 if (node != null)
                 {
@@ -167,7 +168,7 @@ namespace HELLION.Explorer
 
                     // Determine node type and activate appropriate jump to menu items.
                     Type t = node.GetType();
-                    if (t.Equals(typeof(Json_TreeNode)))
+                    if (t.Equals(typeof(Json_TN)))
                     {
                         // We're working with a GAME DATA node
 
@@ -192,8 +193,8 @@ namespace HELLION.Explorer
                         rootOfDockingTreeToolStripMenuItem.Enabled = false;
                         parentCelestialBodyToolStripMenuItem.Enabled = false;
 
-                        // Cast the node to an Json_TreeNode type
-                        Json_TreeNode gDnode = (Json_TreeNode)treeView1.SelectedNode;
+                        // Cast the node to an Json_TN type
+                        Json_TN gDnode = (Json_TN)treeView1.SelectedNode;
 
                         // Disable the LoadNextLevel item if it's already been loaded.
                         if (gDnode.ChildNodesLoaded) loadNextLevelToolStripMenuItem.Enabled = false;
@@ -212,7 +213,7 @@ namespace HELLION.Explorer
                             thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
                         }
                     }
-                    else if (t.Equals(typeof(SolarSystem_TreeNode)))
+                    else if (t.Equals(typeof(SolarSystem_TN)))
                     {
                         // We're working with a SOLAR SYSTEM node
 
@@ -230,8 +231,8 @@ namespace HELLION.Explorer
                         thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
                         thisObjectInSolarSystemViewToolStripMenuItem.Checked = true;
 
-                        // Cast the node as an SolarSystem_TreeNode type
-                        SolarSystem_TreeNode sSnode = (SolarSystem_TreeNode)treeView1.SelectedNode;
+                        // Cast the node as an SolarSystem_TN type
+                        SolarSystem_TN sSnode = (SolarSystem_TN)treeView1.SelectedNode;
 
                         if (sSnode.GUID == -1 || sSnode.NodeType == HETreeNodeType.SolarSystemView
                             || sSnode.NodeType == HETreeNodeType.BlueprintHierarchyView)
@@ -349,7 +350,7 @@ namespace HELLION.Explorer
             if (HellionExplorerProgram.MainForm.treeView1.SelectedNode != null)
             {
                 // Cast the TreeNode to an HETreeNode to determine it's type
-                HETreeNode tempHETreeNode = (HETreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+                Base_TN tempHETreeNode = (Base_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
 
                 switch (tempHETreeNode.NodeType)
                 {
@@ -361,7 +362,7 @@ namespace HELLION.Explorer
                     case HETreeNodeType.JsonValue:
                         // We're in the Game Data section
 
-                        Json_TreeNode tempGameDataNode = (Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+                        Json_TN tempGameDataNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
                         if (!tempGameDataNode.ChildNodesLoaded)
                         {
                             // Load next level
@@ -465,7 +466,7 @@ namespace HELLION.Explorer
         private void loadNextLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load next level
-            Json_TreeNode tempNode = (Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+            Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 1);
             //tempNode.UpdateCounts();
         }
@@ -473,7 +474,7 @@ namespace HELLION.Explorer
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Load all levels (up to depth of 15)
-            Json_TreeNode tempNode = (Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+            Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
             tempNode.CreateChildNodesFromjData(maxDepth: 15);
             //tempNode.UpdateCounts();
             tempNode.Expand();
@@ -493,7 +494,7 @@ namespace HELLION.Explorer
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.CreateNewJsonDataView((Json_TreeNode)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+            HellionExplorerProgram.CreateNewJsonDataView((Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
         }
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -507,9 +508,9 @@ namespace HELLION.Explorer
             else
             {
                 Type t = treeView1.SelectedNode.GetType();
-                if (t.Equals(typeof(Json_TreeNode)))
+                if (t.Equals(typeof(Json_TN)))
                 {
-                    Json_TreeNode node = (Json_TreeNode)treeView1.SelectedNode;
+                    Json_TN node = (Json_TN)treeView1.SelectedNode;
                     treeView1.SelectedNode = node.LinkedSolarSystemNode;
 
                     // Trigger refresh
@@ -527,9 +528,9 @@ namespace HELLION.Explorer
             else
             {
                 Type t = treeView1.SelectedNode.GetType();
-                if (t.Equals(typeof(SolarSystem_TreeNode)))
+                if (t.Equals(typeof(SolarSystem_TN)))
                 {
-                    SolarSystem_TreeNode node = (SolarSystem_TreeNode)treeView1.SelectedNode;
+                    SolarSystem_TN node = (SolarSystem_TN)treeView1.SelectedNode;
                     treeView1.SelectedNode = node.LinkedGameDataNode;
 
                     // Trigger refresh
@@ -544,7 +545,7 @@ namespace HELLION.Explorer
         private void parentCelestialBodyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // This is only applicable in the Solar System View
-            SolarSystem_TreeNode node = (SolarSystem_TreeNode)treeView1.SelectedNode;
+            SolarSystem_TN node = (SolarSystem_TN)treeView1.SelectedNode;
             treeView1.SelectedNode = node.GetParentCelestialBody();
 
             // Trigger refresh
@@ -556,7 +557,7 @@ namespace HELLION.Explorer
         private void rootOfDockingTreeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // This is only applicable in the Solar System View
-            SolarSystem_TreeNode node = (SolarSystem_TreeNode)treeView1.SelectedNode;
+            SolarSystem_TN node = (SolarSystem_TN)treeView1.SelectedNode;
             treeView1.SelectedNode = node.GetRootOfDockingTree();
 
             // Trigger refresh

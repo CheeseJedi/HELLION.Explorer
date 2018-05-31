@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using HELLION.DataStructures.Document;
+using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 
 namespace HELLION.DataStructures.Search
@@ -11,7 +12,7 @@ namespace HELLION.DataStructures.Search
     /// <summary>
     /// A class to handle searches and present search results.
     /// </summary>
-    public class SearchHandler
+    public class SearchHandler : Iparent_Base_TN
     {
         /// <summary>
         /// Defines the available search operator types.
@@ -29,12 +30,12 @@ namespace HELLION.DataStructures.Search
         /// <summary>
         /// Public property for the root node of the Search Handler tree.
         /// </summary>
-        public SearchHandler_TreeNode RootNode => rootNode;
+        public SearchHandler_TN RootNode => rootNode;
 
         /// <summary>
         /// Field for root node of the Game Data tree.
         /// </summary>
-        private SearchHandler_TreeNode rootNode = null;
+        private SearchHandler_TN rootNode = null;
 
         /// <summary>
         /// Stores a reference to the GameData object.
@@ -82,7 +83,7 @@ namespace HELLION.DataStructures.Search
             gameData = passedGameData ?? throw new NullReferenceException("passedGameData was null.");
             solarSystem = passedSolarSystem ?? throw new NullReferenceException("passedSolarSystem was null.");
             
-            rootNode = new SearchHandler_TreeNode("Search", HETreeNodeType.SearchHandler, passedOwner: this);
+            rootNode = new SearchHandler_TN("Search", passedOwner: this, newNodeType: HETreeNodeType.SearchHandler);
             
             searchOperators = new List<HESearchOperator>();
 
@@ -109,7 +110,7 @@ namespace HELLION.DataStructures.Search
         /// <summary>
         /// Implements a search operator that can execute a query and populate a list of results.
         /// </summary>
-        public class HESearchOperator
+        public class HESearchOperator : Iparent_Base_TN
         {
             /// <summary>
             /// Constructor that takes a SearchHandler reference to it's parent.
@@ -119,7 +120,7 @@ namespace HELLION.DataStructures.Search
             {
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
                 OperatorFlags = passedOperatorFlags;
-                _rootNode = new SearchHandler_TreeNode(this, "SEARCHOPERATORRESULTS", HETreeNodeType.SearchResultsSet, baseDisplayName, passedOwner: this);
+                _rootNode = new SearchHandler_TN(this, "SEARCHOPERATORRESULTS", passedOwner: this, newNodeType: HETreeNodeType.SearchResultsSet);
                 parent.rootNode.Nodes.Add(_rootNode);
                 parent.searchOperators.Add(this);
             }
@@ -134,12 +135,12 @@ namespace HELLION.DataStructures.Search
             /// <summary>
             /// Public property for the root node of the Search Handler tree.
             /// </summary>
-            public HETreeNode RootNode => _rootNode;
+            public Base_TN RootNode => _rootNode;
 
             /// <summary>
             /// The root node of the Game Data tree.
             /// </summary>
-            protected HETreeNode _rootNode = null;
+            protected Base_TN _rootNode = null;
 
             /// <summary>
             /// Stores a reference to this object's parent, the SearchHandler
@@ -149,7 +150,7 @@ namespace HELLION.DataStructures.Search
             /// <summary>
             /// Public property to get the results list.
             /// </summary>
-            public List<HETreeNode> Results
+            public List<Base_TN> Results
             {
                 get
                 {
@@ -165,7 +166,7 @@ namespace HELLION.DataStructures.Search
             /// <summary>
             /// 
             /// </summary>
-            protected List<HETreeNode> results = null;
+            protected List<Base_TN> results = null;
 
             public HESearchOperatorFlags OperatorFlags{ get; set; } = 0;
 
@@ -213,13 +214,13 @@ namespace HELLION.DataStructures.Search
             /// </summary>
             protected string query = null;
 
-            public HETreeNode StartingNode
+            public Base_TN StartingNode
             {
                 get => startingNode;
                 set => startingNode = value; // ?? throw new NullReferenceException("StartingNode was null.");
             }
             
-            protected HETreeNode startingNode = null;
+            protected Base_TN startingNode = null;
 
             /// <summary>
             /// Executes the query.
@@ -243,21 +244,35 @@ namespace HELLION.DataStructures.Search
                     if (pathTokens[0] == parent.gameData.RootNode.Name)
                     {
                         // It's a path to a Game Data object.
-                        if (atMaxDepth)  results.Add(parent.gameData.RootNode);
-                        else results = RecursivePathSearch(pathTokens, 1, parent.gameData.RootNode);
+                        if (atMaxDepth)
+                        {
+
+                            results.Add(parent.gameData.RootNode);
+                        }
+                        else
+                        {
+                            results = RecursivePathSearch(pathTokens, 1, parent.gameData.RootNode);
+                        }
                     }
                     else if (pathTokens[0] == parent.solarSystem.RootNode.Name)
                     {
                         // It's a path to a Solar System object.
-                        if (atMaxDepth)  results.Add(parent.solarSystem.RootNode);
-                        else  results = RecursivePathSearch(pathTokens, 1, parent.solarSystem.RootNode);
+                        if (atMaxDepth)
+                        {
+                            results.Add(parent.solarSystem.RootNode);
+                        }
+
+                        else
+                        {
+                            results = RecursivePathSearch(pathTokens, 1, parent.solarSystem.RootNode);
+                        }
                     }
                     else
                     {
                         // Unrecognised/unsupported first token.
                         return false;
                     }
-                    _rootNode.BaseNodeText = GenerateResultSetDisplayName();
+                    _rootNode.Name = GenerateResultSetDisplayName();
                     return results.Count() > 0 ? true : false;
                 }
                 else
@@ -268,23 +283,23 @@ namespace HELLION.DataStructures.Search
                         Debug.Print("Find, Case SENTITIVE");
 
                         results = startingNode.GetChildNodes(includeSubtrees: true)
-                            .Where<HETreeNode>(f => f.Name.Contains(query)
+                            .Where<Base_TN>(f => f.Name.Contains(query)
                             || f.Text.Contains(query)
                             || f.NodeType.ToString().Contains(query))
-                            .ToList<HETreeNode>();
+                            .ToList<Base_TN>();
                     }
                     else
                     {
                         Debug.Print("Find, Case INsensitive");
 
                         results = startingNode.GetChildNodes(includeSubtrees: true)
-                            .Where<HETreeNode>(f => f.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
+                            .Where<Base_TN>(f => f.Name.Contains(query, StringComparison.OrdinalIgnoreCase)
                             || f.Text.Contains(query, StringComparison.OrdinalIgnoreCase)
                             || f.NodeType.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
-                            .ToList<HETreeNode>();
+                            .ToList<Base_TN>();
                     }
 
-                    _rootNode.BaseNodeText = GenerateResultSetDisplayName();
+                    _rootNode.Name = GenerateResultSetDisplayName();
                     return results.Count() > 0 ? true : false;
                 }
             }
@@ -296,15 +311,15 @@ namespace HELLION.DataStructures.Search
             /// <param name="currentDepth"></param>
             /// <param name="parentNode"></param>
             /// <returns></returns>
-            internal List<HETreeNode> RecursivePathSearch(string[] pathTokens, int currentDepth, HETreeNode parentNode)
+            internal List<Base_TN> RecursivePathSearch(string[] pathTokens, int currentDepth, Base_TN parentNode)
             {
-                List<HETreeNode> results = new List<HETreeNode>();
+                List<Base_TN> results = new List<Base_TN>();
                 bool atMaxDepth = currentDepth >= pathTokens.Length - 1 ? true : false;
 
                 if (pathTokens[currentDepth] == "*")
                 {
                     // We've got a wild-card token - process all nodes in the collection.
-                    foreach (HETreeNode node in parentNode.Nodes)
+                    foreach (Base_TN node in parentNode.Nodes)
                     {
                         if (atMaxDepth)
                         {
@@ -327,12 +342,12 @@ namespace HELLION.DataStructures.Search
                         if (atMaxDepth)
                         {
                             // Add the node to the results list
-                            results.Add((HETreeNode)currentNodeArray[0]);
+                            results.Add((Base_TN)currentNodeArray[0]);
                         }
                         else
                         {
                             // Recurse from each node
-                            results.AddRange(RecursivePathSearch(pathTokens, currentDepth + 1, (HETreeNode)currentNodeArray[0]));
+                            results.AddRange(RecursivePathSearch(pathTokens, currentDepth + 1, (Base_TN)currentNodeArray[0]));
                         }
                     }
                 }

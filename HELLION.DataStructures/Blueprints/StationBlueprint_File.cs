@@ -28,7 +28,7 @@ namespace HELLION.DataStructures.Blueprints
             RootNode = new Blueprint_TN(passedOwner: this, nodeName: "Unsaved",
                 newNodeType: HETreeNodeType.Blueprint); //, nodeToolTipText: "File not yet saved");
 
-            DataViewRootNode = new Json_TreeNode(ownerObject: this, nodeName: "Data View");
+            DataViewRootNode = new Json_TN(ownerObject: this, nodeName: "Data View");
                 //newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText:
                 //"Shows a representation of the Json data that makes up this blueprint.");
 
@@ -85,12 +85,12 @@ namespace HELLION.DataStructures.Blueprints
         /// <summary>
         /// A reference to the DataView's root node.
         /// </summary>
-        public Json_TreeNode DataViewRootNode { get; protected set; } = null;
+        public Json_TN DataViewRootNode { get; protected set; } = null;
 
         /// <summary>
         /// A reference to the hierarchy view root node.
         /// </summary>
-        public SolarSystem_TreeNode HierarchyViewRootNode { get; protected set; } = null;
+        public SolarSystem_TN HierarchyViewRootNode { get; protected set; } = null;
 
         /// <summary>
         /// This is the actual blueprint - serialised and de-serialised from here.

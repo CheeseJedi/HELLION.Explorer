@@ -11,7 +11,7 @@ namespace HELLION.DataStructures.Document
     /// Derives an HETreeNode for use in the Game Data that can self-build child nodes
     /// based on the JToken stored in the node's Tag field.
     /// </summary>
-    public partial class Json_TreeNode : Base_TN
+    public partial class Json_TN : Base_TN
     {
         /// <summary>
         /// Constructor that takes a minimum of a name, but also optionally a type and text (display name).
@@ -20,7 +20,7 @@ namespace HELLION.DataStructures.Document
         /// <param name="nodeType">Type of the new node (HETreeNodeType enum)</param>
         /// <param name="nodeText">Text of the new node (Display Name). If not specified this defaults to the node's name.</param>
         /// <param name="nodeToolTipText">Tool tip text of the new node. If not specified this defaults to the node's text.</param>
-        public Json_TreeNode(Iparent_Base_TN ownerObject, string nodeName = null, HETreeNodeType newNodeType = HETreeNodeType.Unknown)
+        public Json_TN(Iparent_Base_TN ownerObject, string nodeName = null, HETreeNodeType newNodeType = HETreeNodeType.Unknown)
              //, string nodeText = null, string nodeToolTipText = null)
             : base(ownerObject, nodeName, newNodeType) //, nodeText, nodeToolTipText)
         {
@@ -28,11 +28,11 @@ namespace HELLION.DataStructures.Document
         }
 
         /// <summary>
-        /// Test new constructor that takes raw Json and formats the Json_TreeNode appropriately.
+        /// Test new constructor that takes raw Json and formats the Json_TN appropriately.
         /// </summary>
         /// <param name="json"></param>
         /// <param name="nodeName">Accepts a passed Name, if not provided a name will be auto-generated.</param>
-        public Json_TreeNode(Iparent_Base_TN ownerObject, JToken passedJson, string nodeName = "") : base(ownerObject)
+        public Json_TN(Iparent_Base_TN ownerObject, JToken passedJson, string nodeName = "") : base(ownerObject)
         {
             JData = passedJson ?? throw new NullReferenceException("Passed Json data was null.");
 
@@ -210,14 +210,14 @@ namespace HELLION.DataStructures.Document
                 {
                     foreach (JToken childToken in JData.Reverse<JToken>())
                     {
-                        Json_TreeNode newNode = new Json_TreeNode(this, childToken);
+                        Json_TN newNode = new Json_TN(this, childToken);
                         Nodes.Add(newNode);
                     }
                     ChildNodesLoaded = true;
                 }
                 if (maxDepth > 1)
                 {
-                    foreach (Json_TreeNode childNode in Nodes)
+                    foreach (Json_TN childNode in Nodes)
                     {
                         childNode.CreateChildNodesFromjData(maxDepth - 1);
                     }

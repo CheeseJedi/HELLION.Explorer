@@ -62,9 +62,9 @@ namespace HELLION.DataStructures.UI
                     base.Name = value;
 
                     // Trigger updates here.
-                    if (value == null) RefreshName();
-                    RefreshText();
-                    RefreshToolTipText();
+                    //if (value == null) RefreshName();
+                    // RefreshText();
+                    //RefreshToolTipText();
                 }
             }
         }
@@ -136,8 +136,8 @@ namespace HELLION.DataStructures.UI
         public virtual void Refresh(bool includeSubTrees = false)
         {
             Debug.Print("Base_TN.Refresh called on {0} - {1}", Name, OwnerObject.ToString());
-            RefreshName(includeSubTrees);
-            RefreshText(includeSubTrees);
+            // RefreshName(includeSubTrees);
+            RefreshText(false);
             // RefreshToolTipText(includeSubTrees);
         }
 
@@ -186,7 +186,7 @@ namespace HELLION.DataStructures.UI
         protected virtual string GenerateName()
         {
             // Generate a name based on the current date and time.
-            return "Unnamed node " + DateTime.Now.ToString();
+            return unnamedNode; // "Unnamed node " + DateTime.Now.ToString();
         }
 
         /// <summary>
@@ -300,9 +300,11 @@ namespace HELLION.DataStructures.UI
         #endregion
 
 
+        #region Constants
 
+        private const string unnamedNode = "Unnamed node";
 
-
+        #endregion
 
     }
 

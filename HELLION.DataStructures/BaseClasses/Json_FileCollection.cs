@@ -33,8 +33,8 @@ namespace HELLION.DataStructures
             DataDirectoryInfo = passedDirectoryInfo ?? throw new NullReferenceException("passedDirectoryInfo was null.");
             if (!DataDirectoryInfo.Exists) throw new DirectoryNotFoundException("DataDirectoryInfo reports the passed folder doesn't exist.");
 
-            RootNode = new HETreeNode(ownerObject: this, nodeName: DataDirectoryInfo.Name,
-                newNodeType: HETreeNodeType.DataFolder, nodeToolTipText: DataDirectoryInfo.FullName);
+            RootNode = new Base_TN(ownerObject: this, nodeName: DataDirectoryInfo.Name,
+                newNodeType: HETreeNodeType.DataFolder);
 
             Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
         }
@@ -58,7 +58,7 @@ namespace HELLION.DataStructures
         /// The root node of the Static Data file collection - each data file will have it's
         /// own tree attached as child nodes to this node.
         /// </summary>
-        public HETreeNode RootNode { get; set; } = null;
+        public Base_TN RootNode { get; set; } = null;
 
         /// <summary>
         /// Public property to read the isLoaded bool.

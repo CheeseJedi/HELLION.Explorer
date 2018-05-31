@@ -22,8 +22,8 @@ namespace HELLION.DataStructures.Document
         /// <returns></returns>
         public int Compare(object x, object y)
         {
-            SolarSystem_TreeNode nodeX = x as SolarSystem_TreeNode;
-            SolarSystem_TreeNode nodeY = y as SolarSystem_TreeNode;
+            SolarSystem_TN nodeX = x as SolarSystem_TN;
+            SolarSystem_TN nodeY = y as SolarSystem_TN;
 
             if (nodeX != null && nodeY != null)
             {

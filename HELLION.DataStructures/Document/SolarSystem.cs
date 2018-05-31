@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using HELLION.DataStructures.UI;
 using Newtonsoft.Json.Linq;
 
 namespace HELLION.DataStructures.Document
@@ -11,7 +12,7 @@ namespace HELLION.DataStructures.Document
     /// <summary>
     /// Implements the Solar System view node tree.
     /// </summary>
-    public class SolarSystem
+    public class SolarSystem : Iparent_Base_TN
     {
         /// <summary>
         /// Constructor that takes an GameData object and uses this as it's data source.
@@ -21,7 +22,7 @@ namespace HELLION.DataStructures.Document
         {
             // Basic constructor
 
-            RootNode = new SolarSystem_TreeNode(passedOwner: this, nodeName: "Solar System", nodeType: HETreeNodeType.SolarSystemView) //, "Solar System")
+            RootNode = new SolarSystem_TN(passedOwner: this, nodeName: "Solar System", nodeType: HETreeNodeType.SolarSystemView) //, "Solar System")
             {
                 GUID = -1 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to the Solar System root node
             };
@@ -45,7 +46,7 @@ namespace HELLION.DataStructures.Document
         /// <summary>
         /// Root node of the Solar System tree.
         /// </summary>
-        public SolarSystem_TreeNode RootNode { get; set; } = null;
+        public Base_TN RootNode { get; set; } = null;
 
         /// <summary>
         /// Builds tree nodes from the GameData nodes, with cross-references
@@ -98,7 +99,7 @@ namespace HELLION.DataStructures.Document
                     {
                         if (!(celestialBodiesJsonBaseFile.RootNode.Nodes.Count > 0)) throw new InvalidOperationException("CelestialBodies RootNode had no child nodes.");
 
-                        foreach (Json_TreeNode node in celestialBodiesJsonBaseFile.RootNode.Nodes)
+                        foreach (Json_TN node in celestialBodiesJsonBaseFile.RootNode.Nodes)
                         {
                             HETreeNodeType newNodeType = HETreeNodeType.Unknown;
 
@@ -136,7 +137,7 @@ namespace HELLION.DataStructures.Document
                                     break;
                             }
 
-                            SolarSystem_TreeNode newNode = node.CreateLinkedSolarSystemNode(newNodeType);
+                            SolarSystem_TN newNode = node.CreateLinkedSolarSystemNode(newNodeType);
                             RootNode.Nodes.Add(newNode);
                         }
                     }
@@ -163,26 +164,26 @@ namespace HELLION.DataStructures.Document
 
                     TreeNode[] tmpMatches = GameData.SaveFile.RootNode.Nodes.Find(findKey, searchAllChildren: false);
                     /*
-                    Json_TreeNode sectionRootNode = null;
+                    Json_TN sectionRootNode = null;
                     foreach (var match in tmpMatches)
                     {
-                        sectionRootNode = (Json_TreeNode)match;
+                        sectionRootNode = (Json_TN)match;
                         break;
                     }
                     */
-                    Json_TreeNode sectionRootNode = tmpMatches.Count() > 0 ? (Json_TreeNode)tmpMatches[0] : throw new NullReferenceException("sectionRootNode was null.");
+                    Json_TN sectionRootNode = tmpMatches.Count() > 0 ? (Json_TN)tmpMatches[0] : throw new NullReferenceException("sectionRootNode was null.");
                     /*
-                    Json_TreeNode arrayRootNode = null;
+                    Json_TN arrayRootNode = null;
                     foreach (var match2 in sectionRootNode.Nodes)
                     {
-                        arrayRootNode = (Json_TreeNode)match2;
+                        arrayRootNode = (Json_TN)match2;
                         break;
                     }
                     if (arrayRootNode == null) throw new NullReferenceException("subRootNode was null.");
                     */
-                    Json_TreeNode arrayRootNode = sectionRootNode.Nodes.Count > 0 ? (Json_TreeNode)sectionRootNode.Nodes[0] : throw new NullReferenceException("subRootNode was null.");
+                    Json_TN arrayRootNode = sectionRootNode.Nodes.Count > 0 ? (Json_TN)sectionRootNode.Nodes[0] : throw new NullReferenceException("subRootNode was null.");
 
-                    foreach (Json_TreeNode node in arrayRootNode.Nodes)
+                    foreach (Json_TN node in arrayRootNode.Nodes)
                     {
                         JObject obj = (JObject)node.JData;
                         long newNodeParentGUID = 0;
@@ -193,7 +194,7 @@ namespace HELLION.DataStructures.Document
                         testToken = obj["FakeGUID"];
                         if (testToken != null) newNodeFakeGUID = (long)obj["FakeGUID"];
 
-                        SolarSystem_TreeNode newNode = node.CreateLinkedSolarSystemNode(nodeType);
+                        SolarSystem_TN newNode = node.CreateLinkedSolarSystemNode(nodeType);
                         if (nodeType == HETreeNodeType.Player && newNodeParentGUID == newNodeFakeGUID)
                         {
                             Debug.Print("FakeGUID: " + newNodeFakeGUID);
@@ -215,9 +216,9 @@ namespace HELLION.DataStructures.Document
         /// </summary>
         public bool RehydrateGUIDHierarchy()
         {
-            SolarSystem_TreeNode currentParentNode = null;
+            SolarSystem_TN currentParentNode = null;
             bool errorState = false;
-            foreach (SolarSystem_TreeNode node in RootNode.GetChildNodes(includeSubtrees: true))
+            foreach (SolarSystem_TN node in RootNode.GetChildNodes(includeSubtrees: true))
             {
                 // If this node has a non-zero value for DockedToShipGUID, process it.
                 if (node.ParentGUID == 0)
@@ -232,15 +233,15 @@ namespace HELLION.DataStructures.Document
                     // There can be only one!
                     try
                     {
-                        SolarSystem_TreeNode newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
-                            .Cast<SolarSystem_TreeNode>()
+                        SolarSystem_TN newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
+                            .Cast<SolarSystem_TN>()
                             .Where(p => p.GUID == node.ParentGUID)
                             .Single();
                         // If the .Single() causes an exception, there's more than one module docked to that port, 
                         // or the GUID that it's docked to can't be found :(
 
-                        // Cast the node.Parent to an SolarSystem_TreeNode (so we can access ClearCachedData)
-                        currentParentNode = (SolarSystem_TreeNode)node.Parent;
+                        // Cast the node.Parent to an SolarSystem_TN (so we can access ClearCachedData)
+                        currentParentNode = (SolarSystem_TN)node.Parent;
 
                         // Remove the ship to be re-parented from it's current parent's node collection.
                         currentParentNode.Nodes.Remove(node);
@@ -275,19 +276,19 @@ namespace HELLION.DataStructures.Document
         /// </remarks>
         public void RehydrateDockedShips()
         {
-            IEnumerable<SolarSystem_TreeNode> shipsToBeReparented = RootNode.GetChildNodes(includeSubtrees: true)
-                .Cast<SolarSystem_TreeNode>()
+            IEnumerable<SolarSystem_TN> shipsToBeReparented = RootNode.GetChildNodes(includeSubtrees: true)
+                .Cast<SolarSystem_TN>()
                 .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
 
-            foreach (SolarSystem_TreeNode node in shipsToBeReparented)
+            foreach (SolarSystem_TN node in shipsToBeReparented)
             {
                 // If this node has a non-zero value for DockedToShipGUID, process it.
                 if (node.DockedToShipGUID != 0)
                 {
                     // Find the node that has the GUID matching the DockedToShipGUID of this node.
                     // There can be only one!
-                    SolarSystem_TreeNode newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
-                        .Cast<SolarSystem_TreeNode>()
+                    SolarSystem_TN newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
+                        .Cast<SolarSystem_TN>()
                         .Where(p => p.GUID == node.DockedToShipGUID)
                         .Single(); 
                     // If the .Single() causes an exception, there's not exactly one module docked to that port!

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.IO;
+using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures.Blueprints
 {
-    public class BlueprintsHandler_UI : BlueprintsHandler
+    public class BlueprintsHandler_UI : BlueprintsHandler, Iparent_Base_TN
     {
         /// <summary>
         /// Default constructor.
         /// </summary>
         public BlueprintsHandler_UI()
         {
-            RootNode = new HEBlueprintsViewTreeNode(passedOwner: this);
+            RootNode = new BlueprintsView_TN(passedOwner: this);
             RootNode.Nodes.Add(StructureDefinitionsFile.RootNode);
 
             #region Blueprints Collection
@@ -31,7 +32,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <summary>
         /// Public property for the root node of the Search Handler tree.
         /// </summary>
-        public HEBlueprintsViewTreeNode RootNode { get; protected set; } = null;
+        public BlueprintsView_TN RootNode { get; protected set; } = null;
 
         /// <summary>
         /// the StaticDataFileCollection object which enumerates the Blueprints folder and builds  

@@ -19,7 +19,7 @@ namespace HELLION.DataStructures.Document
         /// <param name="StaticDataFolderInfo">The DirectoryInfo representing the Data folder.</param>
         public GameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
         {
-            RootNode = new HETreeNode(ownerObject: this, nodeName: "Game Data", newNodeType: HETreeNodeType.DataView);
+            RootNode = new Base_TN(ownerObject: this, nodeName: "Game Data", newNodeType: HETreeNodeType.DataView);
             if (SaveFileInfo != null && SaveFileInfo.Exists)
             {
                 Debug.Print("File evaluated {0}", SaveFileInfo.Name);
@@ -28,7 +28,7 @@ namespace HELLION.DataStructures.Document
                 SaveFile = new GameSave_Json_File(this, SaveFileInfo, populateNodeTreeDepth: 5);
 
                 // Pre-load in several levels of node.
-                Json_TreeNode rootNode = (Json_TreeNode)SaveFile.RootNode;
+                Json_TN rootNode = (Json_TN)SaveFile.RootNode;
                 rootNode.CreateChildNodesFromjData(3);
 
                 if (SaveFile.RootNode == null) throw new Exception("SaveFile rootNode was null");
@@ -46,7 +46,7 @@ namespace HELLION.DataStructures.Document
         /// <summary>
         /// Public property to get the root node of the Game Data tree.
         /// </summary>
-        public HETreeNode RootNode { get; private set; } = null;
+        public Base_TN RootNode { get; private set; } = null;
 
         /// <summary>
         /// Public property to get the SaveFile sub-object as this is not settable outside

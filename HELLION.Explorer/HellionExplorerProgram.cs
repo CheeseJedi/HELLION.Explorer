@@ -10,6 +10,7 @@ using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.Document;
 using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Search;
+using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json.Linq;
 
@@ -135,7 +136,7 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="nSelectedNode"></param>
-        internal static void CreateNewJsonDataView(Json_TreeNode nSelectedNode)
+        internal static void CreateNewJsonDataView(Json_TN nSelectedNode)
         {
             if (nSelectedNode != null && nSelectedNode.JData != null)
             {
@@ -477,13 +478,10 @@ namespace HELLION.Explorer
                 MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
 
                 // Trigger a refresh on each of the node trees.
-                docCurrent.SolarSystem.RootNode.RefreshToolTipText(includeSubtrees: true);
-                docCurrent.GameData.RootNode.RefreshToolTipText(includeSubtrees: true);
-                docCurrent.Blueprints.RootNode.RefreshToolTipText(includeSubtrees: true);
-                docCurrent.SearchHandler.RootNode.RefreshToolTipText(includeSubtrees: true);
-
-
-
+                docCurrent.SolarSystem.RootNode.Refresh(includeSubTrees: true);
+                docCurrent.GameData.RootNode.Refresh(includeSubTrees: true);
+                docCurrent.Blueprints.RootNode.Refresh(includeSubTrees: true);
+                docCurrent.SearchHandler.RootNode.Refresh(includeSubTrees: true);
 
                 //MainForm.treeView1.Sort();
                 // Display prettying - set the star as the selected node and expand it and the solar system root node.
@@ -666,8 +664,8 @@ namespace HELLION.Explorer
         #region Edit Menu Methods
 
         internal static string findSearchKey = null;
-        internal static HETreeNode findStartingNode = null;
-        internal static List<HETreeNode>.Enumerator findEnumerator;
+        internal static Base_TN findStartingNode = null;
+        internal static List<Base_TN>.Enumerator findEnumerator;
 
         /// <summary>
         /// Resets and shows the Find form.
@@ -703,7 +701,7 @@ namespace HELLION.Explorer
                 if (docCurrent.SearchHandler.CurrentOperator == null) throw new NullReferenceException("CurrentOperator was null.");
 
                 docCurrent.SearchHandler.CurrentOperator.Query = FindForm.QueryValue;
-                docCurrent.SearchHandler.CurrentOperator.StartingNode = (HETreeNode)MainForm.treeView1.SelectedNode;
+                docCurrent.SearchHandler.CurrentOperator.StartingNode = (Base_TN)MainForm.treeView1.SelectedNode;
 
                 // Execute the query, which updates the results list.
                 if (!docCurrent.SearchHandler.CurrentOperator.Execute()) MessageBox.Show("No results for search term " + findSearchKey);
@@ -906,7 +904,7 @@ namespace HELLION.Explorer
         {
             if (nSelectedNode != null) // && docCurrent != null && docCurrent.IsFileReady) // temp change to allow unloaded document tree display
             {
-                HETreeNode nSelectedHETNNode = (HETreeNode)nSelectedNode;
+                Base_TN nSelectedHETNNode = (Base_TN)nSelectedNode;
 
                 // Clear the list view's items
                 MainForm.listView1.Items.Clear();
@@ -918,7 +916,7 @@ namespace HELLION.Explorer
                     // Only draw the <PARENT> node if it's not null
                     if (nSelectedNode.Parent != null)
                     {
-                        HETreeNode nodeParent = (HETreeNode)nSelectedHETNNode.Parent;
+                        Base_TN nodeParent = (Base_TN)nSelectedHETNNode.Parent;
 
                         string[] arrParentItem = new string[2];
                         arrParentItem[0] = "<" + nodeParent.Text + ">";
@@ -956,18 +954,18 @@ namespace HELLION.Explorer
 
                 if (nSelectedHETNNode.NodeType == HETreeNodeType.SearchResultsSet)
                 {
-                    SearchHandler_TreeNode nSelectedHESearchHandlerNode = (SearchHandler_TreeNode)nSelectedNode;
+                    SearchHandler_TN nSelectedHESearchHandlerNode = (SearchHandler_TN)nSelectedNode;
 
                     if (nSelectedHESearchHandlerNode.ParentSearchOperator.Results != null)
                     {
-                        foreach (HETreeNode listItem in nSelectedHESearchHandlerNode.ParentSearchOperator.Results)
+                        foreach (Base_TN listItem in nSelectedHESearchHandlerNode.ParentSearchOperator.Results)
                         {
                             string[] arr = new string[7];
                             arr[0] = listItem.Text;
                             arr[1] = listItem.NodeType.ToString();
                             arr[2] = listItem.GetNodeCount(includeSubTrees: false).ToString();
                             arr[3] = listItem.GetNodeCount(includeSubTrees: true).ToString();
-                            arr[4] = listItem.Path;
+                            arr[4] = listItem.Path();
                             arr[5] = ""; // listItem.GUID.ToString();
                             arr[6] = ""; // nodeChild.SceneID.ToString();
 
@@ -987,14 +985,14 @@ namespace HELLION.Explorer
                 }
                 else
                 {
-                    foreach (HETreeNode nodeChild in nSelectedNode.Nodes)
+                    foreach (Base_TN nodeChild in nSelectedNode.Nodes)
                     {
                         string[] arr = new string[7];
                         arr[0] = nodeChild.Text;
                         arr[1] = nodeChild.NodeType.ToString();
                         arr[2] = nodeChild.GetNodeCount(includeSubTrees: false).ToString();
                         arr[3] = nodeChild.GetNodeCount(includeSubTrees: true).ToString();
-                        arr[4] = nodeChild.Path;
+                        arr[4] = nodeChild.Path();
                         arr[5] = ""; // nodeChild.GUID.ToString();
                         arr[6] = ""; // nodeChild.SceneID.ToString();
 
@@ -1033,7 +1031,7 @@ namespace HELLION.Explorer
             //if (nSelectedNode != null) //  && docCurrent != null && docCurrent.IsFileReady) // temp change to allow for tree use without a doc loaded
             if (false)
             {
-                HETreeNode nSelectedHETNNode = (HETreeNode)nSelectedNode;
+                Base_TN nSelectedHETNNode = (Base_TN)nSelectedNode;
 
                 sb1.Append("BASIC NODE DATA");
                 sb1.Append(Environment.NewLine);
@@ -1060,7 +1058,7 @@ namespace HELLION.Explorer
                     || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
                 {
 
-                    SolarSystem_TreeNode nSelectedOrbitalObjNode = (SolarSystem_TreeNode)nSelectedNode;
+                    SolarSystem_TN nSelectedOrbitalObjNode = (SolarSystem_TN)nSelectedNode;
 
                     sb1.Append("GUID: " + nSelectedOrbitalObjNode.GUID.ToString());
                     sb1.Append(Environment.NewLine);
@@ -1071,11 +1069,11 @@ namespace HELLION.Explorer
                     sb1.Append("DockedToShipGUID: " + nSelectedOrbitalObjNode.DockedToShipGUID.ToString());
 
                     /*
-                    SolarSystem_TreeNode tempNode = null;
+                    SolarSystem_TN tempNode = null;
                     TreeNode[] tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(nSelectedOrbitalObjNode.DockedToShipGUID.ToString(), searchAllChildren: true);
                     if (tempNodes.Length > 0)
                     {
-                        tempNode = (SolarSystem_TreeNode)tempNodes[0];
+                        tempNode = (SolarSystem_TN)tempNodes[0];
 
                         if (tempNode == null) throw new NullReferenceException("tempNode was null.");
                         else
@@ -1098,7 +1096,7 @@ namespace HELLION.Explorer
                     tempNodes = null;
                     tempNode = null;
                     tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(nSelectedOrbitalObjNode.OrbitData.ParentGUID.ToString(), searchAllChildren: true);
-                    if (tempNodes.Length > 0) tempNode = (SolarSystem_TreeNode)tempNodes[0];
+                    if (tempNodes.Length > 0) tempNode = (SolarSystem_TN)tempNodes[0];
                     if (tempNode != null)
                     {
                         sb1.Append(" (" + tempNode.Text + ")");
