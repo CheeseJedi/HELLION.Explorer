@@ -83,6 +83,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\Base_TN_NodeType.cs" />
     <Compile Include="BaseClasses\Json_File.cs" />
     <Compile Include="BaseClasses\Json_FileCollection.cs" />
     <Compile Include="BaseClasses\Json_File_UI.cs" />
@@ -106,16 +107,15 @@
     <Compile Include="Document\GameData.cs" />
     <Compile Include="Document\GameSave_Json_File.cs" />
     <Compile Include="Document\GuidManager.cs" />
-    <Compile Include="Document\Json_TN.cs" />
+    <Compile Include="UI\Json_TN.cs" />
     <Compile Include="Document\SolarSystem.cs" />
-    <Compile Include="Document\SolarSystem_TreeNode.cs" />
-    <Compile Include="Document\SolarSystem_TreeNode_Sorter.cs" />
+    <Compile Include="UI\SolarSystem_TN.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="BaseClasses\HETreeNodeType.cs" />
     <Compile Include="Search\SearchHandler.cs" />
     <Compile Include="EmbeddedImages\EmbeddedImages_ImageList.cs" />
     <Compile Include="Search\SearchHandler_TN.cs" />
     <Compile Include="UI\Base_TN.cs" />
+    <Compile Include="UI\SolarSystem_TN_Sorter.cs" />
     <Compile Include="Utilities\EnumExtensions.cs" />
     <Compile Include="Utilities\General.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,6 +127,7 @@
     <Compile Include="Utilities\UpdateChecker.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="StaticData\" />
     <Folder Include="UI\TreeNodes\" />
   </ItemGroup>
   <ItemGroup>
@@ -264,7 +265,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

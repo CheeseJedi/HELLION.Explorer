@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Text;
 using HELLION.DataStructures.UI;
+using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.DataStructures.Blueprints
 {
     public class BlueprintDockingPort_TN : Blueprint_TN
     {
         public BlueprintDockingPort_TN(Iparent_Base_TN passedOwner = null, string nodeName = null)
-            : base(passedOwner, nodeName, HETreeNodeType.BlueprintDockingPort)
+            : base(passedOwner, nodeName, Base_TN_NodeType.BlueprintDockingPort)
         {
 
         }
@@ -16,18 +17,18 @@ namespace HELLION.DataStructures.Blueprints
         /// Generates a name for the TreeNode.
         /// </summary>
         /// <returns></returns>
-        protected new string GenerateName()
+        protected override string GenerateName()
         {
             // Generate a name based on the current docking port names.
-            StationBlueprint.HEBlueprintDockingPort port = (StationBlueprint.HEBlueprintDockingPort)OwnerObject;
-            return port?.PortName.ToString() ?? "Unspecified";
+            HEBlueprintDockingPort ownerPort = (HEBlueprintDockingPort)OwnerObject;
+            return ownerPort.PortName.ToString() ?? "Unspecified Docking Port";
         }
 
         /// <summary>
         /// Generates a fresh ToolTipText.
         /// </summary>
         /// <returns></returns>
-        protected new string GenerateToolTipText()
+        protected override string GenerateToolTipText()
         {
             StringBuilder sb = new StringBuilder();
 

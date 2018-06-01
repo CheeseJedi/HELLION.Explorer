@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures.Document
 {
@@ -19,7 +20,7 @@ namespace HELLION.DataStructures.Document
         public GameSave_Json_File(Json_File_Parent passedParentObject, FileInfo passedFileInfo, int populateNodeTreeDepth) : base(passedParentObject, passedFileInfo, populateNodeTreeDepth)
         {
             RootNode.Name = File.Name;
-            RootNode.NodeType = HETreeNodeType.SaveFile;
+            RootNode.NodeType = Base_TN_NodeType.SaveFile;
             //RootNode.BaseNodeText = File.Name;
             //RootNode.BaseNodeToolTipText = File.FullName;
         }

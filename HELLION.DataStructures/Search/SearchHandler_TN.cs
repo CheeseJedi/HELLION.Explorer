@@ -8,7 +8,7 @@ namespace HELLION.DataStructures.Search
         public SearchHandler.HESearchOperator ParentSearchOperator { get; } = null;
 
         public SearchHandler_TN(string nodeName, Iparent_Base_TN passedOwner = null,
-            HETreeNodeType newNodeType = HETreeNodeType.Unknown)
+            Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown)
             : base(passedOwner, nodeName, newNodeType)
         {
 
@@ -24,7 +24,7 @@ namespace HELLION.DataStructures.Search
         /// <param name="nodeText"></param>
         /// <param name="nodeToolTipText"></param>
         public SearchHandler_TN(SearchHandler.HESearchOperator passedParentSearchOperator, string nodeName,
-            Iparent_Base_TN passedOwner = null, HETreeNodeType newNodeType = HETreeNodeType.Unknown)
+            Iparent_Base_TN passedOwner = null, Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown)
             : base(passedOwner, nodeName, newNodeType)
         {
             ParentSearchOperator = passedParentSearchOperator ?? throw new NullReferenceException("passedParentSearchOperator was null.");

@@ -32,7 +32,7 @@ namespace HELLION.DataStructures
             : base(ownerObject, passedFileInfo)
         {
             File = passedFileInfo ?? throw new NullReferenceException();
-            RootNode = new Json_TN(ownerObject: this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile);
+            RootNode = new Json_TN(ownerObject: this, nodeName: File.Name, newNodeType: Base_TN_NodeType.DataFile);
                 //, nodeToolTipText: File.FullName);
 
             if (!File.Exists) throw new FileNotFoundException();
@@ -73,7 +73,7 @@ namespace HELLION.DataStructures
                         // Set the load error flag
                         loadError = true;
                         // Change the node type so that the icon changes to the error type
-                        RootNode.NodeType = HETreeNodeType.DataFileError;
+                        RootNode.NodeType = Base_TN_NodeType.DataFileError;
                         /*
                         // Fire the event
                         OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Load Error in file {0}", File.FullName)));

@@ -26,14 +26,21 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         /// <param name="ownerObject"></param>
         /// <param name="nodeName"></param>
-        /// <param name="newNodeType"></param>
-        /// <param name="nodeText"></param>
-        /// <param name="nodeToolTipText"></param>
+        /// <param name="nodeType"></param>
         public Base_TN(Iparent_Base_TN ownerObject, string nodeName = null,
-            HETreeNodeType newNodeType = HETreeNodeType.Unknown) : this(ownerObject)
+            Base_TN_NodeType nodeType = Base_TN_NodeType.Unknown) : this(ownerObject)
         {
-            NodeType = newNodeType;
-            Name = nodeName;
+            NodeType = nodeType;
+
+            if (nodeName != null && nodeName != String.Empty)
+            {
+                AutoGenerateName = false;
+                Name = nodeName;
+            }
+            else
+            {
+                RefreshName();
+            }
 
 
             // Trigger name and other info generation based on what was passed.
@@ -63,10 +70,28 @@ namespace HELLION.DataStructures.UI
 
                     // Trigger updates here.
                     //if (value == null) RefreshName();
-                    // RefreshText();
+                    RefreshText();
                     //RefreshToolTipText();
                 }
             }
+        }
+
+        /// <summary>
+        /// Modifies the base's Text property so it's inaccessible for setting externally.
+        /// </summary>
+        public new string Text
+        {
+            get => base.Text;
+            private set => base.Text = value;
+        }
+
+        /// <summary>
+        /// Modifies the base's ToolTipText property so it's inaccessible for setting externally.
+        /// </summary>
+        public new string ToolTipText
+        {
+            get => base.ToolTipText;
+            private set => base.ToolTipText = value;
         }
 
         /// <summary>
@@ -109,9 +134,9 @@ namespace HELLION.DataStructures.UI
         }
 
         /// <summary>
-        /// The HETreeNodeType type of this node.
+        /// The Base_TN_NodeType type of this node.
         /// </summary>
-        public HETreeNodeType NodeType
+        public Base_TN_NodeType NodeType
         {
             get => _nodeType;
             set
@@ -125,6 +150,11 @@ namespace HELLION.DataStructures.UI
             }
         }
 
+        /// <summary>
+        /// Is used to determine whether the node should auto-generate it's name.
+        /// </summary>
+        public bool AutoGenerateName { get; set; } = true;
+        
         #endregion
 
         #region Refresh and Generation Methods
@@ -136,9 +166,9 @@ namespace HELLION.DataStructures.UI
         public virtual void Refresh(bool includeSubTrees = false)
         {
             Debug.Print("Base_TN.Refresh called on {0} - {1}", Name, OwnerObject.ToString());
-            // RefreshName(includeSubTrees);
+            //RefreshName(false);
             RefreshText(false);
-            // RefreshToolTipText(includeSubTrees);
+            RefreshToolTipText(false);
         }
 
         /// <summary>
@@ -147,7 +177,7 @@ namespace HELLION.DataStructures.UI
         /// <param name="includeSubTrees"></param>
         protected virtual void RefreshName(bool includeSubTrees = false)
         {
-            Name = GenerateName();
+            if (AutoGenerateName) Name = GenerateName();
             if (includeSubTrees)
             {
                 foreach (Base_TN node in Nodes) RefreshName(includeSubTrees);
@@ -185,8 +215,8 @@ namespace HELLION.DataStructures.UI
         /// <returns></returns>
         protected virtual string GenerateName()
         {
-            // Generate a name based on the current date and time.
-            return unnamedNode; // "Unnamed node " + DateTime.Now.ToString();
+            // Return the default name for an unnamed node.
+            return unnamedNode;
         }
 
         /// <summary>
@@ -291,7 +321,7 @@ namespace HELLION.DataStructures.UI
 
         protected string _text_Prefix = null;
         protected string _text_Suffix = null;
-        protected HETreeNodeType _nodeType = HETreeNodeType.Unknown;
+        protected Base_TN_NodeType _nodeType = Base_TN_NodeType.Unknown;
 
         #endregion
 

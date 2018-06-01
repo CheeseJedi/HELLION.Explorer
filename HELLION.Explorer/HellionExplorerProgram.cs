@@ -952,7 +952,7 @@ namespace HELLION.Explorer
                     }
                 }
 
-                if (nSelectedHETNNode.NodeType == HETreeNodeType.SearchResultsSet)
+                if (nSelectedHETNNode.NodeType == Base_TN_NodeType.SearchResultsSet)
                 {
                     SearchHandler_TN nSelectedHESearchHandlerNode = (SearchHandler_TN)nSelectedNode;
 
@@ -1051,11 +1051,11 @@ namespace HELLION.Explorer
                 sb1.Append(Environment.NewLine);
                 sb1.Append(Environment.NewLine);
 
-                if (nSelectedHETNNode.NodeType == HETreeNodeType.Star
-                    || nSelectedHETNNode.NodeType == HETreeNodeType.Planet
-                    || nSelectedHETNNode.NodeType == HETreeNodeType.Moon
-                    || nSelectedHETNNode.NodeType == HETreeNodeType.Ship
-                    || nSelectedHETNNode.NodeType == HETreeNodeType.Asteroid)
+                if (nSelectedHETNNode.NodeType == Base_TN_NodeType.Star
+                    || nSelectedHETNNode.NodeType == Base_TN_NodeType.Planet
+                    || nSelectedHETNNode.NodeType == Base_TN_NodeType.Moon
+                    || nSelectedHETNNode.NodeType == Base_TN_NodeType.Ship
+                    || nSelectedHETNNode.NodeType == Base_TN_NodeType.Asteroid)
                 {
 
                     SolarSystem_TN nSelectedOrbitalObjNode = (SolarSystem_TN)nSelectedNode;
@@ -1121,7 +1121,7 @@ namespace HELLION.Explorer
                     sb1.Append(Environment.NewLine);
                 }
 
-                if (true) // nSelectedHETNNode.NodeType != HETreeNodeType.SystemNAV) // temp addition
+                if (true) // nSelectedHETNNode.NodeType != Base_TN_NodeType.SystemNAV) // temp addition
                 {
                     // Get the count of the child nodes contained in the selected node
                     decimal iTotalNodeCount = docCurrent.SolarSystem.RootNode.GetNodeCount(includeSubTrees: true);

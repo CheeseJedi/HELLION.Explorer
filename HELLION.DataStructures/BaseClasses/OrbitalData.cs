@@ -76,8 +76,6 @@ namespace HELLION.DataStructures
         private OrbitalData(OrbitalData another)
         {
             ParentGUID = another.ParentGUID;
-            // VesselID = another.VesselID;
-            // VesselType = another.VesselType;
             Eccentricity = another.Eccentricity;
             SemiMajorAxis = another.SemiMajorAxis;
             LongitudeOfAscendingNode = another.LongitudeOfAscendingNode;

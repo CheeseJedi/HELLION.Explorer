@@ -83,7 +83,7 @@ namespace HELLION.DataStructures.Search
             gameData = passedGameData ?? throw new NullReferenceException("passedGameData was null.");
             solarSystem = passedSolarSystem ?? throw new NullReferenceException("passedSolarSystem was null.");
             
-            rootNode = new SearchHandler_TN("Search", passedOwner: this, newNodeType: HETreeNodeType.SearchHandler);
+            rootNode = new SearchHandler_TN("Search", passedOwner: this, newNodeType: Base_TN_NodeType.SearchHandler);
             
             searchOperators = new List<HESearchOperator>();
 
@@ -120,7 +120,7 @@ namespace HELLION.DataStructures.Search
             {
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
                 OperatorFlags = passedOperatorFlags;
-                _rootNode = new SearchHandler_TN(this, "SEARCHOPERATORRESULTS", passedOwner: this, newNodeType: HETreeNodeType.SearchResultsSet);
+                _rootNode = new SearchHandler_TN(this, "SEARCHOPERATORRESULTS", passedOwner: this, newNodeType: Base_TN_NodeType.SearchResultsSet);
                 parent.rootNode.Nodes.Add(_rootNode);
                 parent.searchOperators.Add(this);
             }
@@ -361,7 +361,7 @@ namespace HELLION.DataStructures.Search
         {
             public HEFindOperator(SearchHandler passedParent) : base(passedParent)
             {
-                rootNode.NodeType = HETreeNodeType.SearchResultsSet;
+                rootNode.NodeType = Base_TN_NodeType.SearchResultsSet;
                 rootNode.Name = "Find Results";
                 rootNode.Text =  "Find Results";
 
@@ -392,7 +392,7 @@ namespace HELLION.DataStructures.Search
         {
             public HEFindNodesByPathOperator(SearchHandler passedParent) : base(passedParent)
             {
-                rootNode.NodeType = HETreeNodeType.SearchResultsSet;
+                rootNode.NodeType = Base_TN_NodeType.SearchResultsSet;
                 rootNode.Name = "Find Path Results";
                 rootNode.Text = "Find Path Results";
 

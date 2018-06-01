@@ -22,7 +22,7 @@ namespace HELLION.DataStructures.Document
         {
             // Basic constructor
 
-            RootNode = new SolarSystem_TN(passedOwner: this, nodeName: "Solar System", nodeType: HETreeNodeType.SolarSystemView) //, "Solar System")
+            RootNode = new SolarSystem_TN(passedOwner: this, nodeName: "Solar System", nodeType: Base_TN_NodeType.SolarSystemView) //, "Solar System")
             {
                 GUID = -1 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to the Solar System root node
             };
@@ -61,16 +61,16 @@ namespace HELLION.DataStructures.Document
             // 1. Create Planets nodes from GameData - CelestialBodies.json 
             // Note that this only needs to be run once and with one of the celestial body
             // HETreeNodeTypes - Star, Planet or Moon.
-            AddSolarSystemObjectsByType(HETreeNodeType.Star);
+            AddSolarSystemObjectsByType(Base_TN_NodeType.Star);
 
             // 2. Create Asteroid nodes from GameData - save file
-            AddSolarSystemObjectsByType(HETreeNodeType.Asteroid);
+            AddSolarSystemObjectsByType(Base_TN_NodeType.Asteroid);
 
             // 3. Create Ship nodes from GameData - save file
-            AddSolarSystemObjectsByType(HETreeNodeType.Ship);
+            AddSolarSystemObjectsByType(Base_TN_NodeType.Ship);
 
             // 4. Create Player nodes from GameData - save file
-            AddSolarSystemObjectsByType(HETreeNodeType.Player);
+            AddSolarSystemObjectsByType(Base_TN_NodeType.Player);
 
             // 5. Rehydrate GUID structure - attach nodes as children of the parent node based on GUID structure
             RehydrateGUIDHierarchy();
@@ -85,13 +85,13 @@ namespace HELLION.DataStructures.Document
         /// Game Data nodes.
         /// </summary>
         /// <param name="nodeType"></param>
-        public void AddSolarSystemObjectsByType(HETreeNodeType nodeType)
+        public void AddSolarSystemObjectsByType(Base_TN_NodeType nodeType)
         {
             switch (nodeType)
             {
-                case HETreeNodeType.Star:
-                case HETreeNodeType.Planet:
-                case HETreeNodeType.Moon:
+                case Base_TN_NodeType.Star:
+                case Base_TN_NodeType.Planet:
+                case Base_TN_NodeType.Moon:
                     // These come from the Static Data - handled by the CelestialBodies.json member of the DataDictionary
                     if (!GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out Json_File_UI celestialBodiesJsonBaseFile))
                         throw new InvalidOperationException("Unable to access the CelestialBodies.json from the Static Data Dictionary.");
@@ -101,7 +101,7 @@ namespace HELLION.DataStructures.Document
 
                         foreach (Json_TN node in celestialBodiesJsonBaseFile.RootNode.Nodes)
                         {
-                            HETreeNodeType newNodeType = HETreeNodeType.Unknown;
+                            Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown;
 
                             // FINDME FIXME
 
@@ -125,15 +125,15 @@ namespace HELLION.DataStructures.Document
                                     throw new Exception("Failed to read ParentGUID");
                                 case -1:
                                     // It's the star, Hellion.
-                                    newNodeType = HETreeNodeType.Star;
+                                    newNodeType = Base_TN_NodeType.Star;
                                     break;
                                 case 1:
                                     // It's a planet, orbiting the star.
-                                    newNodeType = HETreeNodeType.Planet;
+                                    newNodeType = Base_TN_NodeType.Planet;
                                     break;
                                 default:
                                     // It's a moon, not a space station!
-                                    newNodeType = HETreeNodeType.Moon;
+                                    newNodeType = Base_TN_NodeType.Moon;
                                     break;
                             }
 
@@ -142,71 +142,68 @@ namespace HELLION.DataStructures.Document
                         }
                     }
                     break;
-                case HETreeNodeType.Asteroid:
-                case HETreeNodeType.Ship:
-                case HETreeNodeType.Player:
+                case Base_TN_NodeType.Asteroid:
+                case Base_TN_NodeType.Ship:
+                case Base_TN_NodeType.Player:
 
                     // Set up the find key
                     string findKey = "";
                     switch (nodeType)
                     {
-                        case HETreeNodeType.Asteroid:
+                        case Base_TN_NodeType.Asteroid:
                             findKey = "Asteroids";
                             break;
-                        case HETreeNodeType.Ship:
+                        case Base_TN_NodeType.Ship:
                             findKey = "Ships";
                             break;
-                        case HETreeNodeType.Player:
+                        case Base_TN_NodeType.Player:
                             findKey = "Players";
                             break;
                     }
                     if (findKey == "") throw new Exception("findKey was empty.");
 
                     TreeNode[] tmpMatches = GameData.SaveFile.RootNode.Nodes.Find(findKey, searchAllChildren: false);
-                    /*
+
                     Json_TN sectionRootNode = null;
-                    foreach (var match in tmpMatches)
+                    if (tmpMatches.Count() > 0)
                     {
-                        sectionRootNode = (Json_TN)match;
-                        break;
+                        sectionRootNode = (Json_TN)tmpMatches?[0];
                     }
-                    */
-                    Json_TN sectionRootNode = tmpMatches.Count() > 0 ? (Json_TN)tmpMatches[0] : throw new NullReferenceException("sectionRootNode was null.");
-                    /*
+                    else Debug.Print("sectionRootNode was null.");
+
                     Json_TN arrayRootNode = null;
-                    foreach (var match2 in sectionRootNode.Nodes)
+                    if (sectionRootNode?.Nodes.Count > 0)
                     {
-                        arrayRootNode = (Json_TN)match2;
-                        break;
-                    }
-                    if (arrayRootNode == null) throw new NullReferenceException("subRootNode was null.");
-                    */
-                    Json_TN arrayRootNode = sectionRootNode.Nodes.Count > 0 ? (Json_TN)sectionRootNode.Nodes[0] : throw new NullReferenceException("subRootNode was null.");
+                        arrayRootNode = (Json_TN)sectionRootNode?.Nodes[0];
 
-                    foreach (Json_TN node in arrayRootNode.Nodes)
-                    {
-                        JObject obj = (JObject)node.JData;
-                        long newNodeParentGUID = 0;
-                        long newNodeFakeGUID = 0;
-                        JToken testToken = obj["ParentGUID"];
-                        if (testToken != null) newNodeParentGUID = (long)obj["ParentGUID"];
-
-                        testToken = obj["FakeGUID"];
-                        if (testToken != null) newNodeFakeGUID = (long)obj["FakeGUID"];
-
-                        SolarSystem_TN newNode = node.CreateLinkedSolarSystemNode(nodeType);
-                        if (nodeType == HETreeNodeType.Player && newNodeParentGUID == newNodeFakeGUID)
+                        foreach (Json_TN node in arrayRootNode.Nodes)
                         {
-                            Debug.Print("FakeGUID: " + newNodeFakeGUID);
-                            Debug.Print("ParentGUID: " + newNodeParentGUID);
+                            JObject obj = (JObject)node.JData;
+                            long newNodeParentGUID = 0;
+                            long newNodeFakeGUID = 0;
+                            JToken testToken = obj["ParentGUID"];
+                            if (testToken != null) newNodeParentGUID = (long)obj["ParentGUID"];
 
-                            newNode.ParentGUID = -1;
-                            // Needs to be greater than zero to place players below the star node.
-                            newNode.OrbitData.SemiMajorAxis = 1; 
+                            testToken = obj["FakeGUID"];
+                            if (testToken != null) newNodeFakeGUID = (long)obj["FakeGUID"];
+
+                            SolarSystem_TN newNode = node.CreateLinkedSolarSystemNode(nodeType);
+                            if (nodeType == Base_TN_NodeType.Player && newNodeParentGUID == newNodeFakeGUID)
+                            {
+                                Debug.Print("FakeGUID: " + newNodeFakeGUID);
+                                Debug.Print("ParentGUID: " + newNodeParentGUID);
+
+                                newNode.ParentGUID = -1;
+                                // Needs to be greater than zero to place players below the star node.
+                                newNode.OrbitData.SemiMajorAxis = 1;
+                            }
+
+                            RootNode.Nodes.Add(newNode);
                         }
 
-                        RootNode.Nodes.Add(newNode);
                     }
+                    else Debug.Print("subRootNode was null.");
+
                     break;
             }
         }
@@ -278,7 +275,7 @@ namespace HELLION.DataStructures.Document
         {
             IEnumerable<SolarSystem_TN> shipsToBeReparented = RootNode.GetChildNodes(includeSubtrees: true)
                 .Cast<SolarSystem_TN>()
-                .Where(p => (p.NodeType == HETreeNodeType.Ship) && (p.DockedToShipGUID > 0));
+                .Where(p => (p.NodeType == Base_TN_NodeType.Ship) && (p.DockedToShipGUID > 0));
 
             foreach (SolarSystem_TN node in shipsToBeReparented)
             {

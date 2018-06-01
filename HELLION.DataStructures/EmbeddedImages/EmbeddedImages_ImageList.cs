@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using HELLION.DataStructures.UI;
 using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.DataStructures.EmbeddedImages
@@ -163,113 +164,136 @@ namespace HELLION.DataStructures.EmbeddedImages
         /// </summary>
         /// <param name="NodeType">Specifies the HETreeNode type to get the image index of.</param>
         /// <returns>Returns an integer representing the image index.</returns>
-        public static int GetIconImageIndexByNodeType(HETreeNodeType NodeType)
+        public static int GetIconImageIndexByNodeType(Base_TN_NodeType NodeType)
         {
             switch (NodeType)
             {
-                case HETreeNodeType.SolarSystemView:
+                case Base_TN_NodeType.SolarSystemView:
                     return (int)HEIconsImageNames.Share_16x;
 
-                case HETreeNodeType.DataView:
+                case Base_TN_NodeType.DataView:
                     return (int)HEIconsImageNames.ListFolder_16x;
 
-                case HETreeNodeType.SearchResultsView:
-                case HETreeNodeType.SearchHandler:
-                case HETreeNodeType.SearchResultsSet:
+                case Base_TN_NodeType.SearchResultsView:
+                case Base_TN_NodeType.SearchHandler:
+                case Base_TN_NodeType.SearchResultsSet:
                     return (int)HEIconsImageNames.FindResults_16x;
 
-                //case HETreeNodeType.CelestialBody:
-                //case HETreeNodeType.DefCelestialBody:
+                //case Base_TN_NodeType.CelestialBody:
+                //case Base_TN_NodeType.DefCelestialBody:
                 //    return (int)HEIconsImageNames.Shader_16x;
 
-                case HETreeNodeType.Star:
+                case Base_TN_NodeType.Star:
                     return (int)HEIconsImageNames.Brightness_16x;
 
-                case HETreeNodeType.Planet:
+                case Base_TN_NodeType.Planet:
                     return (int)HEIconsImageNames.Contrast_16x;
 
-                case HETreeNodeType.Moon:
+                case Base_TN_NodeType.Moon:
                     return (int)HEIconsImageNames.DarkTheme_16x;
 
-                case HETreeNodeType.Asteroid:
-                    //case HETreeNodeType.DefAsteroid:
+                case Base_TN_NodeType.Asteroid:
+                    //case Base_TN_NodeType.DefAsteroid:
                     return (int)HEIconsImageNames.CheckDot_16x;
 
-                case HETreeNodeType.Ship:
+                case Base_TN_NodeType.Ship:
                     return (int)HEIconsImageNames.AzureLogicApp_16x;
 
-                case HETreeNodeType.Player:
+                case Base_TN_NodeType.Player:
                     return (int)HEIconsImageNames.Actor_16x;
 
-                //case HETreeNodeType.DynamicObject:
-                //case HETreeNodeType.DefDynamicObject:
+                //case Base_TN_NodeType.DynamicObject:
+                //case Base_TN_NodeType.DefDynamicObject:
                 //    return (int)HEIconsImageNames.Driver_16x;
 
-                //case HETreeNodeType.Scene:
+                //case Base_TN_NodeType.Scene:
                 //    return (int)HEIconsImageNames.a3DScene_16x;
 
-                //case HETreeNodeType.DefStructure:
+                //case Base_TN_NodeType.DefStructure:
                 //    return (int)HEIconsImageNames.Component_16x;
 
-                //case HETreeNodeType.SpawnPoint:
-                //case HETreeNodeType.DoomControllerData:
-                //case HETreeNodeType.SpawnManagerData:
+                //case Base_TN_NodeType.SpawnPoint:
+                //case Base_TN_NodeType.DoomControllerData:
+                //case Base_TN_NodeType.SpawnManagerData:
                 //    return (int)HEIconsImageNames.a3DCameraOrbit_16x;
 
 
-                case HETreeNodeType.JsonArray:
+                case Base_TN_NodeType.JsonArray:
                     return (int)HEIconsImageNames.Assembly_16x;
 
-                case HETreeNodeType.JsonObject:
+                case Base_TN_NodeType.JsonObject:
                     return (int)HEIconsImageNames.Settings_16x;
 
-                case HETreeNodeType.JsonProperty:
+                case Base_TN_NodeType.JsonProperty:
                     return (int)HEIconsImageNames.Property_16x;
 
-                case HETreeNodeType.JsonValue:
+                case Base_TN_NodeType.JsonValue:
                     return (int)HEIconsImageNames.DomainType_16x;
 
-                case HETreeNodeType.SaveFile:
-                case HETreeNodeType.DataFile:
+                case Base_TN_NodeType.JsonBoolean:
+                    return (int)HEIconsImageNames.CheckDot_16x;
+
+                case Base_TN_NodeType.JsonBytes:
+                    return (int)HEIconsImageNames.Binary_16x;
+
+                case Base_TN_NodeType.JsonString:
+                case Base_TN_NodeType.JsonUri:
+                case Base_TN_NodeType.JsonComment:
+                    return (int)HEIconsImageNames.String_16x;
+
+                case Base_TN_NodeType.JsonInteger:
+                case Base_TN_NodeType.JsonFloat:
+                case Base_TN_NodeType.JsonGuid:
+                    return (int)HEIconsImageNames.DomainType_16x;
+
+                case Base_TN_NodeType.JsonDate:
+                case Base_TN_NodeType.JsonTimeSpan:
+                    return (int)HEIconsImageNames.DateTimeAxis_16x;
+
+                case Base_TN_NodeType.JsonNull:
+                    return (int)HEIconsImageNames.Checkerboard_16x;
+                    
+                case Base_TN_NodeType.SaveFile:
+                case Base_TN_NodeType.DataFile:
                     return (int)HEIconsImageNames.Document_16x;
 
-                case HETreeNodeType.SaveFileError:
-                case HETreeNodeType.DataFileError:
+                case Base_TN_NodeType.SaveFileError:
+                case Base_TN_NodeType.DataFileError:
                     return (int)HEIconsImageNames.FileError_16x;
 
-                case HETreeNodeType.DataFolder:
+                case Base_TN_NodeType.DataFolder:
                     return (int)HEIconsImageNames.Folder_16x;
 
-                case HETreeNodeType.DataFolderError:
+                case Base_TN_NodeType.DataFolderError:
                     return (int)HEIconsImageNames.FolderError_16x;
 
-                case HETreeNodeType.BlueprintsView:
+                case Base_TN_NodeType.BlueprintsView:
                     return (int)HEIconsImageNames.CordovaMultidevice_16x;
 
-                case HETreeNodeType.Blueprint:
+                case Base_TN_NodeType.Blueprint:
                     return (int)HEIconsImageNames.CSWorkflowDiagram_16x;
 
-                case HETreeNodeType.BlueprintCollection:
+                case Base_TN_NodeType.BlueprintCollection:
                     return (int)HEIconsImageNames.BlueprintFolder_16x;
 
-                case HETreeNodeType.BlueprintHierarchyView:
+                case Base_TN_NodeType.BlueprintHierarchyView:
                     return (int)HEIconsImageNames.TreeView_16x;
 
-                case HETreeNodeType.BlueprintDataView:
+                case Base_TN_NodeType.BlueprintDataView:
                     return (int)HEIconsImageNames.BalanceBrace_16x;
 
-                case HETreeNodeType.BlueprintStructureDefinitionView:
+                case Base_TN_NodeType.BlueprintStructureDefinitionView:
                     return (int)HEIconsImageNames.Bios_16x;
 
-                case HETreeNodeType.BlueprintStructure:
-                case HETreeNodeType.BlueprintStructureDefinition:
+                case Base_TN_NodeType.BlueprintStructure:
+                case Base_TN_NodeType.BlueprintStructureDefinition:
                     return (int)HEIconsImageNames.Component_16x;
 
-                case HETreeNodeType.BlueprintRootStructure:
+                case Base_TN_NodeType.BlueprintRootStructure:
                     return (int)HEIconsImageNames.Hub_16x;
 
-                case HETreeNodeType.BlueprintDockingPort:
-                case HETreeNodeType.BlueprintDockingPortDefinition:
+                case Base_TN_NodeType.BlueprintDockingPort:
+                case Base_TN_NodeType.BlueprintDockingPortDefinition:
                     return (int)HEIconsImageNames.Bolt_16x;
 
                 default:
@@ -380,16 +404,16 @@ namespace HELLION.DataStructures.EmbeddedImages
         {
             get
             {
-                if (structureImageList == null)
+                if (_structureImageList == null)
                 {
                     // Populate the image list
                     BuildImageList();
                 }
-                return structureImageList;
+                return _structureImageList;
             }
         }
 
-        private ImageList structureImageList = null;
+        private ImageList _structureImageList = null;
 
         /// <summary>
         /// Builds an ImageList from the embedded resources.
@@ -410,7 +434,7 @@ namespace HELLION.DataStructures.EmbeddedImages
             iconImageList = new ImageList();
 
             // Create ImageList to hold structure (ship/module) images for identification use.
-            structureImageList = new ImageList
+            _structureImageList = new ImageList
             {
                 // Set the ImageSize property to a larger size 
                 // (the default is 16 x 16).
@@ -428,7 +452,7 @@ namespace HELLION.DataStructures.EmbeddedImages
                 else if (embeddedResource.Contains(entryAssemblyName + ".EmbeddedImages.Structures180x."))
                 {
                     // Caution! Adds ANY file in the _EmbeddedImages folder to the image list! Don't put non-images in this folder!
-                    structureImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
+                    _structureImageList.Images.Add(Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource)));
                 }
                 else
                 {

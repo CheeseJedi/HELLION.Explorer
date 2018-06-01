@@ -3,8 +3,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
-using HELLION.DataStructures;
-using HELLION.DataStructures.Document;
+using HELLION.DataStructures.UI;
 
 namespace HELLION.Explorer
 {
@@ -41,9 +40,7 @@ namespace HELLION.Explorer
 
         private string FormTitleText = null;
 
-        private Json_TN sourceNode = null;
-
-        public Json_TN SourceNode => sourceNode;
+        public Json_TN SourceNode { get; } = null;
 
         public JsonDataViewForm()
         {
@@ -55,7 +52,7 @@ namespace HELLION.Explorer
 
         public JsonDataViewForm(Json_TN passedSourceNode) : this()
         {
-            sourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
+            SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.FullPath;
             Text = FormTitleText;
             AppliedText = passedSourceNode.JData.ToString();

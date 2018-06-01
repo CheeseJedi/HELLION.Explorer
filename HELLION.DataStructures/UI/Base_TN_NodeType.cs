@@ -1,13 +1,9 @@
-﻿/// <summary>
-/// Defines an enum of node types applicable to the HETreeNode class.
-/// </summary>
-
-namespace HELLION.DataStructures
+﻿namespace HELLION.DataStructures.UI
 {
     /// <summary>
-    /// Defines an enum of HETreeNode types
+    /// Defines an enum of node types applicable to the Base_TN class.
     /// </summary>
-    public enum HETreeNodeType
+    public enum Base_TN_NodeType
     {
         Unknown = 0,        // Default for new nodes
         SolarSystemView,    // Node type for the root of the solar system view tree
@@ -18,10 +14,21 @@ namespace HELLION.DataStructures
         Asteroid,           // Node type for Asteroids (loaded from save file, data usually loaded from Asteroids.json)
         Ship,               // Node type for Ships including modules (loaded from save file, data usually loaded from Structures.json)
         Player,             // Node type for player characters, probably includes corpses yet to de-spawn
-        JsonArray,          // Node type for a json Array
         JsonObject,         // Node type for a json Object
+        JsonArray,          // Node type for a json Array
         JsonProperty,       // Node type for a json Property
         JsonValue,          // Node type for a json Value
+        JsonBoolean,        // Node type for a json value type of Boolean
+        JsonBytes,          // Node type for a json value type of Bytes
+        JsonComment,        // Node type for a json value type of Comment
+        JsonDate,           // Node type for a json value type of Date
+        JsonFloat,          // Node type for a json value type of Float
+        JsonGuid,           // Node type for a json value type of Guid
+        JsonInteger,        // Node type for a json value type of Integer
+        JsonString,         // Node type for a json value type of String
+        JsonTimeSpan,       // Node type for a json value type of TimeSpan
+        JsonUri,            // Node type for a json value type of Uri
+        JsonNull,           // Node type for a json value type of Null
         SaveFile,           // Node type for the save file as represented in the node tree
         SaveFileError,      // Node type for the save file in error state as represented in the node tree
         DataFolder,         // Node type for the data folder

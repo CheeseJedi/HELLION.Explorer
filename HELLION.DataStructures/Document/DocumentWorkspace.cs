@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Search;
+using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures.Document
 {
@@ -162,7 +163,7 @@ namespace HELLION.DataStructures.Document
             passedTreeView.ImageList = passedImageList;
             passedTreeView.ImageIndex = (int)EmbeddedImages_ImageList.HEIconsImageNames.Flag_16x;
             passedTreeView.SelectedImageIndex = (int)EmbeddedImages_ImageList.HEIconsImageNames.Flag_16x;
-            passedTreeView.TreeViewNodeSorter = new SolarSystem_TreeNode_Sorter();
+            passedTreeView.TreeViewNodeSorter = new SolarSystem_TN_Sorter();
             passedTreeView.ShowNodeToolTips = true;
         }
 

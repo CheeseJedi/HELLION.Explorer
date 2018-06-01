@@ -39,16 +39,17 @@ namespace HELLION.Explorer
 
         #region menuStrip1
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // User selected MainFile, Exit - call the exit routine
-            HellionExplorerProgram.ControlledExit();
-        }
+        #region File Menu
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //opens a file
             HellionExplorerProgram.FileOpen();
+        }
+
+        private void revertToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            HellionExplorerProgram.FileRevert();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -61,20 +62,38 @@ namespace HELLION.Explorer
             HellionExplorerProgram.FileSaveAs();
         }
 
-        private void revertToolStripMenuItem_Click(object sender, EventArgs e)
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.FileRevert();
+            HellionExplorerProgram.FileClose();
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Show About Dialog Box
-            MessageBox.Show(HellionExplorerProgram.GenerateAboutBoxText(), "About " + Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // User selected MainFile, Exit - call the exit routine
+            HellionExplorerProgram.ControlledExit();
         }
 
-        private void setDataFolderLocationToolStripMenuItem_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Edit Menu
+
+        private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.SetGameDataFolder();
+            HellionExplorerProgram.ShowFindForm();
+        }
+
+        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            HellionExplorerProgram.FindForm.MainFormFindNextActivated();
+        }
+
+        #endregion
+
+        #region View Menu
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void navigationPaneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -115,14 +134,23 @@ namespace HELLION.Explorer
             infoPaneToolStripMenuItem.Checked = HellionExplorerProgram._viewShowInfoPane;
         }
 
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void observedGUIDsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.FileClose();
+            if (HellionExplorerProgram.docCurrent != null)
+            {
+                HellionExplorerProgram.ObservedGuidsForm.Show();
+            }
+            else MessageBox.Show("Must have an open document first.");
+
         }
 
-        private void updatecheckToolStripMenuItem_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Tools Menu
+
+        private void setDataFolderLocationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.hEUpdateChecker.CheckForUpdates();
+            HellionExplorerProgram.SetGameDataFolder();
         }
 
         private void verifyDataFolderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -130,15 +158,60 @@ namespace HELLION.Explorer
             HellionExplorerProgram.VerifyGameDataFolder();
         }
 
-        private void findToolStripMenuItem_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Help Menu
+
+        private void updatecheckToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.ShowFindForm();
+            HellionExplorerProgram.hEUpdateChecker.CheckForUpdates();
         }
 
-        private void findNextToolStripMenuItem_Click(object sender, EventArgs e)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.FindForm.MainFormFindNextActivated();
+            // Show About Dialog Box
+            MessageBox.Show(HellionExplorerProgram.GenerateAboutBoxText(), "About " + Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        #endregion
+
+        #region Test Menu
+
+        private void saveTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (HellionExplorerProgram.docCurrent != null) //  && Program.docCurrent.IsDirty)
+            {
+                // Currently always returns false
+                bool result = HellionExplorerProgram.docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+            }
+            else MessageBox.Show("Must have an open document first.");
+        }
+
+        private void generateStructureDefinitionsStubjsonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Contents to be moved to the BlueprintsHandler_UI class once complete.
+
+            if (HellionExplorerProgram.docCurrent != null)
+            {
+                if (!HellionExplorerProgram.docCurrent.GameData.StaticData.DataDictionary.
+                    TryGetValue("Structures.json", out Json_File_UI structuresJsonBaseFile))
+                    throw new InvalidOperationException(
+                        "Unable to access the Structures.json file from the Static Data Dictionary.");
+                else
+                {
+                    FileInfo newDefsFileInfo = new FileInfo(@"E:\HELLION\TestArea\Output.json");
+
+                    StructureDefinitions_File newDefsFile =
+                        new StructureDefinitions_File(newDefsFileInfo, structuresJsonBaseFile);
+
+                    if (newDefsFile.File.Exists) MessageBox.Show("Tentative Success");
+                    else MessageBox.Show("File not created!");
+                }
+            }
+            else MessageBox.Show("Must have an open document first.");
+        }
+
+        #endregion
 
         #endregion
 
@@ -234,8 +307,8 @@ namespace HELLION.Explorer
                         // Cast the node as an SolarSystem_TN type
                         SolarSystem_TN sSnode = (SolarSystem_TN)treeView1.SelectedNode;
 
-                        if (sSnode.GUID == -1 || sSnode.NodeType == HETreeNodeType.SolarSystemView
-                            || sSnode.NodeType == HETreeNodeType.BlueprintHierarchyView)
+                        if (sSnode.GUID == -1 || sSnode.NodeType == Base_TN_NodeType.SolarSystemView
+                            || sSnode.NodeType == Base_TN_NodeType.BlueprintHierarchyView)
                         {
                             // We're dealing with the Solar System Root Node or a Blueprint Hierarchy
                             // View node, special cases.
@@ -263,7 +336,7 @@ namespace HELLION.Explorer
                             // Enable the Root of Docking Tree option only if the node's parent type
                             // is a ship, indicating it is docked to something (rather than something
                             // being docked *to* this node i.e. child nodes).
-                            rootOfDockingTreeToolStripMenuItem.Enabled = sSnode.IsDockedToParent();
+                            rootOfDockingTreeToolStripMenuItem.Enabled = sSnode.IsDockedToParent;
                         }
                     }
 
@@ -272,7 +345,7 @@ namespace HELLION.Explorer
 
                         // Some decision making logic needed here
 
-                        if (node.NodeType == HETreeNodeType.Blueprint)
+                        if (node.NodeType == Base_TN_NodeType.Blueprint)
                         {
                             // Show the Edit menu item.
                             editToolStripMenuItem1.Visible = true;
@@ -354,12 +427,12 @@ namespace HELLION.Explorer
 
                 switch (tempHETreeNode.NodeType)
                 {
-                    case HETreeNodeType.SaveFile:
-                    case HETreeNodeType.DataFile:
-                    case HETreeNodeType.JsonArray:
-                    case HETreeNodeType.JsonObject:
-                    case HETreeNodeType.JsonProperty:
-                    case HETreeNodeType.JsonValue:
+                    case Base_TN_NodeType.SaveFile:
+                    case Base_TN_NodeType.DataFile:
+                    case Base_TN_NodeType.JsonArray:
+                    case Base_TN_NodeType.JsonObject:
+                    case Base_TN_NodeType.JsonProperty:
+                    case Base_TN_NodeType.JsonValue:
                         // We're in the Game Data section
 
                         Json_TN tempGameDataNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
@@ -546,7 +619,7 @@ namespace HELLION.Explorer
         {
             // This is only applicable in the Solar System View
             SolarSystem_TN node = (SolarSystem_TN)treeView1.SelectedNode;
-            treeView1.SelectedNode = node.GetParentCelestialBody();
+            treeView1.SelectedNode = node.ParentCelestialBody;
 
             // Trigger refresh
             HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
@@ -558,7 +631,7 @@ namespace HELLION.Explorer
         {
             // This is only applicable in the Solar System View
             SolarSystem_TN node = (SolarSystem_TN)treeView1.SelectedNode;
-            treeView1.SelectedNode = node.GetRootOfDockingTree();
+            treeView1.SelectedNode = node.DockingTreeRoot;
 
             // Trigger refresh
             HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
@@ -568,136 +641,69 @@ namespace HELLION.Explorer
 
         #endregion
 
-        private void saveTestToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-            if (HellionExplorerProgram.docCurrent != null) //  && Program.docCurrent.IsDirty)
-            {
-                // Currently always returns false
-                bool result = HellionExplorerProgram.docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
 
 
-            }
-            else MessageBox.Show("Must have an open document first.");
-        }
-
-        private void observedGUIDsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (HellionExplorerProgram.docCurrent != null)
-            {
-                HellionExplorerProgram.ObservedGuidsForm.Show();
-            }
-            else MessageBox.Show("Must have an open document first.");
-
-        }
-
-        private void generateStructureDefinitionsStubjsonToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Contents to be moved to the BlueprintsHandler_UI class once complete.
-
-            if (HellionExplorerProgram.docCurrent != null)
-            {
-                if (!HellionExplorerProgram.docCurrent.GameData.StaticData.DataDictionary.
-                    TryGetValue("Structures.json", out Json_File_UI structuresJsonBaseFile))
-                    throw new InvalidOperationException(
-                        "Unable to access the Structures.json file from the Static Data Dictionary.");
-                else
-                {
-                    // something
-
-                    FileInfo newDefsFileInfo = new FileInfo(@"E:\HELLION\TestArea\Output.json");
-
-                    StructureDefinitions_File newDefsFile = 
-                        new StructureDefinitions_File(newDefsFileInfo, structuresJsonBaseFile);
-
-                    if (newDefsFile.File.Exists) MessageBox.Show("Tentative Success");
-                    else MessageBox.Show("File not created!");
-                }
-            }
-            else MessageBox.Show("Must have an open document first.");
-
-
-
-
-        }
-
-
-
-        private void playerNameBySteamID64ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string result = General.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
-            MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
-
-        }
 
         private void _playerNameBySteamID64()
         {
             string result = General.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
-            MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
-
-        }
-
-
-
-        private void groupID64ByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string groupName = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
-
-            long? result = SteamIntegration.GetGroupID(groupName);
-
-            MessageBox.Show((result != null ? result.ToString() : "No result."), "GroupID64:");
-
+            if (result != null && result != String.Empty)
+            {
+                MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
+            }
         }
 
         private void _groupID64ByGroupName()
         {
             string groupName = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
-
-            long? result = SteamIntegration.GetGroupID(groupName);
-
-            MessageBox.Show((result != null ? result.ToString() : "No result."), "GroupID64:");
-
+            if (groupName != null && groupName != String.Empty)
+            {
+                long? result = SteamIntegration.GetGroupID(groupName);
+                MessageBox.Show((result != null ? result.ToString() : "No result."), "GroupID64:");
+            }
         }
-
-
-
-        private void groupMembersByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-
-
-        private void groupMembersByGroupID64ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-        }
-
 
         private void _groupMembersByGroupID64()
         {
             string result = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam Group Members", null);
-
-            List<long> iDs = SteamIntegration.GetGroupMembers(result);
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append("Results for lookup of membership of Steam Group:  " + result);
-            sb.Append(Environment.NewLine);
-            sb.Append(Environment.NewLine);
-
-            foreach (long iD in iDs)
+            if (result != null && result != String.Empty)
             {
-                sb.Append("Player SteamID64: " + iD.ToString() + " " + SteamIntegration.GetPlayerName(iD) + Environment.NewLine);
+                List<long> iDs = SteamIntegration.GetGroupMembers(result);
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append("Results for lookup of membership of Steam Group:  " + result);
+                sb.Append(Environment.NewLine);
+                sb.Append(Environment.NewLine);
+
+                foreach (long iD in iDs)
+                {
+                    sb.Append("Player SteamID64: " + iD.ToString() + " " 
+                        + SteamIntegration.GetPlayerName(iD) + Environment.NewLine);
+                }
+
+                sb.Append(Environment.NewLine);
+                sb.Append(String.Format("Group contains {0} member(s).", iDs.Count));
+                sb.Append(Environment.NewLine);
+
+                MessageBox.Show(sb.ToString());
             }
-
-            sb.Append(Environment.NewLine);
-            sb.Append(String.Format("Group contains {0} member(s).", iDs.Count));
-            sb.Append(Environment.NewLine);
-
-            MessageBox.Show(sb.ToString());
-
-
         }
 
+
+        private void playerNameBySteamID64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _playerNameBySteamID64();
+        }
+
+        private void groupID64ByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _groupID64ByGroupName();
+        }
+
+        private void groupMembersByGroupID64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _groupMembersByGroupID64();
+        }
     }
 }

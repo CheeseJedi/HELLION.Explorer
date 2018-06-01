@@ -26,10 +26,10 @@ namespace HELLION.DataStructures.Blueprints
             OwnerObject = passedParent; // ?? throw new NullReferenceException();
 
             RootNode = new Blueprint_TN(passedOwner: this, nodeName: "Unsaved",
-                newNodeType: HETreeNodeType.Blueprint); //, nodeToolTipText: "File not yet saved");
+                newNodeType: Base_TN_NodeType.Blueprint); //, nodeToolTipText: "File not yet saved");
 
             DataViewRootNode = new Json_TN(ownerObject: this, nodeName: "Data View");
-                //newNodeType: HETreeNodeType.BlueprintDataView, nodeToolTipText:
+                //newNodeType: Base_TN_NodeType.BlueprintDataView, nodeToolTipText:
                 //"Shows a representation of the Json data that makes up this blueprint.");
 
             RootNode.Nodes.Add(DataViewRootNode);
@@ -43,7 +43,7 @@ namespace HELLION.DataStructures.Blueprints
         {
             File = structDefsFileInfo ?? throw new NullReferenceException();
             RootNode = new Blueprint_TN(passedOwner: this, nodeName: File.Name,
-                newNodeType: HETreeNodeType.Blueprint); //, nodeToolTipText: File.FullName);
+                newNodeType: Base_TN_NodeType.Blueprint); //, nodeToolTipText: File.FullName);
 
             if (File.Exists) LoadFile(populateNodeTreeDepth);
             else Debug.Print("File {0} doesn't exist", File.FullName);

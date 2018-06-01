@@ -28,7 +28,7 @@ namespace HELLION.DataStructures.Blueprints
         {
             Structures = new List<BlueprintStructure>();
             RootNode = new Blueprint_TN(passedOwner: this, nodeName: "Hierarchy View",
-                newNodeType: HETreeNodeType.BlueprintHierarchyView); 
+                newNodeType: Base_TN_NodeType.BlueprintHierarchyView); 
                 //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
         }
 
@@ -1102,7 +1102,7 @@ namespace HELLION.DataStructures.Blueprints
             /// </summary>
             protected void RefreshAfterStructureHierarchyRootChange()
             {
-                RootNode.NodeType = IsStructureHierarchyRoot ? HETreeNodeType.BlueprintRootStructure : HETreeNodeType.BlueprintStructure;
+                RootNode.NodeType = IsStructureHierarchyRoot ? Base_TN_NodeType.BlueprintRootStructure : Base_TN_NodeType.BlueprintStructure;
             }
 
             #endregion

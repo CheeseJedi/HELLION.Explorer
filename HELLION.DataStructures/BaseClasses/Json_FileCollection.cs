@@ -34,7 +34,7 @@ namespace HELLION.DataStructures
             if (!DataDirectoryInfo.Exists) throw new DirectoryNotFoundException("DataDirectoryInfo reports the passed folder doesn't exist.");
 
             RootNode = new Base_TN(ownerObject: this, nodeName: DataDirectoryInfo.Name,
-                newNodeType: HETreeNodeType.DataFolder);
+                nodeType: Base_TN_NodeType.DataFolder);
 
             Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
         }

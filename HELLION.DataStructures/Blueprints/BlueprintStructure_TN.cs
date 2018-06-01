@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Text;
 using HELLION.DataStructures.UI;
+using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.DataStructures.Blueprints
 {
     public class BlueprintStructure_TN : Blueprint_TN
     {
         public BlueprintStructure_TN(Iparent_Base_TN passedOwner = null, string nodeName = null)
-            : base(passedOwner, nodeName, HETreeNodeType.BlueprintStructure)
+            : base(passedOwner, nodeName, Base_TN_NodeType.BlueprintStructure)
         {
 
         }
@@ -19,7 +20,8 @@ namespace HELLION.DataStructures.Blueprints
         protected override string GenerateName()
         {
             // Generate a name based on the current structure type.
-            return "Unnamed node "; // + DateTime.Now.ToString();
+            BlueprintStructure ownerStructure = (BlueprintStructure)OwnerObject;
+            return ownerStructure.SceneID.ToString() ??  "Unspecified Structure "; // + DateTime.Now.ToString();
         }
 
         /// <summary>

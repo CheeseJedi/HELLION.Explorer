@@ -20,7 +20,7 @@ namespace HELLION.DataStructures.Blueprints
         public StructureDefinitions_File(object passedParent, FileInfo passedFileInfo) : base(null)
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
-            // RootNode = new Blueprint_TN(this, nodeName: File.Name, newNodeType: HETreeNodeType.DataFile, nodeToolTipText: File.FullName);
+            // RootNode = new Blueprint_TN(this, nodeName: File.Name, newNodeType: Base_TN_NodeType.DataFile, nodeToolTipText: File.FullName);
             if (File.Exists) LoadFile();
             else Debug.Print("Structure definitions initialised but file {0} doesn't exist.", passedFileInfo.FullName);
         }
@@ -188,7 +188,7 @@ namespace HELLION.DataStructures.Blueprints
                 sb.Append("ItemID: " + structDefn.ItemID + Environment.NewLine);
                 sb.Append("SceneName: " + structDefn.SceneName + Environment.NewLine);
 
-                HETreeNode newStructNode = new HETreeNode(this, nodeName: structDefn.DisplayName, newNodeType: HETreeNodeType.BlueprintStructureDefinition,
+                HETreeNode newStructNode = new HETreeNode(this, nodeName: structDefn.DisplayName, newNodeType: Base_TN_NodeType.BlueprintStructureDefinition,
                     nodeText: structDefn.DisplayName, nodeToolTipText: sb.ToString());
 
                 DefinitionViewRootNode.Nodes.Add(newStructNode);
@@ -202,7 +202,7 @@ namespace HELLION.DataStructures.Blueprints
                     sb.Append("PortID: " + portDefn.PortID + Environment.NewLine);
 
 
-                    HETreeNode newPortNode = new HETreeNode(this, nodeName: portDefn.PortName.ToString(), newNodeType: HETreeNodeType.BlueprintDockingPortDefinition,
+                    HETreeNode newPortNode = new HETreeNode(this, nodeName: portDefn.PortName.ToString(), newNodeType: Base_TN_NodeType.BlueprintDockingPortDefinition,
                         nodeText: portDefn.PortName.ToString(), nodeToolTipText: sb.ToString());
 
                     newStructNode.Nodes.Add(newPortNode);
