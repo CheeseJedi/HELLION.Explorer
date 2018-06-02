@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
-using HELLION.DataStructures.Document;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 
@@ -93,7 +92,7 @@ namespace HELLION.Explorer
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ((Base_TN)treeView1.SelectedNode)?.Refresh();
         }
 
         private void navigationPaneToolStripMenuItem_Click(object sender, EventArgs e)

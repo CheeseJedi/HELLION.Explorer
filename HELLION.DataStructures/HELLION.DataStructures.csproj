@@ -128,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="StaticData\" />
-    <Folder Include="UI\TreeNodes\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EmbeddedImages\Structures180x\STRUCT_AM.png" />
@@ -265,7 +264,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
+      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

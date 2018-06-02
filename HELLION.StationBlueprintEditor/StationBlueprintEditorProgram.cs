@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace HELLION.StationBlueprintEditor
 {
-    static class StationBlueprintEditorProgram
+    public static class StationBlueprintEditorProgram
     {
 
         #region Logging Objects

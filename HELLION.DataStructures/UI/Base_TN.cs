@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows.Forms;
 using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
 
-
 namespace HELLION.DataStructures.UI
 {
     public class Base_TN : TreeNode, Iparent_Base_TN
@@ -34,17 +33,16 @@ namespace HELLION.DataStructures.UI
 
             if (nodeName != null && nodeName != String.Empty)
             {
-                AutoGenerateName = false;
+                // A value for the name was supplied - no auto-generation.
                 Name = nodeName;
             }
             else
             {
+                AutoGenerateName = true;
                 RefreshName();
             }
 
 
-            // Trigger name and other info generation based on what was passed.
-            //     RefreshName();
         }
 
         #endregion
@@ -114,6 +112,25 @@ namespace HELLION.DataStructures.UI
         }
 
         /// <summary>
+        /// The separator character(s) placed between the prefix, name and suffix.
+        /// </summary>
+        public string Text_Seperator
+        {
+            get => _text_Seperator;
+            set
+            {
+                if (_text_Seperator != value)
+                {
+                    _text_Seperator = value;
+
+                    // Trigger updates here.
+                    //RefreshText();
+                    //RefreshToolTipText();
+                }
+            }
+        }
+
+        /// <summary>
         /// The string Text suffix.
         /// </summary>
         public string Text_Suffix
@@ -153,8 +170,13 @@ namespace HELLION.DataStructures.UI
         /// <summary>
         /// Is used to determine whether the node should auto-generate it's name.
         /// </summary>
-        public bool AutoGenerateName { get; set; } = true;
-        
+        public bool AutoGenerateName { get; set; } = false;
+
+        /// <summary>
+        /// Define a default name for nodes that don't auto-generate and haven't had one specified.
+        /// </summary>
+        protected virtual string DefaultObjectName => "Unnamed node";
+
         #endregion
 
         #region Refresh and Generation Methods
@@ -166,9 +188,9 @@ namespace HELLION.DataStructures.UI
         public virtual void Refresh(bool includeSubTrees = false)
         {
             Debug.Print("Base_TN.Refresh called on {0} - {1}", Name, OwnerObject.ToString());
-            //RefreshName(false);
-            RefreshText(false);
-            RefreshToolTipText(false);
+            RefreshName(includeSubTrees);
+            RefreshText(includeSubTrees);
+            RefreshToolTipText(includeSubTrees);
         }
 
         /// <summary>
@@ -180,7 +202,10 @@ namespace HELLION.DataStructures.UI
             if (AutoGenerateName) Name = GenerateName();
             if (includeSubTrees)
             {
-                foreach (Base_TN node in Nodes) RefreshName(includeSubTrees);
+                foreach (Base_TN node in Nodes)
+                {
+                    RefreshName(includeSubTrees);
+                }
             }
         }
 
@@ -216,7 +241,7 @@ namespace HELLION.DataStructures.UI
         protected virtual string GenerateName()
         {
             // Return the default name for an unnamed node.
-            return unnamedNode;
+            return DefaultObjectName;
         }
 
         /// <summary>
@@ -226,7 +251,13 @@ namespace HELLION.DataStructures.UI
         protected virtual string GenerateText()
         {
             // Alterations to the name formatting can be applied here.
-            return Text_Prefix + Name + Text_Suffix;
+
+            //return String.Format("{0}{1}{2}",
+            //    (Text_Prefix.Length > 0 ? Text_Prefix + _text_Seperator : String.Empty), Name,
+            //    (Text_Suffix.Length > 0 ? _text_Seperator + Text_Suffix : String.Empty) );
+
+            return String.Format("{1}{0}{2}{0}{3}", _text_Seperator, Text_Prefix, Name, Text_Suffix);
+            //return Text_Prefix + Name + Text_Suffix;
         }
 
         /// <summary>
@@ -322,17 +353,7 @@ namespace HELLION.DataStructures.UI
         protected string _text_Prefix = null;
         protected string _text_Suffix = null;
         protected Base_TN_NodeType _nodeType = Base_TN_NodeType.Unknown;
-
-        #endregion
-
-        #region Enumerations
-
-        #endregion
-
-
-        #region Constants
-
-        private const string unnamedNode = "Unnamed node";
+        protected string _text_Seperator = " ";
 
         #endregion
 
@@ -342,12 +363,6 @@ namespace HELLION.DataStructures.UI
     /// Defines an interface for the parent object of the Base_TN.
     /// </summary>
     public interface Iparent_Base_TN
-    {
-        /// <summary>
-        /// Defines the RootNode Base_TN for the object.
-        /// </summary>
-        //Base_TN RootNode { get; set; }
-
-    }
+    { }
 
 }

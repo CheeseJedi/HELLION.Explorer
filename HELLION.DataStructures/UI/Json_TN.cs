@@ -11,6 +11,7 @@ namespace HELLION.DataStructures.UI
     /// </summary>
     public class Json_TN : Base_TN
     {
+        private JToken _jData = null;
         #region Constructors
 
         /// <summary>
@@ -29,14 +30,19 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         /// <param name="json"></param>
         /// <param name="nodeName">Accepts a passed Name, if not provided a name will be auto-generated.</param>
-        public Json_TN(Iparent_Base_TN ownerObject, JToken passedJson, string nodeName = null) : base(ownerObject, nodeName)
+        public Json_TN(Iparent_Base_TN ownerObject, JToken passedJson, string nodeName = null) : base(ownerObject)
         {
+            // Enable auto-name generation.
+            AutoGenerateName = true;
+
+            // Set the JData.
             JData = passedJson ?? throw new NullReferenceException("Unable to construct Json_TN: Passed JToken was null.");
 
             // Set the node type.
             NodeType = DetectNodeTypeFromJToken();
 
-            // NewNameMethod(nodeName);
+            // Trigger name generation.
+            RefreshName();
 
         }
 
@@ -47,7 +53,20 @@ namespace HELLION.DataStructures.UI
         /// <summary>
         /// Holds a reference to the JToken object this node represents.
         /// </summary>
-        public JToken JData { get; set; } = null;
+        public JToken JData
+        {
+            get => _jData;
+            set
+            {
+                if (_jData != value)
+                {
+                    _jData = value;
+
+                    // Trigger name update.
+
+                }
+            }
+        }
 
         /// <summary>
         /// Tracks whether child nodes have been loaded for this node.
@@ -66,6 +85,16 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         public SolarSystem_TN LinkedSolarSystemNode { get; protected set; } = null;
 
+        /// <summary>
+        /// Redefine the default object name for use with JObjects.
+        /// </summary>
+        protected override string DefaultObjectName => "unnamed Object";
+
+        /// <summary>
+        /// Define a default name for arrays - these aren't tokens that have names or
+        /// other parameters.
+        /// </summary>
+        protected string DefaultArrayName => "Array";
 
         #endregion
 
@@ -77,8 +106,7 @@ namespace HELLION.DataStructures.UI
         /// <returns></returns>
         protected override string GenerateName()
         {
-            const string defaultObjectName = "unnamed Object";
-            const string defaultArrayName = "unnamed Array";
+
             const string noJData = "No JData";
 
             if (JData == null) return noJData;
@@ -87,10 +115,10 @@ namespace HELLION.DataStructures.UI
             {
                 case JTokenType.Object:
                     string _generatedName = GenerateNameFromJObject((JObject)JData);
-                    return (_generatedName == String.Empty) ? defaultObjectName : _generatedName;
+                    return (_generatedName == String.Empty) ? DefaultObjectName : _generatedName;
 
                 case JTokenType.Array:
-                    return defaultArrayName;
+                    return DefaultArrayName;
 
                 case JTokenType.Property:
                     // It's a JProperty, similar to a key value pair
@@ -172,42 +200,46 @@ namespace HELLION.DataStructures.UI
         /// <returns></returns>
         private Base_TN_NodeType DetectNodeTypeFromJToken()
         {
-            switch (JData.Type)
+            if (JData != null)
             {
-                case JTokenType.Object:
-                    return Base_TN_NodeType.JsonObject;
-                case JTokenType.Array:
-                    return Base_TN_NodeType.JsonArray;
-                case JTokenType.Property:
-                    return Base_TN_NodeType.JsonProperty;
+                switch (JData.Type)
+                {
+                    case JTokenType.Object:
+                        return Base_TN_NodeType.JsonObject;
+                    case JTokenType.Array:
+                        return Base_TN_NodeType.JsonArray;
+                    case JTokenType.Property:
+                        return Base_TN_NodeType.JsonProperty;
 
-                // Json Value types.
-                case JTokenType.Boolean:
-                    return Base_TN_NodeType.JsonBoolean;
-                case JTokenType.Bytes:
-                    return Base_TN_NodeType.JsonBytes;
-                case JTokenType.Comment:
-                    return Base_TN_NodeType.JsonComment;
-                case JTokenType.Date:
-                    return Base_TN_NodeType.JsonDate;
-                case JTokenType.Integer:
-                    return Base_TN_NodeType.JsonInteger;
-                case JTokenType.Float:
-                    return Base_TN_NodeType.JsonFloat;
-                case JTokenType.Guid:
-                    return Base_TN_NodeType.JsonGuid;
-                case JTokenType.String:
-                    return Base_TN_NodeType.JsonString;
-                case JTokenType.TimeSpan:
-                    return Base_TN_NodeType.JsonTimeSpan;
-                case JTokenType.Uri:
-                    return Base_TN_NodeType.JsonUri;
-                case JTokenType.Null:
-                    return Base_TN_NodeType.JsonNull;
+                    // Json Value types.
+                    case JTokenType.Boolean:
+                        return Base_TN_NodeType.JsonBoolean;
+                    case JTokenType.Bytes:
+                        return Base_TN_NodeType.JsonBytes;
+                    case JTokenType.Comment:
+                        return Base_TN_NodeType.JsonComment;
+                    case JTokenType.Date:
+                        return Base_TN_NodeType.JsonDate;
+                    case JTokenType.Integer:
+                        return Base_TN_NodeType.JsonInteger;
+                    case JTokenType.Float:
+                        return Base_TN_NodeType.JsonFloat;
+                    case JTokenType.Guid:
+                        return Base_TN_NodeType.JsonGuid;
+                    case JTokenType.String:
+                        return Base_TN_NodeType.JsonString;
+                    case JTokenType.TimeSpan:
+                        return Base_TN_NodeType.JsonTimeSpan;
+                    case JTokenType.Uri:
+                        return Base_TN_NodeType.JsonUri;
+                    case JTokenType.Null:
+                        return Base_TN_NodeType.JsonNull;
 
-                default:
-                    return Base_TN_NodeType.Unknown;
+                    default:
+                        return Base_TN_NodeType.Unknown;
+                }
             }
+            return Base_TN_NodeType.Unknown;
         }
 
         /// <summary>
@@ -270,7 +302,7 @@ namespace HELLION.DataStructures.UI
 
         //private void NewNameMethod()
         //{
-        //    const string defaultObjectName = "unnamed Object";
+        //    const string DefaultObjectName = "unnamed Object";
         //    const string defaultArrayName = "unnamed Array";
 
         //    switch (JData.Type)
@@ -284,7 +316,7 @@ namespace HELLION.DataStructures.UI
         //            if (newNodeName != String.Empty)
         //                Name = newNodeName;
         //            else
-        //                Name = defaultObjectName;
+        //                Name = DefaultObjectName;
         //            break;
 
         //        case JTokenType.Array:

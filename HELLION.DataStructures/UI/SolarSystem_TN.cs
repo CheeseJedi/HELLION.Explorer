@@ -54,7 +54,7 @@ namespace HELLION.DataStructures.UI
             // Set the node type, this will trigger the icon type to change to an appropriate one.
             //NodeType = nodeType;
 
-            // If we're working with a blueprint node, translate the StructureID to GUID
+            // If we're working with a linked blueprint node, translate the StructureID to GUID
             JToken tmpTkn = _linkedGameDataJson["StructureID"];
             if (tmpTkn != null)
             {
@@ -69,10 +69,14 @@ namespace HELLION.DataStructures.UI
             else
             {
                 // Set the node's Name to the GUID of the object.
-                Name = (string)_linkedGameDataJson["GUID"];
+                Name = (string)_linkedGameDataJson["Registration"]; //LinkedGameDataNode.Name;
+
+                Text_Prefix = ((string)_linkedGameDataJson["Name"]).Trim();
+                Text_Suffix = ((string)_linkedGameDataJson["GUID"]).Trim();
 
                 // Set the GUID
                 GUID = (long)_linkedGameDataJson["GUID"];
+
             }
 
             JToken tempToken = null;

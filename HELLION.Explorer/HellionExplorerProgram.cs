@@ -478,10 +478,10 @@ namespace HELLION.Explorer
                 MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
 
                 // Trigger a refresh on each of the node trees.
-                docCurrent.SolarSystem.RootNode.Refresh(includeSubTrees: true);
-                docCurrent.GameData.RootNode.Refresh(includeSubTrees: true);
-                docCurrent.Blueprints.RootNode.Refresh(includeSubTrees: true);
-                docCurrent.SearchHandler.RootNode.Refresh(includeSubTrees: true);
+                //docCurrent.SolarSystem.RootNode.Refresh(includeSubTrees: true);
+                //docCurrent.GameData.RootNode.Refresh(includeSubTrees: true);
+                //docCurrent.Blueprints.RootNode.Refresh(includeSubTrees: true);
+                //docCurrent.SearchHandler.RootNode.Refresh(includeSubTrees: true);
 
                 //MainForm.treeView1.Sort();
                 // Display prettying - set the star as the selected node and expand it and the solar system root node.
@@ -742,16 +742,16 @@ namespace HELLION.Explorer
             }
         }
 
-        /// <summary>
-        /// Handles Find and Find Next simple searching of a node in the tree view control's 
-        /// currently selected node's Nodes collection.
-        /// </summary>
-        /// <param name="next"></param>
-        internal static void EditFindNext(bool JumpToResultsSet = false)
-        {
-            // This method is defunct and should not be called any more.
-            MessageBox.Show("EditFindNext was called!!");
-        }
+        ///// <summary>
+        ///// Handles Find and Find Next simple searching of a node in the tree view control's 
+        ///// currently selected node's Nodes collection.
+        ///// </summary>
+        ///// <param name="next"></param>
+        //internal static void EditFindNext(bool JumpToResultsSet = false)
+        //{
+        //    // This method is defunct and should not be called any more.
+        //    MessageBox.Show("EditFindNext was called!!");
+        //}
 
         #endregion
 
@@ -1221,45 +1221,52 @@ namespace HELLION.Explorer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            // Initialise the main form
-            MainForm = new MainForm();
 
-            // Initialise the find form.
-            FindForm = new FindForm(MainForm);
-            FindForm.Hide();
+            try
+            {
+                // Initialise the main form
+                MainForm = new MainForm();
+
+                // Initialise the find form.
+                FindForm = new FindForm(MainForm);
+                FindForm.Hide();
 
 
-            // Set the form's icon
-            var exe = System.Reflection.Assembly.GetExecutingAssembly();
-            var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HELLION.Explorer.ico");
-            if (iconStream != null) MainForm.Icon = new Icon(iconStream);
+                // Set the form's icon
+                var exe = System.Reflection.Assembly.GetExecutingAssembly();
+                var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HELLION.Explorer.ico");
+                if (iconStream != null) MainForm.Icon = new Icon(iconStream);
 
-            // Update the main form's title text - this adds the application name
-            RefreshMainFormTitleText();
+                // Update the main form's title text - this adds the application name
+                RefreshMainFormTitleText();
 
-            // Disable the File/Close menu item - this is re-enabled when a file is loaded
-            MainForm.closeToolStripMenuItem.Enabled = false;
-            MainForm.revertToolStripMenuItem.Enabled = false;
+                // Disable the File/Close menu item - this is re-enabled when a file is loaded
+                MainForm.closeToolStripMenuItem.Enabled = false;
+                MainForm.revertToolStripMenuItem.Enabled = false;
 
-            // Disable both the Find and FindNext menu items.
-            MainForm.findToolStripMenuItem.Enabled = false;
-            MainForm.findNextToolStripMenuItem.Enabled = false;
+                // Disable both the Find and FindNext menu items.
+                MainForm.findToolStripMenuItem.Enabled = false;
+                MainForm.findNextToolStripMenuItem.Enabled = false;
 
-            // Disable the Save and Save As menu items.
-            MainForm.saveToolStripMenuItem.Enabled = false;
-            MainForm.saveAsToolStripMenuItem.Enabled = false;
+                // Disable the Save and Save As menu items.
+                MainForm.saveToolStripMenuItem.Enabled = false;
+                MainForm.saveAsToolStripMenuItem.Enabled = false;
 
-            // Disable the Observed GUIDs menu item.
-            MainForm.observedGUIDsToolStripMenuItem.Enabled = false;
+                // Disable the Observed GUIDs menu item.
+                MainForm.observedGUIDsToolStripMenuItem.Enabled = false;
 
-            // Show the main form
-            MainForm.Show();
+                // Show the main form
+                MainForm.Show();
 
-            ProcessCommandLineArguments(args);
+                ProcessCommandLineArguments(args);
 
-            // Start the Windows Forms message loop
-            Application.Run(); // Application.Run(new MainForm());
-
+                // Start the Windows Forms message loop
+                Application.Run(); // Application.Run(new MainForm());
+            }
+            catch (Exception ex)
+            {
+                Debug.Print("An exception occurred." + Environment.NewLine + ex);
+            }
         }
 
     }
