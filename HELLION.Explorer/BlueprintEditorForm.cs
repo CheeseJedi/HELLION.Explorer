@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.EmbeddedImages;
-using HELLION.DataStructures.Utilities;
+using HELLION.DataStructures.StaticData;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
-using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.Explorer
 {
@@ -390,10 +388,10 @@ namespace HELLION.Explorer
         private void RefreshDropDownModuleTypes()
         {
             comboBoxStructureList.Items.Clear();
-            Array enumValues = Enum.GetValues(typeof(HEStructureSceneID));
+            Array enumValues = Enum.GetValues(typeof(StructureSceneID));
             foreach (int value in enumValues)
             {
-                string display = Enum.GetName(typeof(HEStructureSceneID), value);
+                string display = Enum.GetName(typeof(StructureSceneID), value);
                 comboBoxStructureList.Items.Add(display);
             }
             comboBoxStructureList.SelectedIndex = 0;

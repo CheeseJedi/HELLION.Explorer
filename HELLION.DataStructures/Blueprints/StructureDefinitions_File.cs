@@ -2,9 +2,10 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using HELLION.DataStructures.StaticData;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
-using static HELLION.DataStructures.StaticDataHelper;
+using static HELLION.DataStructures.StaticData.DockingPortHelper;
 
 namespace HELLION.DataStructures.Blueprints
 {
@@ -63,8 +64,8 @@ namespace HELLION.DataStructures.Blueprints
                 // Create a new Structure definition
                 BlueprintStructure nsd = new BlueprintStructure
                 {
-                    SceneID = (HEStructureSceneID)Enum
-                        .Parse(typeof(HEStructureSceneID), (string)jtStructure["ItemID"]),
+                    SceneID = (StructureSceneID)Enum
+                        .Parse(typeof(StructureSceneID), (string)jtStructure["ItemID"]),
 
                     AuxData = new HEBlueprintStructureAuxData(null),
 
@@ -96,7 +97,7 @@ namespace HELLION.DataStructures.Blueprints
                         OrderID = (int)jtDockingPort["OrderID"],
 
                         // Look up the correct port name for this structure and orderID
-                        PortName = GetDockingPortType((HEStructureSceneID)nsd.SceneID,
+                        PortName = GetDockingPortType((StructureSceneID)nsd.SceneID,
                             orderID: (int)jtDockingPort["OrderID"]),
 
                         // Default locked/unlocked status is preserved.
@@ -116,115 +117,5 @@ namespace HELLION.DataStructures.Blueprints
 
         }
 
-        /*
-
-        public new void LoadFile()
-        {
-            if (!File.Exists) throw new FileNotFoundException();
-            base.LoadFile();
-            PostLoadOperations();
-        }
-
-        public void PostLoadOperations(int populateNodeTreeDepth = 8)
-        {
-            // Populate the BlueprintStructureDefinitions object.
-            DeserialiseToBlueprintStructureDefinitionsObject();
-            
-            if (DataViewRootNode != null)
-            {
-                // Populate the data view.
-                DataViewRootNode.JData = _jData;
-                DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
-
-                // Populate the hierarchy view.
-                BuildHierarchyView();
-            }
-
-        }
-
-        /// <summary>
-        /// Handles 
-        /// </summary>
-        /// <param name="newData"></param>
-        public void ApplyNewJData(JToken newData)
-        {
-            _jData = newData;
-            //IsDirty = true;
-
-            // Clean up blueprint objects and tree nodes
-
-            //RootNode.Nodes.Remove(BlueprintStructureDefinitionsObject.RootNode);
-
-            // Clean up DataView Tree Nodes.
-            if (DataViewRootNode != null) DataViewRootNode.Nodes.Clear();
-
-            PostLoadOperations();
-        }
-
-        /// <summary>
-        /// This class overrides the type of root node to represent a blueprint.
-        /// </summary>
-        public new HETreeNode RootNode { get; protected set; } = null;
-
-        public Json_TN DataViewRootNode { get; protected set; } = null;
-        public SolarSystem_TN DefinitionViewRootNode { get; protected set; } = null;
-
-        /// <summary>
-        /// This is the actual BlueprintStructureDefinition object - serialised and de-serialised from here.
-        /// </summary>
-        public HEBlueprintStructureDefinitions BlueprintStructureDefinitionsObject { get; protected set; } = null;
-
-        /// <summary>
-        /// Builds tree nodes from the GameData nodes, with cross-references
-        /// </summary>
-        public void BuildHierarchyView()
-        {
-            foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition structDefn
-                in BlueprintStructureDefinitionsObject.StructureDefinitions
-                .Reverse<HEBlueprintStructureDefinitions.HEBlueprintStructureDefinition>())
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("StructureType: " + structDefn.DisplayName + Environment.NewLine);
-                sb.Append("ItemID: " + structDefn.ItemID + Environment.NewLine);
-                sb.Append("SceneName: " + structDefn.SceneName + Environment.NewLine);
-
-                HETreeNode newStructNode = new HETreeNode(this, nodeName: structDefn.DisplayName, newNodeType: Base_TN_NodeType.BlueprintStructureDefinition,
-                    nodeText: structDefn.DisplayName, nodeToolTipText: sb.ToString());
-
-                DefinitionViewRootNode.Nodes.Add(newStructNode);
-
-                foreach (HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort portDefn
-                    in structDefn.DockingPorts.Reverse<HEBlueprintStructureDefinitions.HEBlueprintStructureDefinitionDockingPort>())
-                {
-                    sb.Clear();
-                    sb.Append("PortName: " + portDefn.PortName + Environment.NewLine);
-                    sb.Append("OrderID: " + portDefn.OrderID + Environment.NewLine);
-                    sb.Append("PortID: " + portDefn.PortID + Environment.NewLine);
-
-
-                    HETreeNode newPortNode = new HETreeNode(this, nodeName: portDefn.PortName.ToString(), newNodeType: Base_TN_NodeType.BlueprintDockingPortDefinition,
-                        nodeText: portDefn.PortName.ToString(), nodeToolTipText: sb.ToString());
-
-                    newStructNode.Nodes.Add(newPortNode);
-                }
-            }
-        }
-
-        public void DeserialiseToBlueprintStructureDefinitionsObject()
-        {
-            BlueprintStructureDefinitionsObject = _jData.ToObject<HEBlueprintStructureDefinitions>();
-            //blueprintStructureDefinitionsObject.ReconnectChildParentStructure();
-        }
-
-        public void SerialiseFromBlueprintStructureDefinitionsObject()
-        {
-            JToken newData = JToken.FromObject(BlueprintStructureDefinitionsObject);
-            //Validity check?
-
-            ApplyNewJData(newData);
-
-        }
-
-        */
     }
 }

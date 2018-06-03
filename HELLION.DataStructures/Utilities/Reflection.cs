@@ -62,6 +62,4 @@ namespace HELLION.DataStructures.Utilities
         }
     }
 
-
-
 }

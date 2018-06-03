@@ -39,7 +39,6 @@ namespace HELLION.DataStructures.Utilities
             else return "Path Unavailable (no TreeView)";
         }
 
-
         /// <summary>
         /// Returns a list of all first generation child nodes, or all descendants via recursion.
         /// </summary>

@@ -230,13 +230,13 @@ namespace HELLION.Explorer
                     {
                         // It's a .save file
 
+                        Console.WriteLine("Argument: Save File {0}", arguments[i]);
                         FileInfo tempPath = new FileInfo(arguments[i]);
-                        Console.WriteLine("Argument: Save File {0}", tempPath.FullName);
                         if (tempPath.Exists)
                         {
                             saveFilePath = tempPath.FullName;
                         }
-                        else Console.WriteLine("File {0} not found.", saveFilePath);
+                        else Console.WriteLine("File {0} not found.", arguments[i]);
                     }
                     else if (arguments[i].Equals("/data", StringComparison.CurrentCultureIgnoreCase))
                     {

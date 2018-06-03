@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using static HELLION.DataStructures.StaticDataHelper;
+using static HELLION.DataStructures.StaticData.DockingPortHelper;
 
 namespace HELLION.DataStructures.Blueprints
 {
@@ -304,7 +305,7 @@ namespace HELLION.DataStructures.Blueprints
         /// Adds a new structure to the Secondary Structures list.
         /// </summary>
         /// <returns>Returns true if the added structure is in the Structures list once created.</returns>
-        public BlueprintStructure AddStructure(HEStructureSceneID sceneID)
+        public BlueprintStructure AddStructure(StructureSceneID sceneID)
         {
 
             BlueprintStructure newStructure = new BlueprintStructure
@@ -625,7 +626,7 @@ namespace HELLION.DataStructures.Blueprints
                 {
                     SerialisationTemplate_DockingPort newPort = new SerialisationTemplate_DockingPort()
                     {
-                        PortName = (HEDockingPortType)dockingPort.PortName,
+                        PortName = (DockingPortType)dockingPort.PortName,
                         OrderID = (int)dockingPort.OrderID,
                     };
                     templateStructure.DockingPorts.Add(newPort);
@@ -818,7 +819,7 @@ namespace HELLION.DataStructures.Blueprints
             /// the type of structure (ship/module) to spawn. Critical! 
             /// </summary>
             [JsonProperty]
-            public HEStructureSceneID? SceneID
+            public StructureSceneID? SceneID
             {
                 get => _sceneID;
                 set
@@ -843,7 +844,7 @@ namespace HELLION.DataStructures.Blueprints
             /// </summary>
             [JsonProperty]
             [JsonConverter(typeof(StringEnumConverter))]
-            public HEStructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
+            public StructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
             // public bool ShouldSerializeSceneName() { return OwnerObject == null || (OwnerObject != null && OwnerObject.IsTemplate) ? true : false; }
 
             [JsonProperty]
@@ -856,9 +857,9 @@ namespace HELLION.DataStructures.Blueprints
                     {
 
                         // Attempt to parse the given description to an available one in the enum.
-                        HEStructureSceneID descriptionParseResult = value.ParseToEnumDescriptionOrEnumerator<HEStructureSceneID>();
+                        StructureSceneID descriptionParseResult = value.ParseToEnumDescriptionOrEnumerator<StructureSceneID>();
 
-                        if (descriptionParseResult != HEStructureSceneID.Unspecified)
+                        if (descriptionParseResult != StructureSceneID.Unspecified)
                         {
                             SceneID = descriptionParseResult;
                         }
@@ -1110,7 +1111,7 @@ namespace HELLION.DataStructures.Blueprints
             #region Fields
 
             protected int? _structureID = null;
-            protected HEStructureSceneID? _sceneID = null;
+            protected StructureSceneID? _sceneID = null;
             //protected HEBlueprintStructureType? _structureType = null;
             protected int? _previousStructureID = null;
             protected bool _isStructureHierarchyRoot = false;
@@ -1247,7 +1248,7 @@ namespace HELLION.DataStructures.Blueprints
             /// </summary>
             [JsonProperty]
             [JsonConverter(typeof(StringEnumConverter))]
-            public HEDockingPortType? PortName
+            public DockingPortType? PortName
             {
                 get => _portName;
                 set
@@ -1307,7 +1308,7 @@ namespace HELLION.DataStructures.Blueprints
             /// </remarks>
             [JsonProperty]
             [JsonConverter(typeof(StringEnumConverter))]
-            public HEDockingPortType? DockedPortName
+            public DockingPortType? DockedPortName
             {
                 get => _dockedPortName;
                 set
@@ -1364,11 +1365,11 @@ namespace HELLION.DataStructures.Blueprints
 
             #region Fields
 
-            private HEDockingPortType? _portName = null;
+            private DockingPortType? _portName = null;
             private BlueprintStructure _ownerObject = null;
             private int? _dockedStructureID = null;
             private BlueprintStructure _dockedStructure = null;
-            private HEDockingPortType? _dockedPortName = null;
+            private DockingPortType? _dockedPortName = null;
             private HEBlueprintDockingPort _dockedPort = null;
 
             #endregion

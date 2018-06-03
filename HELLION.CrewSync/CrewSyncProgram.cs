@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using HELLION.DataStructures;
+using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.StaticDataHelper;
 
 namespace HELLION.CrewSync
 {

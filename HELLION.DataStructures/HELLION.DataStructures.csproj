@@ -83,6 +83,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StaticData\AuthorisedPerson.cs" />
+    <Compile Include="StaticData\DockingPortHelper.cs" />
+    <Compile Include="StaticData\StructureSceneID.cs" />
     <Compile Include="UI\Base_TN_NodeType.cs" />
     <Compile Include="BaseClasses\Json_File.cs" />
     <Compile Include="BaseClasses\Json_FileCollection.cs" />
@@ -99,7 +102,6 @@
     <Compile Include="Blueprints\Blueprint_TN.cs" />
     <Compile Include="Blueprints\HierarchyView_TN.cs" />
     <Compile Include="Blueprints\OLD_BlueprintStructureDefinitions.cs" />
-    <Compile Include="Blueprints\StaticDataHelper.cs" />
     <Compile Include="Blueprints\StationBlueprint.cs" />
     <Compile Include="Blueprints\StationBlueprint_File.cs" />
     <Compile Include="Blueprints\StructureDefinitions_File.cs" />
@@ -126,9 +128,7 @@
     <Compile Include="Utilities\TreeNodeExtensions.cs" />
     <Compile Include="Utilities\UpdateChecker.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="StaticData\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="EmbeddedImages\Structures180x\STRUCT_AM.png" />
     <EmbeddedResource Include="EmbeddedImages\Structures180x\STRUCT_ARG.png" />
@@ -264,7 +264,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

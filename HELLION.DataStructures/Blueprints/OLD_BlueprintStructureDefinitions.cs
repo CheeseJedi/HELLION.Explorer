@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using static HELLION.DataStructures.StaticDataHelper;
+using static HELLION.DataStructures.StaticData.DockingPortHelper;
 
 namespace HELLION.DataStructures.Blueprints
 {
@@ -111,7 +111,7 @@ namespace HELLION.DataStructures.Blueprints
             /// Filled when de-serialised.
             /// </summary>
             [JsonProperty]
-            public HEDockingPortType? PortName = null; // not required by the game spawner
+            public DockingPortType? PortName = null; // not required by the game spawner
 
             /// <summary>
             /// Filled when de-serialised.
