@@ -133,7 +133,7 @@ namespace HELLION.DataStructures.Blueprints
             if (DataViewRootNode != null)
             {
                 // Populate the data view.
-                DataViewRootNode.JData = jData;
+                DataViewRootNode.JData = _jData;
                 DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
 
                 // Populate the hierarchy view.
@@ -148,7 +148,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <param name="newData"></param>
         public void ApplyNewJData(JToken newData)
         {
-            jData = newData;
+            _jData = newData;
             //IsDirty = true;
 
             // Clean up blueprint objects and tree nodes
@@ -212,7 +212,7 @@ namespace HELLION.DataStructures.Blueprints
 
         public void DeserialiseToBlueprintStructureDefinitionsObject()
         {
-            BlueprintStructureDefinitionsObject = jData.ToObject<HEBlueprintStructureDefinitions>();
+            BlueprintStructureDefinitionsObject = _jData.ToObject<HEBlueprintStructureDefinitions>();
             //blueprintStructureDefinitionsObject.ReconnectChildParentStructure();
         }
 

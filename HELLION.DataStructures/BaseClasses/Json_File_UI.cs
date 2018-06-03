@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using HELLION.DataStructures.Document;
+﻿using System.IO;
 using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures
@@ -15,6 +13,8 @@ namespace HELLION.DataStructures
     /// </remarks>
     public class Json_File_UI : Json_File, Iparent_Base_TN
     {
+        #region Constructors
+
         /// <summary>
         /// Basic constructor.
         /// </summary>
@@ -31,21 +31,21 @@ namespace HELLION.DataStructures
         public Json_File_UI(Json_File_Parent ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
             : base(ownerObject, passedFileInfo)
         {
-            File = passedFileInfo ?? throw new NullReferenceException();
             RootNode = new Json_TN(ownerObject: this, nodeName: File.Name, newNodeType: Base_TN_NodeType.DataFile);
-                //, nodeToolTipText: File.FullName);
 
             if (!File.Exists) throw new FileNotFoundException();
             else
             {
-                LoadFile();
-
                 // Cast the root node as the appropriate type to use it's methods.
                 Json_TN tmpNode = (Json_TN)RootNode;
-                tmpNode.JData = jData;
+                tmpNode.JData = _jData;
                 tmpNode.CreateChildNodesFromjData(populateNodeTreeDepth);
             }
         }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Public property for read-only access to the root node of the tree.
@@ -53,40 +53,27 @@ namespace HELLION.DataStructures
         /// <remarks>
         /// Casts the RootNode to an Json_TN.
         /// </remarks>
-        public Base_TN RootNode { get; set; } = null;
+        public Base_TN RootNode { get; protected set; } = null;
 
         /// <summary>
         /// Used to determine whether there was an error on load.
         /// </summary>
         public override bool LoadError
         {
-            get
-            {
-                return loadError;
-            }
+            get => base.LoadError;
             protected set
             {
-                if (value)
-                {
-                    if (!loadError)
-                    {
-                        // Set the load error flag
-                        loadError = true;
-                        // Change the node type so that the icon changes to the error type
-                        RootNode.NodeType = Base_TN_NodeType.DataFileError;
-                        /*
-                        // Fire the event
-                        OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Load Error in file {0}", File.FullName)));
-                        */
-                    }
-                }
-                else
-                {
-                    loadError = value;
-                }
+                // Set the load error flag
+                base.LoadError = value;
+                // Change the node type so that the icon changes to the error type
+                RootNode.NodeType = Base_TN_NodeType.DataFileError;
             }
         }
-        
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Handles closing of this file, and de-allocation of it's objects
         /// </summary>
@@ -99,13 +86,19 @@ namespace HELLION.DataStructures
             }
             else
             {
-                if (!base.Close()) return false;
-
                 // Not dirty, OK to close everything
-                RootNode = null;
-                return true;
+                if (RootNode?.Parent != null) RootNode.Parent.Nodes.Remove(RootNode);
+
+                if (base.Close())
+                {
+                    RootNode = null;
+                    return true;
+                }
+                return false;
             }
         }
+
+        #endregion
 
     }
 }

@@ -106,6 +106,7 @@
             this.jsonDataViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.triggerGarbageCollectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -365,7 +366,7 @@
             // 
             this.cleanupToolStripMenuItem.Enabled = false;
             this.cleanupToolStripMenuItem.Name = "cleanupToolStripMenuItem";
-            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.cleanupToolStripMenuItem.Text = "Cleanup...";
             this.cleanupToolStripMenuItem.Visible = false;
             // 
@@ -373,14 +374,14 @@
             // 
             this.repairToolStripMenuItem.Enabled = false;
             this.repairToolStripMenuItem.Name = "repairToolStripMenuItem";
-            this.repairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.repairToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.repairToolStripMenuItem.Text = "Repair...";
             this.repairToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(146, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // steamUtilitiesToolStripMenuItem
@@ -390,7 +391,7 @@
             this.groupID64ByGroupNameToolStripMenuItem,
             this.groupMembersByGroupID64ToolStripMenuItem});
             this.steamUtilitiesToolStripMenuItem.Name = "steamUtilitiesToolStripMenuItem";
-            this.steamUtilitiesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.steamUtilitiesToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.steamUtilitiesToolStripMenuItem.Text = "&Steam Utilities";
             // 
             // playerNameBySteamID64ToolStripMenuItem
@@ -420,7 +421,7 @@
             this.setDataFolderLocationToolStripMenuItem,
             this.verifyDataFolderToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // setDataFolderLocationToolStripMenuItem
@@ -470,7 +471,8 @@
             // 
             this.testToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveTestToolStripMenuItem,
-            this.generateStructureDefinitionsStubjsonToolStripMenuItem});
+            this.generateStructureDefinitionsStubjsonToolStripMenuItem,
+            this.triggerGarbageCollectorToolStripMenuItem});
             this.testToolStripMenuItem1.Name = "testToolStripMenuItem1";
             this.testToolStripMenuItem1.Size = new System.Drawing.Size(40, 20);
             this.testToolStripMenuItem1.Text = "Test";
@@ -802,6 +804,13 @@
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Visible = false;
             // 
+            // triggerGarbageCollectorToolStripMenuItem
+            // 
+            this.triggerGarbageCollectorToolStripMenuItem.Name = "triggerGarbageCollectorToolStripMenuItem";
+            this.triggerGarbageCollectorToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
+            this.triggerGarbageCollectorToolStripMenuItem.Text = "Trigger Garbage Collector";
+            this.triggerGarbageCollectorToolStripMenuItem.Click += new System.EventHandler(this.triggerGarbageCollectorToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -917,6 +926,7 @@
         private System.Windows.Forms.ToolStripMenuItem playerNameBySteamID64ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem groupID64ByGroupNameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem groupMembersByGroupID64ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem triggerGarbageCollectorToolStripMenuItem;
     }
 } // End of namespace HELLION.Explorer
 

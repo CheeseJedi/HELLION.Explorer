@@ -41,8 +41,6 @@ namespace HELLION.DataStructures.UI
                 AutoGenerateName = true;
                 RefreshName();
             }
-
-
         }
 
         #endregion
@@ -250,14 +248,10 @@ namespace HELLION.DataStructures.UI
         /// <returns></returns>
         protected virtual string GenerateText()
         {
-            // Alterations to the name formatting can be applied here.
-
-            //return String.Format("{0}{1}{2}",
-            //    (Text_Prefix.Length > 0 ? Text_Prefix + _text_Seperator : String.Empty), Name,
-            //    (Text_Suffix.Length > 0 ? _text_Seperator + Text_Suffix : String.Empty) );
-
-            return String.Format("{1}{0}{2}{0}{3}", _text_Seperator, Text_Prefix, Name, Text_Suffix);
-            //return Text_Prefix + Name + Text_Suffix;
+            // Alterations to the name formatting can be applied by overriding this method.
+            return String.Format("{0}{1}{2}",
+                (Text_Prefix?.Length > 0 ? Text_Prefix + _text_Seperator : String.Empty), Name,
+                (Text_Suffix?.Length > 0 ? _text_Seperator + Text_Suffix : String.Empty));
         }
 
         /// <summary>

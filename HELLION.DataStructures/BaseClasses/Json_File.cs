@@ -17,6 +17,8 @@ namespace HELLION.DataStructures
     /// </remarks>
     public class Json_File
     {
+        #region Constructors
+
         /// <summary>
         /// Default constructor, not used directly but used by derived classes.
         /// </summary>
@@ -40,6 +42,10 @@ namespace HELLION.DataStructures
             }
         }
 
+        #endregion
+
+        #region Properties
+        
         /// <summary>
         /// Stores a reference to the parent object.
         /// </summary>
@@ -64,7 +70,7 @@ namespace HELLION.DataStructures
                 if (!IsLoaded) return null;
                 // Check there wasn't a load error
                 if (LoadError) return null;
-                return jData;
+                return _jData;
             }
             /*
             set
@@ -73,7 +79,7 @@ namespace HELLION.DataStructures
                 if (value != null)
                 {
                     IsDirty = true;
-                    // jData = value;
+                    // _jData = value;
 
                     // This is temporary and to detect data changes
                     throw new Exception("Attempted JData change :)");
@@ -95,18 +101,16 @@ namespace HELLION.DataStructures
         {
             get
             {
-                return loadError;
+                return _loadError;
             }
             protected set
             {
                 if (value)
                 {
-                    if (!loadError)
+                    if (!_loadError)
                     {
                         // Set the load error flag
-                        loadError = true;
-                        // Change the node type so that the icon changes to the error type
-                        //RootNode.NodeType = Base_TN_NodeType.DataFileError;
+                        _loadError = true;
                         /*
                         // Fire the event
                         OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Load Error in file {0}", File.FullName)));
@@ -115,7 +119,7 @@ namespace HELLION.DataStructures
                 }
                 else
                 {
-                    loadError = value;
+                    _loadError = value;
                 }
             }
         }
@@ -135,39 +139,39 @@ namespace HELLION.DataStructures
                 // Is the file read-only in the file system?
                 if (File.IsReadOnly) return true;
                 // None of the above applied, return the value of the override
-                return readOnlyOverride;
+                return _readOnlyOverride;
             }
             set
             {
                 // Attempts to set the file state to writeable.
                 if (value && IsLoaded && !LoadError && !File.IsReadOnly)
                 {
-                    readOnlyOverride = true;
+                    _readOnlyOverride = true;
                 }
                 else
                 {
-                    readOnlyOverride = false;
+                    _readOnlyOverride = false;
                 }
             }
         }
         
         /// <summary>
-        /// Used to determine whether the jData object has been modified, and will trigger a prompt to save.
+        /// Used to determine whether the _jData object has been modified, and will trigger a prompt to save.
         /// </summary>
         public bool IsDirty
         {
             get
             {
-                return isDirty;
+                return _isDirty;
             }
             private set
             {
                 if (value)
                 {
-                    if (!isDirty)
+                    if (!_isDirty)
                     {
-                        // Set the isDirty flag
-                        isDirty = true;
+                        // Set the _isDirty flag
+                        _isDirty = true;
                         
                         /*
                         // Fire the event
@@ -177,92 +181,54 @@ namespace HELLION.DataStructures
                 }
                 else
                 {
-                    isDirty = false;
+                    _isDirty = false;
                 }
 
             }
         }
 
-        /// <summary>
-        /// The JToken that was loaded from the file, if load was successful.
-        /// </summary>
-        protected JToken jData = null;
+        #endregion
 
-        /// <summary>
-        /// Tracks whether there was an error encountered during load - only used by the 
-        /// LoadError property to prevent re-triggering events.
-        /// </summary>
-        protected bool loadError = false;
-
-        /// <summary>
-        /// This flag is set when the jData is modified - only used by the 
-        /// IsDirty property to prevent re-triggering events.
-        /// </summary>
-        protected bool isDirty = false;
-
-        /// <summary>
-        /// Used to determine whether the file is forced to read-only or whether the other
-        /// constraints alone determine whether the file can be modified.
-        /// </summary>
-        protected bool readOnlyOverride = true;
-
-        /// <summary>
-        /// Used to activate extended logging to the Debug window in VS.
-        /// </summary>
-        protected bool logToDebug = true;
+        #region Methods
 
         /// <summary>
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
         /// </summary>
         /// <returns>Returns true if there was a loading error</returns>
         protected bool LoadFile()
-        {           
+        {
             if (File.Exists)
             {
                 try
                 {
                     using (StreamReader sr = File.OpenText())
                     {
-                        // Process the stream with the JSON Text Reader in to a JToken
+                        // Process the stream with the JsonTextReader in to a JToken.
                         using (JsonTextReader jtr = new JsonTextReader(sr))
                         {
-                            jData = JToken.ReadFrom(jtr);
+                            _jData = JToken.ReadFrom(jtr);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    // Some error handling to be implemented here
+                    // Some (better) error handling to be implemented here.
                     LoadError = true;
-                    if (logToDebug) Debug.Print("Exception caught during StreamReader or JsonTextReader while processing " + File.Name
+                    if (_logToDebug) Debug.Print("Exception caught during StreamReader or JsonTextReader while processing " + File.Name
                         + Environment.NewLine + e);
                 }
 
-                if (jData == null)                   
+                if (_jData == null)
                 {
                     // The data didn't load
                     LoadError = true;
-                    if (logToDebug) Debug.Print("JData is null or empty: " + File.Name);
+                    if (_logToDebug) Debug.Print("JData is null or empty: " + File.Name);
                 }
                 else
                 {
                     // We should have some data
+                    Console.WriteLine("{0} loaded; primary token detected as {1}, {2} child token(s) detected.", File.Name, _jData.Type, _jData.Count());
 
-                    if (logToDebug)
-                    {
-                        int numObj = 0;
-                        Debug.Print("Token Type: " + jData.Type.ToString());
-                        if (jData.Type == JTokenType.Array || jData.Type == JTokenType.Object)
-                        {
-                            numObj = jData.Count();
-                            Console.WriteLine(File.Name + " loaded; detected as " + jData.Type.ToString() + ", " + numObj.ToString() + " JToken(s) detected.");
-                        }
-                        else
-                        {
-                            LoadError = true;
-                            Debug.Print("ERROR: JData is detected as neither an ARRAY or OBJECT!");
-                        }
-                    }
                     // Set the IsLoaded flag to true
                     IsLoaded = true;
                 }
@@ -280,39 +246,21 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="existingToken"></param>
-        /// <param name="newToken"></param>
-        public void ReplaceJToken(JToken existingToken, JToken newToken)
-        {
-            if (IsReadOnly) throw new InvalidOperationException("Attempted JToken change on non-modifiable file. (IsReadOnly=true)");
-            else
-            {
-                Debug.Print("Replacing token " + existingToken.ToString());
-                Debug.Print("With token " + newToken.ToString());
-
-                existingToken.Replace(newToken);
-                isDirty = true;
-            }
-        }
-
-        /// <summary>
         /// Save the file data.
         /// </summary>
         /// <returns></returns>
         public bool SaveFile(bool CreateBackup = true)
         {
-            Debug.Print("SaveFile Called, CreateBackup="+CreateBackup.ToString());
+            //Debug.Print("SaveFile Called, CreateBackup="+CreateBackup.ToString());
 
             if (File.Exists && CreateBackup)
             {
-                string backupFullName = File.FullName + ".bak";
+                string backupFullName = File.FullName + ".backup";
                 // Check to see if the backup file already exists
                 if (System.IO.File.Exists(backupFullName))
                 {
                     // It does, so remove it.
-                    Debug.Print("Deleting " + backupFullName);
+                    Console.WriteLine("Deleting " + backupFullName);
                     System.IO.File.Delete(backupFullName);
                 }
                 // MainFile already exists, create a backup copy (.save.bak)
@@ -326,15 +274,19 @@ namespace HELLION.DataStructures
 
             //try
             {
+                Console.WriteLine("Writing to file: " + File.FullName);
+
                 using (StreamWriter sw = new StreamWriter(File.FullName))
                 {
                     // Process the stream with the JSON Text Reader in to a JToken
                     using (JsonTextWriter jtw = new JsonTextWriter(sw))
                     {
                         jtw.Formatting = Formatting.Indented;
-                        jData.WriteTo(jtw);
+                        _jData.WriteTo(jtw);
                     }
                 }
+                Console.WriteLine("File write complete.");
+
             }
             //catch (IOException)
             {
@@ -362,11 +314,65 @@ namespace HELLION.DataStructures
                 // Not dirty, OK to close everything
                 IsLoaded = false;
                 File = null;
-                jData = null;
+                _jData = null;
+
+
                 //RootNode = null;
                 return true;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="existingToken"></param>
+        /// <param name="newToken"></param>
+        public void ReplaceJToken(JToken existingToken, JToken newToken)
+        {
+            if (IsReadOnly) throw new InvalidOperationException("Attempted JToken change on non-modifiable file. (IsReadOnly=true)");
+            else
+            {
+                Debug.Print("Replacing token " + existingToken.ToString());
+                Debug.Print("With token " + newToken.ToString());
+
+                existingToken.Replace(newToken);
+                _isDirty = true;
+            }
+        }
+
+        #endregion
+
+        #region Fields
+
+        /// <summary>
+        /// The JToken that was loaded from the file, if load was successful.
+        /// </summary>
+        protected JToken _jData = null;
+
+        /// <summary>
+        /// Tracks whether there was an error encountered during load - only used by the 
+        /// LoadError property to prevent re-triggering events.
+        /// </summary>
+        protected bool _loadError = false;
+
+        /// <summary>
+        /// This flag is set when the _jData is modified - only used by the 
+        /// IsDirty property to prevent re-triggering events.
+        /// </summary>
+        protected bool _isDirty = false;
+
+        /// <summary>
+        /// Used to determine whether the file is forced to read-only or whether the other
+        /// constraints alone determine whether the file can be modified.
+        /// </summary>
+        protected bool _readOnlyOverride = true;
+
+        /// <summary>
+        /// Used to activate extended logging to the Debug window in VS.
+        /// </summary>
+        protected bool _logToDebug = true;
+
+        #endregion
 
     }
 
@@ -374,7 +380,5 @@ namespace HELLION.DataStructures
     /// Defines an interface to allow different classes to be a parent of a Json_File
     /// </summary>
     public interface Json_File_Parent
-    {
-
-    }
+    { }
 }

@@ -925,7 +925,7 @@ namespace HELLION.DataStructures.Blueprints
             /// <returns></returns>
             public HEBlueprintDockingPort GetDockingPort(string name)
             {
-                if (name == null || name == "" || !(DockingPorts.Count > 0)) return null;
+                if (name == null || name == String.Empty || !(DockingPorts.Count > 0)) return null;
 
                 IEnumerable<HEBlueprintDockingPort> results = DockingPorts.
                     Where(f => f.PortName.ToString() == name);

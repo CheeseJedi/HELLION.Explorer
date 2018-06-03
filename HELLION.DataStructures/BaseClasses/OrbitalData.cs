@@ -35,10 +35,6 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Constructor that takes a JObject representing the OrbitData.
         /// </summary>
-        /// <remarks>
-        /// Not suitable for Celestial Bodies - they will need handling differently.
-        /// </remarks>
-        /// <param name=""></param>
         public OrbitalData(JObject orbitData)
         {
             if (orbitData != null)

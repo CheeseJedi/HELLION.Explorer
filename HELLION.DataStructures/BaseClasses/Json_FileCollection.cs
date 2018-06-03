@@ -71,7 +71,7 @@ namespace HELLION.DataStructures
         public bool LoadError { get; protected set; } = false;
 
         /// <summary>
-        /// Property to read the isDirty field.
+        /// Property to read the _isDirty field.
         /// </summary>
         public bool IsDirty { get; protected set; } = false;
 

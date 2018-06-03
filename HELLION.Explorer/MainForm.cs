@@ -704,5 +704,10 @@ namespace HELLION.Explorer
         {
             _groupMembersByGroupID64();
         }
+
+        private void triggerGarbageCollectorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GC.Collect();
+        }
     }
 }

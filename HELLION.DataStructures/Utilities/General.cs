@@ -63,7 +63,7 @@ namespace HELLION.DataStructures.Utilities
 
                 prompt.AcceptButton = confirmation;
 
-                return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+                return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : String.Empty;
             }
         }
 

@@ -11,7 +11,6 @@ namespace HELLION.DataStructures.UI
     /// </summary>
     public class Json_TN : Base_TN
     {
-        private JToken _jData = null;
         #region Constructors
 
         /// <summary>
@@ -37,13 +36,6 @@ namespace HELLION.DataStructures.UI
 
             // Set the JData.
             JData = passedJson ?? throw new NullReferenceException("Unable to construct Json_TN: Passed JToken was null.");
-
-            // Set the node type.
-            NodeType = DetectNodeTypeFromJToken();
-
-            // Trigger name generation.
-            RefreshName();
-
         }
 
         #endregion
@@ -62,7 +54,13 @@ namespace HELLION.DataStructures.UI
                 {
                     _jData = value;
 
-                    // Trigger name update.
+                    // Trigger node regeneration.
+
+                    // Set the node type.
+                    NodeType = DetectNodeTypeFromJToken();
+
+                    // Trigger name generation.
+                    RefreshName();
 
                 }
             }
@@ -297,113 +295,13 @@ namespace HELLION.DataStructures.UI
             return LinkedSolarSystemNode;
         }
 
-
         #endregion
 
-        //private void NewNameMethod()
-        //{
-        //    const string DefaultObjectName = "unnamed Object";
-        //    const string defaultArrayName = "unnamed Array";
+        #region Fields
 
-        //    switch (JData.Type)
-        //    {
-        //        case JTokenType.Object:
-        //            JObject tmpJObject = (JObject)JData;
-        //            if (tmpJObject == null) throw new InvalidOperationException("tmpJObject was null");
+        private JToken _jData = null;
 
-        //            // name lookup/generation used
-        //            string newNodeName = GenerateNameFromJObject(tmpJObject).Trim();
-        //            if (newNodeName != String.Empty)
-        //                Name = newNodeName;
-        //            else
-        //                Name = DefaultObjectName;
-        //            break;
-
-        //        case JTokenType.Array:
-        //            Name = defaultArrayName;
-        //            break;
-
-        //        case JTokenType.Property:
-        //            // It's a JProperty, similar to a key value pair
-        //            JProperty tmpJProperty = (JProperty)JData;
-        //            if (tmpJProperty == null) throw new InvalidOperationException("tmpJProperty was null");
-
-        //            Name = tmpJProperty.Name;
-        //            break;
-
-        //        case JTokenType.Boolean:
-        //        case JTokenType.Bytes:
-        //        case JTokenType.Comment:
-        //        case JTokenType.Date:
-        //        case JTokenType.Float:
-        //        case JTokenType.Guid:
-        //        case JTokenType.Integer:
-        //        case JTokenType.String:
-        //        case JTokenType.TimeSpan:
-        //        case JTokenType.Uri:
-        //        case JTokenType.Null:
-        //            JValue tmpJValue = (JValue)JData;
-        //            if (tmpJValue == null) throw new InvalidOperationException("tmpJValue was null");
-        //            //int newNodeImageIndex = 0;
-
-        //            //newNodeImageIndex = NewMethod();
-
-        //            // Set the Name based on the value of the JValue
-        //            Name = tmpJValue.Value == null ? "null" : tmpJValue.Value.ToString();
-        //            //Text = Name;  // No longer necessary as the Base_TN updates it's text based on the name.
-
-        //            NodeType = Base_TN_NodeType.JsonValue;
-
-        //            // Update the ImageIndex and SelectedImageIndex directly - we're overriding the standard icon for a JsonValue
-        //            //ImageIndex = newNodeImageIndex;
-        //            //SelectedImageIndex = ImageIndex;
-
-        //            break;
-
-        //        default:
-        //            throw new InvalidOperationException("Unexpected json.Type: " + JData.Type.ToString());
-        //    }
-        //}
-
-        //private int aNewMethod()
-        //{
-        //    int newNodeImageIndex;
-        //    switch (JData.Type)
-        //    {
-        //        case JTokenType.Boolean:
-        //            // Bool (CheckDot)
-        //            newNodeImageIndex = (int)HEIconsImageNames.CheckDot_16x;
-        //            break;
-        //        case JTokenType.Bytes:
-        //            // Binary
-        //            newNodeImageIndex = (int)HEIconsImageNames.Binary_16x;
-        //            break;
-        //        case JTokenType.Integer:
-        //        case JTokenType.Float:
-        //            // Number
-        //            newNodeImageIndex = (int)HEIconsImageNames.DomainType_16x;
-        //            break;
-        //        case JTokenType.String:
-        //        case JTokenType.Comment:
-        //        case JTokenType.Guid:
-        //        case JTokenType.Uri:
-        //            // Text
-        //            newNodeImageIndex = (int)HEIconsImageNames.String_16x;
-        //            break;
-        //        case JTokenType.Date:
-        //        case JTokenType.TimeSpan:
-        //            // Time/Date
-        //            newNodeImageIndex = (int)HEIconsImageNames.DateTimeAxis_16x;
-        //            break;
-        //        default:
-        //            // Default (checker board)
-        //            newNodeImageIndex = (int)HEIconsImageNames.Checkerboard_16x;
-        //            break;
-        //    }
-
-        //    return newNodeImageIndex;
-        //}
-
+        #endregion
 
     }
 }

@@ -25,7 +25,7 @@ namespace HELLION.DataStructures.Utilities
         public UpdateChecker (string gitHubUserName, string repositoryName)
         {
             // Only proceed if both the username and repository name have non-empty strings.
-            if (gitHubUserName != "" && repositoryName != "")
+            if (gitHubUserName != String.Empty && repositoryName != String.Empty)
             {
                 GitHubUserName = gitHubUserName;
                 RepositoryName = repositoryName;
@@ -42,7 +42,7 @@ namespace HELLION.DataStructures.Utilities
         /// <remarks>
         /// Set when using the constructor.
         /// </remarks>
-        public string GitHubUserName { get; private set; } = "";
+        public string GitHubUserName { get; private set; } = String.Empty;
 
         /// <summary>
         /// The GitHub repository name of which the releases will be queried.
@@ -50,7 +50,7 @@ namespace HELLION.DataStructures.Utilities
         /// <remarks>
         /// Set when using the constructor.
         /// </remarks>
-        public string RepositoryName { get; private set; } = "";
+        public string RepositoryName { get; private set; } = String.Empty;
 
         /// <summary>
         /// Checks current build number against the latest release on GitHub repository and 
@@ -86,7 +86,7 @@ namespace HELLION.DataStructures.Utilities
         {
             get
             {
-                if (latestRelease == "")
+                if (latestRelease == String.Empty)
                 {
                     // Generate the latest release info
                     latestRelease = FindLatestRelease();
@@ -99,7 +99,7 @@ namespace HELLION.DataStructures.Utilities
         /// Private field to cache the latest release version to prevent repeated web requests
         /// per session.
         /// </summary>
-        private string latestRelease = "";
+        private string latestRelease = String.Empty;
 
         /// <summary>
         /// Private field for the AllReleases Property
@@ -139,7 +139,7 @@ namespace HELLION.DataStructures.Utilities
             IOrderedEnumerable<JToken> orderedReleases = from s in AllReleases
                                                          orderby (string)s["published_at"] descending
                                                          select s;
-            string potentialLatestRelease = "";
+            string potentialLatestRelease = String.Empty;
             if (orderedReleases.Count() > 0)
             {
                 // Grab the first item, as they're already sorted by reverse date order.

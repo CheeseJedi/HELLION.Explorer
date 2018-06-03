@@ -129,7 +129,7 @@ namespace HELLION.DataStructures.Blueprints
                 RootNode.Nodes.Add(BlueprintObject.RootNode);
 
                 // Populate the data view.
-                DataViewRootNode.JData = jData;
+                DataViewRootNode.JData = _jData;
                 DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
                 ///RootNode.Nodes.Add(DataViewRootNode);
 
@@ -144,7 +144,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <param name="newData"></param>
         public void ApplyNewJData(JToken newData)
         {
-            jData = newData;
+            _jData = newData;
 
 
             // Clean up blueprint objects and tree nodes
@@ -163,7 +163,7 @@ namespace HELLION.DataStructures.Blueprints
         public void DeserialiseToBlueprintObject()
         {
             Debug.Print("Got to Deserialisation.");
-            BlueprintObject = jData.ToObject<StationBlueprint>();
+            BlueprintObject = _jData.ToObject<StationBlueprint>();
             BlueprintObject.OwnerObject = this;
             //BlueprintObject.StructureDefinitions = ;
             BlueprintObject.PostDeserialisationInit();

@@ -186,7 +186,7 @@ namespace HELLION.DataStructures.Search
             /// <returns></returns>
             protected virtual string GenerateResultSetDisplayName()
             {
-                string postfix = "";
+                string postfix = String.Empty;
                 if (query != null)
                 {
                     postfix = " " + query + " (" + results.Count().ToString() + ")";
@@ -228,7 +228,7 @@ namespace HELLION.DataStructures.Search
             /// <returns>Returns true if the result set has more than zero members.</returns>
             public bool Execute()
             {
-                if (query == null || query == "") return false;
+                if (query == null || query == String.Empty) return false;
 
                 if ((OperatorFlags & HESearchOperatorFlags.ByPath) == HESearchOperatorFlags.ByPath)
                 {
@@ -378,7 +378,7 @@ namespace HELLION.DataStructures.Search
             protected override string GenerateResultSetDisplayName()
 
             {
-                string postfix = "";
+                string postfix = String.Empty;
                 if (query != null)
                 {
                     postfix = " '" + query + "' (" + results.Count().ToString() + ")";
@@ -412,7 +412,7 @@ namespace HELLION.DataStructures.Search
             /// <returns>Returns true if the result set has more than zero members.</returns>
             public new bool Execute()
             {
-                if (query == null || query == "") return false;
+                if (query == null || query == String.Empty) return false;
                 else
                 {
                     string[] pathTokens = query.Split('>');
@@ -423,7 +423,7 @@ namespace HELLION.DataStructures.Search
 
                     bool atMaxDepth = pathTokens.Length <= 1 ? true : false;
 
-                    //Debug.Print("");
+                    //Debug.Print(String.Empty);
                     //Debug.Print("Execute - atMaxDepth: " + atMaxDepth);
                     //Debug.Print(query);
                     //Debug.Print(pathTokens[0]);

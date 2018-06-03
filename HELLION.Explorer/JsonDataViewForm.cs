@@ -13,7 +13,7 @@ namespace HELLION.Explorer
         //TextStyle brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Regular);
 
         /// <summary>
-        /// Property to get/set the isDirty bool.
+        /// Property to get/set the _isDirty bool.
         /// </summary>
         public bool IsDirty
         {
@@ -57,7 +57,7 @@ namespace HELLION.Explorer
             Text = FormTitleText;
             AppliedText = passedSourceNode.JData.ToString();
             fastColoredTextBox1.Text = AppliedText;
-            // Required as setting the FastColouredTextBox triggers the isDirty
+            // Required as setting the FastColouredTextBox triggers the _isDirty
             IsDirty = false;
         }
 
@@ -93,7 +93,7 @@ namespace HELLION.Explorer
         }
 
         /// <summary>
-        /// Handles setting folding markers on the FastColoredTextBox and setting the isDirty bool.
+        /// Handles setting folding markers on the FastColoredTextBox and setting the _isDirty bool.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

@@ -3,11 +3,6 @@ using System.Diagnostics;
 using System.Text;
 using Newtonsoft.Json.Linq;
 
-/// <summary>
-/// Defines a derived HETreeNode to handle objects in the Solar System view.
-/// Also defines a node sorter that sorts by Semi-Major axis instead of by name which is
-/// the default on a TreeView control, and a class to hold the orbital data.
-/// </summary>
 namespace HELLION.DataStructures.UI
 {
     /// <summary>
@@ -144,7 +139,6 @@ namespace HELLION.DataStructures.UI
 
         #region Properties
 
-
         /// <summary>
         /// The GUID for this object.
         /// </summary>
@@ -165,12 +159,8 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         public long ParentGUID
         {
-            get => (long)OrbitData?.ParentGUID;
-            set
-            {
-                if (OrbitData == null) throw new NullReferenceException();
-                else OrbitData.ParentGUID = value;
-            }
+            get => OrbitData.ParentGUID;
+            set => OrbitData.ParentGUID = value;
         }
 
         /// <summary>
@@ -181,7 +171,7 @@ namespace HELLION.DataStructures.UI
         /// </remarks>
         public double SemiMajorAxis
         {
-            get => (double)OrbitData?.SemiMajorAxis;
+            get => OrbitData.SemiMajorAxis;
         }
 
         /// <summary>
@@ -189,7 +179,7 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         public double Inclination
         {
-            get => (double)OrbitData?.Inclination;
+            get => OrbitData.Inclination;
         }
 
         /// <summary>
@@ -197,22 +187,21 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         public int Type { get; set; } = 0;
 
-
         /// <summary>
         /// If this ship/module is docked TO another, the other ship's 
         /// GUID will be populated here
         /// </summary>
-        public long DockedToShipGUID { get; set; } = 0;
+        public long? DockedToShipGUID { get; set; } = null;
 
         /// <summary>
         /// Which local port is in use to dock to the other ship.
         /// </summary>
-        public int DockedPortID { get; set; } = 0;
+        public int? DockedPortID { get; set; } = null;
 
         /// <summary>
         /// Which port on the other ship is docked to this ship.
         /// </summary>
-        public int DockedToPortID { get; set; } = 0;
+        public int? DockedToPortID { get; set; } = null;
 
         /// <summary>
         /// Gets the current object's parent Celestial Body.
@@ -226,7 +215,7 @@ namespace HELLION.DataStructures.UI
                 {
                     // We're at the Solar System View Root Node, return this
                     if (GUID == -1) return this;
-                    throw new NullReferenceException("parent was null.");
+                    return null;
                 }
                 else
                 {
@@ -238,7 +227,7 @@ namespace HELLION.DataStructures.UI
                         // This node's parent was a celestial body, return it.
                         return parent;
                     }
-                    else return parent.ParentCelestialBody;
+                    return parent.ParentCelestialBody;
                 }
             }
         }
@@ -297,11 +286,7 @@ namespace HELLION.DataStructures.UI
             return sb.ToString();
         }
 
-
         #endregion
 
-
-
     }
-
 }

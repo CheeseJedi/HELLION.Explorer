@@ -147,7 +147,7 @@ namespace HELLION.DataStructures.Document
                 case Base_TN_NodeType.Player:
 
                     // Set up the find key
-                    string findKey = "";
+                    string findKey = String.Empty;
                     switch (nodeType)
                     {
                         case Base_TN_NodeType.Asteroid:
@@ -160,7 +160,7 @@ namespace HELLION.DataStructures.Document
                             findKey = "Players";
                             break;
                     }
-                    if (findKey == "") throw new Exception("findKey was empty.");
+                    if (findKey == String.Empty) throw new Exception("findKey was empty.");
 
                     TreeNode[] tmpMatches = GameData.SaveFile.RootNode.Nodes.Find(findKey, searchAllChildren: false);
 

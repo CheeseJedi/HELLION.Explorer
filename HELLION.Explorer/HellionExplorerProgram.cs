@@ -219,8 +219,8 @@ namespace HELLION.Explorer
             if (arguments.Length > 0)
             {
                 // There are arguments 
-                string saveFilePath = "";
-                string dataFolderPath = "";
+                string saveFilePath = String.Empty;
+                string dataFolderPath = String.Empty;
                 string helpText = Application.ProductName + ".exe [<full file name of .save file to open>] [/data <full path to the dedi's Data folder>]";
 
                 for (int i = 0; i < arguments.Length; i++)
@@ -229,8 +229,14 @@ namespace HELLION.Explorer
                     if (arguments[i].EndsWith(".save", StringComparison.CurrentCultureIgnoreCase))
                     {
                         // It's a .save file
-                        saveFilePath = arguments[i];
-                        Console.WriteLine("Argument: Save File " + saveFilePath);
+
+                        FileInfo tempPath = new FileInfo(arguments[i]);
+                        Console.WriteLine("Argument: Save File {0}", tempPath.FullName);
+                        if (tempPath.Exists)
+                        {
+                            saveFilePath = tempPath.FullName;
+                        }
+                        else Console.WriteLine("File {0} not found.", saveFilePath);
                     }
                     else if (arguments[i].Equals("/data", StringComparison.CurrentCultureIgnoreCase))
                     {
@@ -251,13 +257,13 @@ namespace HELLION.Explorer
                     }
                 }
 
-                if (dataFolderPath != "")
+                if (dataFolderPath != String.Empty)
                 {
                     // Set the Data folder
                     SetGameDataFolder(dataFolderPath);
                 }
 
-                if (saveFilePath != "")
+                if (saveFilePath != String.Empty)
                 {
                     // Open the .save file
                     FileOpen(saveFilePath);
@@ -399,7 +405,7 @@ namespace HELLION.Explorer
             }
 
             // If the sFileName is set, check the file exists otherwise prompt the user to select a file
-            if (sFileName == "")
+            if (sFileName == String.Empty)
             {
                 // Create a new OpenFileDialog box and set some parameters
                 var openFileDialog1 = new OpenFileDialog()
@@ -762,7 +768,7 @@ namespace HELLION.Explorer
         /// </summary>
         internal static void SetGameDataFolder(string passedFolder = "")
         {
-            if (passedFolder == "")
+            if (passedFolder == String.Empty)
             {
                 // We weren't passed a folder so prompt the user to select one.
                 MessageBox.Show("Please use the following folder browser window to select the location of the game Data folder." + Environment.NewLine + Environment.NewLine +
@@ -821,7 +827,7 @@ namespace HELLION.Explorer
             string StoredDataFolderPath = Properties.HELLIONExplorer.Default.sGameDataFolder.Trim();
 
             // Check GameDataFolder path in settings is not null or empty
-            if (StoredDataFolderPath == null || StoredDataFolderPath == "") return false;
+            if (StoredDataFolderPath == null || StoredDataFolderPath == String.Empty) return false;
 
             // Check the folder exists
             if (!Directory.Exists(StoredDataFolderPath)) return false;
@@ -858,7 +864,7 @@ namespace HELLION.Explorer
             // Add the product name
             sb.Append(Application.ProductName);
 
-            if (FullFileNameHint != "")
+            if (FullFileNameHint != String.Empty)
             {
                 sb.Append(" [" + FullFileNameHint + "] ");
             }
@@ -966,8 +972,8 @@ namespace HELLION.Explorer
                             arr[2] = listItem.GetNodeCount(includeSubTrees: false).ToString();
                             arr[3] = listItem.GetNodeCount(includeSubTrees: true).ToString();
                             arr[4] = listItem.Path();
-                            arr[5] = ""; // listItem.GUID.ToString();
-                            arr[6] = ""; // nodeChild.SceneID.ToString();
+                            arr[5] = String.Empty; // listItem.GUID.ToString();
+                            arr[6] = String.Empty; // nodeChild.SceneID.ToString();
 
                             ListViewItem liNewItem = new ListViewItem(arr)
                             {
@@ -993,8 +999,8 @@ namespace HELLION.Explorer
                         arr[2] = nodeChild.GetNodeCount(includeSubTrees: false).ToString();
                         arr[3] = nodeChild.GetNodeCount(includeSubTrees: true).ToString();
                         arr[4] = nodeChild.Path();
-                        arr[5] = ""; // nodeChild.GUID.ToString();
-                        arr[6] = ""; // nodeChild.SceneID.ToString();
+                        arr[5] = String.Empty; // nodeChild.GUID.ToString();
+                        arr[6] = String.Empty; // nodeChild.SceneID.ToString();
 
                         ListViewItem liNewItem = new ListViewItem(arr)
                         {
@@ -1222,7 +1228,7 @@ namespace HELLION.Explorer
             Application.SetCompatibleTextRenderingDefault(false);
 
 
-            try
+            //try
             {
                 // Initialise the main form
                 MainForm = new MainForm();
@@ -1260,12 +1266,13 @@ namespace HELLION.Explorer
 
                 ProcessCommandLineArguments(args);
 
+
                 // Start the Windows Forms message loop
                 Application.Run(); // Application.Run(new MainForm());
             }
-            catch (Exception ex)
+            //catch (Exception ex)
             {
-                Debug.Print("An exception occurred." + Environment.NewLine + ex);
+                //Debug.Print("An exception occurred." + Environment.NewLine + ex);
             }
         }
 
