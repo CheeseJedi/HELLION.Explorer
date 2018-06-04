@@ -22,17 +22,16 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Default constructor, not used directly but used by derived classes.
         /// </summary>
-        public Json_File(Json_File_Parent ownerObject)
+        public Json_File(IParent_Json_File ownerObject)
         {
             OwnerObject = ownerObject;
-            if (OwnerObject == null) Debug.Print("Json_File: OwnerObject was null.");
         }
 
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public Json_File(Json_File_Parent ownerObject, FileInfo passedFileInfo) : this(ownerObject) // , int populateNodeTreeDepth
+        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo) : this(ownerObject) // , int populateNodeTreeDepth
         {
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
 
@@ -52,7 +51,7 @@ namespace HELLION.DataStructures
         /// <remarks>
         /// Set by the constructor.
         /// </remarks>
-        public Json_File_Parent OwnerObject { get; protected set; } = null;
+        public IParent_Json_File OwnerObject { get; protected set; } = null;
 
         /// <summary>
         /// FileInfo object that represents the file on disk that is to be worked with.
@@ -227,7 +226,7 @@ namespace HELLION.DataStructures
                 else
                 {
                     // We should have some data
-                    Console.WriteLine("{0} loaded; primary token detected as {1}, {2} child token(s) detected.", File.Name, _jData.Type, _jData.Count());
+                    Console.WriteLine("File loaded: {0} ({1}, {2} child tokens).", File.Name, _jData.Type, _jData.Count());
 
                     // Set the IsLoaded flag to true
                     IsLoaded = true;
@@ -379,6 +378,6 @@ namespace HELLION.DataStructures
     /// <summary>
     /// Defines an interface to allow different classes to be a parent of a Json_File
     /// </summary>
-    public interface Json_File_Parent
+    public interface IParent_Json_File
     { }
 }

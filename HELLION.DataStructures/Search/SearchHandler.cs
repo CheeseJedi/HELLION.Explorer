@@ -12,7 +12,7 @@ namespace HELLION.DataStructures.Search
     /// <summary>
     /// A class to handle searches and present search results.
     /// </summary>
-    public class SearchHandler : Iparent_Base_TN
+    public class SearchHandler : IParent_Base_TN
     {
         /// <summary>
         /// Defines the available search operator types.
@@ -110,7 +110,7 @@ namespace HELLION.DataStructures.Search
         /// <summary>
         /// Implements a search operator that can execute a query and populate a list of results.
         /// </summary>
-        public class HESearchOperator : Iparent_Base_TN
+        public class HESearchOperator : IParent_Base_TN
         {
             /// <summary>
             /// Constructor that takes a SearchHandler reference to it's parent.

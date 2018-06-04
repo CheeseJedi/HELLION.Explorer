@@ -11,7 +11,7 @@ namespace HELLION.DataStructures
     /// Defines an object that contains a dictionary of HEJsonBaseFiles representing the 
     /// json files in a specified folder.
     /// </summary>
-    public class Json_FileCollection : Json_File_Parent, Iparent_Base_TN
+    public class Json_FileCollection : IParent_Json_File, IParent_Base_TN
     {
         public Json_FileCollection()
         {
@@ -23,7 +23,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="autoPopulateTree"></param>
-        public Json_FileCollection(Json_File_Parent passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
+        public Json_FileCollection(IParent_Json_File passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
         {
             // Set up the data dictionary
             DataDictionary = new Dictionary<string, Json_File_UI>();
@@ -33,8 +33,8 @@ namespace HELLION.DataStructures
             DataDirectoryInfo = passedDirectoryInfo ?? throw new NullReferenceException("passedDirectoryInfo was null.");
             if (!DataDirectoryInfo.Exists) throw new DirectoryNotFoundException("DataDirectoryInfo reports the passed folder doesn't exist.");
 
-            RootNode = new Base_TN(ownerObject: this, nodeName: DataDirectoryInfo.Name,
-                nodeType: Base_TN_NodeType.DataFolder);
+            RootNode = new Base_TN(ownerObject: this, nodeType: Base_TN_NodeType.DataFolder,
+                nodeName: DataDirectoryInfo.Name);
 
             Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
         }
@@ -42,7 +42,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// A reference to the 'Owning' object.
         /// </summary>
-        public Json_File_Parent OwnerObject { get; protected set; } = null;
+        public IParent_Json_File OwnerObject { get; protected set; } = null;
             
         /// <summary>
         /// The Data Dictionary holds Json_File_UI objects, with the file name as the key.
@@ -58,7 +58,7 @@ namespace HELLION.DataStructures
         /// The root node of the Static Data file collection - each data file will have it's
         /// own tree attached as child nodes to this node.
         /// </summary>
-        public Base_TN RootNode { get; set; } = null;
+        public Base_TN RootNode { get; protected set; } = null;
 
         /// <summary>
         /// Public property to read the isLoaded bool.
@@ -91,16 +91,8 @@ namespace HELLION.DataStructures
             if (!DataDirectoryInfo.Exists) return false;
             else
             {
-                // Set up a list to monitor tasks running asynchronously
-                //List<Task> tasks = new List<Task>();
-
-                //Json_File_UI tempFile = null;
-
                 foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
                 {
-                    Debug.Print("File evaluated {0}", dataFile.Name);
-
-                    
                     // Create a new Json_File_UI and populate the path.
                     Json_File_UI tempJsonFile = new Json_File_UI(this, dataFile, PopulateNodeTreeDepth);
                     // Add the file to the Data Dictionary 
@@ -108,12 +100,6 @@ namespace HELLION.DataStructures
 
                     if (tempJsonFile.IsLoaded && !LoadError)
                     {
-                        /*
-                        if (PopulateNodeTreeDepth > 0)
-                        {
-                            tempJsonFile.RootNode.CreateChildNodesFromjData(PopulateNodeTreeDepth);
-                        }
-                        */
                         if (tempJsonFile.RootNode == null) throw new Exception();
                         else RootNode.Nodes.Add(tempJsonFile.RootNode);
                     }

@@ -12,7 +12,7 @@ namespace HELLION.DataStructures.Blueprints
     /// <summary>
     /// 
     /// </summary>
-    public class StructureDefinitions_File : StationBlueprint_File, Json_File_Parent
+    public class StructureDefinitions_File : StationBlueprint_File, IParent_Json_File
     {
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
@@ -90,7 +90,7 @@ namespace HELLION.DataStructures.Blueprints
                 // Loop through the jtStructure's DockingPort collection.
                 foreach (JToken jtDockingPort in jtStructure["DockingPorts"])
                 {
-                    HEBlueprintDockingPort newDockingPortDefinition = new HEBlueprintDockingPort
+                    BlueprintDockingPort newDockingPortDefinition = new BlueprintDockingPort
                     {
                         // OrderID is critical as this is what the game uses as the key to match
                         // the ports in-game.

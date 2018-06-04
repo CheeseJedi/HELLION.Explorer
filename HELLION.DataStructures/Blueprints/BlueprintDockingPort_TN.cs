@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using HELLION.DataStructures.UI;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
@@ -7,10 +8,17 @@ namespace HELLION.DataStructures.Blueprints
 {
     public class BlueprintDockingPort_TN : Blueprint_TN
     {
-        public BlueprintDockingPort_TN(Iparent_Base_TN passedOwner = null, string nodeName = null)
-            : base(passedOwner, nodeName, Base_TN_NodeType.BlueprintDockingPort)
+        public BlueprintDockingPort_TN(IParent_Base_TN passedOwner = null)
+            : base(passedOwner)
         {
+            // Set NodeType
+            NodeType = Base_TN_NodeType.BlueprintDockingPort;
 
+            // Enable name auto-generation.
+            AutoGenerateName = true;
+
+            // Trigger name generation.
+            RefreshName();
         }
 
         /// <summary>
@@ -20,7 +28,9 @@ namespace HELLION.DataStructures.Blueprints
         protected override string GenerateName()
         {
             // Generate a name based on the current docking port names.
-            HEBlueprintDockingPort ownerPort = (HEBlueprintDockingPort)OwnerObject;
+            BlueprintDockingPort ownerPort = (BlueprintDockingPort)OwnerObject;
+            Debug.Print("### Docking Port Name Generation called - {0}", ownerPort.PortName);
+
             return ownerPort.PortName.ToString() ?? "Unspecified Docking Port";
         }
 

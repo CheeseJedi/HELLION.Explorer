@@ -7,7 +7,7 @@ using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
 
 namespace HELLION.DataStructures.UI
 {
-    public class Base_TN : TreeNode, Iparent_Base_TN
+    public class Base_TN : TreeNode, IParent_Base_TN
     {
         #region Constructors
 
@@ -15,7 +15,7 @@ namespace HELLION.DataStructures.UI
         /// Default constructor that attempts to set the owner object.
         /// </summary>
         /// <param name="ownerObject"></param>
-        public Base_TN(Iparent_Base_TN ownerObject = null)
+        public Base_TN(IParent_Base_TN ownerObject = null)
         {
             OwnerObject = ownerObject;
         }
@@ -24,10 +24,11 @@ namespace HELLION.DataStructures.UI
         /// Normal constructor - requires the owner object.
         /// </summary>
         /// <param name="ownerObject"></param>
-        /// <param name="nodeName"></param>
         /// <param name="nodeType"></param>
-        public Base_TN(Iparent_Base_TN ownerObject, string nodeName = null,
-            Base_TN_NodeType nodeType = Base_TN_NodeType.Unknown) : this(ownerObject)
+        /// <param name="nodeName"></param>
+        public Base_TN(IParent_Base_TN ownerObject,
+            Base_TN_NodeType nodeType = Base_TN_NodeType.Unknown,
+            string nodeName = null) : this(ownerObject)
         {
             NodeType = nodeType;
 
@@ -50,7 +51,7 @@ namespace HELLION.DataStructures.UI
         /// <summary>
         /// Stores a reference to the owning object.
         /// </summary>
-        public Iparent_Base_TN OwnerObject { get; protected set; } = null;
+        public IParent_Base_TN OwnerObject { get; protected set; } = null;
 
         /// <summary>
         /// Redefines the Name accessor to track changes.
@@ -356,7 +357,7 @@ namespace HELLION.DataStructures.UI
     /// <summary>
     /// Defines an interface for the parent object of the Base_TN.
     /// </summary>
-    public interface Iparent_Base_TN
+    public interface IParent_Base_TN
     { }
 
 }

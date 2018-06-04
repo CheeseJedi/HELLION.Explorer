@@ -20,9 +20,9 @@ namespace HELLION.DataStructures.UI
         /// <param name="nodeType">Base_TN_NodeType of the new node; defaults to Unknown.</param>
         /// <param name="nodeText">The Text (DisplayName) of the node - uses the Name if omitted.</param>
         /// <param name="nodeToolTipText">The ToolTip text displayed; defaults to the nodeText if omitted.</param>
-        public SolarSystem_TN(Iparent_Base_TN passedOwner, string nodeName = null,
+        public SolarSystem_TN(IParent_Base_TN passedOwner, string nodeName = null,
             Base_TN_NodeType nodeType = Base_TN_NodeType.Unknown)
-            : base(passedOwner, nodeName, nodeType)
+            : base(passedOwner, nodeType, nodeName)
         {
             OrbitData = new OrbitalData();
         }

@@ -1,18 +1,26 @@
 ﻿using System;
 using System.Text;
 using HELLION.DataStructures.UI;
+using HELLION.DataStructures.Utilities;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.DataStructures.Blueprints
 {
     public class BlueprintStructure_TN : Blueprint_TN
     {
-        public BlueprintStructure_TN(Iparent_Base_TN passedOwner = null, string nodeName = null)
-            : base(passedOwner, nodeName, Base_TN_NodeType.BlueprintStructure)
+        public BlueprintStructure_TN(IParent_Base_TN passedOwner = null)
+            : base(passedOwner)
         {
+            // Set NodeType
+            NodeType = Base_TN_NodeType.BlueprintStructure;
 
+            // Enable name auto-generation.
+            AutoGenerateName = true;
+
+            // Trigger name generation.
+            RefreshName();
         }
-        
+
         /// <summary>
         /// Generates a name for the TreeNode.
         /// </summary>
@@ -21,7 +29,7 @@ namespace HELLION.DataStructures.Blueprints
         {
             // Generate a name based on the current structure type.
             BlueprintStructure ownerStructure = (BlueprintStructure)OwnerObject;
-            return ownerStructure.SceneID.ToString() ??  "Unspecified Structure "; // + DateTime.Now.ToString();
+            return ownerStructure.SceneID.GetEnumDescription() ??  "Unspecified Structure";
         }
 
         /// <summary>
@@ -34,8 +42,6 @@ namespace HELLION.DataStructures.Blueprints
 
             sb.Append("Name: " + Name + Environment.NewLine);
             sb.Append("Text: " + Text + Environment.NewLine);
-
-
 
             // sb.Append("NodeType: " + NodeType + Environment.NewLine);
             // sb.Append("FullPath: " + FullPath + Environment.NewLine);

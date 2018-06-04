@@ -12,7 +12,7 @@ namespace HELLION.DataStructures.Document
     /// <summary>
     /// Implements the Solar System view node tree.
     /// </summary>
-    public class SolarSystem : Iparent_Base_TN
+    public class SolarSystem : IParent_Base_TN
     {
         /// <summary>
         /// Constructor that takes an GameData object and uses this as it's data source.
@@ -103,11 +103,6 @@ namespace HELLION.DataStructures.Document
                         {
                             Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown;
 
-                            // FINDME FIXME
-
-                            Debug.Print("node Name/Text: " + node.Name + " / " + node.Text);
-                            //Debug.Print("node.Jdata" + Environment.NewLine + (JObject)node.Jdata.ToString());
-
                             JObject obj = (JObject)node.JData;
 
                             if (obj == null) throw new NullReferenceException("Adding CelestialBodies - obj was null.");
@@ -169,7 +164,7 @@ namespace HELLION.DataStructures.Document
                     {
                         sectionRootNode = (Json_TN)tmpMatches?[0];
                     }
-                    else Debug.Print("sectionRootNode was null.");
+                    //else Debug.Print("sectionRootNode was null.");
 
                     Json_TN arrayRootNode = null;
                     if (sectionRootNode?.Nodes.Count > 0)

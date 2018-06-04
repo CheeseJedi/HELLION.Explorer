@@ -18,6 +18,8 @@ namespace HELLION.DataStructures.Document
     /// </remarks>
     public class DocumentWorkspace
     {
+        #region Constructors
+
         /// <summary>
         /// Constructor that takes a FileInfo and a DirectoryInfo.
         /// </summary>
@@ -27,7 +29,8 @@ namespace HELLION.DataStructures.Document
         /// <param name="passedListView"></param>
         /// <param name="passedTreeView"></param>
         /// <param name="passedImageList"></param>
-        public DocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo, TreeView passedTreeView, ListView passedListView, EmbeddedImages_ImageList passedHEImageList)
+        public DocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo,
+            TreeView passedTreeView, ListView passedListView, EmbeddedImages_ImageList passedHEImageList)
         {
             // Initialise the GameData, SolarSystem and SearchHandler objects.
             if (passedFileInfo == null || passedDirectoryInfo == null
@@ -41,16 +44,20 @@ namespace HELLION.DataStructures.Document
                 Blueprints = new BlueprintsHandler_UI();
 
                 // Add the parameters related to the MainForm controls.
-                mainFormTreeView = passedTreeView ?? throw new NullReferenceException("passedTreeView was null.");
-                mainFormListView = passedListView ?? throw new NullReferenceException("passedListView was null.");
-                mainProgramHEImageList = passedHEImageList ?? throw new NullReferenceException("passedHEImageList was null.");
+                _mainFormTreeView = passedTreeView ?? throw new NullReferenceException("passedTreeView was null.");
+                _mainFormListView = passedListView ?? throw new NullReferenceException("passedListView was null.");
+                _mainProgramHEImageList = passedHEImageList ?? throw new NullReferenceException("passedHEImageList was null.");
 
-                InitialiseTreeView(mainFormTreeView, mainProgramHEImageList.IconImageList);
-                InitialiseListView(mainFormListView, mainProgramHEImageList.IconImageList);
+                InitialiseTreeView(_mainFormTreeView, _mainProgramHEImageList.IconImageList);
+                InitialiseListView(_mainFormListView, _mainProgramHEImageList.IconImageList);
 
                 IsWorkspaceReady = true;
             }
         }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// The GameData object that is responsible for loading the save file and all the static data files and then
@@ -104,20 +111,9 @@ namespace HELLION.DataStructures.Document
         /// </summary>
         public bool LogToDebug { get; set; } = false;
 
-        /// <summary>
-        /// Stores a reference to the Main Form's tree view control.
-        /// </summary>
-        private TreeView mainFormTreeView = null;
+        #endregion
 
-        /// <summary>
-        /// Stores a reference to the Main Form's list view control.
-        /// </summary>
-        private ListView mainFormListView = null;
-
-        /// <summary>
-        /// Stores a reference to the main program's ImageList for icon use.
-        /// </summary>
-        private EmbeddedImages_ImageList mainProgramHEImageList = null;
+        #region Methods
 
         /// <summary>
         /// Handles closing of the document workspace.
@@ -184,6 +180,27 @@ namespace HELLION.DataStructures.Document
             passedListView.Columns.Add("GUID", 50, HorizontalAlignment.Right);
             passedListView.Columns.Add("SceneID", 30, HorizontalAlignment.Right);
         }
+
+        #endregion
+
+        #region Fields
+
+        /// <summary>
+        /// Stores a reference to the Main Form's tree view control.
+        /// </summary>
+        private TreeView _mainFormTreeView = null;
+
+        /// <summary>
+        /// Stores a reference to the Main Form's list view control.
+        /// </summary>
+        private ListView _mainFormListView = null;
+
+        /// <summary>
+        /// Stores a reference to the main program's ImageList for icon use.
+        /// </summary>
+        private EmbeddedImages_ImageList _mainProgramHEImageList = null;
+
+        #endregion
 
     }
 }

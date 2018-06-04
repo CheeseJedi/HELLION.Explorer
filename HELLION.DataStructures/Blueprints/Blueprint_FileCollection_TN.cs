@@ -7,7 +7,7 @@ namespace HELLION.DataStructures.Blueprints
     {
         public Blueprint_FileCollection_TN(Blueprint_FileCollection passedOwner = null, string nodeName = null)
              //, string nodeText = null, string nodeToolTipText = null)
-            : base(passedOwner, nodeName, Base_TN_NodeType.BlueprintCollection) //, nodeText, nodeToolTipText)
+            : base(passedOwner, Base_TN_NodeType.BlueprintCollection, nodeName) //, nodeText, nodeToolTipText)
         {
 
         }

@@ -87,10 +87,10 @@ namespace HELLION.Explorer
                     {
                         // Figure out whether it's a Structure node or a Docking Port node.
                         Type parentType = _selectedPrimaryStructureNode.OwnerObject.GetType();
-                        if (parentType == typeof(StationBlueprint.HEBlueprintDockingPort))
+                        if (parentType == typeof(StationBlueprint.BlueprintDockingPort))
                         {
                             // Docking Port node, need find the parent structure.
-                            SelectedPrimaryDockingPort = (StationBlueprint.HEBlueprintDockingPort)_selectedPrimaryStructureNode.OwnerObject;
+                            SelectedPrimaryDockingPort = (StationBlueprint.BlueprintDockingPort)_selectedPrimaryStructureNode.OwnerObject;
 
                             SelectedPrimaryStructure = SelectedPrimaryDockingPort?.OwnerObject;
 
@@ -143,10 +143,10 @@ namespace HELLION.Explorer
                     {
                         // Figure out whether it's a Structure node or a Docking Port node.
                         Type parentType = _selectedSecondaryStructureNode.OwnerObject.GetType();
-                        if (parentType == typeof(StationBlueprint.HEBlueprintDockingPort))
+                        if (parentType == typeof(StationBlueprint.BlueprintDockingPort))
                         {
                             // Docking Port node, need find the parent structure.
-                            SelectedSecondaryDockingPort = (StationBlueprint.HEBlueprintDockingPort)_selectedSecondaryStructureNode.OwnerObject;
+                            SelectedSecondaryDockingPort = (StationBlueprint.BlueprintDockingPort)_selectedSecondaryStructureNode.OwnerObject;
 
                             SelectedSecondaryStructure = SelectedSecondaryDockingPort?.OwnerObject;
 
@@ -212,7 +212,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the currently selected docking port.
         /// </summary>
-        public StationBlueprint.HEBlueprintDockingPort SelectedPrimaryDockingPort
+        public StationBlueprint.BlueprintDockingPort SelectedPrimaryDockingPort
         {
             get => _currentDockingPort;
             private set
@@ -291,7 +291,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Represents the selected destination structures target docking port for docking.
         /// </summary>
-        public StationBlueprint.HEBlueprintDockingPort SelectedSecondaryDockingPort
+        public StationBlueprint.BlueprintDockingPort SelectedSecondaryDockingPort
         {
             get => _destinationDockingPort;
             private set
@@ -599,8 +599,8 @@ namespace HELLION.Explorer
 
         private void buttonDockPort_Click(object sender, EventArgs e)
         {
-            HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
-            HEBlueprintDockingPort b = SelectedSecondaryDockingPort ?? throw new NullReferenceException("SelectedSecondaryDockingPort was null.");
+            BlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
+            BlueprintDockingPort b = SelectedSecondaryDockingPort ?? throw new NullReferenceException("SelectedSecondaryDockingPort was null.");
 
             DockingResultStatus result = blueprint.DockPorts(a, b);
 
@@ -612,7 +612,7 @@ namespace HELLION.Explorer
 
         private void buttonUndockPort_Click(object sender, EventArgs e)
         {
-            HEBlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
+            BlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
 
             DockingResultStatus result = blueprint.UndockPort(a);
 
@@ -755,9 +755,9 @@ namespace HELLION.Explorer
         private Blueprint_TN _selectedPrimaryStructureNode = null;
         private Blueprint_TN _selectedSecondaryStructureNode = null;
         private StationBlueprint.BlueprintStructure _currentStructure = null;
-        private StationBlueprint.HEBlueprintDockingPort _currentDockingPort = null;
+        private StationBlueprint.BlueprintDockingPort _currentDockingPort = null;
         private StationBlueprint.BlueprintStructure _destinationStructure = null;
-        private StationBlueprint.HEBlueprintDockingPort _destinationDockingPort = null;
+        private StationBlueprint.BlueprintDockingPort _destinationDockingPort = null;
 
         #endregion
 

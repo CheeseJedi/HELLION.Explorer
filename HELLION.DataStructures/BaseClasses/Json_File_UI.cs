@@ -11,7 +11,7 @@ namespace HELLION.DataStructures
     /// This is a re-write intended to encapsulate more of the functionality of building node trees
     /// of the correct type and enabling lazy population of node tree branches.
     /// </remarks>
-    public class Json_File_UI : Json_File, Iparent_Base_TN
+    public class Json_File_UI : Json_File, IParent_Base_TN
     {
         #region Constructors
 
@@ -19,7 +19,7 @@ namespace HELLION.DataStructures
         /// Basic constructor.
         /// </summary>
         /// <param name="ownerObject"></param>
-        public Json_File_UI(Json_File_Parent ownerObject) : base(ownerObject)
+        public Json_File_UI(IParent_Json_File ownerObject) : base(ownerObject)
         {
 
         }
@@ -28,10 +28,10 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public Json_File_UI(Json_File_Parent ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
+        public Json_File_UI(IParent_Json_File ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
             : base(ownerObject, passedFileInfo)
         {
-            RootNode = new Json_TN(ownerObject: this, nodeName: File.Name, newNodeType: Base_TN_NodeType.DataFile);
+            RootNode = new Json_TN(ownerObject: this, newNodeType: Base_TN_NodeType.DataFile, nodeName: File.Name);
 
             if (!File.Exists) throw new FileNotFoundException();
             else

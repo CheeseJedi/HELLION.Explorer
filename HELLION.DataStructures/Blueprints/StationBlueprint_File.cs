@@ -19,14 +19,14 @@ namespace HELLION.DataStructures.Blueprints
         /// Basic constructor - attempts to set the parent.
         /// </summary>
         /// <param name="passedParent"></param>
-        public StationBlueprint_File(Json_File_Parent passedParent) : base(passedParent)
+        public StationBlueprint_File(IParent_Json_File passedParent) : base(passedParent)
         {
             // Re-assign the OwnerObject (the base class stores this as an object,
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent; // ?? throw new NullReferenceException();
 
-            RootNode = new Blueprint_TN(passedOwner: this, nodeName: "Unsaved",
-                newNodeType: Base_TN_NodeType.Blueprint); //, nodeToolTipText: "File not yet saved");
+            RootNode = new Blueprint_TN(passedOwner: this, newNodeType: Base_TN_NodeType.Blueprint,
+                nodeName: "Unsaved"); //, nodeToolTipText: "File not yet saved");
 
             DataViewRootNode = new Json_TN(ownerObject: this, nodeName: "Data View");
                 //newNodeType: Base_TN_NodeType.BlueprintDataView, nodeToolTipText:
@@ -39,11 +39,11 @@ namespace HELLION.DataStructures.Blueprints
         /// General use constructor - takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public StationBlueprint_File(Json_File_Parent passedParent, FileInfo structDefsFileInfo, int populateNodeTreeDepth = 0) : this(passedParent)
+        public StationBlueprint_File(IParent_Json_File passedParent, FileInfo structDefsFileInfo, int populateNodeTreeDepth = 0) : this(passedParent)
         {
             File = structDefsFileInfo ?? throw new NullReferenceException();
-            RootNode = new Blueprint_TN(passedOwner: this, nodeName: File.Name,
-                newNodeType: Base_TN_NodeType.Blueprint); //, nodeToolTipText: File.FullName);
+            RootNode = new Blueprint_TN(passedOwner: this, newNodeType: Base_TN_NodeType.Blueprint,
+                nodeName: File.Name); //, nodeToolTipText: File.FullName);
 
             if (File.Exists) LoadFile(populateNodeTreeDepth);
             else Debug.Print("File {0} doesn't exist", File.FullName);
@@ -56,7 +56,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <param name="passedParent"></param>
         /// <param name="passedFileInfo"></param>
         /// <param name="structuresJsonFile"></param>
-        public StationBlueprint_File(Json_File_Parent passedParent, FileInfo passedFileInfo, Json_File_UI structuresJsonFile, bool generateSDfile = false) : base(passedParent)
+        public StationBlueprint_File(IParent_Json_File passedParent, FileInfo passedFileInfo, Json_File_UI structuresJsonFile, bool generateSDfile = false) : base(passedParent)
         {
             File = passedFileInfo; // ?? throw new NullReferenceException("passedFileInfo was null.");
             // Check the reference to the Static Data's Structures.json file.
@@ -75,7 +75,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <summary>
         /// Stores a reference to the parent object, if set using the constructor.
         /// </summary>
-        public new Json_File_Parent OwnerObject { get; protected set; }
+        public new IParent_Json_File OwnerObject { get; protected set; }
 
         /// <summary>
         /// This class overrides the type of root node to represent a blueprint.
@@ -162,13 +162,9 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public void DeserialiseToBlueprintObject()
         {
-            Debug.Print("Got to Deserialisation.");
             BlueprintObject = _jData.ToObject<StationBlueprint>();
             BlueprintObject.OwnerObject = this;
-            //BlueprintObject.StructureDefinitions = ;
             BlueprintObject.PostDeserialisationInit();
-            Debug.Print("BlueprintObject.");
-
         }
 
         /// <summary>

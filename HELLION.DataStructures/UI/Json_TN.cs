@@ -20,16 +20,16 @@ namespace HELLION.DataStructures.UI
         /// <param name="nodeType">Type of the new node (Base_TN_NodeType enum)</param>
         /// <param name="nodeText">Text of the new node (Display Name). If not specified this defaults to the node's name.</param>
         /// <param name="nodeToolTipText">Tool tip text of the new node. If not specified this defaults to the node's text.</param>
-        public Json_TN(Iparent_Base_TN ownerObject, string nodeName = null, Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown)
-            : base(ownerObject, nodeName, newNodeType)
+        public Json_TN(IParent_Base_TN ownerObject, Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown, string nodeName = null)
+            : base(ownerObject, newNodeType, nodeName)
         { }
 
         /// <summary>
-        /// Test new constructor that takes raw Json and formats the Json_TN appropriately.
+        /// Constructor that takes an Owner and raw Json and formats the Json_TN appropriately.
         /// </summary>
         /// <param name="json"></param>
         /// <param name="nodeName">Accepts a passed Name, if not provided a name will be auto-generated.</param>
-        public Json_TN(Iparent_Base_TN ownerObject, JToken passedJson, string nodeName = null) : base(ownerObject)
+        public Json_TN(IParent_Base_TN ownerObject, JToken passedJson, string nodeName = null) : base(ownerObject)
         {
             // Enable auto-name generation.
             AutoGenerateName = true;

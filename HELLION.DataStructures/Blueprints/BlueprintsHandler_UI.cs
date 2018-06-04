@@ -4,7 +4,7 @@ using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures.Blueprints
 {
-    public class BlueprintsHandler_UI : BlueprintsHandler, Iparent_Base_TN
+    public class BlueprintsHandler_UI : BlueprintsHandler, IParent_Base_TN
     {
         /// <summary>
         /// Default constructor.

@@ -9,8 +9,10 @@ namespace HELLION.DataStructures.Document
     /// Implements the Game Data view node tree, comprised of the sub-trees
     /// of the Save File and each of the .json files in the Data folder (the Static Data).
     /// </summary>
-    public class GameData : Json_File_Parent, Iparent_Base_TN
+    public class GameData : IParent_Json_File, IParent_Base_TN
     {
+        #region Constructors
+
         /// <summary>
         /// Constructor that takes a FileInfo and a DirectoryInfo representing the save file
         /// and the Data folder.
@@ -19,17 +21,14 @@ namespace HELLION.DataStructures.Document
         /// <param name="StaticDataFolderInfo">The DirectoryInfo representing the Data folder.</param>
         public GameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
         {
-            RootNode = new Base_TN(ownerObject: this, nodeName: "Game Data", nodeType: Base_TN_NodeType.DataView);
+            RootNode = new Base_TN(ownerObject: this, nodeType: Base_TN_NodeType.DataView, nodeName: "Game Data");
             if (SaveFileInfo != null && SaveFileInfo.Exists)
             {
-                Debug.Print("File evaluated {0}", SaveFileInfo.Name);
-
-                // FINDME
+                // Create new save file object.
                 SaveFile = new GameSave_Json_File(this, SaveFileInfo, populateNodeTreeDepth: 5);
 
                 // Pre-load in several levels of node.
-                Json_TN rootNode = (Json_TN)SaveFile.RootNode;
-                rootNode.CreateChildNodesFromjData(3);
+                ((Json_TN)SaveFile.RootNode).CreateChildNodesFromjData(3);
 
                 if (SaveFile.RootNode == null) throw new Exception("SaveFile rootNode was null");
                 else RootNode.Nodes.Add(SaveFile.RootNode);
@@ -42,6 +41,10 @@ namespace HELLION.DataStructures.Document
                 else RootNode.Nodes.Add(StaticData.RootNode);
             }
         }
+
+        #endregion
+
+        #region Properties
 
         /// <summary>
         /// Public property to get the root node of the Game Data tree.
@@ -60,7 +63,9 @@ namespace HELLION.DataStructures.Document
         /// </summary>
         public Json_FileCollection StaticData { get; private set; } = null;
 
+        #endregion
 
+        #region Methods
 
         /// <summary>
         /// Handles closing this object and sub-objects that support being closed.
@@ -84,5 +89,6 @@ namespace HELLION.DataStructures.Document
             return closeSuccess;
         }
 
+        #endregion
     }
 }
