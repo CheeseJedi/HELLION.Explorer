@@ -10,7 +10,7 @@ using static HELLION.DataStructures.StaticData.DockingPortHelper;
 namespace HELLION.DataStructures.Blueprints
 {
     /// <summary>
-    /// 
+    /// A derived class for handling the StructureDefinitions.json file, a special-case blueprint file.
     /// </summary>
     public class StructureDefinitions_File : StationBlueprint_File, IParent_Json_File
     {

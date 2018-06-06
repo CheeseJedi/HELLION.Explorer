@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.StaticData;
+using HELLION.DataStructures.UI;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.StationBlueprintEditor
@@ -124,7 +125,7 @@ namespace HELLION.StationBlueprintEditor
         /// <summary>
         /// Represents the currently selected tree node in the Primary Structure TreeView.
         /// </summary>
-        public Blueprint_TN SelectedPrimaryStructureNode
+        public Base_TN SelectedPrimaryStructureNode
         {
             get => _selectedPrimaryStructureNode;
             set
@@ -180,7 +181,7 @@ namespace HELLION.StationBlueprintEditor
         /// <summary>
         /// Represents the currently selected tree node in the Secondary Structures TreeView.
         /// </summary>
-        public Blueprint_TN SelectedSecondaryStructureNode
+        public Base_TN SelectedSecondaryStructureNode
         {
             get => _selectedSecondaryStructureNode;
             set
@@ -650,7 +651,7 @@ namespace HELLION.StationBlueprintEditor
         private void treeViewPrimaryStructure_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            SelectedPrimaryStructureNode = (Blueprint_TN)treeViewPrimaryStructure.SelectedNode;
+            SelectedPrimaryStructureNode = (Base_TN)treeViewPrimaryStructure.SelectedNode;
         }
 
         /// <summary>
@@ -661,7 +662,7 @@ namespace HELLION.StationBlueprintEditor
         private void treeViewSecondaryStructures_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // Update the info display for the selected item.
-            SelectedSecondaryStructureNode = (Blueprint_TN)treeViewSecondaryStructures.SelectedNode;
+            SelectedSecondaryStructureNode = (Base_TN)treeViewSecondaryStructures.SelectedNode;
         }
 
         /// <summary>
@@ -780,8 +781,8 @@ namespace HELLION.StationBlueprintEditor
         #region Fields
 
         private string FormTitleText = null;
-        private Blueprint_TN _selectedPrimaryStructureNode = null;
-        private Blueprint_TN _selectedSecondaryStructureNode = null;
+        private Base_TN _selectedPrimaryStructureNode = null;
+        private Base_TN _selectedSecondaryStructureNode = null;
         private BlueprintStructure _currentStructure = null;
         private BlueprintDockingPort _currentDockingPort = null;
         private BlueprintStructure _destinationStructure = null;

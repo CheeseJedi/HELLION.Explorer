@@ -367,6 +367,7 @@ namespace HELLION.CrewSync
 #endif
             Logging.WriteLine("Part of HELLION.Explorer - https://github.com/CheeseJedi/HELLION.Explorer");
 
+            // Process the command line arguments. If there's an issue (returned false) then exit.
             if (!ProcessCommandLineArguments(args)) return;
 
             Logging.WriteLine("Loading save file...");

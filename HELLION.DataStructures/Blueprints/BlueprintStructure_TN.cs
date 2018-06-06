@@ -6,7 +6,7 @@ using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.DataStructures.Blueprints
 {
-    public class BlueprintStructure_TN : Blueprint_TN
+    public class BlueprintStructure_TN : Base_TN
     {
         public BlueprintStructure_TN(IParent_Base_TN passedOwner = null)
             : base(passedOwner)
@@ -18,7 +18,7 @@ namespace HELLION.DataStructures.Blueprints
             AutoGenerateName = true;
 
             // Trigger name generation.
-            RefreshName();
+            //RefreshName();
         }
 
         /// <summary>

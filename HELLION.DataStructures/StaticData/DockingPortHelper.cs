@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
-using HELLION.DataStructures.StaticData;
+using System.Linq;
 
 namespace HELLION.DataStructures.StaticData
 {
     public static class DockingPortHelper
     {
         /// <summary>
-        /// Defines a dictionary of modules and contains a sub-dictionary of it's docking ports.
+        /// Defines a two-layer dictionary - the upper dictionary contains modules and each contains
+        /// a sub-dictionary of it's docking ports.
         /// </summary>
         public static Dictionary<StructureSceneID, Dictionary<int, DockingPortType>> DockingPortHints
             = new Dictionary<StructureSceneID, Dictionary<int, DockingPortType>>()
@@ -151,13 +152,30 @@ namespace HELLION.DataStructures.StaticData
             // Attempt to locate the correct port Dictionary by sceneID.
             if (DockingPortHints.TryGetValue(sceneID, out Dictionary<int, DockingPortType> portDictionary))
             {
-                // We should have a Dictionary object containing the structure's port OrderIDs and Names.
+                // We should have a Dictionary object containing the structure's port OrderIDs and Names (aka types).
                 if (portDictionary.TryGetValue(orderID, out DockingPortType portType))
                 {
                     return portType;
                 }
             }
             return DockingPortType.Unspecified;
+        }
+
+        public static int? GetOrderID(StructureSceneID sceneID, DockingPortType portType)
+        {
+            // Attempt to locate the correct port Dictionary by sceneID.
+            if (DockingPortHints.TryGetValue(sceneID, out Dictionary<int, DockingPortType> portDictionary))
+            {
+                // We should have a Dictionary object containing the structure's port OrderIDs and Names (aka types).
+
+                // Look up the keys of ports with matching name (type).
+                IEnumerable<int> results = portDictionary.Keys.Where(k => portDictionary[k] == portType);
+
+                // There should only be one result otherwise there's a duplicate name in the definitions.
+                if (results.Count() < 1 || results.Count() > 1) return null;
+                return results.Single();
+            }
+            return null;
         }
 
         /// <summary>
@@ -180,8 +198,8 @@ namespace HELLION.DataStructures.StaticData
             CargoDockingPortB,
             CargoDock,  // Dockable Cargo (IC) module
             Anchor,
-            DerelictPort1,
-            DerelictPort2,
+            DerelictPort1, // This currently has no in-game representation and so is an abstract name.
+            DerelictPort2, // This currently has no in-game representation and so is an abstract name.
         }
 
     /*

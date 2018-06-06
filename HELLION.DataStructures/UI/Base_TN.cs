@@ -40,7 +40,7 @@ namespace HELLION.DataStructures.UI
             else
             {
                 AutoGenerateName = true;
-                RefreshName();
+                if (ownerObject != null) RefreshName();
             }
         }
 
@@ -186,6 +186,7 @@ namespace HELLION.DataStructures.UI
         /// <param name="includeSubTrees"></param>
         public virtual void Refresh(bool includeSubTrees = false)
         {
+            Debug.Print("____________________________________________________________");
             Debug.Print("Base_TN.Refresh called on {0} - {1}", Name, OwnerObject.ToString());
             RefreshName(includeSubTrees);
             RefreshText(includeSubTrees);

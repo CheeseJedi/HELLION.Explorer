@@ -540,6 +540,17 @@ namespace HELLION.StationBlueprintEditor
         [STAThread]
         static void Main(string[] args)
         {
+            // Make a record of the starting time.
+            DateTime operationStartTime = DateTime.Now;
+            Logging.WriteLine(Application.ProductName + " - " + Application.ProductVersion);
+#if DEBUG
+            Logging.WriteLine("Mode=Debug");
+#else
+            Logging.WriteLine("Mode=Release"); 
+#endif
+            Logging.WriteLine("Part of HELLION.Explorer - https://github.com/CheeseJedi/HELLION.Explorer");
+
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new Form1());

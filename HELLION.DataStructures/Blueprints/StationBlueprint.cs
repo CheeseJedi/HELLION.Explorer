@@ -18,7 +18,6 @@ namespace HELLION.DataStructures.Blueprints
     [JsonObject(MemberSerialization.OptIn)]
     public class StationBlueprint : IParent_Base_TN
     {
-        public const decimal StationBlueprintFormatVersion = 0.38m;
 
         #region Constructors
 
@@ -173,6 +172,7 @@ namespace HELLION.DataStructures.Blueprints
                 structure.OwnerObject = this;
                 foreach (BlueprintDockingPort port in structure.DockingPorts)
                 {
+                    port.RootNode.AutoGenerateName = true;
                     port.OwnerObject = structure;
                 }
             }
@@ -316,7 +316,10 @@ namespace HELLION.DataStructures.Blueprints
             // Set this blueprint as the owner.
             newStructure.OwnerObject = this;
             // Populate the DockingPorts collection with ports appropriate for this structure type.
-            newStructure.AddAppropriateDockingPorts();
+
+            // temporarily disabled, may need to be reworked based on the DockingPortHelper class instead
+            // of using the StructureDefinitions.json file.
+            //newStructure.AddAppropriateDockingPorts(); 
 
             // Add the new structure to the main Structures list.
             Structures.Add(newStructure);
@@ -641,6 +644,7 @@ namespace HELLION.DataStructures.Blueprints
 
         #region Fields
 
+        public const decimal StationBlueprintFormatVersion = 0.38m;
         private BlueprintStructure _primaryStructureRoot = null;
 
         #endregion
@@ -694,6 +698,7 @@ namespace HELLION.DataStructures.Blueprints
             public BlueprintStructure()
             {
                 DockingPorts = new List<BlueprintDockingPort>();
+                SceneID = StructureSceneID.Unspecified;
                 RootNode = new BlueprintStructure_TN(passedOwner: this);
             }
 
@@ -1035,7 +1040,7 @@ namespace HELLION.DataStructures.Blueprints
             /// <summary>
             /// Adds docking ports appropriate for this type of structure.
             /// </summary>
-            public void AddAppropriateDockingPorts()
+            public void aAddAppropriateDockingPorts()
             {
                 // Find the matching definition type for this structures type.
                 if (OwnerObject.StructureDefinitions == null) throw new NullReferenceException();
@@ -1121,6 +1126,9 @@ namespace HELLION.DataStructures.Blueprints
             /// </summary>
             public BlueprintDockingPort()
             {
+                // Set a Default port name.
+                //PortName = DockingPortType.Unspecified;
+
                 RootNode = new BlueprintDockingPort_TN(passedOwner: this)
                 //    nodeName: PortName.ToString())
                 {
@@ -1135,7 +1143,9 @@ namespace HELLION.DataStructures.Blueprints
             /// <param name="passedParent"></param>
             public BlueprintDockingPort(BlueprintStructure passedParent = null) : this()
             {
+                RootNode.AutoGenerateName = true;
                 OwnerObject = passedParent;
+
             }
 
             #endregion
@@ -1151,7 +1161,14 @@ namespace HELLION.DataStructures.Blueprints
                 set
                 {
                     _ownerObject = value;
+
+                    RootNode.Refresh();
                     RefreshAfterParentStructureIDChange();
+
+
+                    if (OrderID != null && OwnerObject != null) SetPortNameFromOrderID(); // This is causing an issue
+
+
                 }
             }
 
@@ -1239,8 +1256,10 @@ namespace HELLION.DataStructures.Blueprints
                     if (_portName != value)
                     {
                         _portName = value;
+
+                        SetOrderIDFromPortName();
+
                         RootNode.Refresh();
-                        //RootNode.Name = _portName.ToString();
                     }
                 }
             }
@@ -1250,13 +1269,39 @@ namespace HELLION.DataStructures.Blueprints
             /// blueprints.
             /// </summary>
             [JsonProperty]
-            public int? OrderID { get; set; } = null;
+            public int? OrderID
+            {
+                get => _orderID;
+                set
+                {
+                    if (_orderID != value && value !=null)
+                    {
+
+                        // Debug.Print("New value for OrderID on [{0}]: [{1}] (previously [{2}])", OwnerObject?.SceneName, value, _orderID);
+                        _orderID = value;
+
+                        
+                        
+                        if (OrderID != null && OwnerObject != null) SetPortNameFromOrderID(); // This is causing an issue
+                    }
+                }
+            }
 
             /// <summary>
             /// Whether this docking port is locked (and not advertised to the docking system.)
             /// </summary>
             [JsonProperty]
-            public bool? Locked { get; set; } = null;
+            public bool? Locked
+            {
+                get => _locked;
+                set
+                {
+                    if (_locked != value)
+                    {
+                        _locked = value;
+                    }
+                }
+            }
 
             /// <summary>
             /// The ID of the structure this port is docked to.
@@ -1344,16 +1389,33 @@ namespace HELLION.DataStructures.Blueprints
                 //RootNode.RefreshName();
             }
 
+            private void SetPortNameFromOrderID()
+            {
+                // Look up the correct port name for this structure and orderID
+                PortName = GetDockingPortType((StructureSceneID)OwnerObject?.SceneID, (int)OrderID);
+            }
+
+
+            private void SetOrderIDFromPortName()
+            {
+                OrderID = GetOrderID((StructureSceneID)OwnerObject?.SceneID, (DockingPortType)PortName);
+            }
+
+
+
+
             #endregion
 
             #region Fields
 
-            private DockingPortType? _portName = null;
+            private DockingPortType? _portName = null; // DockingPortType.Unspecified;
             private BlueprintStructure _ownerObject = null;
             private int? _dockedStructureID = null;
             private BlueprintStructure _dockedStructure = null;
             private DockingPortType? _dockedPortName = null;
             private BlueprintDockingPort _dockedPort = null;
+            private int? _orderID = null;
+            private bool? _locked = null;
 
             #endregion
 

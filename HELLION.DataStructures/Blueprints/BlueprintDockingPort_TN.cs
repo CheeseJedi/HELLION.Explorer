@@ -6,7 +6,7 @@ using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.DataStructures.Blueprints
 {
-    public class BlueprintDockingPort_TN : Blueprint_TN
+    public class BlueprintDockingPort_TN : Base_TN
     {
         public BlueprintDockingPort_TN(IParent_Base_TN passedOwner = null)
             : base(passedOwner)
@@ -15,10 +15,49 @@ namespace HELLION.DataStructures.Blueprints
             NodeType = Base_TN_NodeType.BlueprintDockingPort;
 
             // Enable name auto-generation.
-            AutoGenerateName = true;
+            //AutoGenerateName = true;
 
             // Trigger name generation.
-            RefreshName();
+            //RefreshName();
+        }
+
+        /// <summary>
+        /// Refreshes the node's name.
+        /// </summary>
+        /// <param name="includeSubTrees"></param>
+        protected override void RefreshName(bool includeSubTrees = false)
+        {
+            BlueprintDockingPort dockingPort = (BlueprintDockingPort)OwnerObject;
+            BlueprintStructure structure = dockingPort.OwnerObject;
+
+            Debug.Print("structure {0}, ({1}), ID {2}", (int)structure.SceneID, structure.SceneName, structure.StructureID);
+            Debug.Print("docking port {0}, ({1})", dockingPort.OrderID, dockingPort.PortName);
+
+            if (structure == null || dockingPort == null || structure.SceneID == null
+                || dockingPort.PortName == null || !AutoGenerateName)
+            {
+                Debug.Print("RefreshName() skipped.");
+                if (structure == null) Debug.Print("structure == null");
+                if (dockingPort == null) Debug.Print("dockingPort == null");
+                if (structure.SceneID == null) Debug.Print("structure.SceneID == null");
+                if (dockingPort.PortName == null) Debug.Print("dockingPort.PortName == null");
+                if (!AutoGenerateName) Debug.Print("AutoGenerate == false");
+
+            }
+            else
+            {
+
+                Name = GenerateName();
+                Debug.Print("RefreshName() generated [{0}].", Name);
+            }
+
+            if (includeSubTrees)
+            {
+                foreach (Base_TN node in Nodes)
+                {
+                    RefreshName(includeSubTrees);
+                }
+            }
         }
 
         /// <summary>
@@ -29,7 +68,7 @@ namespace HELLION.DataStructures.Blueprints
         {
             // Generate a name based on the current docking port names.
             BlueprintDockingPort ownerPort = (BlueprintDockingPort)OwnerObject;
-            Debug.Print("### Docking Port Name Generation called - {0}", ownerPort.PortName);
+            Debug.Print("### Docking Port TN GenerateName() called - {0}", ownerPort.PortName);
 
             return ownerPort.PortName.ToString() ?? "Unspecified Docking Port";
         }
