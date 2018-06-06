@@ -4,7 +4,7 @@ using HELLION.DataStructures.UI;
 namespace HELLION.DataStructures
 {
     /// <summary>
-    /// A derived Json_File class that has a HETreeNode for UI display purposes.
+    /// A derived Json_File class that has a Base_TN or derived class for UI display purposes.
     /// </summary>
     /// <remarks>
     /// Used directly in the Json_FileCollection and is also inherited by the HEJsonGameFile class.

@@ -246,6 +246,16 @@ namespace HELLION.StationBlueprintEditor
 
         #region File Menu Methods
 
+        internal static void FileNew()
+        {
+
+            FileClose();
+
+
+
+        }
+
+
         /// <summary>
         /// Loads a .save file in to memory - passes details on to the DocumentWorkspace and
         /// tells it to load.
@@ -255,18 +265,6 @@ namespace HELLION.StationBlueprintEditor
         {
             // Make a note of the starting time
             DateTime startingTime = DateTime.Now;
-
-            // Check that the Data folder path has been defined and the expected files are there
-            //if (!IsGameDataFolderValid())
-            //{
-            //    // The checks failed, throw up an error message and cancel the load
-            //    MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu."); // this needs to be massively improved!
-            //    // Begin repainting the TreeView.
-            //    MainForm.treeView1.EndUpdate();
-            //    // Restore mouse cursor
-            //    MainForm.Cursor = Cursors.Default;
-            //    return;
-            //}
 
             // If the sFileName is set, check the file exists otherwise prompt the user to select a file
             if (sFileName == "")
@@ -334,24 +332,13 @@ namespace HELLION.StationBlueprintEditor
                 MainForm.JsonBlueprintFile = docCurrent;
                 MainForm.Blueprint = docCurrent.BlueprintObject;
 
-
-                //Blueprint = JsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("JsonBlueprintFile.BlueprintObject was null.");
-
-                // Trigger a refresh on each of the node trees.
-                //docCurrent.SolarSystem.RootNode.RefreshToolTipText(includeSubtrees: true);
-                //docCurrent.GameData.RootNode.RefreshToolTipText(includeSubtrees: true);
-                //docCurrent.Blueprints.RootNode.RefreshToolTipText(includeSubtrees: true);
-                //docCurrent.SearchHandler.RootNode.RefreshToolTipText(includeSubtrees: true);
-
                 Debug.Print(docCurrent.BlueprintObject.Name);
 
                 MainForm.RefreshEverything();
 
-
-
                 // Enable the Save and Save As menu items.
-                //MainForm.saveToolStripMenuItem.Enabled = true;
-                //MainForm.saveAsToolStripMenuItem.Enabled = true;
+                MainForm.saveToolStripMenuItem.Enabled = true;
+                MainForm.saveAsToolStripMenuItem.Enabled = true;
 
 
                 // Begin repainting the TreeView.
@@ -361,12 +348,11 @@ namespace HELLION.StationBlueprintEditor
                 MainForm.Cursor = Cursors.Default;
 
                 //RefreshMainFormTitleText();
-                //RefreshSelectedObjectSummaryText(docCurrent.SolarSystemRootNode);
 
-                //MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
+                MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
 
-                //MainForm.closeToolStripMenuItem.Enabled = true;
-                //MainForm.revertToolStripMenuItem.Enabled = true;
+                MainForm.closeToolStripMenuItem.Enabled = true;
+                MainForm.revertToolStripMenuItem.Enabled = true;
 
 
             }
@@ -464,25 +450,43 @@ namespace HELLION.StationBlueprintEditor
 
             }
 
-
-
-
             // TODO: More work to be done here to handle cleanup, and calling the save
-
 
             //GraftTreeOutboundToMainForm();
 
-
             // Remove the current JsonDataViewForm from the jsonDataViews list
             //StationBlueprintEditorProgram.blueprintEditorForms.Remove(this);
-            //GC.Collect();
 
+            MainForm.Cursor = Cursors.WaitCursor;
 
+            // Suppress repainting the TreeView until all the objects have been created.
+            //MainForm.treeView1.BeginUpdate();
 
+            // Create a new DocumentWorkspace
+            //docCurrent = new DocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
 
-            // Disable both the Find and FindNext menu items.
-            //MainForm.findToolStripMenuItem.Enabled = false;
-            //MainForm.findNextToolStripMenuItem.Enabled = false;
+            //Blueprint = JsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("JsonBlueprintFile.BlueprintObject was null.");
+
+            // Trigger a refresh on each of the node trees.
+            //docCurrent.SolarSystem.RootNode.RefreshToolTipText(includeSubtrees: true);
+            //docCurrent.GameData.RootNode.RefreshToolTipText(includeSubtrees: true);
+            //docCurrent.Blueprints.RootNode.RefreshToolTipText(includeSubtrees: true);
+            //docCurrent.SearchHandler.RootNode.RefreshToolTipText(includeSubtrees: true);
+
+            Debug.Print(docCurrent.BlueprintObject.Name);
+
+            MainForm.FormTitleText = String.Empty;
+            MainForm.RefreshEverything();
+
+            // Enable the Save and Save As menu items.
+            //MainForm.saveToolStripMenuItem.Enabled = true;
+            //MainForm.saveAsToolStripMenuItem.Enabled = true;
+
+            // Begin repainting the TreeView.
+            //MainForm.treeView1.EndUpdate();
+
+            //Application.UseWaitCursor = false;
+            MainForm.Cursor = Cursors.Default;
 
             // Disable the Save and Save As menu items.
             //MainForm.saveToolStripMenuItem.Enabled = false;
@@ -505,18 +509,23 @@ namespace HELLION.StationBlueprintEditor
                 docCurrent = null;
             }
 
-            //MainForm.closeToolStripMenuItem.Enabled = false;
-            //MainForm.revertToolStripMenuItem.Enabled = false;
+            MainForm.Blueprint = null;
+            MainForm.JsonBlueprintFile = null;
+
+
+
+
+            MainForm.RefreshEverything();
+
+
+            MainForm.closeToolStripMenuItem.Enabled = false;
+            MainForm.revertToolStripMenuItem.Enabled = false;
 
             // Trigger refresh of UI elements
             //RefreshMainFormTitleText();
 
-            //RefreshSelectedOjectPathBarText(null);
-            //RefreshListView(null);
-            //RefreshSelectedObjectSummaryText(null);
-
             // Initiate Garbage Collection
-            //GC.Collect();
+            GC.Collect();
         }
 
         /// <summary>
