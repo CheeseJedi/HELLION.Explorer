@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.UI;
-using HELLION.DataStructures.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using static HELLION.DataStructures.StaticData.DockingPortHelper;
 
 namespace HELLION.DataStructures.Blueprints
 {
@@ -16,7 +13,7 @@ namespace HELLION.DataStructures.Blueprints
     /// A class to handle station blueprint data structures.
     /// </summary>
     [JsonObject(MemberSerialization.OptIn)]
-    public class StationBlueprint : IParent_Base_TN
+    public partial class StationBlueprint : IParent_Base_TN
     {
 
         #region Constructors
@@ -129,7 +126,7 @@ namespace HELLION.DataStructures.Blueprints
         /// ride the blueprint level AuxData.
         /// </summary>
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-        public HEBlueprintStructureAuxData AuxData { get; set; } = null;
+        public BlueprintStructure_AuxData AuxData { get; set; } = null;
 
         /// <summary>
         /// The list of all structures in the blueprint.
@@ -173,7 +170,7 @@ namespace HELLION.DataStructures.Blueprints
                 foreach (BlueprintDockingPort port in structure.DockingPorts)
                 {
                     port.RootNode.AutoGenerateName = true;
-                    port.OwnerObject = structure;
+                    port.OwnerStructure = structure;
                 }
             }
         }
@@ -225,7 +222,7 @@ namespace HELLION.DataStructures.Blueprints
 
                 foreach (BlueprintDockingPort port in structure.DockingPorts)
                 {
-                    port.OwnerObject.RootNode.Nodes.Remove(port.RootNode);
+                    port.OwnerStructure.RootNode.Nodes.Remove(port.RootNode);
                     port.RootNode.Refresh();
                 }
             }
@@ -319,23 +316,19 @@ namespace HELLION.DataStructures.Blueprints
 
             // temporarily disabled, may need to be reworked based on the DockingPortHelper class instead
             // of using the StructureDefinitions.json file.
-            //newStructure.AddAppropriateDockingPorts(); 
+            newStructure.AddAppropriateDockingPorts(); 
 
             // Add the new structure to the main Structures list.
             Structures.Add(newStructure);
 
-            // Add the new structure to the Secondary Structures list.
-            //SecondaryStructures.Add(newStructure);
-
+            // Mark the new structure as a hierarchy root so that it appears in the secondary list.
             newStructure.IsStructureHierarchyRoot = true;
-
 
             ReconnectChildToParentObjectHierarchy();
 
-            IsDirty = true;
+            //IsDirty = true;
 
             return newStructure;
-
 
         }
 
@@ -375,11 +368,11 @@ namespace HELLION.DataStructures.Blueprints
             if (portB == null) return DockingResultStatus.InvalidPortB;
 
             // check the ports parent structures are valid.
-            if (portA.OwnerObject == null) return DockingResultStatus.InvalidStructurePortA;
-            if (portB.OwnerObject == null) return DockingResultStatus.InvalidStructurePortB;
+            if (portA.OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
+            if (portB.OwnerStructure == null) return DockingResultStatus.InvalidStructurePortB;
 
             // Ensure that the two ports aren't on the same structure.
-            if (portA.OwnerObject == portB.OwnerObject) return DockingResultStatus.PortsOnSameStructure;
+            if (portA.OwnerStructure == portB.OwnerStructure) return DockingResultStatus.PortsOnSameStructure;
 
             // Ensure that both ports are not already docked.
             if (portA.IsDocked) return DockingResultStatus.AlreadyDockedPortA;
@@ -388,13 +381,13 @@ namespace HELLION.DataStructures.Blueprints
             // Proceed with docking operation.
 
             // Update portA.
-            portA.DockedStructure = portB.OwnerObject;
+            portA.DockedStructure = portB.OwnerStructure;
             portA.DockedPort = portB;
 
             // Update portB.
-            portB.DockedStructure = portA.OwnerObject;
+            portB.DockedStructure = portA.OwnerStructure;
             portB.DockedPort = portA;
-            portB.OwnerObject.IsStructureHierarchyRoot = false;
+            portB.OwnerStructure.IsStructureHierarchyRoot = false;
 
             // Mark the blueprint object as dirty.
             IsDirty = true;
@@ -413,7 +406,7 @@ namespace HELLION.DataStructures.Blueprints
             if (!portA.IsDocked) return DockingResultStatus.PortANotDocked;
 
             // Find structure A (the one selected)
-            BlueprintStructure structureA = portA.OwnerObject;
+            BlueprintStructure structureA = portA.OwnerStructure;
             if (structureA == null) return DockingResultStatus.InvalidStructurePortA;
 
             // Find portB (the other side)
@@ -439,7 +432,7 @@ namespace HELLION.DataStructures.Blueprints
             portB.DockedStructure = null;
             portB.DockedPort = null;
 
-            //portB.OwnerObject.IsStructureHierarchyRoot = true;
+            //portB.OwnerStructure.IsStructureHierarchyRoot = true;
 
             // Figure out which structure to add to the Secondary Structures list.
 
@@ -683,804 +676,6 @@ namespace HELLION.DataStructures.Blueprints
         }
 
         #endregion
-
-        /// <summary>
-        /// A class to define structures (modules/ships) within the blueprint.
-        /// </summary>
-        [JsonObject(MemberSerialization.OptIn)]
-        public class BlueprintStructure : IParent_Base_TN
-        {
-            #region Constructors
-
-            /// <summary>
-            /// Basic constructor.
-            /// </summary>
-            public BlueprintStructure()
-            {
-                DockingPorts = new List<BlueprintDockingPort>();
-                SceneID = StructureSceneID.Unspecified;
-                RootNode = new BlueprintStructure_TN(passedOwner: this);
-            }
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="ownerObject"></param>
-            public BlueprintStructure(StationBlueprint ownerObject = null) : this()
-            {
-                OwnerObject = ownerObject;
-            }
-
-            #endregion
-
-            #region Properties
-
-            /// <summary>
-            /// Parent object - not to be included in serialisation.
-            /// </summary>
-            public StationBlueprint OwnerObject { get; set; } = null;
-
-            /// <summary>
-            /// Not to be serialised.
-            /// </summary>
-            public Base_TN RootNode { get; set; } = null;
-
-            /// <summary>
-            /// Used to determine whether this structure is a hierarchy root.
-            /// </summary>
-            /// <remarks>
-            /// Hierarchy root markers are used to identify graph nodes to be used as tree roots.
-            /// Primarily this is used in building the Secondary Structures list, as all structures
-            /// (singular) that exist in a blueprint in memory will appear in the main Structures
-            /// list of the blueprint object, but only the 'root' of each chain of modules is marked
-            /// for later retrieval. 
-            /// </remarks>
-            public bool IsStructureHierarchyRoot
-            {
-                get => _isStructureHierarchyRoot;
-                set
-                {
-                    if (_isStructureHierarchyRoot != value)
-                    {
-                        _isStructureHierarchyRoot = value;
-
-                        // Trigger refresh.
-                        RefreshAfterStructureHierarchyRootChange();
-                    }
-
-                }
-            }
-
-            /// <summary>
-            /// Determines whether this structure is connected to the blueprint's primary structure.
-            /// </summary>
-            /// <returns></returns>
-            public bool IsConnectedToPrimaryStructure
-            {
-                get
-                {
-                    // Shortcut check.
-                    if (this == OwnerObject.PrimaryStructureRoot) return true;
-
-                    // Full check.
-                    if (ConnectedStructures(new List<BlueprintStructure> { this })
-                        .Contains(OwnerObject.PrimaryStructureRoot)) return true;
-
-                    // This structure wasn't in the PrimaryStructureRoot's list of connected structures.
-                    return false;
-                }
-            }
-
-            #endregion
-
-            /// <summary>
-            /// Legacy de-serialisation helper.
-            /// </summary>
-            /*
-            public int? ItemID
-            {
-                set => SceneID = (HEBlueprintStructureSceneID)Enum
-                    .Parse(typeof(HEBlueprintStructureSceneID), value.ToString());
-            }
-            */
-
-            #region Serialised Properties
-
-            /// <summary>
-            /// The unique ID of this structure - set if the object is a blueprint. 
-            /// If a template this will be null as there is no docking hierarchy represented
-            /// in a template.
-            /// </summary>
-            [JsonProperty]
-            public int? StructureID
-            {
-                get => _structureID;
-                set
-                {
-                    if (_structureID != value)
-                    {
-                        // Change detected, evaluate whether this is the root node (has ID of zero)
-                        _previousStructureID = _structureID;
-                        _structureID = value;
-
-                        RefreshAfterStructureIDChange();
-                    }
-                }
-            }
-
-            /// <summary>
-            /// The SceneID of the structure - Critical! used by the in-game deserialiser to determine
-            /// the type of structure (ship/module) to spawn. Critical! 
-            /// </summary>
-            [JsonProperty]
-            public StructureSceneID? SceneID
-            {
-                get => _sceneID;
-                set
-                {
-                    if (_sceneID != value)
-                    {
-                        _sceneID = value;
-
-                        // Update the RootNode's BaseNodeName.
-                        
-                        //RootNode.Name = value.GetEnumDescription();
-                        
-                    }
-                }
-            }
-
-            /// <summary>
-            /// The SceneName of the Structure. 
-            /// Shadow Property - also comes from the SceneID field using the SceneID enum.
-            /// </summary>
-            [JsonProperty]
-            [JsonConverter(typeof(StringEnumConverter))]
-            public StructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
-            // public bool ShouldSerializeSceneName() { return OwnerObject == null || (OwnerObject != null && OwnerObject.IsTemplate) ? true : false; }
-
-            [JsonProperty]
-            public String StructureType
-            {
-                get => SceneID?.GetEnumDescription(); // ?? HEBlueprintStructureSceneID.Unspecified.ToString();
-                set
-                {
-                    if (value != null && value.Length > 0)
-                    {
-
-                        // Attempt to parse the given description to an available one in the enum.
-                        StructureSceneID descriptionParseResult = value.ParseToEnumDescriptionOrEnumerator<StructureSceneID>();
-
-                        if (descriptionParseResult != StructureSceneID.Unspecified)
-                        {
-                            SceneID = descriptionParseResult;
-                        }
-                        // else throw new Exception();
-
-                    }
-
-                }
-            }
-
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            public float? StandbyPowerRequirement { get; set; } = null;
-
-            // [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            // public float? NominalPowerRequirement { get; set; } = null;
-
-            // [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            // public float? NominalPowerContribution { get; set; } = null;
-
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            public float? NominalAirVolume { get; set; } = null;
-
-            /// <summary>
-            /// Auxiliary data for this blueprint. If this is set it applies to all structures in
-            /// the blueprint. Individual structures can also implement an AuxData that will over-
-            /// ride the blueprint level AuxData.
-            /// </summary>
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            public HEBlueprintStructureAuxData AuxData { get; set; } = null;
-
-
-            /*
-            /// <summary>
-            /// The structure type - a value from the HEBlueprintStructureType enum.
-            /// </summary>
-            [JsonProperty]
-            [JsonConverter(typeof(StringEnumConverter))]
-            public HEBlueprintStructureType? StructureType
-            {
-                get => _structureType;
-                set
-                {
-                    _structureType = value;
-                    RootNode.BaseNodeName = value.ToString();
-                    //RootNode.BaseNodeText = RootNode.Name;
-                }
-            }
-            */
-
-            /// <summary>
-            /// The list of docking ports for this individual structure.
-            /// </summary>
-            [JsonProperty]
-            public List<BlueprintDockingPort> DockingPorts { get; set; } = null;
-
-            #endregion
-
-            #region Methods
-
-            /// <summary>
-            /// Gets a docking port by name.
-            /// </summary>
-            /// <param name="name"></param>
-            /// <returns></returns>
-            public BlueprintDockingPort GetDockingPort(string name)
-            {
-                if (name == null || name == String.Empty || !(DockingPorts.Count > 0)) return null;
-
-                IEnumerable<BlueprintDockingPort> results = DockingPorts.
-                    Where(f => f.PortName.ToString() == name);
-
-                return results.Count() == 1 ? results.Single() : null;
-            }
-
-            /// <summary>
-            /// Gets a docking port by the ID of the structure it's docked to.
-            /// </summary>
-            /// <param name="dockedStructureID"></param>
-            /// <returns></returns>
-            public BlueprintDockingPort GetDockingPort(int dockedStructureID)
-            {
-                if (!(dockedStructureID >= 0) || !(dockedStructureID <= OwnerObject.Structures.Count)
-                    || !(DockingPorts.Count > 0)) return null;
-
-                IEnumerable<BlueprintDockingPort> results = DockingPorts.
-                    Where(f => f.DockedStructureID == dockedStructureID);
-
-                return results.Count() == 1 ? results.Single() : null;
-            }
-
-            /// <summary>
-            /// Gets a docking port by the structure it's docked to.
-            /// </summary>
-            /// <param name="dockedStructureID"></param>
-            /// <returns></returns>
-            public BlueprintDockingPort GetDockingPort(BlueprintStructure dockedStructure)
-            {
-                if (dockedStructure == null || !(DockingPorts.Count > 0)) return null;
-
-                IEnumerable<BlueprintDockingPort> results = DockingPorts.
-                    Where(f => f.DockedStructure == dockedStructure);
-
-                return results.Count() == 1 ? results.Single() : null;
-            }
-
-            /// <summary>
-            /// Gets the Structure Root for this structure.
-            /// </summary>
-            /// <returns></returns>
-            public BlueprintStructure GetStructureRoot()
-            {
-                // Is this structure a root itself?
-                if (OwnerObject.PrimaryStructureRoot == this || OwnerObject.SecondaryStructureRoots.Contains(this)) return this;
-
-                // Is this structure connected to the Primary Structure?
-                if (IsConnectedToPrimaryStructure) return OwnerObject.PrimaryStructureRoot;
-
-                // Full test - the intersection of this structure's connected structures list, and 
-                // the Secondary Structures list.
-                IEnumerable<BlueprintStructure> results = ConnectedStructures(new List<BlueprintStructure> { this })
-                    .Intersect(OwnerObject.SecondaryStructureRoots);
-
-                if (results.Count() > 1) throw new InvalidOperationException("More than one root found.");
-
-                return results.Count() == 1 ? results.Single() : null;
-            }
-
-            /// <summary>
-            /// Returns a list of directly docked structures, or all connected structures.
-            /// </summary>
-            /// <returns>
-            /// Returns an empty list if no docked structures.
-            /// </returns>
-            /// <remarks>
-            /// Is recursive if passed a list containing the starting structure, otherwise it only
-            /// returns the directly connected structures.
-            /// </remarks>
-            public List<BlueprintStructure> ConnectedStructures(List<BlueprintStructure> visitedtedStructures = null)
-            {
-                bool includeAllConnected = true;
-                if (visitedtedStructures == null)
-                {
-                    includeAllConnected = false;
-                    visitedtedStructures = new List<BlueprintStructure>();
-                }
-
-                // Loop over all of this structure's ports that are docked to something.
-                foreach (BlueprintDockingPort port in DockingPorts.Where(p => p.IsDocked))
-                {
-                    // The port is docked; retrieve the structure by its ID.
-                    BlueprintStructure _result = port.DockedStructure;
-
-                    if (!visitedtedStructures.Contains(_result))
-                    {
-                        // Add the current structure to the visited list.
-                        visitedtedStructures.Add(_result);
-
-                        // Recurse if we're including all connected structures.
-                        if (includeAllConnected) visitedtedStructures.AddRange(
-                            _result.ConnectedStructures(visitedtedStructures)
-                            .Where(s => !visitedtedStructures.Contains(s)));
-                    }
-                }
-                return visitedtedStructures;
-            }
-
-            /// <summary>
-            /// Removes this structure, and any docked to it that would be orphaned by
-            /// the removal operation.
-            /// </summary>
-            /// <returns>Returns true on success.</returns>
-            public bool Remove(bool RemoveOrphanedStructures = false)
-            {
-                // TODO - Not yet implemented.
-
-                // Make list of directly docked structures
-                // Find local docking ports that are in use
-                // Loop through each and find the corresponding docking port and reset it's data with .Undock()
-                //      check the previously docked structures and make a list of structures not
-
-
-
-                return false;
-            }
-
-            /// <summary>
-            /// Adds docking ports appropriate for this type of structure.
-            /// </summary>
-            public void aAddAppropriateDockingPorts()
-            {
-                // Find the matching definition type for this structures type.
-                if (OwnerObject.StructureDefinitions == null) throw new NullReferenceException();
-
-                BlueprintStructure defn = OwnerObject.StructureDefinitions.Structures
-                    .Where(f => (int)f.SceneID == (int)SceneID).Single();
-
-                foreach (BlueprintDockingPort dockingPort in defn.DockingPorts)
-                {
-                    BlueprintDockingPort newPort = new BlueprintDockingPort()
-                    {
-                        OwnerObject = this,
-                        PortName = dockingPort.PortName,
-                        OrderID = dockingPort.OrderID,
-                        DockedStructureID = null
-                    };
-                    DockingPorts.Add(newPort);
-                    RootNode.Nodes.Add(newPort.RootNode);
-                }
-            }
-
-            /// <summary>
-            /// Is called when the StructureID changes and updates the node's prefix and icon.
-            /// </summary>
-            protected void RefreshAfterStructureIDChange()
-            {
-                if (StructureID != null)
-                {
-
-                    // Module ID zero is always the docking root in a blueprint and has a different icon.
-                    //RootNode.DisplayRootStructureIcon = (StructureID != null && StructureID == 0) ? true : false;
-
-                    // RootNode.BaseNodeName = StructureType.ToString();
-                    RootNode.Text_Prefix = String.Format("[{0:000}] ", (int)StructureID);
-                    //RootNode.RefreshText();
-                    //RootNode.RefreshName();
-
-                    // Update Docking Port nodes for this node.
-                    if (DockingPorts.Count > 0)
-                    {
-                        foreach (var port in DockingPorts)
-                        {
-                            // Update docking structure relationships between this module and any docked modules.
-                            port.RefreshAfterParentStructureIDChange();
-                        }
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Is called when the StructurehierarchyRoot bool changes status and updates the TreeNode's node type.
-            /// </summary>
-            protected void RefreshAfterStructureHierarchyRootChange()
-            {
-                RootNode.NodeType = IsStructureHierarchyRoot ? Base_TN_NodeType.BlueprintRootStructure : Base_TN_NodeType.BlueprintStructure;
-            }
-
-            #endregion
-
-            #region Fields
-
-            protected int? _structureID = null;
-            protected StructureSceneID? _sceneID = null;
-            //protected HEBlueprintStructureType? _structureType = null;
-            protected int? _previousStructureID = null;
-            protected bool _isStructureHierarchyRoot = false;
-
-            #endregion
-
-        }
-
-        /// <summary>
-        /// A class to define the docking ports of a structure (module/ship) within the 
-        /// blueprint.
-        /// </summary>
-        [JsonObject(MemberSerialization.OptIn)]
-        public class BlueprintDockingPort : IParent_Base_TN
-        {
-            #region Constructors
-
-            /// <summary>
-            /// Basic Constructor.
-            /// </summary>
-            public BlueprintDockingPort()
-            {
-                // Set a Default port name.
-                //PortName = DockingPortType.Unspecified;
-
-                RootNode = new BlueprintDockingPort_TN(passedOwner: this)
-                //    nodeName: PortName.ToString())
-                {
-                    Text_Prefix = OwnerObject != null && OwnerObject.StructureID != null ?
-                        String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] "
-                };
-            }
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="passedParent"></param>
-            public BlueprintDockingPort(BlueprintStructure passedParent = null) : this()
-            {
-                RootNode.AutoGenerateName = true;
-                OwnerObject = passedParent;
-
-            }
-
-            #endregion
-
-            #region Properties
-
-            /// <summary>
-            /// Parent object - not to be included in serialisation.
-            /// </summary>
-            public BlueprintStructure OwnerObject
-            {
-                get => _ownerObject;
-                set
-                {
-                    _ownerObject = value;
-
-                    RootNode.Refresh();
-                    RefreshAfterParentStructureIDChange();
-
-
-                    if (OrderID != null && OwnerObject != null) SetPortNameFromOrderID(); // This is causing an issue
-
-
-                }
-            }
-
-            /// <summary>
-            /// Not to be serialised.
-            /// </summary>
-            public Base_TN RootNode { get; set; } = null;
-
-            /// <summary>
-            /// The structure object of the port this port is docked to.
-            /// </summary>
-            /// <remarks>
-            /// Updates the DockedStructureID.
-            /// </remarks>
-            public BlueprintStructure DockedStructure
-            {
-                get => _dockedStructure;
-                set
-                {
-                    if (_dockedStructure != value)
-                    {
-                        _dockedStructure = value;
-
-                        // Attempt to update the DockedSctuctureID
-                        //if (_dockedStructure != null)
-                        //{
-                        DockedStructureID = _dockedStructure?.StructureID;
-                        //}
-
-                        if (_dockedStructure == null) DockedPort = null;
-
-
-                    }
-                }
-            }
-
-            /// <summary>
-            /// The Port object this port is docked to.
-            /// </summary>
-            public BlueprintDockingPort DockedPort
-            {
-                get => _dockedPort;
-                set
-                {
-                    if (_dockedPort != value)
-                    {
-                        _dockedPort = value;
-
-                        // Attempt to update the DockedPortName
-
-                        //if (_dockedPort != null)
-                        //{
-                        DockedPortName = _dockedPort?.PortName;
-                        //}
-
-                        if (_dockedPort == null) DockedStructure = null;
-
-
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Indicates whether this port is docked to a port on another structure.
-            /// </summary>
-            public bool IsDocked
-            {
-                get => DockedStructure == null || DockedStructureID == null ? false : true;
-            }
-
-            #endregion
-
-            #region Serialised Properties
-
-            /// <summary>
-            /// The (standardised) name of the docking port.
-            /// </summary>
-            [JsonProperty]
-            [JsonConverter(typeof(StringEnumConverter))]
-            public DockingPortType? PortName
-            {
-                get => _portName;
-                set
-                {
-                    if (_portName != value)
-                    {
-                        _portName = value;
-
-                        SetOrderIDFromPortName();
-
-                        RootNode.Refresh();
-                    }
-                }
-            }
-
-            /// <summary>
-            /// The OrderId of the docking port - these are used by the game deserialiser to spawn
-            /// blueprints.
-            /// </summary>
-            [JsonProperty]
-            public int? OrderID
-            {
-                get => _orderID;
-                set
-                {
-                    if (_orderID != value && value !=null)
-                    {
-
-                        // Debug.Print("New value for OrderID on [{0}]: [{1}] (previously [{2}])", OwnerObject?.SceneName, value, _orderID);
-                        _orderID = value;
-
-                        
-                        
-                        if (OrderID != null && OwnerObject != null) SetPortNameFromOrderID(); // This is causing an issue
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Whether this docking port is locked (and not advertised to the docking system.)
-            /// </summary>
-            [JsonProperty]
-            public bool? Locked
-            {
-                get => _locked;
-                set
-                {
-                    if (_locked != value)
-                    {
-                        _locked = value;
-                    }
-                }
-            }
-
-            /// <summary>
-            /// The ID of the structure this port is docked to.
-            /// </summary>
-            /// <remarks>
-            /// This is to be serialised.
-            /// This should only be set initially by the JToken.ToObject()
-            /// Attempts to set the DockedStructure object.
-            /// </remarks>
-            [JsonProperty]
-            public int? DockedStructureID
-            {
-                get => _dockedStructureID;
-                set
-                {
-                    if (_dockedStructureID != value)
-                    {
-                        _dockedStructureID = value;
-
-                        AttemptUpdateDockedStructure();
-
-                    }
-                }
-            }
-
-            /// <summary>
-            /// The name of the port this port is docked to.
-            /// </summary>
-            /// <remarks>
-            /// This is to be serialised.
-            /// Updates the DockedStructureID.
-            /// </remarks>
-            [JsonProperty]
-            [JsonConverter(typeof(StringEnumConverter))]
-            public DockingPortType? DockedPortName
-            {
-                get => _dockedPortName;
-                set
-                {
-                    if (_dockedPortName != value)
-                    {
-                        _dockedPortName = value;
-
-                        AttemptUpdateDockedPort();
-                    }
-                }
-            }
-
-            #endregion
-
-            #region Methods
-
-            /// <summary>
-            /// Attempt to update the DockedStructure object.
-            /// </summary>
-            /// <returns>
-            /// Return true if a non null was returned from the GetStructureByID.
-            /// </returns>
-            public bool AttemptUpdateDockedStructure()
-            {
-                if (OwnerObject == null || OwnerObject.OwnerObject == null) return false;
-                DockedStructure = OwnerObject.OwnerObject.GetStructure(_dockedStructureID);
-                return DockedStructure != null ? true : false;
-            }
-
-            /// <summary>
-            /// Attempt to update the DockedPort object.
-            /// </summary>
-            /// <returns>
-            /// Return true if a non null was returned from the GetStructureByID.
-            /// </returns>
-            public bool AttemptUpdateDockedPort()
-            {
-                if (DockedStructure == null || OwnerObject.OwnerObject == null) return false;
-                DockedPort = DockedStructure.GetDockingPort(_dockedPortName.ToString());
-                return DockedPort != null ? true : false;
-            }
-
-            public void RefreshAfterParentStructureIDChange()
-            {
-                RootNode.Text_Prefix = OwnerObject != null ? String.Format("[{0:000}] ", (int)OwnerObject.StructureID) : "[ERR] ";
-                RootNode.Name = _portName.ToString();
-
-                //RootNode.RefreshText();
-                //RootNode.RefreshName();
-            }
-
-            private void SetPortNameFromOrderID()
-            {
-                // Look up the correct port name for this structure and orderID
-                PortName = GetDockingPortType((StructureSceneID)OwnerObject?.SceneID, (int)OrderID);
-            }
-
-
-            private void SetOrderIDFromPortName()
-            {
-                OrderID = GetOrderID((StructureSceneID)OwnerObject?.SceneID, (DockingPortType)PortName);
-            }
-
-
-
-
-            #endregion
-
-            #region Fields
-
-            private DockingPortType? _portName = null; // DockingPortType.Unspecified;
-            private BlueprintStructure _ownerObject = null;
-            private int? _dockedStructureID = null;
-            private BlueprintStructure _dockedStructure = null;
-            private DockingPortType? _dockedPortName = null;
-            private BlueprintDockingPort _dockedPort = null;
-            private int? _orderID = null;
-            private bool? _locked = null;
-
-            #endregion
-
-        }
-
-
-        /// <summary>
-        /// Defines optional parameters for a station blueprint structure.
-        /// </summary>
-        /// <remarks>
-        /// Can also be attached to a blueprint directly.
-        /// </remarks>
-        [JsonObject(MemberSerialization.OptOut)]
-        public class HEBlueprintStructureAuxData
-        {
-            // Optional parameters - structure level
-            public bool? Invulnerable = null;                   // Invulnerable or will take damage.
-            public bool? SystemsOnline = null;                  // Spawns powered on.
-            public bool? PowerGeneratorsOnline = null;          // Power generators (solar panels/reactors) spawn powered on.
-            public bool? DoorsLocked = null;                    // Doors are locked.
-            public bool? DockingPortsLocked = null;             // Docking ports are locked (not advertised to docking systems).
-            public bool? CryoPodsDisabled = null;               // Cryo pods are deactivated (non interact-able)
-            public bool? DockingReleaseHandlesDisabled = null;  // Modules' docking release handles are visible.
-            public bool? TextLabelEditingDisabled = null;       // Text labels (doors, parts boxes) are editable.
-            public bool? SecurityPanelsDisabled = null;         // Security panel(s) are disabled or deactivated.
-            public bool? SystemPartsInteractionDisabled = null; // Dynamic Object Parts in systems cannot be interacted with.
-
-            /// <summary>
-            /// Default constructor - able to pre-set values for a prefab.
-            /// </summary>
-            /// <param name="isPrefabStation"></param>
-            public HEBlueprintStructureAuxData(bool? isPrefabStation = null)
-            {
-                SetAllBools(isPrefabStation);
-            }
-
-            public void SetAllBools(bool? value)
-            {
-                Invulnerable = value;
-                SystemsOnline = value;
-                PowerGeneratorsOnline = value;
-                DoorsLocked = value;    // Current prefabs don't (usually) have locked doors.
-                DockingPortsLocked = value;
-                CryoPodsDisabled = value;
-                DockingReleaseHandlesDisabled = value;
-                TextLabelEditingDisabled = value;
-                SecurityPanelsDisabled = value;
-                SystemPartsInteractionDisabled = value;
-
-            }
-
-            public void ResetAuxData()
-            {
-                Invulnerable = null;
-                SystemsOnline = null;
-                PowerGeneratorsOnline = null;
-                DoorsLocked = null;
-                DockingPortsLocked = null;
-                CryoPodsDisabled = null;
-                DockingReleaseHandlesDisabled = null;
-                TextLabelEditingDisabled = null;
-                SecurityPanelsDisabled = null;
-                SystemPartsInteractionDisabled = null;
-            }
-        }
 
     }
 

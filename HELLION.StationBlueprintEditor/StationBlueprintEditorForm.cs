@@ -5,6 +5,7 @@ using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.UI;
+using HELLION.DataStructures.Utilities;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.StationBlueprintEditor
@@ -52,7 +53,7 @@ namespace HELLION.StationBlueprintEditor
         //    FormTitleText = passedSourceNode.Name;
         //    RefreshBlueprintEditorFormTitleText();
 
-        //    JsonBlueprintFile = (StationBlueprint_File)passedSourceNode.OwnerObject;
+        //    JsonBlueprintFile = (StationBlueprint_File)passedSourceNode.OwnerStructure;
         //    Blueprint = JsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("JsonBlueprintFile.BlueprintObject was null.");
 
         //    //GraftTreeInboundFromMainForm();
@@ -169,7 +170,7 @@ namespace HELLION.StationBlueprintEditor
                             // Docking Port node, need find the parent structure.
                             SelectedPrimaryDockingPort = (StationBlueprint.BlueprintDockingPort)_selectedPrimaryStructureNode.OwnerObject;
 
-                            SelectedPrimaryStructure = SelectedPrimaryDockingPort?.OwnerObject;
+                            SelectedPrimaryStructure = SelectedPrimaryDockingPort?.OwnerStructure;
 
                         }
                         else if (parentType == typeof(StationBlueprint.BlueprintStructure))
@@ -177,7 +178,7 @@ namespace HELLION.StationBlueprintEditor
                             SelectedPrimaryDockingPort = null;
                             SelectedPrimaryStructure = (StationBlueprint.BlueprintStructure)_selectedPrimaryStructureNode.OwnerObject;
                         }
-                        else throw new InvalidOperationException("Unrecognised OwnerObject type.");
+                        else throw new InvalidOperationException("Unrecognised OwnerStructure type.");
                     }
                     else
                     {
@@ -225,7 +226,7 @@ namespace HELLION.StationBlueprintEditor
                             // Docking Port node, need find the parent structure.
                             SelectedSecondaryDockingPort = (StationBlueprint.BlueprintDockingPort)_selectedSecondaryStructureNode.OwnerObject;
 
-                            SelectedSecondaryStructure = SelectedSecondaryDockingPort?.OwnerObject;
+                            SelectedSecondaryStructure = SelectedSecondaryDockingPort?.OwnerStructure;
 
                         }
                         else if (parentType == typeof(StationBlueprint.BlueprintStructure))
@@ -233,7 +234,7 @@ namespace HELLION.StationBlueprintEditor
                             SelectedSecondaryDockingPort = null;
                             SelectedSecondaryStructure = (StationBlueprint.BlueprintStructure)_selectedSecondaryStructureNode.OwnerObject;
                         }
-                        else throw new InvalidOperationException("Unrecognised OwnerObject type.");
+                        else throw new InvalidOperationException("Unrecognised OwnerStructure type.");
                     }
                     else
                     {
@@ -379,7 +380,6 @@ namespace HELLION.StationBlueprintEditor
             //Debug.Print("SelectedPrimaryDockingPort.PortName = " + SelectedPrimaryDockingPort.PortName.ToString());
         }
 
-
         /// <summary>
         /// Updates the label text for the Secondary Structure.
         /// </summary>
@@ -408,7 +408,6 @@ namespace HELLION.StationBlueprintEditor
                 : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID, SelectedSecondaryDockingPort.PortName.ToString());
         }
 
-
         /// <summary>
         /// Updates the form's title text with a marker if the object is dirty.
         /// </summary>
@@ -425,14 +424,14 @@ namespace HELLION.StationBlueprintEditor
         {
             comboBoxStructureList.Items.Clear();
             Array enumValues = Enum.GetValues(typeof(StructureSceneID));
-            foreach (int value in enumValues)
+            foreach (StructureSceneID value in enumValues)
             {
-                string display =      //Enum.GetName(typeof(StructureSceneID), value);
+                string display = value.GetEnumDescription();
+                //string display = Enum.GetName(typeof(StructureSceneID), value);
                 comboBoxStructureList.Items.Add(display);
             }
             comboBoxStructureList.SelectedIndex = 0;
         }
-
 
         /// <summary>
         /// Refreshes the enabled status of the Dock button.
@@ -562,14 +561,17 @@ namespace HELLION.StationBlueprintEditor
         private void buttonAddStructure_Click(object sender, EventArgs e)
         {
             // Temporarily disabled.
-            /*
             if (Blueprint != null && (string)comboBoxStructureList.SelectedItem != "Unspecified")
             {
-                // Do something - create the new structure in the Blueprint.
-                HEBlueprintStructureType newStructureType = (HEBlueprintStructureType)Enum.Parse(
-                    typeof(HEBlueprintStructureType), (string)comboBoxStructureList.SelectedItem);
+                // Create the new structure in the Blueprint.
+                //StructureSceneID newStructureType = (StructureSceneID)Enum.Parse(
+                //    typeof(StructureSceneID), (string)comboBoxStructureList.SelectedItem);
 
-                StationBlueprint.BlueprintStructure newStructure = Blueprint.AddStructure(newStructureType);
+                // Attempt to parse the given description to an available one in the enum.
+                StructureSceneID newStructureType = ((string)comboBoxStructureList.SelectedItem)
+                    .ParseToEnumDescriptionOrEnumerator<StructureSceneID>();
+
+                BlueprintStructure newStructure = Blueprint.AddStructure(newStructureType);
 
                 // Refresh tree views
 
@@ -588,7 +590,6 @@ namespace HELLION.StationBlueprintEditor
                 RefreshBlueprintEditorFormTitleText();
                 RefreshFileSaveMenuStatus();
             }
-            */
         }
 
         private void buttonRemoveStructure_Click(object sender, EventArgs e)

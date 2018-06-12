@@ -69,7 +69,7 @@ namespace HELLION.DataStructures.StaticData
         [Description("FM")]
         AltCorp_FabricatorModule = 28, // 0x0000001C
         FlatShipTest = 29, // 0x0000001D
-                           // ActaeonProbe = 30, // 0x0000001E
+        // ActaeonProbe = 30, // 0x0000001E
 
         //Asteroid01 = 1000, // 0x000003E8
         //Asteroid02 = 1001, // 0x000003E9

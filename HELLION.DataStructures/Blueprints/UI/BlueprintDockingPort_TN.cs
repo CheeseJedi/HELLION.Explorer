@@ -28,19 +28,21 @@ namespace HELLION.DataStructures.Blueprints
         protected override void RefreshName(bool includeSubTrees = false)
         {
             BlueprintDockingPort dockingPort = (BlueprintDockingPort)OwnerObject;
-            BlueprintStructure structure = dockingPort.OwnerObject;
+            BlueprintStructure structure = dockingPort.OwnerStructure;
 
-            Debug.Print("structure {0}, ({1}), ID {2}", (int)structure.SceneID, structure.SceneName, structure.StructureID);
-            Debug.Print("docking port {0}, ({1})", dockingPort.OrderID, dockingPort.PortName);
+            //Debug.Print("structure {0}, ({1}), ID {2}", (int)structure?.SceneID, structure?.SceneName, structure?.StructureID);
+            //Debug.Print("docking port {0}, ({1})", dockingPort?.OrderID, dockingPort?.PortName);
 
             if (structure == null || dockingPort == null || structure.SceneID == null
                 || dockingPort.PortName == null || !AutoGenerateName)
             {
                 Debug.Print("RefreshName() skipped.");
                 if (structure == null) Debug.Print("structure == null");
+                else if (structure.SceneID == null) Debug.Print("structure.SceneID == null");
+
                 if (dockingPort == null) Debug.Print("dockingPort == null");
-                if (structure.SceneID == null) Debug.Print("structure.SceneID == null");
-                if (dockingPort.PortName == null) Debug.Print("dockingPort.PortName == null");
+                else if (dockingPort.PortName == null) Debug.Print("dockingPort.PortName == null");
+
                 if (!AutoGenerateName) Debug.Print("AutoGenerate == false");
 
             }

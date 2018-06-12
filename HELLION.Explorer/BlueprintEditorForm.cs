@@ -92,7 +92,7 @@ namespace HELLION.Explorer
                             // Docking Port node, need find the parent structure.
                             SelectedPrimaryDockingPort = (StationBlueprint.BlueprintDockingPort)_selectedPrimaryStructureNode.OwnerObject;
 
-                            SelectedPrimaryStructure = SelectedPrimaryDockingPort?.OwnerObject;
+                            SelectedPrimaryStructure = SelectedPrimaryDockingPort?.OwnerStructure;
 
                         }
                         else if (parentType == typeof(StationBlueprint.BlueprintStructure))
@@ -100,7 +100,7 @@ namespace HELLION.Explorer
                             SelectedPrimaryDockingPort = null;
                             SelectedPrimaryStructure = (StationBlueprint.BlueprintStructure)_selectedPrimaryStructureNode.OwnerObject;
                         }
-                        else throw new InvalidOperationException("Unrecognised OwnerObject type.");
+                        else throw new InvalidOperationException("Unrecognised OwnerStructure type.");
                     }
                     else
                     {
@@ -148,7 +148,7 @@ namespace HELLION.Explorer
                             // Docking Port node, need find the parent structure.
                             SelectedSecondaryDockingPort = (StationBlueprint.BlueprintDockingPort)_selectedSecondaryStructureNode.OwnerObject;
 
-                            SelectedSecondaryStructure = SelectedSecondaryDockingPort?.OwnerObject;
+                            SelectedSecondaryStructure = SelectedSecondaryDockingPort?.OwnerStructure;
 
                         }
                         else if (parentType == typeof(StationBlueprint.BlueprintStructure))
@@ -156,7 +156,7 @@ namespace HELLION.Explorer
                             SelectedSecondaryDockingPort = null;
                             SelectedSecondaryStructure = (StationBlueprint.BlueprintStructure)_selectedSecondaryStructureNode.OwnerObject;
                         }
-                        else throw new InvalidOperationException("Unrecognised OwnerObject type.");
+                        else throw new InvalidOperationException("Unrecognised OwnerStructure type.");
                     }
                     else
                     {

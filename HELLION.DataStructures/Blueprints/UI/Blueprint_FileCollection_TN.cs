@@ -1,5 +1,4 @@
-﻿using HELLION.DataStructures.Document;
-using HELLION.DataStructures.UI;
+﻿using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures.Blueprints
 {

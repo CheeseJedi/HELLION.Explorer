@@ -33,7 +33,7 @@ namespace HELLION.DataStructures.Utilities
         /// <remarks>
         /// Adapted From: https://stackoverflow.com/questions/4249632/string-to-enum-with-description
         /// </remarks>
-        public static T ParseToEnumDescriptionOrEnumerator<T>(this string description) // this?
+        public static T ParseToEnumDescriptionOrEnumerator<T>(this string description)
         {
             MemberInfo[] fields = typeof(T).GetFields();
 
@@ -59,7 +59,6 @@ namespace HELLION.DataStructures.Utilities
            
         }
 
-
         /// <summary>
         /// Returns the values of an enum of given type T
         /// usage: var values = EnumUtil.GetValues<Foos>();
@@ -72,7 +71,4 @@ namespace HELLION.DataStructures.Utilities
         }
 
     }
-
-
-
 }

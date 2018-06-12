@@ -21,7 +21,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <param name="passedParent"></param>
         public StationBlueprint_File(IParent_Json_File passedParent) : base(passedParent)
         {
-            // Re-assign the OwnerObject (the base class stores this as an object,
+            // Re-assign the OwnerStructure (the base class stores this as an object,
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent; // ?? throw new NullReferenceException();
 
@@ -48,25 +48,6 @@ namespace HELLION.DataStructures.Blueprints
             if (File.Exists) LoadFile(populateNodeTreeDepth);
             else Debug.Print("File {0} doesn't exist", File.FullName);
         }
-
-        /*
-        /// <summary>
-        /// Constructor used to generate a StructuresDefinition.json file.
-        /// </summary>
-        /// <param name="passedParent"></param>
-        /// <param name="passedFileInfo"></param>
-        /// <param name="structuresJsonFile"></param>
-        public StationBlueprint_File(IParent_Json_File passedParent, FileInfo passedFileInfo, Json_File_UI structuresJsonFile, bool generateSDfile = false) : base(passedParent)
-        {
-            File = passedFileInfo; // ?? throw new NullReferenceException("passedFileInfo was null.");
-            // Check the reference to the Static Data's Structures.json file.
-            if (structuresJsonFile == null) throw new NullReferenceException("structuresJsonFile was null.");
-
-            BlueprintObject = new StationBlueprint();
-            GenerateAndSaveNewStructureDefinitionsFile(passedFileInfo, structuresJsonFile);
-
-        }
-        */
 
         #endregion
 

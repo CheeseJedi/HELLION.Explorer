@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.DataStructures.StaticData
 {
+    /// <summary>
+    /// A class that implements a nested dictionary structure detailing
+    /// the docking ports for each structure type.
+    /// </summary>
     public static class DockingPortHelper
     {
         /// <summary>
-        /// Defines a two-layer dictionary - the upper dictionary contains modules and each contains
-        /// a sub-dictionary of it's docking ports.
+        /// Defines a two-layer dictionary - the upper dictionary contains structures and each contains
+        /// a sub-dictionary of it's docking ports with the game's orderID as the key.
         /// </summary>
         public static Dictionary<StructureSceneID, Dictionary<int, DockingPortType>> DockingPortHints
             = new Dictionary<StructureSceneID, Dictionary<int, DockingPortType>>()
@@ -19,14 +24,14 @@ namespace HELLION.DataStructures.StaticData
             { 3, DockingPortType.Anchor }
         } },
 
-        { StructureSceneID.AltCorp_CorridorIntersectionModule,  new Dictionary<int, DockingPortType> {
+        { StructureSceneID.AltCorp_CorridorIntersectionModule, new Dictionary<int, DockingPortType> {
             { 1, DockingPortType.StandardDockingPortA },
             { 3, DockingPortType.StandardDockingPortB },
             { 2, DockingPortType.StandardDockingPortC },
             { 4, DockingPortType.Anchor }
         } },
 
-        { StructureSceneID.AltCorp_Corridor45TurnModule,  new Dictionary<int, DockingPortType> {
+        { StructureSceneID.AltCorp_Corridor45TurnModule, new Dictionary<int, DockingPortType> {
             { 1, DockingPortType.StandardDockingPortA },
             { 2, DockingPortType.StandardDockingPortB },
             { 3, DockingPortType.Anchor }
@@ -49,7 +54,7 @@ namespace HELLION.DataStructures.StaticData
             { 3, DockingPortType.Anchor }
         } },
 
-        { StructureSceneID.AltCorp_Cargo_Module,  new Dictionary<int, DockingPortType> {
+        { StructureSceneID.AltCorp_Cargo_Module, new Dictionary<int, DockingPortType> {
             { 1, DockingPortType.StandardDockingPortA },
             { 4, DockingPortType.IndustrialContainerPortA },
             { 5, DockingPortType.IndustrialContainerPortB },
@@ -147,6 +152,12 @@ namespace HELLION.DataStructures.StaticData
 
         };
 
+        /// <summary>
+        /// Looks up a port type (name) from the port dictionary from the specified sceneID and orderID.
+        /// </summary>
+        /// <param name="sceneID"></param>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         public static DockingPortType GetDockingPortType(StructureSceneID sceneID, int orderID)
         {
             // Attempt to locate the correct port Dictionary by sceneID.
@@ -161,6 +172,12 @@ namespace HELLION.DataStructures.StaticData
             return DockingPortType.Unspecified;
         }
 
+        /// <summary>
+        /// Looks up the orderID from the port dictionary for the specified sceneID and portType.
+        /// </summary>
+        /// <param name="sceneID"></param>
+        /// <param name="portType"></param>
+        /// <returns></returns>
         public static int? GetOrderID(StructureSceneID sceneID, DockingPortType portType)
         {
             // Attempt to locate the correct port Dictionary by sceneID.
@@ -179,71 +196,35 @@ namespace HELLION.DataStructures.StaticData
         }
 
         /// <summary>
-        /// Docking Port Types Enum.
+        /// Generates a list of BlueprintDockingPort objects appropriate to the specified sceneID (module type).
         /// </summary>
-        public enum DockingPortType
+        /// <param name="sceneID"></param>
+        /// <returns></returns>
+        public static List<BlueprintDockingPort> GenerateBlueprintDockingPorts(StructureSceneID sceneID)
         {
-            Unspecified = 0,
-            StandardDockingPortA,
-            StandardDockingPortB,
-            StandardDockingPortC,
-            StandardDockingPortD,
-            AirlockDockingPort,
-            Grapple,    // LEGACY ITEM - DEPRECATED
-            IndustrialContainerPortA,
-            IndustrialContainerPortB,
-            IndustrialContainerPortC,
-            IndustrialContainerPortD,
-            CargoDockingPortA,
-            CargoDockingPortB,
-            CargoDock,  // Dockable Cargo (IC) module
-            Anchor,
-            DerelictPort1, // This currently has no in-game representation and so is an abstract name.
-            DerelictPort2, // This currently has no in-game representation and so is an abstract name.
-        }
+            List<BlueprintDockingPort> results = new List<BlueprintDockingPort>();
 
-    /*
-    /// <summary>
-    /// LEGACY Structure Types Enum.
-    /// </summary>
-    /// <remarks>
-    /// The numeric values of these correspond to the game's ItemID in the structures.json
-    /// to allow for easier cross-referencing.
-    /// </remarks>
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum aHEBlueprintStructureType
-    {
-        Unspecified = 0,
-        //BRONTES = 2,
-        CIM = 3,
-        CTM = 4,
-        CLM = 5,
-        ARG = 6,
-        PSM = 7,
-        LSM = 8,
-        CBM = 9,
-        CSM = 10,
-        CM = 11,
-        CRM = 12,
-        OUTPOST = 13,
-        AM = 14,
-        Generic_Debris_JuncRoom001 = 15, // 0x0000000F
-        Generic_Debris_JuncRoom002 = 16, // 0x00000010
-        Generic_Debris_Corridor001 = 17, // 0x00000011
-        Generic_Debris_Corridor002 = 18, // 0x00000012
-        IC = 19, // 0x00000013
-        //MataPrefabs = 20, // 0x00000014
-        //Generic_Debris_Outpost001 = 21, // 0x00000015
-        CQM = 22, // 0x00000016
-        // Generic_Debris_Spawn1 = 23, // 0x00000017
-        // Generic_Debris_Spawn2 = 24, // 0x00000018
-        // Generic_Debris_Spawn3 = 25, // 0x00000019
-        SPM = 26, // 0x0000001A
-        STEROPES = 27, // 0x0000001B
-        FM = 28, // 0x0000001C
-        // FlatShipTest = 29, // 0x0000001D
-    }
-    */
+            // Attempt to locate the correct port Dictionary by sceneID.
+            if (DockingPortHints.TryGetValue(sceneID, out Dictionary<int, DockingPortType> portDictionary))
+            {
+                // We should have a Dictionary object containing the structure's port OrderIDs and Names (aka types).
+
+
+                foreach (KeyValuePair<int, DockingPortType> item in portDictionary)
+                {
+                    // Create a new BlueprintDockingPort.
+                    BlueprintDockingPort newPort = new BlueprintDockingPort()
+                    {
+                        PortName = item.Value,
+                        OrderID = item.Key,
+                    };
+                    // Add it to the results list.
+                    results.Add(newPort);
+                }
+            }
+
+            return results;
+        }
 
     }
 }

@@ -56,7 +56,7 @@ namespace HELLION.DataStructures.Blueprints
                 StationBlueprintFormatVersion, DateTime.Now);
             BlueprintObject.LinkURI = new Uri(@"https://github.com/CheeseJedi/Hellion-Station-Blueprint-Format");
 
-            BlueprintObject.AuxData = new HEBlueprintStructureAuxData(null);
+            BlueprintObject.AuxData = new BlueprintStructure_AuxData(null);
 
             // Loop through all the structures in the Structures.Json file
             foreach (JToken jtStructure in structuresJsonFile.JData)
@@ -67,7 +67,7 @@ namespace HELLION.DataStructures.Blueprints
                     SceneID = (StructureSceneID)Enum
                         .Parse(typeof(StructureSceneID), (string)jtStructure["ItemID"]),
 
-                    AuxData = new HEBlueprintStructureAuxData(null),
+                    AuxData = new BlueprintStructure_AuxData(null),
 
                     // Calculate the total (nominal) air volume.
                     NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume")),
