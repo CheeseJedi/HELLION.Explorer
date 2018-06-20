@@ -356,7 +356,8 @@ namespace HELLION.StationBlueprintEditor
         private void RefreshLabelSelectedPrimaryStructure()
         {
             labelSelectedPrimaryStructure.Text = SelectedPrimaryStructure == null ? "Unspecified"
-                : String.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryStructure.StructureType);
+                : SelectedPrimaryStructure.RootNode.Text;
+                // : String.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryStructure.StructureType);
         }
 
         /// <summary>
@@ -386,7 +387,8 @@ namespace HELLION.StationBlueprintEditor
         private void RefreshLabelSelectedSecondaryStructure()
         {
             labelSelectedSecondaryStructure.Text = SelectedSecondaryStructure == null ? "Unspecified"
-                : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID, SelectedSecondaryStructure.StructureType);
+                : SelectedSecondaryStructure.RootNode.Text;
+                // : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID, SelectedSecondaryStructure.StructureType);
         }
 
         /// <summary>
@@ -594,6 +596,7 @@ namespace HELLION.StationBlueprintEditor
 
         private void buttonRemoveStructure_Click(object sender, EventArgs e)
         {
+            // TODO - this is not yet implemented
 
             RefreshBlueprintEditorFormTitleText();
             RefreshFileSaveMenuStatus();
@@ -739,10 +742,7 @@ namespace HELLION.StationBlueprintEditor
         /// <param name="e"></param>
         private void toolPaneToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            const int adjustmentAmount = 197; // This is basically the width of the Tool Panel, with a tweak.
-            panelToolPanel.Visible = toolPaneToolStripMenuItem.Checked;
-            if (toolPaneToolStripMenuItem.Checked) splitContainerTreeViews.Width -= adjustmentAmount;
-            else splitContainerTreeViews.Width += adjustmentAmount;
+            splitContainerMain.Panel2Collapsed = !toolPaneToolStripMenuItem.Checked;
         }
 
         /// <summary>
@@ -784,6 +784,5 @@ namespace HELLION.StationBlueprintEditor
         #endregion
 
         private const string _baseText = "Station Blueprint Editor";
-
     }
 }
