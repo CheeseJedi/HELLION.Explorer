@@ -256,6 +256,7 @@ namespace HELLION.StationBlueprintEditor
 
                     RefreshDockButtonEnabledStatus();
                     RefreshUndockButtonEnabledStatus();
+                    RefreshRemoveButtonEnabledStatus();
 
                 }
             }
@@ -357,7 +358,6 @@ namespace HELLION.StationBlueprintEditor
         {
             labelSelectedPrimaryStructure.Text = SelectedPrimaryStructure == null ? "Unspecified"
                 : SelectedPrimaryStructure.RootNode.Text;
-                // : String.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryStructure.StructureType);
         }
 
         /// <summary>
@@ -388,7 +388,6 @@ namespace HELLION.StationBlueprintEditor
         {
             labelSelectedSecondaryStructure.Text = SelectedSecondaryStructure == null ? "Unspecified"
                 : SelectedSecondaryStructure.RootNode.Text;
-                // : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID, SelectedSecondaryStructure.StructureType);
         }
 
         /// <summary>
@@ -463,6 +462,18 @@ namespace HELLION.StationBlueprintEditor
         }
 
         /// <summary>
+        /// Refreshes the status of the Remove (structure) button.
+        /// </summary>
+        private void RefreshRemoveButtonEnabledStatus()
+        {
+            if (SelectedSecondaryStructure != null && !(SelectedSecondaryStructure.IsDocked))
+            {
+                buttonRemoveStructure.Enabled = true;
+            }
+            else buttonRemoveStructure.Enabled = false;
+        }
+
+        /// <summary>
         /// Refreshes all the nodes in both TreeViews.
         /// </summary>
         private void RefreshTreeViews()
@@ -533,6 +544,7 @@ namespace HELLION.StationBlueprintEditor
 
             RefreshDockButtonEnabledStatus();
             RefreshUndockButtonEnabledStatus();
+            RefreshRemoveButtonEnabledStatus();
         }
 
         #endregion
@@ -596,10 +608,16 @@ namespace HELLION.StationBlueprintEditor
 
         private void buttonRemoveStructure_Click(object sender, EventArgs e)
         {
-            // TODO - this is not yet implemented
+            // Check the selected secondary current structure is not docked to anything.
+            // The button should be disabled so this shouldn't be necessary.
+            if (SelectedSecondaryStructure.IsDocked) MessageBox.Show("Unable to remove a docked structure - un-dock first.");
 
-            RefreshBlueprintEditorFormTitleText();
-            RefreshFileSaveMenuStatus();
+            if (Blueprint.RemoveStructure(SelectedSecondaryStructure)) MessageBox.Show("Removal failed.");
+            SelectedSecondaryStructure = null;
+
+            // This could do with being more selective.
+            RefreshEverything();
+            
 
         }
 

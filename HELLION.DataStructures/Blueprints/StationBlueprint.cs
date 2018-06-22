@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.UI;
@@ -243,7 +244,7 @@ namespace HELLION.DataStructures.Blueprints
         public void ReassembleTreeNodeDockingStructure(BlueprintStructure hierarchyRoot, bool AttachToBlueprintTreeNode = false)
         {
             // Start with the root node, should be item zero in the list.
-
+            Debug.Print("### Reassemble-main [{0}] [{1}]", hierarchyRoot.StructureType, hierarchyRoot.StructureID);
             // Process the docking root's ports slightly differently - always child nodes.
             if (AttachToBlueprintTreeNode) RootNode.Nodes.Add(hierarchyRoot.RootNode);
 
@@ -252,6 +253,11 @@ namespace HELLION.DataStructures.Blueprints
                 hierarchyRoot.RootNode.Nodes.Add(port.RootNode);
                 if (port.IsDocked)
                 {
+                    if (port.DockedStructure == null)
+                    {
+                        Debug.Print("&&& REASSEMBLE &&& Port.IsDocked = true but docked structure was null");
+                        return;
+                    }
                     Reassemble(port.DockedStructure, hierarchyRoot);
                 }
             }
@@ -261,6 +267,8 @@ namespace HELLION.DataStructures.Blueprints
             /// </summary>
             void Reassemble(BlueprintStructure structure, BlueprintStructure parent)
             {
+                Debug.Print("###  Reassemble-recurse [{0}] [{1}]", structure.StructureType, structure.StructureID);
+
                 // Figure out which port is docking us to the parent and vice versa.
                 // TODO - This probably should use the object references now they are available instead of the simple de-serialised IDs.
                 BlueprintDockingPort linkToParent = structure.GetDockingPort((int)parent.StructureID);
@@ -337,19 +345,29 @@ namespace HELLION.DataStructures.Blueprints
             return RemoveStructure(GetStructure(id));
         }
 
+        /// <summary>
+        /// Removes a structure from the blueprint.
+        /// </summary>
+        /// <remarks>
+        /// Currently the structure muse be undocked to be removed.
+        /// </remarks>
+        /// <param name="structure"></param>
+        /// <returns></returns>
         public bool RemoveStructure(BlueprintStructure structure)
         {
 
             if (structure != null)
-                structure.Remove(RemoveOrphanedStructures: true);
+                structure.PrepareForRemoval(removeOrphanedStructures: false);
             else
                 return false;
 
-            IsDirty = true;
-
-
-
-            return Structures.Contains(structure) ? true : false;
+            // Actually remove the structure.
+            Structures.Remove(structure);
+            
+            // Modifications to the secondary structures list don't constitute a modification of the blueprint.
+            // IsDirty = true;
+            
+            return Structures.Contains(structure);
 
         }
 

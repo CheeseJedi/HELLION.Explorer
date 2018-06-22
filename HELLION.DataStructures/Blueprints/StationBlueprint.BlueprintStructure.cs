@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
@@ -32,7 +34,7 @@ namespace HELLION.DataStructures.Blueprints
             }
 
             /// <summary>
-            /// Constructor.
+            /// Constructor that takes an ownerObject reference.
             /// </summary>
             /// <param name="ownerObject"></param>
             public BlueprintStructure(StationBlueprint ownerObject = null) : this()
@@ -96,6 +98,20 @@ namespace HELLION.DataStructures.Blueprints
                         .Contains(OwnerObject.PrimaryStructureRoot)) return true;
 
                     // This structure wasn't in the PrimaryStructureRoot's list of connected structures.
+                    return false;
+                }
+            }
+
+            /// <summary>
+            /// Determines whether the structure is docked to another.
+            /// </summary>
+            public bool IsDocked
+            {
+                get
+                {
+                    foreach (BlueprintDockingPort port in DockingPorts)
+                        if (port.IsDocked) return true;
+
                     return false;
                 }
             }
@@ -347,20 +363,41 @@ namespace HELLION.DataStructures.Blueprints
             }
 
             /// <summary>
-            /// Removes this structure, and any docked to it that would be orphaned by
-            /// the removal operation.
+            /// Removes this structure only - it must not be docked to another.
             /// </summary>
-            /// <returns>Returns true on success.</returns>
-            public bool Remove(bool RemoveOrphanedStructures = false)
+            /// <returns>Returns a failure state; true if the operation encountered a problem, false if successful.</returns>
+            public bool PrepareForRemoval(bool removeOrphanedStructures = false)
             {
-                // TODO - Not yet implemented.
+                // The RemoveOrphanedStructures is currently ignored.
+                // Ideally each docking port would be notified, and if necessary trigger an un-docking.
 
-                // Make list of directly docked structures
-                // Find local docking ports that are in use
-                // Loop through each and find the corresponding docking port and reset it's data with .Undock()
-                //      check the previously docked structures and make a list of structures not
+                // Immediately fail (return) if the structure is docked.
+                if (IsDocked) return true;
+
+                // Set up a StringBuilder to append debug info to.
+                StringBuilder sb = new StringBuilder();
+
+                //
+                sb.Append(String.Format("Removal called on StructureType {0} StructureID {1}", StructureType, StructureID) + Environment.NewLine);
+
+                // Process DockingPorts first - prepare them for removal.
+                foreach (BlueprintDockingPort port in DockingPorts)
+                {
+                    sb.Append(String.Format("* Processing PortName {0}; OrderID {1}; IsDocked {2}", port.PortName, port.OrderID, IsDocked) + Environment.NewLine);
+
+                    if (!port.PrepareForRemoval(removeOrphanedStructures)) return true;
+                    
+                }
+
+                
+                
+                // Set the DockingPorts list to null - the garbage collector will deal with the docking port objects.
+                //DockingPorts = null;
+
+                
 
 
+                Debug.Print(sb.ToString());
 
                 return false;
             }

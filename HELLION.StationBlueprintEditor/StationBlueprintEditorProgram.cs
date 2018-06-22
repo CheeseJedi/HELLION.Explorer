@@ -37,24 +37,61 @@ namespace HELLION.StationBlueprintEditor
 
         #endregion
 
-        #region File Handling Objects
+        #region File Handling Properties
 
         /// <summary>
         /// The DirectoryInfo object representing the Static Data directory.
         /// </summary>
-        internal static DirectoryInfo dataDirectoryInfo = null;
+        // internal static DirectoryInfo dataDirectoryInfo = null;
 
         /// <summary>
         /// The FileInfo object that represents the currently open file when one is set.
         /// </summary>
-        internal static FileInfo saveFileInfo = null;
+        internal static FileInfo SaveFileInfo
+        {
+            get => _saveFileInfo;
+            set
+            {
+                if (_saveFileInfo != value)
+                {
+                    _saveFileInfo = value;
 
-        internal static StructureDefinitions_File structureDefinitionsFile = null;
+                }
+            }
+        }
 
         /// <summary>
         /// Defines an object to hold the current open document
         /// </summary>
-        internal static StationBlueprint_File docCurrent = null;
+        internal static StationBlueprint_File DocCurrent
+        {
+            get => _docCurrent;
+            set
+            {
+                if (_docCurrent != value)
+                {
+                    _docCurrent = value;
+                    if (_docCurrent?.File != null)
+                    {
+                        Debug.Print("DocCurrent change triggering potential SaveFileInfo change.");
+                        SaveFileInfo = _docCurrent.File;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// The StructureDefs file
+        /// </summary>
+        internal static StructureDefinitions_File StructureDefinitionsFile
+        {
+            get => _structureDefinitionsFile;
+            set => _structureDefinitionsFile = value;
+
+        }
+
+
+
 
         #endregion
 
@@ -220,7 +257,7 @@ namespace HELLION.StationBlueprintEditor
         internal static void ControlledExit()
         {
             // Check the current document isn't null
-            if (docCurrent != null)
+            if (DocCurrent != null)
             {
                 // Looks like there was a document open, call the FileClose method.
                 FileClose();
@@ -246,10 +283,20 @@ namespace HELLION.StationBlueprintEditor
 
         #region File Menu Methods
 
+        /// <summary>
+        /// Creates a new empty blueprint object and blueprint file object.
+        /// </summary>
         internal static void FileNew()
         {
 
+            // Call the file close to handle unsaved changes
             FileClose();
+
+            DocCurrent = new StationBlueprint_File(null, SaveFileInfo);
+
+
+            MainForm.JsonBlueprintFile = DocCurrent;
+            MainForm.Blueprint = DocCurrent.BlueprintObject;
 
 
 
@@ -287,7 +334,7 @@ namespace HELLION.StationBlueprintEditor
                 if (dialogResult == DialogResult.OK)
                 {
                     // Check for an existing document and close it if necessary
-                    if (docCurrent != null)
+                    if (DocCurrent != null)
                     {
                         FileClose();
                     }
@@ -306,16 +353,16 @@ namespace HELLION.StationBlueprintEditor
                 }
             }
 
-            saveFileInfo = new FileInfo(sFileName);
+            SaveFileInfo = new FileInfo(sFileName);
             //dataDirectoryInfo = new DirectoryInfo(Properties.HELLION.Explorer.Default.sGameDataFolder);
 
-            if (saveFileInfo.Exists) // && dataDirectoryInfo.Exists)
+            if (SaveFileInfo.Exists) // && dataDirectoryInfo.Exists)
             {
                 // Set the status strip message
-                //MainForm.toolStripStatusLabel1.Text = ("Loading file: " + saveFileInfo.FullName);
+                //MainForm.toolStripStatusLabel1.Text = ("Loading file: " + _saveFileInfo.FullName);
 
                 // Update the main window's title text to reflect the filename selected
-                //RefreshMainFormTitleText(saveFileInfo.FullName);
+                //RefreshMainFormTitleText(_saveFileInfo.FullName);
 
                 //Application.UseWaitCursor = true;
                 MainForm.Cursor = Cursors.WaitCursor;
@@ -324,15 +371,15 @@ namespace HELLION.StationBlueprintEditor
                 //MainForm.treeView1.BeginUpdate();
 
                 // Create a new DocumentWorkspace
-                //docCurrent = new DocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
+                //_docCurrent = new DocumentWorkspace(_saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
 
-                docCurrent = new StationBlueprint_File(null, saveFileInfo);
+                DocCurrent = new StationBlueprint_File(null, SaveFileInfo);
 
 
-                MainForm.JsonBlueprintFile = docCurrent;
-                MainForm.Blueprint = docCurrent.BlueprintObject;
+                MainForm.JsonBlueprintFile = DocCurrent;
+                MainForm.Blueprint = DocCurrent.BlueprintObject;
 
-                Debug.Print(docCurrent.BlueprintObject.Name);
+                Debug.Print(DocCurrent.BlueprintObject.Name);
 
                 MainForm.RefreshEverything();
 
@@ -365,12 +412,12 @@ namespace HELLION.StationBlueprintEditor
         /// <param name="passedFileName"></param>
         internal static void FileSave(string passedFileName = null)
         {
-            if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
+            if (DocCurrent == null) throw new NullReferenceException("_docCurrent was null.");
             else
             {
-                string newFileName = passedFileName ?? docCurrent.File.FullName;
-                // Call the docCurrent's save file's .Save() method.
-                //docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+                string newFileName = passedFileName ?? DocCurrent.File.FullName;
+                // Call the _docCurrent's save file's .Save() method.
+                //_docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
             }
         }
 
@@ -379,7 +426,7 @@ namespace HELLION.StationBlueprintEditor
         /// </summary>
         internal static void FileSaveAs()
         {
-            if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
+            if (DocCurrent == null) throw new NullReferenceException("_docCurrent was null.");
             else
             {
 
@@ -387,7 +434,7 @@ namespace HELLION.StationBlueprintEditor
                 // default file name.
                 var saveFileDialog1 = new SaveFileDialog()
                 {
-                    FileName = docCurrent.File.FullName,
+                    FileName = DocCurrent.File.FullName,
                     Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
                     Title = "Save As",
 
@@ -409,123 +456,87 @@ namespace HELLION.StationBlueprintEditor
         }
 
         /// <summary>
-        /// Closes the current document workspace.
+        /// Closes the current open blueprint document.
         /// </summary>
         internal static void FileClose()
         {
-            // Handles closing of files and cleanup of the document workspace.
+            Debug.Print("File Close called; Filename={0} BlueprintName={1}", DocCurrent.File.FullName, DocCurrent.BlueprintObject.Name);
 
-            // isFileDirty check before exiting
-            if (docCurrent != null && docCurrent.IsDirty)
+            if (DocCurrent != null)
             {
-                // Unsaved changes, prompt user to save
-                string sMessage = docCurrent.File.FullName + " has been modified." + Environment.NewLine + "Do you want to save changes to this Blueprint before exiting?";
-                const string sCaption = "Unsaved Changes";
-                DialogResult result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-                if (result == DialogResult.Cancel) return;
-
-
-                switch (result)
+                // isFileDirty check before exiting
+                if (DocCurrent.IsDirty)
                 {
-                    case DialogResult.Cancel:
-                        //e.Cancel = true;
-                        return;
-                    // If the yes button was pressed ...
-                    case DialogResult.Yes:
-                        MessageBox.Show("User selected to save changes.", "NonImplemented Notice",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Unsaved changes, prompt user to save
+                    string sMessage = DocCurrent.File.FullName + " has been modified." + Environment.NewLine + "Do you want to save changes to this Blueprint before exiting?";
+                    const string sCaption = "Unsaved Changes";
+                    DialogResult result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
-                        // Save operation to be triggered here.
+                    if (result == DialogResult.Cancel) return;
+
+                    switch (result)
+                    {
+                        case DialogResult.Cancel:
+                            //e.Cancel = true;
+                            return;
+
+                        // If the yes button was pressed ...
+                        case DialogResult.Yes:
+                            MessageBox.Show("User selected to save changes.", "NonImplemented Notice",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            break;
 
 
-
-                        break;
+                        default:
+                            // Save operation to be triggered here.
+                            
+                            break;
+                    }
 
                 }
 
+
                 // Close the file
 
+                // Remove the current JsonDataViewForm from the jsonDataViews list
+                //StationBlueprintEditorProgram.blueprintEditorForms.Remove(this);
+
+                MainForm.Cursor = Cursors.WaitCursor;
+
+                // Suppress repainting the TreeView until all the objects have been created.
+                MainForm.treeViewPrimaryStructure.BeginUpdate();
+                MainForm.treeViewSecondaryStructures.BeginUpdate();
 
 
-            }
+                MainForm.FormTitleText = String.Empty;
 
-            // TODO: More work to be done here to handle cleanup, and calling the save
+                // Disable the Save and Save As menu items.
+                MainForm.saveToolStripMenuItem.Enabled = false;
+                MainForm.saveAsToolStripMenuItem.Enabled = false;
+                MainForm.closeToolStripMenuItem.Enabled = false;
+                MainForm.revertToolStripMenuItem.Enabled = false;
 
-            //GraftTreeOutboundToMainForm();
-
-            // Remove the current JsonDataViewForm from the jsonDataViews list
-            //StationBlueprintEditorProgram.blueprintEditorForms.Remove(this);
-
-            MainForm.Cursor = Cursors.WaitCursor;
-
-            // Suppress repainting the TreeView until all the objects have been created.
-            //MainForm.treeView1.BeginUpdate();
-
-            // Create a new DocumentWorkspace
-            //docCurrent = new DocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
-
-            //Blueprint = JsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("JsonBlueprintFile.BlueprintObject was null.");
-
-            // Trigger a refresh on each of the node trees.
-            //docCurrent.SolarSystem.RootNode.RefreshToolTipText(includeSubtrees: true);
-            //docCurrent.GameData.RootNode.RefreshToolTipText(includeSubtrees: true);
-            //docCurrent.Blueprints.RootNode.RefreshToolTipText(includeSubtrees: true);
-            //docCurrent.SearchHandler.RootNode.RefreshToolTipText(includeSubtrees: true);
-
-            Debug.Print(docCurrent.BlueprintObject.Name);
-
-            MainForm.FormTitleText = String.Empty;
-            MainForm.RefreshEverything();
-
-            // Enable the Save and Save As menu items.
-            //MainForm.saveToolStripMenuItem.Enabled = true;
-            //MainForm.saveAsToolStripMenuItem.Enabled = true;
-
-            // Begin repainting the TreeView.
-            //MainForm.treeView1.EndUpdate();
-
-            //Application.UseWaitCursor = false;
-            MainForm.Cursor = Cursors.Default;
-
-            // Disable the Save and Save As menu items.
-            //MainForm.saveToolStripMenuItem.Enabled = false;
-            //MainForm.saveAsToolStripMenuItem.Enabled = false;
-
-            // Disable the Observed GUIDs menu item.
-            //MainForm.observedGUIDsToolStripMenuItem.Enabled = false;
-
-            // Clear any existing nodes from the tree view
-            //MainForm.treeView1.Nodes.Clear();
-
-            // Clear any items from the list view
-            //MainForm.listView1.Items.Clear();
-
-            // Check for an existing document and close it if necessary
-            if (docCurrent != null)
-            {
                 // Clear the existing document
-                docCurrent.Close();
-                docCurrent = null;
+                DocCurrent.Close();
+                DocCurrent = null;
+                MainForm.Blueprint = null;
+                MainForm.JsonBlueprintFile = null;
+                
+                // Trigger refresh
+                MainForm.RefreshEverything();
+
+                // Begin repainting the TreeViews.
+                MainForm.treeViewPrimaryStructure.EndUpdate();
+                MainForm.treeViewSecondaryStructures.EndUpdate();
+
+
+
+
+                // Initiate Garbage Collection
+                GC.Collect();
+                MainForm.Cursor = Cursors.Default;
+
             }
-
-            MainForm.Blueprint = null;
-            MainForm.JsonBlueprintFile = null;
-
-
-
-
-            MainForm.RefreshEverything();
-
-
-            MainForm.closeToolStripMenuItem.Enabled = false;
-            MainForm.revertToolStripMenuItem.Enabled = false;
-
-            // Trigger refresh of UI elements
-            //RefreshMainFormTitleText();
-
-            // Initiate Garbage Collection
-            GC.Collect();
         }
 
         /// <summary>
@@ -536,10 +547,19 @@ namespace HELLION.StationBlueprintEditor
         /// </remarks>
         internal static void FileRevert()
         {
-            string currentFileName = docCurrent.File.FullName;
+            string currentFileName = DocCurrent.File.FullName;
             FileClose();
             FileOpen(currentFileName);
         }
+
+        #endregion
+
+        #region Fields
+
+        private static FileInfo _saveFileInfo = null;
+        private static StationBlueprint_File _docCurrent = null;
+        private static StructureDefinitions_File _structureDefinitionsFile = null;
+
 
         #endregion
 
@@ -565,7 +585,7 @@ namespace HELLION.StationBlueprintEditor
             //Application.Run(new Form1());
 
             // Initialise the StructureDefinitions file - temporary setup!
-            structureDefinitionsFile = new StructureDefinitions_File(null, new FileInfo(@"E:\HELLION\TestArea\Output.json"));
+            StructureDefinitionsFile = new StructureDefinitions_File(null, new FileInfo(@"E:\HELLION\TestArea\Output.json"));
 
             // Initialise the main form
             MainForm = new StationBlueprintEditorForm();

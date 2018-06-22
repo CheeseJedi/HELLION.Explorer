@@ -322,6 +322,25 @@ namespace HELLION.DataStructures.Blueprints
             }
 
             /// <summary>
+            /// Prepares the DockingPort for removal from memory.
+            /// </summary>
+            /// <param name="RemoveOrphanedStructures"></param>
+            /// <returns>Returns a failure state; true if the operation encountered a problem, false if successful.</returns>
+            public bool PrepareForRemoval(bool RemoveOrphanedStructures = false)
+            {
+                if (IsDocked)
+                {
+                    // TODO: Trigger un-docking if this port is docked.
+                    return true;
+                }
+
+                // Remove the ports tree node from it's parent's Nodes collection.
+                if (RootNode.Parent != null) RootNode.Parent.Nodes.Remove(RootNode);
+
+                return false;
+            }
+
+            /// <summary>
             /// Attempts to set the PortName from OrderID.
             /// </summary>
             private void AttemptSetPortNameFromOrderID()
@@ -337,6 +356,9 @@ namespace HELLION.DataStructures.Blueprints
             {
                 if (OwnerStructure != null) OrderID = (int)GetOrderID((StructureSceneID)OwnerStructure?.SceneID, (DockingPortType)PortName);
             }
+
+
+
 
             #endregion
 
