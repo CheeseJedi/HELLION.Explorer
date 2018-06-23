@@ -106,7 +106,7 @@ namespace HELLION.StationBlueprintEditor
 
                     if (_blueprint != null)
                     {
-                        RefreshEverything();
+                        // REENABLE RefreshEverything();
                     }
                     else
                     {
@@ -186,11 +186,13 @@ namespace HELLION.StationBlueprintEditor
                         SelectedPrimaryStructure = null;
                     }
 
+                    /*
                     Debug.Print("SelectedPrimaryStructureNode has caused new values to be set.");
                     if (SelectedPrimaryStructure == null) Debug.Print("CurrentStructure is null.");
                     else Debug.Print("CurrentStructure [" + SelectedPrimaryStructure.StructureID.ToString() + "] " + SelectedPrimaryStructure.StructureType.ToString());
                     if (SelectedPrimaryDockingPort == null) Debug.Print("CurrentDockingPort is null.");
                     else Debug.Print("CurrentDockingPort " + SelectedPrimaryDockingPort.PortName.ToString());
+                    */
 
                     // Trigger updates.
 
@@ -530,10 +532,12 @@ namespace HELLION.StationBlueprintEditor
         }
 
         /// <summary>
-        /// Refreshes everything!
+        /// Refreshes everything.
         /// </summary>
         public void RefreshEverything()
         {
+            Debug.Print("---### RefreshEverything called. ###---");
+            
             // RefreshBlueprintEditorFormTitleText();
             RefreshFileSaveMenuStatus();
 
@@ -591,8 +595,6 @@ namespace HELLION.StationBlueprintEditor
 
                 RefreshTreeViews();
 
-
-
                 // treeViewPrimaryStructure.Nodes.Add(newStructure.RootNode);
 
                 // Select the new node
@@ -615,10 +617,12 @@ namespace HELLION.StationBlueprintEditor
             if (Blueprint.RemoveStructure(SelectedSecondaryStructure)) MessageBox.Show("Removal failed.");
             SelectedSecondaryStructure = null;
 
-            // This could do with being more selective.
-            RefreshEverything();
-            
-
+            // Trigger refresh.
+            RefreshLabelSelectedSecondaryStructure();
+            RefreshLabelSelectedSecondaryDockingPort();
+            RefreshPictureBoxSelectedSecondaryStructure();
+            RefreshTreeViews();
+            RefreshRemoveButtonEnabledStatus();
         }
 
         private void buttonDockPort_Click(object sender, EventArgs e)

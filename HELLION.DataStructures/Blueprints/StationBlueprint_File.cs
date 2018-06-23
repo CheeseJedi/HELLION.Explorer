@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using HELLION.DataStructures.Document;
 using HELLION.DataStructures.UI;
 using Newtonsoft.Json.Linq;
-using static HELLION.DataStructures.Blueprints.StationBlueprint;
 
 namespace HELLION.DataStructures.Blueprints
 {
@@ -45,7 +43,7 @@ namespace HELLION.DataStructures.Blueprints
             RootNode = new Blueprint_TN(passedOwner: this, newNodeType: Base_TN_NodeType.Blueprint,
                 nodeName: File.Name); //, nodeToolTipText: File.FullName);
 
-            if (File.Exists) LoadFile(populateNodeTreeDepth);
+            if (File.Exists) LoadFile(); //  populateNodeTreeDepth);
             else Debug.Print("File {0} doesn't exist", File.FullName);
         }
 
@@ -86,37 +84,23 @@ namespace HELLION.DataStructures.Blueprints
         /// Loads the file.
         /// </summary>
         /// <param name="populateNodeTreeDepth"></param>
-        public void LoadFile(int populateNodeTreeDepth)
+        public override bool LoadFile() //int populateNodeTreeDepth)
         {
             if (!File.Exists) throw new FileNotFoundException();
-            base.LoadFile();
-            PostLoadOperations(populateNodeTreeDepth);
+            bool result = base.LoadFile();
+            PostLoadOperations(); // populateNodeTreeDepth);
+            return result;
         }
 
         /// <summary>
         /// Called after a file is loaded.
         /// </summary>
         /// <param name="populateNodeTreeDepth"></param>
-        public void PostLoadOperations(int populateNodeTreeDepth = 8)
+        public void PostLoadOperations() // int populateNodeTreeDepth = 8)
         {
             // Populate the blueprint object.
             DeserialiseToBlueprintObject();
-
-            if (BlueprintObject.__ObjectType != null && BlueprintObject.__ObjectType == BlueprintObjectType.StationBlueprint)
-            {
-                // Assemble the primary tree hierarchy based on the DockingRoot.
-                BlueprintObject.ReassembleTreeNodeDockingStructure
-                    (BlueprintObject.PrimaryStructureRoot, AttachToBlueprintTreeNode: true);
-                RootNode.Nodes.Add(BlueprintObject.RootNode);
-
-                // Populate the data view.
-                DataViewRootNode.JData = _jData;
-                DataViewRootNode.CreateChildNodesFromjData(populateNodeTreeDepth);
-                ///RootNode.Nodes.Add(DataViewRootNode);
-
-                // Populate the hierarchy view.
-                //BuildHierarchyView();
-            }
+                 
         }
 
         /// <summary>
@@ -125,8 +109,8 @@ namespace HELLION.DataStructures.Blueprints
         /// <param name="newData"></param>
         public void ApplyNewJData(JToken newData)
         {
+            // Apply the new data.
             _jData = newData;
-
 
             // Clean up blueprint objects and tree nodes
 

@@ -194,7 +194,7 @@ namespace HELLION.DataStructures
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
         /// </summary>
         /// <returns>Returns true if there was a loading error</returns>
-        protected bool LoadFile()
+        public virtual bool LoadFile()
         {
             if (File.Exists)
             {

@@ -267,12 +267,18 @@ namespace HELLION.DataStructures.Blueprints
             /// </summary>
             void Reassemble(BlueprintStructure structure, BlueprintStructure parent)
             {
+                if (structure == null) throw new NullReferenceException("Structure was null.");
                 Debug.Print("###  Reassemble-recurse [{0}] [{1}]", structure.StructureType, structure.StructureID);
 
                 // Figure out which port is docking us to the parent and vice versa.
                 // TODO - This probably should use the object references now they are available instead of the simple de-serialised IDs.
-                BlueprintDockingPort linkToParent = structure.GetDockingPort((int)parent.StructureID);
-                BlueprintDockingPort linkFromParent = parent.GetDockingPort((int)structure.StructureID);
+                //BlueprintDockingPort linkToParent = structure.GetDockingPort((int)parent.StructureID);
+                //BlueprintDockingPort linkFromParent = parent.GetDockingPort((int)structure.StructureID);
+
+                BlueprintDockingPort linkToParent = structure.GetDockingPort(parent);
+                BlueprintDockingPort linkFromParent = parent.GetDockingPort(structure);
+
+
 
                 // Add the node for the link to parent to the link from parent's node collection.
                 linkFromParent.RootNode.Nodes.Add(linkToParent.RootNode);

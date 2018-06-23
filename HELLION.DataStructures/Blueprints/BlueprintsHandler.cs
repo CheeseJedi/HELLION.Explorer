@@ -24,7 +24,7 @@ namespace HELLION.DataStructures.Blueprints
         }
 
         /// <summary>
-        /// The FileIndo for the StructureDefinitions.json file.
+        /// The FileInfo for the StructureDefinitions.json file.
         /// </summary>
         protected FileInfo structureDefinitionsFileInfo = null;
 

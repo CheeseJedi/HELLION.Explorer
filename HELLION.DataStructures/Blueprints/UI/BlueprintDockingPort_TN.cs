@@ -14,11 +14,6 @@ namespace HELLION.DataStructures.Blueprints
             // Set NodeType
             NodeType = Base_TN_NodeType.BlueprintDockingPort;
 
-            // Enable name auto-generation.
-            //AutoGenerateName = true;
-
-            // Trigger name generation.
-            //RefreshName();
         }
 
         /// <summary>
@@ -36,6 +31,7 @@ namespace HELLION.DataStructures.Blueprints
             if (structure == null || dockingPort == null || structure.SceneID == null
                 || dockingPort.PortName == null || !AutoGenerateName)
             {
+                /*
                 Debug.Print("RefreshName() skipped.");
                 if (structure == null) Debug.Print("structure == null");
                 else if (structure.SceneID == null) Debug.Print("structure.SceneID == null");
@@ -44,13 +40,14 @@ namespace HELLION.DataStructures.Blueprints
                 else if (dockingPort.PortName == null) Debug.Print("dockingPort.PortName == null");
 
                 if (!AutoGenerateName) Debug.Print("AutoGenerate == false");
+                */
 
             }
             else
             {
 
                 Name = GenerateName();
-                Debug.Print("RefreshName() generated [{0}].", Name);
+                // Debug.Print("RefreshName() generated [{0}].", Name);
             }
 
             if (includeSubTrees)
@@ -70,7 +67,7 @@ namespace HELLION.DataStructures.Blueprints
         {
             // Generate a name based on the current docking port names.
             BlueprintDockingPort ownerPort = (BlueprintDockingPort)OwnerObject;
-            Debug.Print("### Docking Port TN GenerateName() called - {0}", ownerPort.PortName);
+            //Debug.Print("### Docking Port TN GenerateName() called - {0}", ownerPort.PortName);
 
             return ownerPort.PortName.ToString() ?? "Unspecified Docking Port";
         }

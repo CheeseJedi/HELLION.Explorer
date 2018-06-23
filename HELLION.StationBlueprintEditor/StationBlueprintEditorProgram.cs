@@ -381,7 +381,7 @@ namespace HELLION.StationBlueprintEditor
 
                 Debug.Print(DocCurrent.BlueprintObject.Name);
 
-                MainForm.RefreshEverything();
+                
 
                 // Enable the Save and Save As menu items.
                 MainForm.saveToolStripMenuItem.Enabled = true;
@@ -396,11 +396,15 @@ namespace HELLION.StationBlueprintEditor
 
                 //RefreshMainFormTitleText();
 
-                MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
+                MainForm.RefreshEverything();
+
+
+
 
                 MainForm.closeToolStripMenuItem.Enabled = true;
                 MainForm.revertToolStripMenuItem.Enabled = true;
 
+                MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
 
             }
         }
