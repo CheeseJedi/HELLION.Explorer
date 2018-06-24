@@ -209,7 +209,6 @@ namespace HELLION.DataStructures.StaticData
             {
                 // We should have a Dictionary object containing the structure's port OrderIDs and Names (aka types).
 
-
                 foreach (KeyValuePair<int, DockingPortType> item in portDictionary)
                 {
                     // Create a new BlueprintDockingPort.

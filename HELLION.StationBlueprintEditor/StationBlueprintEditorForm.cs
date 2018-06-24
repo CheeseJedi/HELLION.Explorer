@@ -23,8 +23,8 @@ namespace HELLION.StationBlueprintEditor
         {
             InitializeComponent();
 
-            treeViewPrimaryStructure.ImageList = StationBlueprintEditorProgram.hEImageList.IconImageList;
-            treeViewSecondaryStructures.ImageList = StationBlueprintEditorProgram.hEImageList.IconImageList;
+            treeViewPrimaryStructure.ImageList = hEImageList.IconImageList;
+            treeViewSecondaryStructures.ImageList = hEImageList.IconImageList;
 
             treeViewPrimaryStructure.ShowNodeToolTips = true;
             treeViewSecondaryStructures.ShowNodeToolTips = true;
@@ -32,97 +32,9 @@ namespace HELLION.StationBlueprintEditor
             RefreshDropDownModuleTypes();
         }
 
-        ///// <summary>
-        ///// Unused constructor.
-        ///// </summary>
-        ///// <param name="jsonBlueprintFile"></param>
-        //public StationBlueprintEditorForm(StationBlueprint_File jsonBlueprintFile) : this()
-        //{
-        //    JsonBlueprintFile = jsonBlueprintFile;
-        //    Blueprint = JsonBlueprintFile.BlueprintObject; // ?? throw new NullReferenceException("JsonBlueprintFile.BlueprintObject was null.");
-
-        //    FormTitleText = JsonBlueprintFile.File.FullName;
-        //    RefreshBlueprintEditorFormTitleText();
-        //}
-
-        ///// <summary>
-        ///// Constructor that takes a Blueprint_TN.
-        ///// </summary>
-        ///// <param name="passedSourceNode"></param>
-        //public StationBlueprintEditorForm(Blueprint_TN passedSourceNode) : this()
-        //{
-        //    SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
-        //    FormTitleText = passedSourceNode.Name;
-        //    RefreshBlueprintEditorFormTitleText();
-
-        //    JsonBlueprintFile = (StationBlueprint_File)passedSourceNode.OwnerStructure;
-        //    Blueprint = JsonBlueprintFile.BlueprintObject ?? throw new NullReferenceException("JsonBlueprintFile.BlueprintObject was null.");
-
-        //    //GraftTreeInboundFromMainForm();
-
-        //}
-
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// The file being worked on.
-        /// </summary>
-        //public StationBlueprint_File aJsonBlueprintFile
-        //{
-        //    get => _jsonBlueprintFile;
-        //    set
-        //    {
-        //        if (_jsonBlueprintFile != value)
-        //        {
-        //            _jsonBlueprintFile = value;
-
-        //            if (_jsonBlueprintFile != null)
-        //            {
-        //                // Attempt to set the form's Blueprint object to the
-        //                // StationBlueprint in the file.
-        //                FormTitleText = JsonBlueprintFile.File?.FullName ?? "untitled";
-        //                //Blueprint = JsonBlueprintFile.BlueprintObject;
-        //            }
-        //            else
-        //            {
-        //                FormTitleText = String.Empty;
-        //                //Blueprint = null;
-        //            }
-        //        }
-        //    }
-        //}
-
-        /// <summary>
-        /// The blueprint object in the file that's being worked on.
-        /// </summary>
-        //public StationBlueprint Blueprint
-        //{
-        //    get => _blueprint;
-        //    set
-        //    {
-        //        if (_blueprint != value)
-        //        {
-        //            _blueprint = value;
-
-        //            if (_blueprint != null)
-        //            {
-        //                // REENABLE RefreshEverything();
-        //            }
-        //            else
-        //            {
-        //                _selectedPrimaryStructureNode = null;
-        //                _selectedSecondaryStructureNode = null;
-        //                _currentStructure = null;
-        //                _currentDockingPort = null;
-        //                _destinationStructure = null;
-        //                _destinationDockingPort = null;
-
-        //            }
-        //        }
-        //    }
-        //}
 
         public String FormTitleText
         {
@@ -690,19 +602,25 @@ namespace HELLION.StationBlueprintEditor
 
         private void newFromClipboardToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             if (Clipboard.ContainsText(TextDataFormat.Text))
             {
                 // Get the clipboard contents.
                 string clipboardText = Clipboard.GetText(TextDataFormat.Text);
 
+                Debug.Print(clipboardText);
+
                 // Attempt to parse the text in to a JToken.
                 if (clipboardText.TryParseJson(out JToken jtoken))
                 {
+                    Debug.Print("JToken HasValues: {0}", jtoken.HasValues.ToString());
+                    Debug.Print(jtoken.ToString());
+
                     // We should have a valid JToken - trigger FileNew.
                     FileNew(jtoken);
                 }
 
+                else
+                    Debug.Print("newFromClipboardToolStripMenuItem - Parse failure.");
             }
             else MessageBox.Show("Clipboard needs to contain valid JSON data as text.", "Error creating new blueprint from clipboard",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);

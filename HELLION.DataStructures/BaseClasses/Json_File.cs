@@ -31,27 +31,38 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo) : this(ownerObject)
+        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo, bool autoDeserialise ) : this(ownerObject)
         {
+            Debug.Print("Json_File.ctor(FileInfo) called {0}", passedFileInfo.FullName);
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
 
-            if (File.Exists)
-            {
-                LoadFile();
-            }
+            // Load the file.
+            LoadFile();
+
+            // Trigger the first de-serialisation.
+            if (autoDeserialise) Deserialise();
+
+            // Switch on automatic de-serialisation of the JData when it changes.
+            AutoDeserialiseOnJdataModification = autoDeserialise;
         }
 
         /// <summary>
         /// Constructor for creating a Json_File in memory from a JToken.
         /// </summary>
         /// <param name="ownerObject"></param>
-        /// <param name="jtoken"></param>
-        public Json_File(IParent_Json_File ownerObject, JToken jtoken) : this(ownerObject)
+        /// <param name="jdata"></param>
+        public Json_File(IParent_Json_File ownerObject, JToken jdata, bool autoDeserialise ) : this(ownerObject)
         {
-            // Set the JData.
-            JData = jtoken;
-        }
+            Debug.Print("Json_File.ctor(FileInfo) called - HasValues [{0}]",
+                jdata != null ? jdata.HasValues.ToString() : "null");
 
+            // Switch on automatic de-serialisation of the JData when it changes.
+            AutoDeserialiseOnJdataModification = autoDeserialise;
+
+            // Set the JData, triggering de-serialisation.
+            JData = jdata;
+
+        }
 
         #endregion
 
@@ -90,18 +101,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Determines whether a change to the jData will trigger de-serialisation.
         /// </summary>
-        public bool AutoDeserialiseOnJdataModification
-        {
-            get => _autoDeserialiseOnJdataModification;
-            set
-            {
-                if (_autoDeserialiseOnJdataModification != value)
-                {
-                    _autoDeserialiseOnJdataModification = value;
-
-                }
-            }
-        }
+        public bool AutoDeserialiseOnJdataModification { get; set; } = false;
 
         /// <summary>
         /// Used to determine whether the file is loaded.
@@ -339,26 +339,16 @@ namespace HELLION.DataStructures
         }
 
         /// <summary>
-        /// Does nothing.
+        /// Does nothing - This method is a stub to be overridden by derived classes.
         /// </summary>
-        /// <remarks>
-        /// A empty method to be overridden for derived classes for files that implement serialisation.
-        /// </remarks>
-        public virtual void Serialise()
-        {
-            // This method is empty and intended to be overridden by derived classes.
-        }
+        public virtual void Serialise() => throw new NotImplementedException
+            ("This method is a stub to be overridden by derived classes.");
 
         /// <summary>
-        /// Does nothing.
+        /// Does nothing - This method is a stub to be overridden by derived classes.
         /// </summary>
-        /// <remarks>
-        /// A empty method to be overridden for derived classes for files that implement de-serialisation.
-        /// </remarks>
-        public virtual void Deserialise()
-        {
-            // This method is empty and intended to be overridden by derived classes.
-        }
+        public virtual void Deserialise() => throw new NotImplementedException
+            ("This method is a stub to be overridden by derived classes.");
 
         /// <summary>
         /// Handles changes to the JData object.
@@ -399,7 +389,6 @@ namespace HELLION.DataStructures
         protected bool _isDirty = false;
         protected bool _readOnlyOverride = true;
         protected bool _logToDebug = true;
-        private bool _autoDeserialiseOnJdataModification = false;
 
         #endregion
 

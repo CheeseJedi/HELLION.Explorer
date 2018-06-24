@@ -186,7 +186,7 @@ namespace HELLION.CrewSync
         /// <returns></returns>
         internal static bool FileOpen()
         {
-            hellionSaveFile = new Json_File(null, hellionSaveFileInfo);
+            hellionSaveFile = new Json_File(null, hellionSaveFileInfo, autoDeserialise: true);
 
             if (hellionSaveFile.LoadError) return false;
             return true;

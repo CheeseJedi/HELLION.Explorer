@@ -59,11 +59,6 @@ namespace HELLION.StationBlueprintEditor
             }
         }
 
-        /// <summary>
-        /// The StructureDefs file
-        /// </summary>
-        //internal static StructureDefinitions_File StructureDefinitionsFile { get; set; } = null;
-
         #endregion
 
         #region Misc Objects
@@ -92,61 +87,89 @@ namespace HELLION.StationBlueprintEditor
         /// <summary>
         /// Processes any command line arguments issued to the program.
         /// </summary>
-        /// <remarks>
-        /// Hellion.Explorer.exe [(full file name of .save file to open)] [/data (full path to the dedi's Data folder)]
-        /// 1 argument - just the .save file, Data folder needs to be already defined
-        /// 2 arguments - Sets the data folder path 
-        /// 3 arguments - Sets the data folder path and opens the .save file
-        /// </remarks>
         /// <param name="arguments"></param>
-        internal static void ProcessCommandLineArguments(string[] arguments)
+        internal static bool ProcessCommandLineArguments(string[] arguments)
         {
             if (arguments.Length > 0)
             {
                 // There are arguments 
-                string saveFilePath = "";
-                string dataFolderPath = "";
-                string helpText = Application.ProductName + ".exe [<full file name of .save file to open>] [/data <full path to the dedi's Data folder>]";
+
+                string helpText = Application.ProductName
+                    + ".exe <full file name of station blueprint .json file to open> "
+                    + "[/logfolder <path to log file directory>] "
+                    + "[/nobackup] [/verbose] ";
 
                 for (int i = 0; i < arguments.Length; i++)
                 {
                     // Try to figure out what's in this argument
-                    if (arguments[i].EndsWith(".save", StringComparison.CurrentCultureIgnoreCase))
+                    if (arguments[i].EndsWith(".json", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        // It's a .save file
-                        saveFilePath = arguments[i];
-                        Console.WriteLine("Argument: Save File " + saveFilePath);
+                        // It's a .json file
+                        arg_blueprintFileInfo = new FileInfo(arguments[i]);
+                        Logging.WriteLine("Argument: Station Blueprint File " + arg_blueprintFileInfo.FullName);
+
+                        if (!arg_blueprintFileInfo.Exists)
+                        {
+                            Logging.WriteLine("Specified Station Blueprint File does not exist.");
+                            return false;
+                        }
                     }
-                    else if (arguments[i].Equals("/data", StringComparison.CurrentCultureIgnoreCase))
+                    else if (arguments[i].Equals("/logfolder", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        // It's the /data argument, increment i by one to prevent the next element being
-                        // processed in case there are other(?) arguments.
+                        // Increment i by one to prevent the next element being processed in case there are other(?) arguments.
                         i++;
-                        dataFolderPath = arguments[i];
-                        Console.WriteLine("Argument: Data Folder " + dataFolderPath);
+                        DirectoryInfo _loggingPath = new DirectoryInfo(arguments[i]);
+                        Logging.WriteLine("Argument: Log File Path " + _loggingPath.FullName);
+                        if (!(_loggingPath.Exists))
+                        {
+                            Logging.WriteLine("Invalid logging path specified.");
+                            return false;
+                        }
+                        Logging.LogFile = new FileInfo(Path.Combine(_loggingPath.FullName, Logging.GenerateLogFileName(LogFileNameSuffix)));
+                        Logging.WriteLine("Logging to: " + Logging.LogFile.FullName);
+
+                        Logging.Mode = LogFileHandler.LoggingOperationType.ConsoleAndLogFile;
+
+                    }
+                    else if (arguments[i].Equals("/nobackup", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        arg_createBackup = false;
+                        Logging.WriteLine("Argument: Backup file will NOT be created.");
+                    }
+                    else if (arguments[i].Equals("/verbose", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        arg_verboseOutput = true;
+                        Logging.WriteLine("Argument: Verbose output ON.");
                     }
                     else if (arguments[i].Equals("/?") || arguments[i].ToLower().Contains("help"))
                     {
-                        Console.WriteLine(helpText);
+                        Logging.WriteLine(helpText);
+                        return false;
                     }
                     else
                     {
-                        Console.WriteLine("Unexpected Argument: " + arguments[i]);
-                        Console.WriteLine("Use /? or /help to show available arguments.");
+                        Logging.WriteLine("Unexpected Argument: " + arguments[i]);
+                        Logging.WriteLine("Use /? or /help to show available arguments.");
+                        return false;
                     }
                 }
 
-                if (dataFolderPath != "")
+                // We got here so everything checked out so far.
+                Logging.WriteLine("Loading station blueprint file...");
+                if (FileOpen(arg_blueprintFileInfo))
                 {
-                    // Set the Data folder
-                    //SetGameDataFolder(dataFolderPath);
+                    Logging.WriteLine("Problem loading save file.");
+                    return false;
                 }
+                Logging.WriteLine("Complete.");
 
-                if (saveFilePath != "")
-                {
-                    // Open the .save file
-                    FileOpen(saveFilePath);
-                }
+                return true;
+            }
+            else
+            {
+                //Logging.WriteLine("No parameters specified.");
+                //Logging.WriteLine("Use /? or /help to show available arguments.");
+                return false;
             }
         }
 
@@ -259,32 +282,28 @@ namespace HELLION.StationBlueprintEditor
         /// </summary>
         internal static void FileNew(JToken jdata = null)
         {
-
+            Debug.Print("FileNew() called, jdata == null {0}", (jdata == null).ToString());
             // Call the file close to handle unsaved changes
-            FileClose();
+            if (DocCurrent != null) FileClose();
 
             // Create a new StationBlueprint file, passing the JToken.
             DocCurrent = new StationBlueprint_File(null, jdata);
 
             if (DocCurrent.BlueprintObject == null) Debug.Print("Newly created Blueprint file doesn't contain a blueprint object.");
-            //MainForm.JsonBlueprintFile = DocCurrent;
-            //MainForm.Blueprint = DocCurrent.BlueprintObject;
-
-
 
         }
 
         /// <summary>
-        /// Loads a .save file in to memory.
+        /// Opens a file and displays a OpenFileDialog if no file path specified.
         /// </summary>
-        /// <param name="sFileName"></param>
-        internal static void FileOpen(string sFileName = "")
+        /// <remarks>Intended to be called by a UI action rather than a command line argument.</remarks>
+        /// <param name="fileName"></param>
+        /// <returns>Returns true on error.</returns>
+        internal static bool FileOpen(string fileName = null)
         {
-            // Make a note of the starting time
-            DateTime startingTime = DateTime.Now;
 
-            // If the sFileName is set, check the file exists otherwise prompt the user to select a file
-            if (sFileName == "")
+            // If the fileName is set, check the file exists otherwise prompt the user to select a file
+            if (string.IsNullOrEmpty(fileName))
             {
                 // Create a new OpenFileDialog box and set some parameters
                 var openFileDialog1 = new OpenFileDialog()
@@ -298,7 +317,7 @@ namespace HELLION.StationBlueprintEditor
                 DialogResult dialogResult = openFileDialog1.ShowDialog();
 
                 // Exit if the user clicked Cancel
-                if (dialogResult == DialogResult.Cancel) return;
+                if (dialogResult == DialogResult.Cancel) return true;
 
                 // Check that the file exists when the user clicked OK
                 if (dialogResult == DialogResult.OK)
@@ -308,73 +327,85 @@ namespace HELLION.StationBlueprintEditor
                     {
                         FileClose();
                     }
-                    sFileName = openFileDialog1.FileName;
+                    // Set the file name from the dialog selection.
+                    fileName = openFileDialog1.FileName;
                 }
             }
             else
             {
                 // We were passed a file name from the command line, check to see if it's actually there
-                if (!System.IO.File.Exists(sFileName))
+                if (!System.IO.File.Exists(fileName))
                 {
                     // The file name passed doesn't exist
-                    MessageBox.Show(String.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, sFileName));
+                    MessageBox.Show(String.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, fileName));
 
-                    return;
+                    return true;
                 }
             }
 
-            FileInfo saveFileInfo = new FileInfo(sFileName);
-            //dataDirectoryInfo = new DirectoryInfo(Properties.HELLION.Explorer.Default.sGameDataFolder);
-
-            if (saveFileInfo.Exists) // && dataDirectoryInfo.Exists)
-            {
-                // Set the status strip message
-                //MainForm.toolStripStatusLabel1.Text = ("Loading file: " + _saveFileInfo.FullName);
-
-                // Update the main window's title text to reflect the filename selected
-                //RefreshMainFormTitleText(_saveFileInfo.FullName);
-
-                //Application.UseWaitCursor = true;
-                MainForm.Cursor = Cursors.WaitCursor;
-
-                // Suppress repainting the TreeView until all the objects have been created.
-                //MainForm.treeView1.BeginUpdate();
-
-                // Create a new DocumentWorkspace
-                //_docCurrent = new DocumentWorkspace(_saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
-
-                DocCurrent = new StationBlueprint_File(null, saveFileInfo);
+            return FileOpen(new FileInfo(fileName));
 
 
-                //MainForm.JsonBlueprintFile = DocCurrent;
-                //MainForm.Blueprint = DocCurrent.BlueprintObject;
+        }
 
-                Debug.Print(DocCurrent.BlueprintObject.Name);
+        /// <summary>
+        /// Opens a file from a specified FileInfo object.
+        /// </summary>
+        /// <param name="saveFileInfo"></param>
+        /// <returns>Returns true on error.</returns>
+        internal static bool FileOpen(FileInfo saveFileInfo)
+        {
+
+            Debug.Print("FileOpen(FileInfo) called.");
+            // Make a note of the starting time
+            DateTime startingTime = DateTime.Now;
+
+
+            if (!saveFileInfo.Exists) throw new FileNotFoundException("File not found: {0}", saveFileInfo.FullName);
+            // Set the status strip message
+            //MainForm.toolStripStatusLabel1.Text = ("Loading file: " + _saveFileInfo.FullName);
+
+            // Update the main window's title text to reflect the filename selected
+            //RefreshMainFormTitleText(_saveFileInfo.FullName);
+
+            //Application.UseWaitCursor = true;
+            MainForm.Cursor = Cursors.WaitCursor;
+
+            // Suppress repainting the TreeView until all the objects have been created.
+            //MainForm.treeView1.BeginUpdate();
+
+            DocCurrent = new StationBlueprint_File(null, saveFileInfo);
+
+
+            //MainForm.JsonBlueprintFile = DocCurrent;
+            //MainForm.Blueprint = DocCurrent.BlueprintObject;
+
+            Debug.Print(DocCurrent.BlueprintObject.Name);
 
                 
 
-                // Enable the Save and Save As menu items.
-                MainForm.saveToolStripMenuItem.Enabled = true;
-                MainForm.saveAsToolStripMenuItem.Enabled = true;
+            // Enable the Save and Save As menu items.
+            MainForm.saveToolStripMenuItem.Enabled = true;
+            MainForm.saveAsToolStripMenuItem.Enabled = true;
 
 
-                // Begin repainting the TreeView.
-                //MainForm.treeView1.EndUpdate();
+            // Begin repainting the TreeView.
+            //MainForm.treeView1.EndUpdate();
 
-                //Application.UseWaitCursor = false;
-                MainForm.Cursor = Cursors.Default;
+            //Application.UseWaitCursor = false;
+            MainForm.Cursor = Cursors.Default;
 
-                //RefreshMainFormTitleText();
+            //RefreshMainFormTitleText();
 
-                MainForm.RefreshEverything();
+            MainForm.RefreshEverything();
 
 
-                MainForm.closeToolStripMenuItem.Enabled = true;
-                MainForm.revertToolStripMenuItem.Enabled = true;
+            MainForm.closeToolStripMenuItem.Enabled = true;
+            MainForm.revertToolStripMenuItem.Enabled = true;
 
-                MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
+            MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
 
-            }
+            return false;
         }
 
         /// <summary>
@@ -531,9 +562,10 @@ namespace HELLION.StationBlueprintEditor
 
         #region Fields
 
-        private static FileInfo _saveFileInfo = null;
-        private static StationBlueprint_File _docCurrent = null;
-
+        internal static StationBlueprint_File _docCurrent = null;
+        internal static FileInfo arg_blueprintFileInfo = null;
+        internal static bool arg_createBackup = true;
+        internal static bool arg_verboseOutput = false;
 
         #endregion
 
@@ -577,7 +609,7 @@ namespace HELLION.StationBlueprintEditor
             MainForm.Show();
 
             // Generate a new file.
-            FileNew();
+            FileNew((JToken)null);
 
             // Process the command line arguments.
             // If a file is specified to open, it will replace the cur

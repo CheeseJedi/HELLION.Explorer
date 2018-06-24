@@ -29,7 +29,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
         public Json_File_UI(IParent_Json_File ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
-            : base(ownerObject, passedFileInfo)
+            : base(ownerObject, passedFileInfo, autoDeserialise: true)
         {
             RootNode = new Json_TN(ownerObject: this, newNodeType: Base_TN_NodeType.DataFile, nodeName: File.Name);
 

@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 using HELLION.DataStructures.UI;
 using Newtonsoft.Json.Linq;
 
@@ -16,17 +18,16 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
         public StationBlueprint_File(IParent_Json_File passedParent, FileInfo stationBlueprintFileInfo)
-            : base (passedParent, stationBlueprintFileInfo)
+            : base(passedParent, stationBlueprintFileInfo, autoDeserialise: true)
         {
-            // Blueprint files use auto de-serialisation.
-            AutoDeserialiseOnJdataModification = true;
-
+            Debug.Print("StationBlueprint_File.ctor(FileInfo) called {0}", stationBlueprintFileInfo.FullName);
+            
             // Re-assign the OwnerStructure (the base class stores this as an object,
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent; // ?? throw new NullReferenceException();
 
             // Create a new Blueprint object - possibly not required when opening from file.
-            BlueprintObject = new StationBlueprint(this, null);
+            if (BlueprintObject == null) BlueprintObject = new StationBlueprint(this, null);
 
         }
 
@@ -35,21 +36,18 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         /// <param name="passedParent"></param>
         /// <param name="jdata"></param>
-        public StationBlueprint_File(IParent_Json_File passedParent, JToken jdata) : base(passedParent, jdata) 
+        public StationBlueprint_File(IParent_Json_File passedParent, JToken jdata)
+            : base(passedParent, jdata, autoDeserialise: true) 
         {
-            // Blueprint files use auto de-serialisation.
-            AutoDeserialiseOnJdataModification = true;
-
-            // JData was potentially updated, trigger the refresh.
-            ProcessChangedJData();
-
+            Debug.Print("StationBlueprint_File.ctor(JToken) called - HasValues [{0}]",
+                jdata != null ? jdata.HasValues.ToString() : "null");
 
             // Re-assign the OwnerStructure (the base class stores this as an object,
             // we ideally need it in its native type to work with its methods.
             OwnerObject = passedParent; // ?? throw new NullReferenceException();
 
             // Create a new Blueprint object - possibly not required when creating from JData.
-            BlueprintObject = new StationBlueprint(this, null);
+            if (BlueprintObject == null) BlueprintObject = new StationBlueprint(this, null);
 
         }
 
@@ -87,25 +85,14 @@ namespace HELLION.DataStructures.Blueprints
         #region Methods
 
         /// <summary>
-        /// Loads the file.
-        /// </summary>
-        /// <param name="populateNodeTreeDepth"></param>
-        //public bool LoadFile(string clipboardText = null)
-        //{
-        //    if (clipboardText == null)
-        //    {
-        //        if (!File.Exists) throw new FileNotFoundException();
-        //        return base.LoadFile();
-        //    }
-        //    return false;
-        //}
-
-        /// <summary>
         /// Implements auto de-serialisation from the base class call.
         /// </summary>
         public override void Deserialise()
         {
-            if (JData != null)
+            Debug.Print("StationBlueprint_File.Deserialise() called.");
+
+            if (JData == null) Debug.Print("StationBlueprint_File.Deserialise() skipping - JData was null.");
+            else
             {
                 BlueprintObject = JData.ToObject<StationBlueprint>();
                 BlueprintObject.OwnerObject = this;
@@ -134,26 +121,8 @@ namespace HELLION.DataStructures.Blueprints
             AutoDeserialiseOnJdataModification = currentSetting;
         }
 
-
-
-
-        /// <summary>
-        /// De-serialises the JData to the blueprint object.
-        /// </summary>
-        public void _DeserialiseToBlueprintObject()
-        {
-
-        }
-
-        /// <summary>
-        /// Serialises the JData to from blueprint object.
-        /// </summary>
-        public void _SerialiseFromBlueprintObject()
-        {
-
-        }
-
         #endregion
+
     }
 
 }
