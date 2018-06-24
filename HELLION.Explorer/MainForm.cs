@@ -571,7 +571,9 @@ namespace HELLION.Explorer
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+            // This needs updating to support the external Station Blueprint Editor.
+            MessageBox.Show("External editor not currently available.");
+            // HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
         }
 
         private void thisObjectInSolarSystemViewToolStripMenuItem_Click(object sender, EventArgs e)

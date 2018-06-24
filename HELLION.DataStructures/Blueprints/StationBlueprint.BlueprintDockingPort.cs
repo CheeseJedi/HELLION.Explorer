@@ -46,12 +46,18 @@ namespace HELLION.DataStructures.Blueprints
 
             }
 
+            /// <summary>
+            /// The type of parent structure this docking port is part of.
+            /// </summary>
+            /// <remarks>
+            /// Used to assist in lookup of OrderID to PortName and vice versa.
+            /// </remarks>
+            /// <param name="parentType"></param>
             public BlueprintDockingPort(StructureSceneID parentType) : this()
             {
                 RootNode.AutoGenerateName = true;
                 StructureSceneID = parentType;
             }
-
 
             #endregion
 
@@ -169,7 +175,6 @@ namespace HELLION.DataStructures.Blueprints
                     }
                 }
             }
-
 
             #endregion
 

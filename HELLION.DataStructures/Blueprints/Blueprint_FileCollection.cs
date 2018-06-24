@@ -67,7 +67,7 @@ namespace HELLION.DataStructures.Blueprints
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
                     // Create a new HEStationonBlueprintFile and populate the path.
-                    StationBlueprint_File tempBlueprintFile = new StationBlueprint_File(this, dataFile, PopulateNodeTreeDepth);
+                    StationBlueprint_File tempBlueprintFile = new StationBlueprint_File(this, dataFile);
                     // Add the file to the Data Dictionary 
                     DataDictionary.Add(dataFile.Name, tempBlueprintFile);
 

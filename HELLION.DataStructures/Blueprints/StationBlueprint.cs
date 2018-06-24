@@ -39,7 +39,7 @@ namespace HELLION.DataStructures.Blueprints
         public StationBlueprint(StationBlueprint_File ownerObject, StationBlueprint structureDefs) : this()
         {
             OwnerObject = ownerObject ?? throw new NullReferenceException("passedParent was null.");
-            StructureDefinitions = structureDefs ?? throw new NullReferenceException("structureDefs was null.");
+            StructureDefinitions = structureDefs; // ?? throw new NullReferenceException("structureDefs was null.");
             __ObjectType = BlueprintObjectType.StationBlueprint;
             Version = StationBlueprintFormatVersion;
         }
@@ -243,22 +243,25 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public void ReassembleTreeNodeDockingStructure(BlueprintStructure hierarchyRoot, bool AttachToBlueprintTreeNode = false)
         {
-            // Start with the root node, should be item zero in the list.
-            Debug.Print("### Reassemble-main [{0}] [{1}]", hierarchyRoot.StructureType, hierarchyRoot.StructureID);
-            // Process the docking root's ports slightly differently - always child nodes.
-            if (AttachToBlueprintTreeNode) RootNode.Nodes.Add(hierarchyRoot.RootNode);
-
-            foreach (BlueprintDockingPort port in hierarchyRoot.DockingPorts.ToArray().Reverse())
+            if (hierarchyRoot != null)
             {
-                hierarchyRoot.RootNode.Nodes.Add(port.RootNode);
-                if (port.IsDocked)
+                // Start with the root node, should be item zero in the list.
+                Debug.Print("### Reassemble-main [{0}] [{1}]", hierarchyRoot.StructureType, hierarchyRoot.StructureID);
+                // Process the docking root's ports slightly differently - always child nodes.
+                if (AttachToBlueprintTreeNode) RootNode.Nodes.Add(hierarchyRoot.RootNode);
+
+                foreach (BlueprintDockingPort port in hierarchyRoot.DockingPorts.ToArray().Reverse())
                 {
-                    if (port.DockedStructure == null)
+                    hierarchyRoot.RootNode.Nodes.Add(port.RootNode);
+                    if (port.IsDocked)
                     {
-                        Debug.Print("&&& REASSEMBLE &&& Port.IsDocked = true but docked structure was null");
-                        return;
+                        if (port.DockedStructure == null)
+                        {
+                            Debug.Print("&&& REASSEMBLE &&& Port.IsDocked = true but docked structure was null");
+                            return;
+                        }
+                        Reassemble(port.DockedStructure, hierarchyRoot);
                     }
-                    Reassemble(port.DockedStructure, hierarchyRoot);
                 }
             }
 
@@ -266,36 +269,30 @@ namespace HELLION.DataStructures.Blueprints
             /// The recursive bit.
             /// </summary>
             void Reassemble(BlueprintStructure structure, BlueprintStructure parent)
-            {
-                if (structure == null) throw new NullReferenceException("Structure was null.");
-                Debug.Print("###  Reassemble-recurse [{0}] [{1}]", structure.StructureType, structure.StructureID);
-
-                // Figure out which port is docking us to the parent and vice versa.
-                // TODO - This probably should use the object references now they are available instead of the simple de-serialised IDs.
-                //BlueprintDockingPort linkToParent = structure.GetDockingPort((int)parent.StructureID);
-                //BlueprintDockingPort linkFromParent = parent.GetDockingPort((int)structure.StructureID);
-
-                BlueprintDockingPort linkToParent = structure.GetDockingPort(parent);
-                BlueprintDockingPort linkFromParent = parent.GetDockingPort(structure);
-
-
-
-                // Add the node for the link to parent to the link from parent's node collection.
-                linkFromParent.RootNode.Nodes.Add(linkToParent.RootNode);
-
-                // Add the structures's node to the link to parent node collection.
-                linkToParent.RootNode.Nodes.Add(structure.RootNode);
-
-                foreach (BlueprintDockingPort port in structure.DockingPorts.ToArray().Reverse())
                 {
-                    if (port != linkToParent)
+                    if (structure == null) throw new NullReferenceException("Structure was null.");
+                    Debug.Print("###  Reassemble-recurse [{0}] [{1}]", structure.StructureType, structure.StructureID);
+
+                    // Figure out which port is docking us to the parent and vice versa.
+                    BlueprintDockingPort linkToParent = structure.GetDockingPort(parent);
+                    BlueprintDockingPort linkFromParent = parent.GetDockingPort(structure);
+
+                    // Add the node for the link to parent to the link from parent's node collection.
+                    linkFromParent.RootNode.Nodes.Add(linkToParent.RootNode);
+
+                    // Add the structures's node to the link to parent node collection.
+                    linkToParent.RootNode.Nodes.Add(structure.RootNode);
+
+                    foreach (BlueprintDockingPort port in structure.DockingPorts.ToArray().Reverse())
                     {
-                        structure.RootNode.Nodes.Add(port.RootNode);
-                        if (port.IsDocked) Reassemble(GetStructure(port.DockedStructureID), structure);
+                        if (port != linkToParent)
+                        {
+                            structure.RootNode.Nodes.Add(port.RootNode);
+                            if (port.IsDocked) Reassemble(GetStructure(port.DockedStructureID), structure);
+                        }
                     }
                 }
 
-            }
         }
 
         /// <summary>
@@ -321,26 +318,31 @@ namespace HELLION.DataStructures.Blueprints
             BlueprintStructure newStructure = new BlueprintStructure
             {
                 SceneID = sceneID,
-
                 StructureID = Structures.Count()
             };
+            
             // Set this blueprint as the owner.
             newStructure.OwnerObject = this;
-            // Populate the DockingPorts collection with ports appropriate for this structure type.
 
-            // temporarily disabled, may need to be reworked based on the DockingPortHelper class instead
-            // of using the StructureDefinitions.json file.
+            // Populate the DockingPorts collection with ports appropriate
+            // for this structure type.
             newStructure.AddAppropriateDockingPorts(); 
 
             // Add the new structure to the main Structures list.
             Structures.Add(newStructure);
 
-            // Mark the new structure as a hierarchy root so that it appears in the secondary list.
+            // Mark the new structure as a hierarchy root so that it appears
+            // as a primary root or in the secondary list.
             newStructure.IsStructureHierarchyRoot = true;
+
+            if (Structures.Count == 1 && PrimaryStructureRoot == null)
+            {
+                PrimaryStructureRoot = newStructure;
+                IsDirty = true;
+            }
 
             ReconnectChildToParentObjectHierarchy();
 
-            //IsDirty = true;
 
             return newStructure;
 

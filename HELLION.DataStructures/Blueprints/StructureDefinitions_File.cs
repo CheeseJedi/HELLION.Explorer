@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using HELLION.DataStructures.StaticData;
@@ -18,21 +17,21 @@ namespace HELLION.DataStructures.Blueprints
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public StructureDefinitions_File(object passedParent, FileInfo passedFileInfo) : base(null)
+        public StructureDefinitions_File(IParent_Json_File passedParent, FileInfo passedFileInfo) : base(passedParent, passedFileInfo)
         {
-            File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
-            // RootNode = new Blueprint_TN(this, nodeName: File.Name, newNodeType: Base_TN_NodeType.DataFile, nodeToolTipText: File.FullName);
-            if (File.Exists) LoadFile();
-            else Debug.Print("Structure definitions initialised but file {0} doesn't exist.", passedFileInfo.FullName);
+            //File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
+            //// RootNode = new Blueprint_TN(this, nodeName: File.Name, newNodeType: Base_TN_NodeType.DataFile, nodeToolTipText: File.FullName);
+            //if (File.Exists) LoadFile();
+            //else Debug.Print("Structure definitions initialised but file {0} doesn't exist.", passedFileInfo.FullName);
         }
 
         /// <summary>
-        /// Constructor used to build a new StructureDefinitions.json file.
+        /// Constructor used to build a new StructureDefinitions.json file - probably needs attention!
         /// </summary>
         /// <param name="passedParent"></param>
         /// <param name="outputFileInfo"></param>
         /// <param name="structuresJsonFile"></param>
-        public StructureDefinitions_File(FileInfo outputFileInfo, Json_File_UI structuresJsonFile) : base(null)
+        public StructureDefinitions_File(FileInfo outputFileInfo, Json_File_UI structuresJsonFile) : base(null, outputFileInfo)
         {
             File = outputFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
             // Check the reference to the Static Data's Structures.json file.
@@ -111,7 +110,7 @@ namespace HELLION.DataStructures.Blueprints
 
             }
 
-            SerialiseFromBlueprintObject();
+            Serialise();
 
             SaveFile(CreateBackup: true);
 

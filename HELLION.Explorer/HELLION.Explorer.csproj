@@ -130,12 +130,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlueprintEditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="BlueprintEditorForm.Designer.cs">
-      <DependentUpon>BlueprintEditorForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="FindForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -168,9 +162,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>HELLIONExplorer.settings</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="BlueprintEditorForm.resx">
-      <DependentUpon>BlueprintEditorForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FindForm.resx">
       <DependentUpon>FindForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -223,7 +214,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

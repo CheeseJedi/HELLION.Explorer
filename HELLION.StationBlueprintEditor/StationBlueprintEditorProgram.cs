@@ -40,27 +40,6 @@ namespace HELLION.StationBlueprintEditor
         #region File Handling Properties
 
         /// <summary>
-        /// The DirectoryInfo object representing the Static Data directory.
-        /// </summary>
-        // internal static DirectoryInfo dataDirectoryInfo = null;
-
-        /// <summary>
-        /// The FileInfo object that represents the currently open file when one is set.
-        /// </summary>
-        internal static FileInfo SaveFileInfo
-        {
-            get => _saveFileInfo;
-            set
-            {
-                if (_saveFileInfo != value)
-                {
-                    _saveFileInfo = value;
-
-                }
-            }
-        }
-
-        /// <summary>
         /// Defines an object to hold the current open document
         /// </summary>
         internal static StationBlueprint_File DocCurrent
@@ -74,7 +53,7 @@ namespace HELLION.StationBlueprintEditor
                     if (_docCurrent?.File != null)
                     {
                         Debug.Print("DocCurrent change triggering potential SaveFileInfo change.");
-                        SaveFileInfo = _docCurrent.File;
+                        //SaveFileInfo = _docCurrent.File;
                     }
                 }
             }
@@ -83,15 +62,7 @@ namespace HELLION.StationBlueprintEditor
         /// <summary>
         /// The StructureDefs file
         /// </summary>
-        internal static StructureDefinitions_File StructureDefinitionsFile
-        {
-            get => _structureDefinitionsFile;
-            set => _structureDefinitionsFile = value;
-
-        }
-
-
-
+        //internal static StructureDefinitions_File StructureDefinitionsFile { get; set; } = null;
 
         #endregion
 
@@ -286,26 +257,25 @@ namespace HELLION.StationBlueprintEditor
         /// <summary>
         /// Creates a new empty blueprint object and blueprint file object.
         /// </summary>
-        internal static void FileNew()
+        internal static void FileNew(JToken jdata = null)
         {
 
             // Call the file close to handle unsaved changes
             FileClose();
 
-            DocCurrent = new StationBlueprint_File(null, SaveFileInfo);
+            // Create a new StationBlueprint file, passing the JToken.
+            DocCurrent = new StationBlueprint_File(null, jdata);
 
-
-            MainForm.JsonBlueprintFile = DocCurrent;
-            MainForm.Blueprint = DocCurrent.BlueprintObject;
+            if (DocCurrent.BlueprintObject == null) Debug.Print("Newly created Blueprint file doesn't contain a blueprint object.");
+            //MainForm.JsonBlueprintFile = DocCurrent;
+            //MainForm.Blueprint = DocCurrent.BlueprintObject;
 
 
 
         }
 
-
         /// <summary>
-        /// Loads a .save file in to memory - passes details on to the DocumentWorkspace and
-        /// tells it to load.
+        /// Loads a .save file in to memory.
         /// </summary>
         /// <param name="sFileName"></param>
         internal static void FileOpen(string sFileName = "")
@@ -353,10 +323,10 @@ namespace HELLION.StationBlueprintEditor
                 }
             }
 
-            SaveFileInfo = new FileInfo(sFileName);
+            FileInfo saveFileInfo = new FileInfo(sFileName);
             //dataDirectoryInfo = new DirectoryInfo(Properties.HELLION.Explorer.Default.sGameDataFolder);
 
-            if (SaveFileInfo.Exists) // && dataDirectoryInfo.Exists)
+            if (saveFileInfo.Exists) // && dataDirectoryInfo.Exists)
             {
                 // Set the status strip message
                 //MainForm.toolStripStatusLabel1.Text = ("Loading file: " + _saveFileInfo.FullName);
@@ -373,11 +343,11 @@ namespace HELLION.StationBlueprintEditor
                 // Create a new DocumentWorkspace
                 //_docCurrent = new DocumentWorkspace(_saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
 
-                DocCurrent = new StationBlueprint_File(null, SaveFileInfo);
+                DocCurrent = new StationBlueprint_File(null, saveFileInfo);
 
 
-                MainForm.JsonBlueprintFile = DocCurrent;
-                MainForm.Blueprint = DocCurrent.BlueprintObject;
+                //MainForm.JsonBlueprintFile = DocCurrent;
+                //MainForm.Blueprint = DocCurrent.BlueprintObject;
 
                 Debug.Print(DocCurrent.BlueprintObject.Name);
 
@@ -397,8 +367,6 @@ namespace HELLION.StationBlueprintEditor
                 //RefreshMainFormTitleText();
 
                 MainForm.RefreshEverything();
-
-
 
 
                 MainForm.closeToolStripMenuItem.Enabled = true;
@@ -460,15 +428,15 @@ namespace HELLION.StationBlueprintEditor
         }
 
         /// <summary>
-        /// Closes the current open blueprint document.
+        /// Prepares the current open blueprint document for closing.
         /// </summary>
         internal static void FileClose()
         {
-            Debug.Print("File Close called; Filename={0} BlueprintName={1}", DocCurrent.File.FullName, DocCurrent.BlueprintObject.Name);
-
             if (DocCurrent != null)
             {
-                // isFileDirty check before exiting
+                Debug.Print("File Close called; Filename={0} BlueprintName={1}", DocCurrent.File?.FullName, DocCurrent.BlueprintObject?.Name);
+
+                // isFileDirty check before closing
                 if (DocCurrent.IsDirty)
                 {
                     // Unsaved changes, prompt user to save
@@ -502,16 +470,19 @@ namespace HELLION.StationBlueprintEditor
 
                 // Close the file
 
-                // Remove the current JsonDataViewForm from the jsonDataViews list
-                //StationBlueprintEditorProgram.blueprintEditorForms.Remove(this);
-
+                // Set the mouse cursor to the animated wait cursor.
                 MainForm.Cursor = Cursors.WaitCursor;
 
                 // Suppress repainting the TreeView until all the objects have been created.
                 MainForm.treeViewPrimaryStructure.BeginUpdate();
                 MainForm.treeViewSecondaryStructures.BeginUpdate();
 
+                // Clear both primary and secondary selections.
+                MainForm.SelectedPrimaryStructureNode = null;
+                MainForm.SelectedSecondaryStructureNode = null;
 
+
+                // TODO: Doing this here is probably wrong.
                 MainForm.FormTitleText = String.Empty;
 
                 // Disable the Save and Save As menu items.
@@ -523,8 +494,6 @@ namespace HELLION.StationBlueprintEditor
                 // Clear the existing document
                 DocCurrent.Close();
                 DocCurrent = null;
-                MainForm.Blueprint = null;
-                MainForm.JsonBlueprintFile = null;
                 
                 // Trigger refresh
                 MainForm.RefreshEverything();
@@ -538,6 +507,8 @@ namespace HELLION.StationBlueprintEditor
 
                 // Initiate Garbage Collection
                 GC.Collect();
+
+                // Restore default mouse cursor.
                 MainForm.Cursor = Cursors.Default;
 
             }
@@ -562,7 +533,6 @@ namespace HELLION.StationBlueprintEditor
 
         private static FileInfo _saveFileInfo = null;
         private static StationBlueprint_File _docCurrent = null;
-        private static StructureDefinitions_File _structureDefinitionsFile = null;
 
 
         #endregion
@@ -589,7 +559,7 @@ namespace HELLION.StationBlueprintEditor
             //Application.Run(new Form1());
 
             // Initialise the StructureDefinitions file - temporary setup!
-            StructureDefinitionsFile = new StructureDefinitions_File(null, new FileInfo(@"E:\HELLION\TestArea\Output.json"));
+            // StructureDefinitionsFile = new StructureDefinitions_File(null, new FileInfo(@"E:\HELLION\TestArea\Output.json"));
 
             // Initialise the main form
             MainForm = new StationBlueprintEditorForm();
@@ -606,6 +576,11 @@ namespace HELLION.StationBlueprintEditor
             // Show the main form
             MainForm.Show();
 
+            // Generate a new file.
+            FileNew();
+
+            // Process the command line arguments.
+            // If a file is specified to open, it will replace the cur
             ProcessCommandLineArguments(args);
 
             // Start the Windows Forms message loop

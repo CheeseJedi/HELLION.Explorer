@@ -57,7 +57,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Holds a list of the BlueprintEditorForm windows that have been created.
         /// </summary>
-        internal static List<BlueprintEditorForm> blueprintEditorForms = new List<BlueprintEditorForm>();
+        //internal static List<BlueprintEditorForm> blueprintEditorForms = new List<BlueprintEditorForm>();
 
         #endregion
 
@@ -170,35 +170,35 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="selectedNode"></param>
-        internal static void CreateNewBlueprintEditor(Blueprint_TN selectedNode)
-        {
-            if (selectedNode != null)
-            {
-                // Look for an existing form for this node.
-                BlueprintEditorForm newBlueprintEditorForm = null;
-                foreach (BlueprintEditorForm form in blueprintEditorForms)
-                {
-                    if (form.SourceNode == selectedNode)
-                    {
-                        newBlueprintEditorForm = form;
-                        break;
-                    }
-                }
+        //internal static void CreateNewBlueprintEditor(Blueprint_TN selectedNode)
+        //{
+        //    if (selectedNode != null)
+        //    {
+        //        // Look for an existing form for this node.
+        //        BlueprintEditorForm newBlueprintEditorForm = null;
+        //        foreach (BlueprintEditorForm form in blueprintEditorForms)
+        //        {
+        //            if (form.SourceNode == selectedNode)
+        //            {
+        //                newBlueprintEditorForm = form;
+        //                break;
+        //            }
+        //        }
 
-                if (newBlueprintEditorForm == null)
-                {
-                    // No existing form for this node was found, create a new one.
-                    newBlueprintEditorForm = new BlueprintEditorForm(selectedNode);
+        //        if (newBlueprintEditorForm == null)
+        //        {
+        //            // No existing form for this node was found, create a new one.
+        //            newBlueprintEditorForm = new BlueprintEditorForm(selectedNode);
 
-                    // Add the form to the jsonDataViews list.
-                    blueprintEditorForms.Add(newBlueprintEditorForm);
-                }
+        //            // Add the form to the jsonDataViews list.
+        //            blueprintEditorForms.Add(newBlueprintEditorForm);
+        //        }
 
-                // Show the form.
-                newBlueprintEditorForm.Show();
-                newBlueprintEditorForm.Activate();
-            }
-        }
+        //        // Show the form.
+        //        newBlueprintEditorForm.Show();
+        //        newBlueprintEditorForm.Activate();
+        //    }
+        //}
 
         #endregion
 

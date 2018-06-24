@@ -3,7 +3,7 @@ using System.IO;
 
 namespace HELLION.DataStructures.Blueprints
 {
-    public class BlueprintsHandler
+    public class BlueprintsHandler : IParent_Json_File
     {
         public BlueprintsHandler()
         {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using HELLION.DataStructures.UI;
 using Newtonsoft.Json.Linq;
 
@@ -9,42 +7,50 @@ namespace HELLION.DataStructures.Blueprints
     /// <summary>
     /// Defines a class to load HSBF blueprint files.
     /// </summary>
-    public class StationBlueprint_File : Json_File_UI
+    public class StationBlueprint_File : Json_File //_UI
     {
         #region Constructors
-
-        /// <summary>
-        /// Basic constructor - attempts to set the parent.
-        /// </summary>
-        /// <param name="passedParent"></param>
-        public StationBlueprint_File(IParent_Json_File passedParent) : base(passedParent)
-        {
-            // Re-assign the OwnerStructure (the base class stores this as an object,
-            // we ideally need it in its native type to work with its methods.
-            OwnerObject = passedParent; // ?? throw new NullReferenceException();
-
-            RootNode = new Blueprint_TN(passedOwner: this, newNodeType: Base_TN_NodeType.Blueprint,
-                nodeName: "Unsaved"); //, nodeToolTipText: "File not yet saved");
-
-            DataViewRootNode = new Json_TN(ownerObject: this, nodeName: "Data View");
-                //newNodeType: Base_TN_NodeType.BlueprintDataView, nodeToolTipText:
-                //"Shows a representation of the Json data that makes up this blueprint.");
-
-            RootNode.Nodes.Add(DataViewRootNode);
-        }
 
         /// <summary>
         /// General use constructor - takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public StationBlueprint_File(IParent_Json_File passedParent, FileInfo structDefsFileInfo, int populateNodeTreeDepth = 0) : this(passedParent)
+        public StationBlueprint_File(IParent_Json_File passedParent, FileInfo stationBlueprintFileInfo)
+            : base (passedParent, stationBlueprintFileInfo)
         {
-            File = structDefsFileInfo ?? throw new NullReferenceException();
-            RootNode = new Blueprint_TN(passedOwner: this, newNodeType: Base_TN_NodeType.Blueprint,
-                nodeName: File.Name); //, nodeToolTipText: File.FullName);
+            // Blueprint files use auto de-serialisation.
+            AutoDeserialiseOnJdataModification = true;
 
-            if (File.Exists) LoadFile(); //  populateNodeTreeDepth);
-            else Debug.Print("File {0} doesn't exist", File.FullName);
+            // Re-assign the OwnerStructure (the base class stores this as an object,
+            // we ideally need it in its native type to work with its methods.
+            OwnerObject = passedParent; // ?? throw new NullReferenceException();
+
+            // Create a new Blueprint object - possibly not required when opening from file.
+            BlueprintObject = new StationBlueprint(this, null);
+
+        }
+
+        /// <summary>
+        /// A constructor for creating a new file in memory using a JToken.
+        /// </summary>
+        /// <param name="passedParent"></param>
+        /// <param name="jdata"></param>
+        public StationBlueprint_File(IParent_Json_File passedParent, JToken jdata) : base(passedParent, jdata) 
+        {
+            // Blueprint files use auto de-serialisation.
+            AutoDeserialiseOnJdataModification = true;
+
+            // JData was potentially updated, trigger the refresh.
+            ProcessChangedJData();
+
+
+            // Re-assign the OwnerStructure (the base class stores this as an object,
+            // we ideally need it in its native type to work with its methods.
+            OwnerObject = passedParent; // ?? throw new NullReferenceException();
+
+            // Create a new Blueprint object - possibly not required when creating from JData.
+            BlueprintObject = new StationBlueprint(this, null);
+
         }
 
         #endregion
@@ -84,63 +90,67 @@ namespace HELLION.DataStructures.Blueprints
         /// Loads the file.
         /// </summary>
         /// <param name="populateNodeTreeDepth"></param>
-        public override bool LoadFile() //int populateNodeTreeDepth)
+        //public bool LoadFile(string clipboardText = null)
+        //{
+        //    if (clipboardText == null)
+        //    {
+        //        if (!File.Exists) throw new FileNotFoundException();
+        //        return base.LoadFile();
+        //    }
+        //    return false;
+        //}
+
+        /// <summary>
+        /// Implements auto de-serialisation from the base class call.
+        /// </summary>
+        public override void Deserialise()
         {
-            if (!File.Exists) throw new FileNotFoundException();
-            bool result = base.LoadFile();
-            PostLoadOperations(); // populateNodeTreeDepth);
-            return result;
+            if (JData != null)
+            {
+                BlueprintObject = JData.ToObject<StationBlueprint>();
+                BlueprintObject.OwnerObject = this;
+                BlueprintObject.PostDeserialisationInit();
+            }
         }
 
         /// <summary>
-        /// Called after a file is loaded.
+        /// Implements auto serialisation from the base class call.
         /// </summary>
-        /// <param name="populateNodeTreeDepth"></param>
-        public void PostLoadOperations() // int populateNodeTreeDepth = 8)
+        public override void Serialise()
         {
-            // Populate the blueprint object.
-            DeserialiseToBlueprintObject();
-                 
+            JToken newData = JToken.FromObject(BlueprintObject);
+
+            // Make a note of the current setting.
+            bool currentSetting = AutoDeserialiseOnJdataModification;
+
+            // Prevent the serialisation and modification of the JData object
+            // from triggering a de-serialisation.
+            AutoDeserialiseOnJdataModification = false;
+
+            // Apply the JData.
+            JData = newData;
+
+            // Restore the previous value.
+            AutoDeserialiseOnJdataModification = currentSetting;
         }
 
-        /// <summary>
-        /// Applies new JData and triggers the PostLoadOperations method.
-        /// </summary>
-        /// <param name="newData"></param>
-        public void ApplyNewJData(JToken newData)
-        {
-            // Apply the new data.
-            _jData = newData;
 
-            // Clean up blueprint objects and tree nodes
 
-            if (RootNode != null) RootNode.Nodes.Remove(BlueprintObject.RootNode);
-
-            // Clean up DataView Tree Nodes.
-            if (DataViewRootNode != null) DataViewRootNode.Nodes.Clear();
-
-            PostLoadOperations();
-        }
 
         /// <summary>
         /// De-serialises the JData to the blueprint object.
         /// </summary>
-        public void DeserialiseToBlueprintObject()
+        public void _DeserialiseToBlueprintObject()
         {
-            BlueprintObject = _jData.ToObject<StationBlueprint>();
-            BlueprintObject.OwnerObject = this;
-            BlueprintObject.PostDeserialisationInit();
+
         }
 
         /// <summary>
         /// Serialises the JData to from blueprint object.
         /// </summary>
-        public void SerialiseFromBlueprintObject()
+        public void _SerialiseFromBlueprintObject()
         {
-            JToken newData = JToken.FromObject(BlueprintObject); // .GetSerialisationTemplate()
-            //Validity check?
 
-            ApplyNewJData(newData);
         }
 
         #endregion

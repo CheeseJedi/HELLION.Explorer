@@ -186,7 +186,7 @@ namespace HELLION.DataStructures.UI
         /// <param name="includeSubTrees"></param>
         public virtual void Refresh(bool includeSubTrees = false)
         {
-            Debug.Print("Base_TN.Refresh called: node Name [{0}], Text [{1}], (parent hash [{2}], type [{3}])", Name, Text, OwnerObject.GetHashCode(), OwnerObject.GetType());
+            //Debug.Print("Base_TN.Refresh called: node Name [{0}], Text [{1}], (parent hash [{2}], type [{3}])", Name, Text, OwnerObject.GetHashCode(), OwnerObject.GetType());
             RefreshName(includeSubTrees);
             RefreshText(includeSubTrees);
             RefreshToolTipText(includeSubTrees);
