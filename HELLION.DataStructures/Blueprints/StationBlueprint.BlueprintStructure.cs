@@ -412,7 +412,7 @@ namespace HELLION.DataStructures.Blueprints
                 
                 foreach (BlueprintDockingPort port in DockingPorts)
                 {
-                    RootNode.Nodes.Add(port.RootNode);
+                    RootNode.Nodes.Insert(0, port.RootNode);
                 }
 
 
@@ -432,7 +432,7 @@ namespace HELLION.DataStructures.Blueprints
                 //        DockedStructureID = null
                 //    };
                 //    DockingPorts.Add(newPort);
-                //    RootNode.Nodes.Add(newPort.RootNode);
+                //    RootNode.Nodes.Insert(0, newPort.RootNode);
                 //}
             }
 

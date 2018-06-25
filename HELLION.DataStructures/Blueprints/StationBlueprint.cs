@@ -174,8 +174,10 @@ namespace HELLION.DataStructures.Blueprints
                     structure.StructureType, (StructureSceneID)structure.SceneID);
 
 
-                //List<BlueprintDockingPort> newDockingPorts = DockingPortHelper.
-                //    GenerateBlueprintDockingPorts((StructureSceneID)structure.SceneID);
+                List<BlueprintDockingPort> newDockingPorts = DockingPortHelper.
+                    GenerateBlueprintDockingPorts((StructureSceneID)structure.SceneID);
+
+                Debug.Print("DockingPorts count {0} newDockingPorts count {1}", structure.DockingPorts.Count, newDockingPorts.Count);
 
                 foreach (BlueprintDockingPort port in structure.DockingPorts)
                 {
@@ -194,10 +196,6 @@ namespace HELLION.DataStructures.Blueprints
                     else tmp = -1;
 
                     Debug.Print("OrderID(lookup) {0}", tmp != -1 ? tmp.ToString() : "null");
-
-
-
-
 
                 }
             }
@@ -303,11 +301,11 @@ namespace HELLION.DataStructures.Blueprints
                 // Start with the root node, should be item zero in the list.
                 Debug.Print("### Reassemble-main [{0}] [{1}]", hierarchyRoot.StructureType, hierarchyRoot.StructureID);
                 // Process the docking root's ports slightly differently - always child nodes.
-                if (AttachToBlueprintTreeNode) RootNode.Nodes.Add(hierarchyRoot.RootNode);
+                if (AttachToBlueprintTreeNode) RootNode.Nodes.Insert(0, hierarchyRoot.RootNode);
 
-                foreach (BlueprintDockingPort port in hierarchyRoot.DockingPorts.ToArray().Reverse())
+                foreach (BlueprintDockingPort port in hierarchyRoot.DockingPorts.ToArray()) // .Reverse())
                 {
-                    hierarchyRoot.RootNode.Nodes.Add(port.RootNode);
+                    hierarchyRoot.RootNode.Nodes.Insert(0, port.RootNode);
                     if (port.IsDocked)
                     {
                         if (port.DockedStructure == null)
@@ -333,16 +331,16 @@ namespace HELLION.DataStructures.Blueprints
                     BlueprintDockingPort linkFromParent = parent.GetDockingPort(structure);
 
                     // Add the node for the link to parent to the link from parent's node collection.
-                    linkFromParent.RootNode.Nodes.Add(linkToParent.RootNode);
+                    linkFromParent.RootNode.Nodes.Insert(0, linkToParent.RootNode);
 
                     // Add the structures's node to the link to parent node collection.
-                    linkToParent.RootNode.Nodes.Add(structure.RootNode);
+                    linkToParent.RootNode.Nodes.Insert(0, structure.RootNode);
 
-                    foreach (BlueprintDockingPort port in structure.DockingPorts.ToArray().Reverse())
+                    foreach (BlueprintDockingPort port in structure.DockingPorts.ToArray()) // .Reverse())
                     {
                         if (port != linkToParent)
                         {
-                            structure.RootNode.Nodes.Add(port.RootNode);
+                            structure.RootNode.Nodes.Insert(0, port.RootNode);
                             if (port.IsDocked) Reassemble(GetStructure(port.DockedStructureID), structure);
                         }
                     }

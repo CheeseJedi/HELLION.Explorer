@@ -62,7 +62,7 @@ namespace HELLION.DataStructures.Blueprints
             if (!DataDirectoryInfo.Exists) return false;
             else
             {
-                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
+                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension)) // .Reverse())
                 {
                     Debug.Print("File evaluated {0}", dataFile.Name);
 
@@ -76,7 +76,7 @@ namespace HELLION.DataStructures.Blueprints
                         // if (PopulateNodeTreeDepth > 0) tempBlueprintFile.DataViewRootNode.CreateChildNodesFromjData(PopulateNodeTreeDepth);
 
                         if (tempBlueprintFile.RootNode == null) throw new NullReferenceException();
-                        else RootNode.Nodes.Add(tempBlueprintFile.RootNode);
+                        else RootNode.Nodes.Insert(0, tempBlueprintFile.RootNode);
                     }
                 }
                 return true;

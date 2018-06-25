@@ -31,14 +31,14 @@ namespace HELLION.DataStructures.Document
                 ((Json_TN)SaveFile.RootNode).CreateChildNodesFromjData(3);
 
                 if (SaveFile.RootNode == null) throw new Exception("SaveFile rootNode was null");
-                else RootNode.Nodes.Add(SaveFile.RootNode);
+                else RootNode.Nodes.Insert(0, SaveFile.RootNode);
             }
 
             if (StaticDataFolderInfo != null && StaticDataFolderInfo.Exists)
             {
                 StaticData = new Json_FileCollection(this, StaticDataFolderInfo, autoPopulateTreeDepth: 1);
                 if (StaticData.RootNode == null) throw new Exception("StaticData rootNode was null");
-                else RootNode.Nodes.Add(StaticData.RootNode);
+                else RootNode.Nodes.Insert(0, StaticData.RootNode);
             }
         }
 

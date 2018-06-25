@@ -91,7 +91,7 @@ namespace HELLION.DataStructures
             if (!DataDirectoryInfo.Exists) return false;
             else
             {
-                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension).Reverse())
+                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension)) // .Reverse())
                 {
                     // Create a new Json_File_UI and populate the path.
                     Json_File_UI tempJsonFile = new Json_File_UI(this, dataFile, PopulateNodeTreeDepth);
@@ -101,7 +101,7 @@ namespace HELLION.DataStructures
                     if (tempJsonFile.IsLoaded && !LoadError)
                     {
                         if (tempJsonFile.RootNode == null) throw new Exception();
-                        else RootNode.Nodes.Add(tempJsonFile.RootNode);
+                        else RootNode.Nodes.Insert(0, tempJsonFile.RootNode);
                     }
                 }
                 return true;

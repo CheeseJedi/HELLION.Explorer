@@ -477,10 +477,12 @@ namespace HELLION.Explorer
                 ObservedGuidsForm = new ObservedGuidsForm();
                 ObservedGuidsForm.Hide();
 
+
+                // TODO: Possibly needs to use the .Insert(0, node) method.
                 // Add the nodes to the TreeView control.
                 MainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
-                MainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
+                // MainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
 
                 // Trigger a refresh on each of the node trees.
@@ -798,7 +800,7 @@ namespace HELLION.Explorer
         /// Checks that the Static Data folder is valid. Called by menu option on the main
         /// form and Is interactive and will prompt the user to set a valid folder.
         /// </summary>
-        internal static void VerifyGameDataFolder(bool NotifySuccess = true)
+        internal static void VerifyGameDataFolder(bool notifySuccess = true)
         {
             // Check that the Data folder path has been defined and there's stuff there
             if (!IsGameDataFolderValid())
@@ -807,7 +809,7 @@ namespace HELLION.Explorer
                 MessageBox.Show("There was a problem with the Data Folder - use Set Data Folder option in Tools menu."); // this needs to be massively improved!
                 return;
             }
-            else if (NotifySuccess)
+            else if (notifySuccess)
             {
                 MessageBox.Show("Game Data folder: " + Properties.HELLIONExplorer.Default.sGameDataFolder + " seems valid.");
             }

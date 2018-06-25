@@ -175,10 +175,10 @@ namespace HELLION.DataStructures.UI
             {
                 if (!ChildNodesLoaded) // <-- check this
                 {
-                    foreach (JToken childToken in JData.Reverse<JToken>())
+                    foreach (JToken childToken in JData) // .Reverse<JToken>())
                     {
                         Json_TN newNode = new Json_TN(this, childToken);
-                        Nodes.Add(newNode);
+                        Nodes.Insert(0, newNode);
                     }
                     // ChildNodesLoaded = true;
                 }

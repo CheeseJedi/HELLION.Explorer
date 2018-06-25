@@ -23,12 +23,19 @@ namespace HELLION.StationBlueprintEditor
         {
             InitializeComponent();
 
+            // Assign the custom ImageList.
             treeViewPrimaryStructure.ImageList = hEImageList.IconImageList;
             treeViewSecondaryStructures.ImageList = hEImageList.IconImageList;
 
+            // Enable sorting (default sorter).
+            //treeViewPrimaryStructure.Sorted = true;
+            //treeViewSecondaryStructures.Sorted = true;
+
+            // Enable ToolTips for the TreeViews.
             treeViewPrimaryStructure.ShowNodeToolTips = true;
             treeViewSecondaryStructures.ShowNodeToolTips = true;
 
+            // Fills the drop down list of module types that can be added.
             RefreshDropDownModuleTypes();
         }
 
@@ -391,13 +398,13 @@ namespace HELLION.StationBlueprintEditor
                 if (DocCurrent.BlueprintObject.PrimaryStructureRoot != null)
                 {
                     // Add the primary structure.
-                    treeViewPrimaryStructure.Nodes.Add(DocCurrent.BlueprintObject.PrimaryStructureRoot.RootNode);
+                    treeViewPrimaryStructure.Nodes.Insert(0, DocCurrent.BlueprintObject.PrimaryStructureRoot.RootNode);
                     DocCurrent.BlueprintObject.PrimaryStructureRoot.RootNode.ExpandAll();
 
                     // Add secondary structures.
                     foreach (BlueprintStructure _secondaryStructure in DocCurrent.BlueprintObject.SecondaryStructureRoots)
                     {
-                        treeViewSecondaryStructures.Nodes.Add(_secondaryStructure.RootNode);
+                        treeViewSecondaryStructures.Nodes.Insert(0, _secondaryStructure.RootNode);
                         _secondaryStructure.RootNode.ExpandAll();
                     }
                 }
@@ -498,7 +505,7 @@ namespace HELLION.StationBlueprintEditor
 
                 RefreshTreeViews();
 
-                // treeViewPrimaryStructure.Nodes.Add(newStructure.RootNode);
+                // treeViewPrimaryStructure.Nodes.Insert(0, newStructure.RootNode);
 
                 // Select the new node
                 treeViewSecondaryStructures.SelectedNode = newStructure.RootNode;

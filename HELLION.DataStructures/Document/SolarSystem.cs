@@ -133,7 +133,7 @@ namespace HELLION.DataStructures.Document
                             }
 
                             SolarSystem_TN newNode = node.CreateLinkedSolarSystemNode(newNodeType);
-                            RootNode.Nodes.Add(newNode);
+                            RootNode.Nodes.Insert(0, newNode);
                         }
                     }
                     break;
@@ -193,7 +193,7 @@ namespace HELLION.DataStructures.Document
                                 newNode.OrbitData.SemiMajorAxis = 1;
                             }
 
-                            RootNode.Nodes.Add(newNode);
+                            RootNode.Nodes.Insert(0, newNode);
                         }
 
                     }
@@ -239,7 +239,7 @@ namespace HELLION.DataStructures.Document
                         currentParentNode.Nodes.Remove(node);
 
                         // Add the ship being re-parented to the new parent's node collection.
-                        newParentNode.Nodes.Add(node);
+                        newParentNode.Nodes.Insert(0, node);
 
                     }
                     catch (Exception e)
@@ -288,7 +288,7 @@ namespace HELLION.DataStructures.Document
                     // Remove the ship to be re-parented from it's current parent's node collection.
                     node.Parent.Nodes.Remove(node);
                     // Add the ship being re-parented to the new parent's node collection.
-                    newParentNode.Nodes.Add(node);
+                    newParentNode.Nodes.Insert(0, node);
                 }
                 else throw new InvalidOperationException();
             }

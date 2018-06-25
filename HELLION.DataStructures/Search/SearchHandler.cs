@@ -121,7 +121,7 @@ namespace HELLION.DataStructures.Search
                 parent = passedParent ?? throw new NullReferenceException("passedParent was null.");
                 OperatorFlags = passedOperatorFlags;
                 _rootNode = new SearchHandler_TN(this, "SEARCHOPERATORRESULTS", passedOwner: this, newNodeType: Base_TN_NodeType.SearchResultsSet);
-                parent.rootNode.Nodes.Add(_rootNode);
+                parent.rootNode.Nodes.Insert(0, _rootNode);
                 parent.searchOperators.Add(this);
             }
 

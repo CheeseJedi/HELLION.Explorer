@@ -31,7 +31,7 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo, bool autoDeserialise ) : this(ownerObject)
+        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo, bool autoDeserialise = false ) : this(ownerObject)
         {
             Debug.Print("Json_File.ctor(FileInfo) called {0}", passedFileInfo.FullName);
             File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
@@ -51,7 +51,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="ownerObject"></param>
         /// <param name="jdata"></param>
-        public Json_File(IParent_Json_File ownerObject, JToken jdata, bool autoDeserialise ) : this(ownerObject)
+        public Json_File(IParent_Json_File ownerObject, JToken jdata, bool autoDeserialise = false ) : this(ownerObject)
         {
             Debug.Print("Json_File.ctor(FileInfo) called - HasValues [{0}]",
                 jdata != null ? jdata.HasValues.ToString() : "null");

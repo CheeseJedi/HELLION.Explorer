@@ -12,7 +12,7 @@ namespace HELLION.DataStructures.Blueprints
         public BlueprintsHandler_UI()
         {
             RootNode = new BlueprintsView_TN(passedOwner: this);
-            RootNode.Nodes.Add(StructureDefinitionsFile.RootNode);
+            RootNode.Nodes.Insert(0, StructureDefinitionsFile.RootNode);
 
             #region Blueprints Collection
             blueprintCollectionFolderInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
@@ -25,7 +25,7 @@ namespace HELLION.DataStructures.Blueprints
 
             if (BlueprintCollection == null) throw new NullReferenceException("BlueprintCollection was null.");
             if (BlueprintCollection.RootNode == null) throw new NullReferenceException("BlueprintCollection RootNode was null.");
-            RootNode.Nodes.Add(BlueprintCollection.RootNode);
+            RootNode.Nodes.Insert(0, BlueprintCollection.RootNode);
             #endregion
         }
 

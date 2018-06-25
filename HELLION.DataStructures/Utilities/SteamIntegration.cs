@@ -110,6 +110,9 @@ namespace HELLION.DataStructures.Utilities
         /// <returns></returns>
         public static List<long> GetGroupMembers(Uri uri)
         {
+            // TODO: The xml returned by the Steam Public API may have changed as this is causing
+            // an exception - and wasn't implemented that long ago.
+
             List<long> results = new List<long>();
             XmlDocument document = new XmlDocument();
 

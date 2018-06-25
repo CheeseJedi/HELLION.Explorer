@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures
@@ -29,7 +30,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
         public Json_File_UI(IParent_Json_File ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
-            : base(ownerObject, passedFileInfo, autoDeserialise: true)
+            : base(ownerObject, passedFileInfo, autoDeserialise: false)
         {
             RootNode = new Json_TN(ownerObject: this, newNodeType: Base_TN_NodeType.DataFile, nodeName: File.Name);
 
@@ -96,6 +97,16 @@ namespace HELLION.DataStructures
                 }
                 return false;
             }
+        }
+
+        public override void Deserialise()
+        {
+            Debug.Print("Json_File_UI.Deserialise() called - AND SHOULDN'T HAVE!");
+        }
+
+        public override void Serialise()
+        {
+            Debug.Print("Json_File_UI.Serialise() called - AND SHOULDN'T HAVE!");
         }
 
         #endregion

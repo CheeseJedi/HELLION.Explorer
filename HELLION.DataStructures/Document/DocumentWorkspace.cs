@@ -41,7 +41,7 @@ namespace HELLION.DataStructures.Document
                 GameData = new GameData(passedFileInfo, passedDirectoryInfo);
                 SolarSystem = new SolarSystem(GameData);
                 SearchHandler = new SearchHandler(GameData, SolarSystem);
-                Blueprints = new BlueprintsHandler_UI();
+                //Blueprints = new BlueprintsHandler_UI();
 
                 // Add the parameters related to the MainForm controls.
                 _mainFormTreeView = passedTreeView ?? throw new NullReferenceException("passedTreeView was null.");
@@ -79,7 +79,7 @@ namespace HELLION.DataStructures.Document
         /// <summary>
         /// The BlueprintsHandler_UI object that handles loading and displaying blueprints.
         /// </summary>
-        public BlueprintsHandler_UI Blueprints { get; private set; } = null;
+        public BlueprintsHandler_UI aBlueprints { get; private set; } = null;
 
         /// <summary>
         /// The .save file that is being opened.
