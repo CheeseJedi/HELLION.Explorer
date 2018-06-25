@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
@@ -189,25 +187,25 @@ namespace HELLION.Explorer
         private void generateStructureDefinitionsStubjsonToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Contents to be moved to the BlueprintsHandler_UI class once complete.
+            MessageBox.Show("Feature Disabled.");
+            //if (HellionExplorerProgram.docCurrent != null)
+            //{
+            //    if (!HellionExplorerProgram.docCurrent.GameData.StaticData.DataDictionary.
+            //        TryGetValue("Structures.json", out Json_File_UI structuresJsonBaseFile))
+            //        throw new InvalidOperationException(
+            //            "Unable to access the Structures.json file from the Static Data Dictionary.");
+            //    else
+            //    {
+            //        FileInfo newDefsFileInfo = new FileInfo(@"E:\HELLION\TestArea\Output.json");
 
-            if (HellionExplorerProgram.docCurrent != null)
-            {
-                if (!HellionExplorerProgram.docCurrent.GameData.StaticData.DataDictionary.
-                    TryGetValue("Structures.json", out Json_File_UI structuresJsonBaseFile))
-                    throw new InvalidOperationException(
-                        "Unable to access the Structures.json file from the Static Data Dictionary.");
-                else
-                {
-                    FileInfo newDefsFileInfo = new FileInfo(@"E:\HELLION\TestArea\Output.json");
+            //        StructureDefinitions_File newDefsFile =
+            //            new StructureDefinitions_File(newDefsFileInfo, structuresJsonBaseFile);
 
-                    StructureDefinitions_File newDefsFile =
-                        new StructureDefinitions_File(newDefsFileInfo, structuresJsonBaseFile);
-
-                    if (newDefsFile.File.Exists) MessageBox.Show("Tentative Success");
-                    else MessageBox.Show("File not created!");
-                }
-            }
-            else MessageBox.Show("Must have an open document first.");
+            //        if (newDefsFile.File.Exists) MessageBox.Show("Tentative Success");
+            //        else MessageBox.Show("File not created!");
+            //    }
+            //}
+            //else MessageBox.Show("Must have an open document first.");
         }
 
         #endregion
@@ -647,7 +645,7 @@ namespace HELLION.Explorer
 
         private void _playerNameBySteamID64()
         {
-            string result = General.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", null);
+            string result = General.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", false, null);
             if (result != null && result != String.Empty)
             {
                 MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
@@ -656,7 +654,7 @@ namespace HELLION.Explorer
 
         private void _groupID64ByGroupName()
         {
-            string groupName = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", null);
+            string groupName = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", false, null);
             if (groupName != null && groupName != String.Empty)
             {
                 long? result = SteamIntegration.GetGroupID(groupName);
@@ -666,7 +664,7 @@ namespace HELLION.Explorer
 
         private void _groupMembersByGroupID64()
         {
-            string result = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam Group Members", null);
+            string result = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam Group Members", false, null);
             if (result != null && result != String.Empty)
             {
                 List<long> iDs = SteamIntegration.GetGroupMembers(result);

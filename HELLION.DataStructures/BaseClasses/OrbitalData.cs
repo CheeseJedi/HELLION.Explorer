@@ -85,10 +85,7 @@ namespace HELLION.DataStructures
         /// Builds and returns a clone of the current OrbitalData object
         /// </summary>
         /// <returns></returns>
-        public OrbitalData Clone()
-        {
-            return new OrbitalData(this);
-        }
+        public OrbitalData Clone() => new OrbitalData(this);
 
         /// <summary>
         /// Placeholder for a clone routine that generates an imperfect clone, used to generate similar

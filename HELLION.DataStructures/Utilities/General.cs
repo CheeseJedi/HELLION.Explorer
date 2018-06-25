@@ -33,7 +33,7 @@ namespace HELLION.DataStructures.Utilities
         /// </summary>
         public static class Prompt
         {
-            public static string ShowDialog(string text, string caption, Icon icon = null)
+            public static string ShowDialog(string text, string caption, bool showAdditionalCheckBox = false, Icon icon = null)
             {
                 Form prompt = new Form()
                 {
@@ -49,6 +49,7 @@ namespace HELLION.DataStructures.Utilities
                 // Set the form icon if one has been passed.
                 if (icon != null) prompt.Icon = icon;
 
+
                 Label textLabel = new Label() { Left = 50, Top = 20, Width = 400, Text = text };
                 TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
                 CheckBox checkBox = new CheckBox() { Left = 50, Top = 70, Width = 15 };
@@ -58,8 +59,8 @@ namespace HELLION.DataStructures.Utilities
                 prompt.Controls.Add(textBox);
                 prompt.Controls.Add(confirmation);
                 prompt.Controls.Add(textLabel);
-                prompt.Controls.Add(checkBox);
-                prompt.Controls.Add(textLabel2);
+                if (showAdditionalCheckBox) prompt.Controls.Add(checkBox);
+                if (showAdditionalCheckBox) prompt.Controls.Add(textLabel2);
 
                 prompt.AcceptButton = confirmation;
 

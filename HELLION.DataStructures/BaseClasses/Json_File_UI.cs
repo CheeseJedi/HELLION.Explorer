@@ -22,7 +22,7 @@ namespace HELLION.DataStructures
         /// <param name="ownerObject"></param>
         public Json_File_UI(IParent_Json_File ownerObject) : base(ownerObject)
         {
-
+            RootNode = new Json_TN(ownerObject: this, newNodeType: Base_TN_NodeType.DataFile, nodeName: "unknown");
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace HELLION.DataStructures
             {
                 // Cast the root node as the appropriate type to use it's methods.
                 Json_TN tmpNode = (Json_TN)RootNode;
-                tmpNode.JData = _jData;
+                tmpNode.JData = JData;
                 tmpNode.CreateChildNodesFromjData(populateNodeTreeDepth);
             }
         }
@@ -99,15 +99,15 @@ namespace HELLION.DataStructures
             }
         }
 
-        public override void Deserialise()
-        {
-            Debug.Print("Json_File_UI.Deserialise() called - AND SHOULDN'T HAVE!");
-        }
+        //public override void Deserialise()
+        //{
+        //    Debug.Print("Json_File_UI.Deserialise() called - AND SHOULDN'T HAVE!");
+        //}
 
-        public override void Serialise()
-        {
-            Debug.Print("Json_File_UI.Serialise() called - AND SHOULDN'T HAVE!");
-        }
+        //public override void Serialise()
+        //{
+        //    Debug.Print("Json_File_UI.Serialise() called - AND SHOULDN'T HAVE!");
+        //}
 
         #endregion
 

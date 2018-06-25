@@ -73,6 +73,7 @@
             this.testToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.saveTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateStructureDefinitionsStubjsonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.triggerGarbageCollectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -106,7 +107,6 @@
             this.jsonDataViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.triggerGarbageCollectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -366,7 +366,7 @@
             // 
             this.cleanupToolStripMenuItem.Enabled = false;
             this.cleanupToolStripMenuItem.Name = "cleanupToolStripMenuItem";
-            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.cleanupToolStripMenuItem.Text = "Cleanup...";
             this.cleanupToolStripMenuItem.Visible = false;
             // 
@@ -374,14 +374,14 @@
             // 
             this.repairToolStripMenuItem.Enabled = false;
             this.repairToolStripMenuItem.Name = "repairToolStripMenuItem";
-            this.repairToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.repairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.repairToolStripMenuItem.Text = "Repair...";
             this.repairToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(146, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // steamUtilitiesToolStripMenuItem
@@ -390,9 +390,11 @@
             this.playerNameBySteamID64ToolStripMenuItem,
             this.groupID64ByGroupNameToolStripMenuItem,
             this.groupMembersByGroupID64ToolStripMenuItem});
+            this.steamUtilitiesToolStripMenuItem.Enabled = false;
             this.steamUtilitiesToolStripMenuItem.Name = "steamUtilitiesToolStripMenuItem";
-            this.steamUtilitiesToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.steamUtilitiesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.steamUtilitiesToolStripMenuItem.Text = "&Steam Utilities";
+            this.steamUtilitiesToolStripMenuItem.Visible = false;
             // 
             // playerNameBySteamID64ToolStripMenuItem
             // 
@@ -421,7 +423,7 @@
             this.setDataFolderLocationToolStripMenuItem,
             this.verifyDataFolderToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // setDataFolderLocationToolStripMenuItem
@@ -490,6 +492,13 @@
             this.generateStructureDefinitionsStubjsonToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
             this.generateStructureDefinitionsStubjsonToolStripMenuItem.Text = "Generate StructureDefinitionsStub.json";
             this.generateStructureDefinitionsStubjsonToolStripMenuItem.Click += new System.EventHandler(this.generateStructureDefinitionsStubjsonToolStripMenuItem_Click);
+            // 
+            // triggerGarbageCollectorToolStripMenuItem
+            // 
+            this.triggerGarbageCollectorToolStripMenuItem.Name = "triggerGarbageCollectorToolStripMenuItem";
+            this.triggerGarbageCollectorToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
+            this.triggerGarbageCollectorToolStripMenuItem.Text = "Trigger Garbage Collector";
+            this.triggerGarbageCollectorToolStripMenuItem.Click += new System.EventHandler(this.triggerGarbageCollectorToolStripMenuItem_Click);
             // 
             // openFileDialog1
             // 
@@ -803,13 +812,6 @@
             this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Visible = false;
-            // 
-            // triggerGarbageCollectorToolStripMenuItem
-            // 
-            this.triggerGarbageCollectorToolStripMenuItem.Name = "triggerGarbageCollectorToolStripMenuItem";
-            this.triggerGarbageCollectorToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
-            this.triggerGarbageCollectorToolStripMenuItem.Text = "Trigger Garbage Collector";
-            this.triggerGarbageCollectorToolStripMenuItem.Click += new System.EventHandler(this.triggerGarbageCollectorToolStripMenuItem_Click);
             // 
             // MainForm
             // 

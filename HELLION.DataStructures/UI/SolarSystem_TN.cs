@@ -14,29 +14,22 @@ namespace HELLION.DataStructures.UI
         #region Constructors
 
         /// <summary>
-        /// Constructor that takes a minimum of a name, but also optionally a type and text (display name) - inherits the base constructor
+        /// Constructor that takes a minimum of an Owner, but also optionally a name and type.
         /// </summary>
         /// <param name="nodeName">Name for the new node; required;</param>
         /// <param name="nodeType">Base_TN_NodeType of the new node; defaults to Unknown.</param>
-        /// <param name="nodeText">The Text (DisplayName) of the node - uses the Name if omitted.</param>
-        /// <param name="nodeToolTipText">The ToolTip text displayed; defaults to the nodeText if omitted.</param>
         public SolarSystem_TN(IParent_Base_TN passedOwner, string nodeName = null,
             Base_TN_NodeType nodeType = Base_TN_NodeType.Unknown)
             : base(passedOwner, nodeType, nodeName)
         {
-            OrbitData = new OrbitalData();
+            // OrbitData = new OrbitalData();
         }
 
         /// <summary>
         /// Constructor that takes a link to an Json_TN and an Base_TN_NodeType.
         /// </summary>
-        /// <remarks>
-        /// Uses the Json_TN's Tag field, cast to a JObject, to generate name, GUID
-        /// and other properties.
-        /// The Inherits the base() constructor and sets properties directly.
-        /// </remarks>
-        /// <param name="gameDataNodeToLink"></param>
-        /// <param name="nodeType"></param>
+        /// <param name="gameDataNodeToLink">The node to link to.</param>
+        /// <param name="nodeType">The node Type for the new linked node.</param>
         public SolarSystem_TN(Json_TN gameDataNodeToLink, Base_TN_NodeType nodeType) : base(gameDataNodeToLink, nodeType: nodeType)
         {
             // Set up this end of the cross-link.
@@ -145,14 +138,14 @@ namespace HELLION.DataStructures.UI
         public long GUID { get; set; } = 0;
 
         /// <summary>
-        /// The OrbitData for this node - a copy of the values directly from the Json data for
+        /// The OrbitData for this node - de-serialised directly from the Json data for
         /// Asteroids, Ships and Players.
         /// </summary>
         /// <remarks>
         /// Celestial Bodies do not populate this information as theirs is stored in a slightly
         /// different format, as they come from the Static Data rather than the .save file.
         /// </remarks>
-        public OrbitalData OrbitData { get; set; } = null;
+        public OrbitalData OrbitData { get; set; } = new OrbitalData();
 
         /// <summary>
         /// The GUID of the parent of this object, returned from the OrbitalData.
@@ -169,23 +162,17 @@ namespace HELLION.DataStructures.UI
         /// <remarks>
         /// Primary field for sorting objects that have the same ParentGUID.
         /// </remarks>
-        public double SemiMajorAxis
-        {
-            get => OrbitData.SemiMajorAxis;
-        }
+        public double SemiMajorAxis => OrbitData.SemiMajorAxis;
 
         /// <summary>
         /// The Angle of Inclination of the orbiting body.
         /// </summary>
-        public double Inclination
-        {
-            get => OrbitData.Inclination;
-        }
+        //public double Inclination => OrbitData.Inclination;
 
         /// <summary>
         /// The Type of the object, as defined by the game.
         /// </summary>
-        public int Type { get; set; } = 0;
+        // public int Type { get; set; } = 0;
 
         /// <summary>
         /// If this ship/module is docked TO another, the other ship's 
@@ -247,7 +234,8 @@ namespace HELLION.DataStructures.UI
         }
 
         /// <summary>
-        /// Determines whether this node is docked *to* it's parent, or just orbiting it.
+        /// Determines whether this node is docked *to* it's parent, or just orbiting
+        /// it in the case of a celestial body parent.
         /// </summary>
         public bool IsDockedToParent
         {
