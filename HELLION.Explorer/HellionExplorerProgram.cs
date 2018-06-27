@@ -154,7 +154,7 @@ namespace HELLION.Explorer
                 if (newDataView == null)
                 {
                     // No existing form for this node was found, create a new one.
-                    newDataView = new JsonDataViewForm(nSelectedNode);
+                    newDataView = new JsonDataViewForm(nSelectedNode, hEImageList);
 
                     // Add the form to the jsonDataViews list.
                     jsonDataViews.Add(newDataView);

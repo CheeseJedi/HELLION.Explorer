@@ -32,10 +32,11 @@ namespace HELLION.DataStructures.Utilities
         /// Returns true if the parse was successful. If successful the token created 
         /// during parsing is available via the out parameter.
         /// </returns>
-        public static bool TryParseJson(this string str, out JToken jtoken, bool mustBeObjectOrArray = false)
+        public static bool TryParseJson(this string str, out JToken jtoken, out JsonReaderException jrex, bool mustBeObjectOrArray = false)
         {
-            // Set the JToken to null in case of returning due to an exception.
+            // Set the JToken and JsonReaderException to null in case of returning due to an exception.
             jtoken = null;
+            jrex = null;
 
             // Shortcut check for null or empty strings.
             if (string.IsNullOrEmpty(str)) return false;
@@ -66,7 +67,8 @@ namespace HELLION.DataStructures.Utilities
             catch (JsonReaderException jex)
             {
                 // Exception caught during parsing.
-                Debug.Print("Exception: {0}", jex);
+                jrex = jex;
+                Debug.Print("JsonReaderException: {0}", jex);
                 return false;
             }
             catch (Exception ex)

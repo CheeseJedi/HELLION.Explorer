@@ -40,9 +40,11 @@
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabelSerialisatonStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripMainStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStrip_SpringSeperator = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripCursorPositionLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_SerialisationStatus = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.fastColoredTextBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -68,7 +70,6 @@
             this.fastColoredTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fastColoredTextBox1.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.fastColoredTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fastColoredTextBox1.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fastColoredTextBox1.IsReplaceMode = false;
             this.fastColoredTextBox1.Location = new System.Drawing.Point(0, 24);
             this.fastColoredTextBox1.Name = "fastColoredTextBox1";
@@ -80,6 +81,7 @@
             this.fastColoredTextBox1.Text = "fastColoredTextBox1";
             this.fastColoredTextBox1.Zoom = 100;
             this.fastColoredTextBox1.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.fastColoredTextBox1_TextChanged);
+            this.fastColoredTextBox1.SelectionChanged += new System.EventHandler(this.fastColoredTextBox1_SelectionChanged);
             // 
             // menuStrip1
             // 
@@ -138,7 +140,7 @@
             // 
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
-            this.findToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.findToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.findToolStripMenuItem.Text = "Find...";
             this.findToolStripMenuItem.Click += new System.EventHandler(this.findToolStripMenuItem_Click);
             // 
@@ -146,38 +148,55 @@
             // 
             this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
             this.replaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.replaceToolStripMenuItem.Text = "Replace...";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1,
-            this.toolStripStatusLabel2,
-            this.toolStripStatusLabelSerialisatonStatus});
+            this.toolStripMainStatusLabel,
+            this.toolStrip_SpringSeperator,
+            this.toolStripCursorPositionLabel,
+            this.toolStripStatusLabel3,
+            this.toolStripStatusLabel_SerialisationStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 519);
             this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(815, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // toolStripMainStatusLabel
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+            this.toolStripMainStatusLabel.Name = "toolStripMainStatusLabel";
+            this.toolStripMainStatusLabel.Size = new System.Drawing.Size(16, 17);
+            this.toolStripMainStatusLabel.Text = "   ";
             // 
-            // toolStripStatusLabel2
+            // toolStrip_SpringSeperator
             // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(606, 17);
-            this.toolStripStatusLabel2.Spring = true;
+            this.toolStrip_SpringSeperator.Name = "toolStrip_SpringSeperator";
+            this.toolStrip_SpringSeperator.Size = new System.Drawing.Size(555, 17);
+            this.toolStrip_SpringSeperator.Spring = true;
             // 
-            // toolStripStatusLabelSerialisatonStatus
+            // toolStripCursorPositionLabel
             // 
-            this.toolStripStatusLabelSerialisatonStatus.Name = "toolStripStatusLabelSerialisatonStatus";
-            this.toolStripStatusLabelSerialisatonStatus.Size = new System.Drawing.Size(163, 17);
-            this.toolStripStatusLabelSerialisatonStatus.Text = "Passes Serialisation: unknown";
+            this.toolStripCursorPositionLabel.Name = "toolStripCursorPositionLabel";
+            this.toolStripCursorPositionLabel.Size = new System.Drawing.Size(77, 17);
+            this.toolStripCursorPositionLabel.Text = "Cursor [    ,   ]";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(105, 17);
+            this.toolStripStatusLabel3.Text = "Serialisation Status";
+            // 
+            // toolStripStatusLabel_SerialisationStatus
+            // 
+            this.toolStripStatusLabel_SerialisationStatus.AutoToolTip = true;
+            this.toolStripStatusLabel_SerialisationStatus.Name = "toolStripStatusLabel_SerialisationStatus";
+            this.toolStripStatusLabel_SerialisationStatus.Size = new System.Drawing.Size(16, 17);
+            this.toolStripStatusLabel_SerialisationStatus.Text = "   ";
             // 
             // JsonDataViewForm
             // 
@@ -212,8 +231,10 @@
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem applyChangesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSerialisatonStatus;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripMainStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel toolStrip_SpringSeperator;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_SerialisationStatus;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripCursorPositionLabel;
     }
 }

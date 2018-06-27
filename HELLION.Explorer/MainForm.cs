@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
@@ -708,6 +709,28 @@ namespace HELLION.Explorer
         private void triggerGarbageCollectorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GC.Collect();
+        }
+
+        private void findOwningFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Json_TN node = (Json_TN)treeView1.SelectedNode;
+
+            if (HellionExplorerProgram.docCurrent != null && node != null)
+            {
+
+                Json_File file = HellionExplorerProgram.docCurrent.GameData.FindOwningFile(node);
+
+                if (file != null)
+                {
+                    MessageBox.Show(string.Format("TreeNode {0} is owned by file {1}.", node.FullPath, file.File.FullName));
+                }
+                else MessageBox.Show("No result found.");
+
+            }
+            else MessageBox.Show("No open document or selected TreeNode was null.");
+
+
+
         }
     }
 }

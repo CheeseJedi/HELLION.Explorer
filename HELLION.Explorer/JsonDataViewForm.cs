@@ -3,19 +3,60 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
+using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
 
 namespace HELLION.Explorer
 {
     public partial class JsonDataViewForm : Form
     {
-        //Create style for highlighting
-        //TextStyle brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Regular);
+        #region Constructors
 
         /// <summary>
-        /// Property to get/set the _isDirty bool.
+        /// Private constructor.
+        /// </summary>
+        private JsonDataViewForm()
+        {
+            InitializeComponent();
+            Icon = HellionExplorerProgram.MainForm.Icon;
+
+            // We're not using a custom language for the FastColouredTextBox, instead
+            // the JavaScript built-in language is utilised.
+            fastColoredTextBox1.Language = Language.JS;
+            // Set the line numbering to start from zero.
+            //fastColoredTextBox1.LineNumberStartValue = 0;
+            applyChangesToolStripMenuItem.Enabled = false;
+        }
+
+        /// <summary>
+        /// Normal Constructor.
+        /// </summary>
+        /// <param name="passedSourceNode"></param>
+        /// <param name="imageList"></param>
+        public JsonDataViewForm(Json_TN passedSourceNode, EmbeddedImages_ImageList imageList) : this()
+        {
+            // Store a reference to the ImageList
+            _imageList = imageList ?? throw new NullReferenceException("passed ImageList was null.");
+
+            SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
+            FormTitleText = passedSourceNode.FullPath;
+            Text = FormTitleText;
+            AppliedText = passedSourceNode.JData.ToString();
+            fastColoredTextBox1.Text = AppliedText;
+            // Required as setting the FastColouredTextBox triggers the _isDirty
+            IsDirty = false;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Tracks un-applied changes to this editor window.
         /// </summary>
         public bool IsDirty
         {
@@ -30,44 +71,126 @@ namespace HELLION.Explorer
             }
         }
 
-        /// <summary>
-        /// Field that determines whether the text has been changed.
-        /// </summary>
-        private bool _isDirty = false;
-
-        /// <summary>
-        /// Stores a copy of the unmodified text - updated after the apply changes operation.
-        /// </summary>
-        private string AppliedText = null;
-
-        private string FormTitleText = null;
-
         public Json_TN SourceNode { get; } = null;
 
-        public JsonDataViewForm()
-        {
-            InitializeComponent();
-            Icon = HellionExplorerProgram.MainForm.Icon;
-            fastColoredTextBox1.Language = Language.JS;
-            applyChangesToolStripMenuItem.Enabled = false;
-        }
+        #endregion
 
-        public JsonDataViewForm(Json_TN passedSourceNode) : this()
-        {
-            SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
-            FormTitleText = passedSourceNode.FullPath;
-            Text = FormTitleText;
-            AppliedText = passedSourceNode.JData.ToString();
-            fastColoredTextBox1.Text = AppliedText;
-            // Required as setting the FastColouredTextBox triggers the _isDirty
-            IsDirty = false;
-        }
+        #region Methods
 
         private void RefreshJsonDataViewFormTitleText()
         {
             if (IsDirty) Text = FormTitleText + "*";
             else Text = FormTitleText;
         }
+
+        /// <summary>
+        /// De-serialises the text from the FastColoredTextBox and replaces the
+        /// source JToken with the results if the serialisation was successful.
+        /// </summary>
+        /// <returns></returns>
+        private bool ApplyChanges()
+        {
+
+            if (fastColoredTextBox1.Text.
+                TryParseJson(out JToken tmp, out JsonReaderException jrex))
+            {
+                // Successful parse
+
+                // Set the AppliedText.
+                AppliedText = fastColoredTextBox1.Text;
+
+
+                // do some important stuff like actually apply the data changes.
+
+
+                IsDirty = false;
+
+                MessageBox.Show("fake-applied.");
+
+                return true;
+
+            }
+            else
+            {
+                string msg = string.Format("An exception occurred: {0}{1}{0}{0}Full Detail{0}{2}",
+                    Environment.NewLine, jrex != null ? jrex.Message : "Non-JsonTextReader error.", jrex);
+                MessageBox.Show(msg, "De-serialisation error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the Serialise-As-You-Type status indicator (text and icon).
+        /// </summary>
+        private void Refresh_toolStrip_DeserialisatonStatus()
+        {
+            if (fastColoredTextBox1.Text.
+                TryParseJson(out JToken tmp, out JsonReaderException jrex))
+            {
+                toolStripStatusLabel3.Text = "De-serialisation PASSED";
+
+                if (_imageList != null)
+                {
+                    toolStripStatusLabel_SerialisationStatus.Image =
+                        _imageList.IconImageList.Images[(int)HEIconsImageNames.FileOK_16x];
+                }
+
+                toolStripStatusLabel_SerialisationStatus.ToolTipText =
+                    "The text is syntactically correct and de-serialised OK.";
+                toolStripMainStatusLabel.Text = toolStripStatusLabel_SerialisationStatus.ToolTipText;
+
+            }
+            else
+            {
+                toolStripStatusLabel3.Text = "De-serialisation ERROR";
+
+                if (_imageList != null)
+                {
+                    toolStripStatusLabel_SerialisationStatus.Image =
+                        _imageList.IconImageList.Images[(int)HEIconsImageNames.FileError_16x];
+                }
+
+                toolStripStatusLabel_SerialisationStatus.ToolTipText = jrex != null ? jrex.Message : "Non-JsonTextReader error.";
+                toolStripMainStatusLabel.Text = toolStripStatusLabel_SerialisationStatus.ToolTipText;
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the cursor position indicator.
+        /// </summary>
+        private void refresh_toolStrip_toolStripCursorPositionLabel()
+        {
+            if (fastColoredTextBox1.Selection.Start != null)
+            {
+                toolStripCursorPositionLabel.Text = string.Format("[Ln {0} Col {1}]",
+                // The line number position for the cursor is returned by the FastColouredTextBox
+                // counting from zero, seemingly regardless of the configured starting line number.
+                fastColoredTextBox1.Selection.Start.iLine + 1,
+                fastColoredTextBox1.Selection.Start.iChar); 
+            }
+            else toolStripCursorPositionLabel.Text = "[Ln ? Col ?]";
+        }
+
+        #endregion
+
+        #region Fields
+
+        private bool _isDirty = false;
+        /// <summary>
+        /// Stores a copy of the unmodified text - updated after the apply changes operation.
+        /// </summary>
+        private string AppliedText = null;
+        private string FormTitleText = null;
+
+        private EmbeddedImages_ImageList _imageList = null;
+
+        #endregion
+
+
+        //Create style for highlighting
+        //TextStyle brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Regular);
+
 
         // This really needs to happen before form closing
         private void JsonDataViewForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -117,10 +240,13 @@ namespace HELLION.Explorer
 
             //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");
 
+            Refresh_toolStrip_DeserialisatonStatus();
 
-            Refresh_toolStripStatusLabelSerialisatonStatus();
+        }
 
-
+        private void fastColoredTextBox1_SelectionChanged(object sender, EventArgs e)
+        {
+            refresh_toolStrip_toolStripCursorPositionLabel();
         }
 
         #region menuStrip1
@@ -146,35 +272,6 @@ namespace HELLION.Explorer
         }
 
         #endregion
-
-        /// <summary>
-        /// De-serialises the text from the FastColoredTextBox and replaces the
-        /// source JToken with the results if the serialisation was successful.
-        /// </summary>
-        /// <returns></returns>
-        private bool ApplyChanges()
-        {
-
-
-
-            // AppliedText = fastColoredTextBox1.Text;
-                
-
-            return false;
-        }
-
-
-        private bool DoesTextSerialise => StringExtensions.TryParseJson(fastColoredTextBox1.Text, out JToken tmp);
-
-
-        private void Refresh_toolStripStatusLabelSerialisatonStatus()
-        {
-
-           toolStripStatusLabelSerialisatonStatus.Text = 
-                String.Format("Passes Serialisation: {0}", DoesTextSerialise);
-
-        }
-
 
     }
 }

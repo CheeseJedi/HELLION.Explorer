@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
@@ -170,6 +169,27 @@ namespace HELLION.DataStructures.UI
         /// Is used to determine whether the node should auto-generate it's name.
         /// </summary>
         public bool AutoGenerateName { get; set; } = false;
+
+        /// <summary>
+        /// Returns a list including this node and all child nodes.
+        /// </summary>
+        public List<Base_TN> AllNodes
+        {
+            get
+            {
+                // Create a new list and add this node to it.
+                List<Base_TN> results = new List<Base_TN>() { this };
+
+                foreach (Base_TN node in Nodes)
+                {
+                    // Add the node's nodes, via recursion.
+                    results.AddRange(node.AllNodes);
+                }
+
+                return results;
+            }
+        }
+
 
         /// <summary>
         /// Define a default name for nodes that don't auto-generate and haven't had one specified.

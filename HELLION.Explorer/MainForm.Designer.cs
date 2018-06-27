@@ -107,6 +107,7 @@
             this.jsonDataViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findOwningFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -366,7 +367,7 @@
             // 
             this.cleanupToolStripMenuItem.Enabled = false;
             this.cleanupToolStripMenuItem.Name = "cleanupToolStripMenuItem";
-            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.cleanupToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.cleanupToolStripMenuItem.Text = "Cleanup...";
             this.cleanupToolStripMenuItem.Visible = false;
             // 
@@ -374,14 +375,14 @@
             // 
             this.repairToolStripMenuItem.Enabled = false;
             this.repairToolStripMenuItem.Name = "repairToolStripMenuItem";
-            this.repairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.repairToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.repairToolStripMenuItem.Text = "Repair...";
             this.repairToolStripMenuItem.Visible = false;
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(146, 6);
             this.toolStripSeparator5.Visible = false;
             // 
             // steamUtilitiesToolStripMenuItem
@@ -392,7 +393,7 @@
             this.groupMembersByGroupID64ToolStripMenuItem});
             this.steamUtilitiesToolStripMenuItem.Enabled = false;
             this.steamUtilitiesToolStripMenuItem.Name = "steamUtilitiesToolStripMenuItem";
-            this.steamUtilitiesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.steamUtilitiesToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.steamUtilitiesToolStripMenuItem.Text = "&Steam Utilities";
             this.steamUtilitiesToolStripMenuItem.Visible = false;
             // 
@@ -423,7 +424,7 @@
             this.setDataFolderLocationToolStripMenuItem,
             this.verifyDataFolderToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // setDataFolderLocationToolStripMenuItem
@@ -474,7 +475,8 @@
             this.testToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveTestToolStripMenuItem,
             this.generateStructureDefinitionsStubjsonToolStripMenuItem,
-            this.triggerGarbageCollectorToolStripMenuItem});
+            this.triggerGarbageCollectorToolStripMenuItem,
+            this.findOwningFileToolStripMenuItem});
             this.testToolStripMenuItem1.Name = "testToolStripMenuItem1";
             this.testToolStripMenuItem1.Size = new System.Drawing.Size(40, 20);
             this.testToolStripMenuItem1.Text = "Test";
@@ -813,6 +815,13 @@
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Visible = false;
             // 
+            // findOwningFileToolStripMenuItem
+            // 
+            this.findOwningFileToolStripMenuItem.Name = "findOwningFileToolStripMenuItem";
+            this.findOwningFileToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
+            this.findOwningFileToolStripMenuItem.Text = "Find Owning File";
+            this.findOwningFileToolStripMenuItem.Click += new System.EventHandler(this.findOwningFileToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -929,6 +938,7 @@
         private System.Windows.Forms.ToolStripMenuItem groupID64ByGroupNameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem groupMembersByGroupID64ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem triggerGarbageCollectorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findOwningFileToolStripMenuItem;
     }
 } // End of namespace HELLION.Explorer
 
