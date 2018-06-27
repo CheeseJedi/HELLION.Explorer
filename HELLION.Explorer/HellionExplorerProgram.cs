@@ -405,7 +405,7 @@ namespace HELLION.Explorer
             }
 
             // If the sFileName is set, check the file exists otherwise prompt the user to select a file
-            if (sFileName == String.Empty)
+            if (string.IsNullOrEmpty(sFileName))
             {
                 // Create a new OpenFileDialog box and set some parameters
                 var openFileDialog1 = new OpenFileDialog()

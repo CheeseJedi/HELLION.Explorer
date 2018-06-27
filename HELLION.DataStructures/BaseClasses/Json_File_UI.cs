@@ -67,7 +67,7 @@ namespace HELLION.DataStructures
                 // Set the load error flag
                 base.LoadError = value;
                 // Change the node type so that the icon changes to the error type
-                RootNode.NodeType = Base_TN_NodeType.DataFileError;
+                if (RootNode != null) RootNode.NodeType = Base_TN_NodeType.DataFileError;
             }
         }
 

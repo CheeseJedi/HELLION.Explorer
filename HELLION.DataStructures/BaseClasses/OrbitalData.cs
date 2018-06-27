@@ -17,14 +17,14 @@ namespace HELLION.DataStructures
     /// </remarks>
     public class OrbitalData
     {
-        public long ParentGUID { get; set; } = 0;
-        public double Eccentricity { get; set; } = 0;
-        public double SemiMajorAxis { get; set; } = 0;
-        public double LongitudeOfAscendingNode { get; set; } = 0;
-        public double ArgumentOfPeriapsis { get; set; } = 0;
-        public double Inclination { get; set; } = 0;
-        public double TimeSincePeriapsis { get; set; } = 0;
-        public double SolarSystemPeriapsisTime { get; set; } = 0;
+        public long? ParentGUID { get; set; } = null;
+        public double? Eccentricity { get; set; } = null;
+        public double? SemiMajorAxis { get; set; } = null;
+        public double? LongitudeOfAscendingNode { get; set; } = null;
+        public double? ArgumentOfPeriapsis { get; set; } = null;
+        public double? Inclination { get; set; } = null;
+        public double? TimeSincePeriapsis { get; set; } = null;
+        public double? SolarSystemPeriapsisTime { get; set; } = null;
 
         /// <summary>
         /// Basic constructor used to initialise an empty object.

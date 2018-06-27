@@ -36,16 +36,13 @@ namespace HELLION.DataStructures.UI
             LinkedGameDataNode = gameDataNodeToLink ?? throw new NullReferenceException("gameDataNodeToLink was null.");
 
             // Cast the LinkedGameDataNode.JData field in to a JObject.
-            JObject _linkedGameDataJson = (JObject)LinkedGameDataNode.JData;
-            if (_linkedGameDataJson == null) throw new NullReferenceException("_linkedGameDataJson was null.");
-
-            // Set the node type, this will trigger the icon type to change to an appropriate one.
-            //NodeType = nodeType;
+            JObject _linkedGameDataJson = (JObject)LinkedGameDataNode.JData ?? throw new NullReferenceException("_linkedGameDataJson was null.");
 
             // If we're working with a linked blueprint node, translate the StructureID to GUID
             JToken tmpTkn = _linkedGameDataJson["StructureID"];
             if (tmpTkn != null)
             {
+                throw new Exception("Got here for some reason!");
                 Debug.Print("Got here for some reason!");
                 
                 // Set the node's Name to the StructureID of the object.
@@ -56,11 +53,30 @@ namespace HELLION.DataStructures.UI
             }
             else
             {
-                // Set the node's Name to the GUID of the object.
-                Name = (string)_linkedGameDataJson["Registration"]; //LinkedGameDataNode.Name;
+                switch (nodeType)
+                {
+                    case Base_TN_NodeType.Ship:
+                        if (string.IsNullOrEmpty((string)_linkedGameDataJson["Name"]))
+                        {
+                            // The ship has no name - most non-player vessels fall in to this category.
+                            Name = (string)_linkedGameDataJson["Registration"];
+                        }
+                        else
+                        {
+                            // The ship has a name, append it on to the end of the registration
+                            Name = (string)_linkedGameDataJson["Registration"] + " " + (string)_linkedGameDataJson["Name"];
+                        }
+                        break;
+                    default:
+                        Name = ((string)_linkedGameDataJson["Name"]).Trim();
+                        break;
+                }
 
-                Text_Prefix = ((string)_linkedGameDataJson["Name"]).Trim();
-                Text_Suffix = ((string)_linkedGameDataJson["GUID"]).Trim();
+                // Can't use these presently as it messes with the TreeView's Path system,
+                // which annoyingly uses the TreeNode's Text field rather than the Name field
+                // in path generation.
+                // Text_Prefix = ((string)_linkedGameDataJson["Name"]).Trim();
+                // Text_Suffix = ((string)_linkedGameDataJson["GUID"]).Trim();
 
                 // Set the GUID
                 GUID = (long)_linkedGameDataJson["GUID"];
@@ -83,7 +99,7 @@ namespace HELLION.DataStructures.UI
                     // It's a player - doesn't have orbital data but may have a parent GUID if in a ship/module.
 
                     // Ensure OrbitData is null.
-                    OrbitData = new OrbitalData();
+                    // OrbitData = new OrbitalData();
 
                     tempToken = _linkedGameDataJson["ParentGUID"];
                     if (tempToken != null) OrbitData.ParentGUID = (long)_linkedGameDataJson["ParentGUID"];
@@ -100,24 +116,9 @@ namespace HELLION.DataStructures.UI
 
                     OrbitData = new OrbitalData((JObject)_linkedGameDataJson["OrbitData"]);
 
-                    tempToken = _linkedGameDataJson["DockedToShipGUID"];
-                    if (tempToken != null)
-                    {
-                        DockedToShipGUID = (long)_linkedGameDataJson["DockedToShipGUID"];
-                    }
-
-                    tempToken = _linkedGameDataJson["DockedPortID"];
-                    if (tempToken != null)
-                    {
-                        DockedPortID = (int)_linkedGameDataJson["DockedPortID"];
-                    }
-
-                    tempToken = _linkedGameDataJson["DockedToPortID"];
-                    if (tempToken != null)
-                    {
-                        DockedToPortID = (int)_linkedGameDataJson["DockedToPortID"];
-                    }
-
+                    DockedToShipGUID = (long?)_linkedGameDataJson["DockedToShipGUID"];
+                    DockedPortID = (int?)_linkedGameDataJson["DockedPortID"];
+                    DockedToPortID = (int?)_linkedGameDataJson["DockedToPortID"];
 
                     break;
                 default:
@@ -152,7 +153,7 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         public long ParentGUID
         {
-            get => OrbitData.ParentGUID;
+            get => OrbitData.ParentGUID != null ? (long)OrbitData.ParentGUID : -1L;
             set => OrbitData.ParentGUID = value;
         }
 
@@ -162,7 +163,7 @@ namespace HELLION.DataStructures.UI
         /// <remarks>
         /// Primary field for sorting objects that have the same ParentGUID.
         /// </remarks>
-        public double SemiMajorAxis => OrbitData.SemiMajorAxis;
+        public double SemiMajorAxis => OrbitData.SemiMajorAxis != null ? (double)OrbitData.SemiMajorAxis : -1L;
 
         /// <summary>
         /// The Angle of Inclination of the orbiting body.

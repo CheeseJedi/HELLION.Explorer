@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
 using HELLION.DataStructures.UI;
+using HELLION.DataStructures.Utilities;
+using Newtonsoft.Json.Linq;
 
 namespace HELLION.Explorer
 {
@@ -17,10 +19,10 @@ namespace HELLION.Explorer
         /// </summary>
         public bool IsDirty
         {
-            get { return isDirty; }
+            get => _isDirty;
             private set
             {
-                isDirty = value;
+                _isDirty = value;
                 // Enable or disable the Apply Changes menu option.
                 applyChangesToolStripMenuItem.Enabled = value;
                 // Update the form name
@@ -31,7 +33,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Field that determines whether the text has been changed.
         /// </summary>
-        private bool isDirty = false;
+        private bool _isDirty = false;
 
         /// <summary>
         /// Stores a copy of the unmodified text - updated after the apply changes operation.
@@ -97,7 +99,7 @@ namespace HELLION.Explorer
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void fastColoredTextBox1_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
+        private void fastColoredTextBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
             IsDirty = true;
             Debug.Print("Text Changed called");
@@ -114,6 +116,11 @@ namespace HELLION.Explorer
             e.ChangedRange.SetFoldingMarkers(Regex.Escape(@"["), Regex.Escape(@"]"));
 
             //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");
+
+
+            Refresh_toolStripStatusLabelSerialisatonStatus();
+
+
         }
 
         #region menuStrip1
@@ -154,6 +161,18 @@ namespace HELLION.Explorer
                 
 
             return false;
+        }
+
+
+        private bool DoesTextSerialise => StringExtensions.TryParseJson(fastColoredTextBox1.Text, out JToken tmp);
+
+
+        private void Refresh_toolStripStatusLabelSerialisatonStatus()
+        {
+
+           toolStripStatusLabelSerialisatonStatus.Text = 
+                String.Format("Passes Serialisation: {0}", DoesTextSerialise);
+
         }
 
 

@@ -22,28 +22,33 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Default constructor, not used directly but used by derived classes.
         /// </summary>
-        protected Json_File(IParent_Json_File ownerObject)
-        {
-            OwnerObject = ownerObject;
-        }
+        protected Json_File(IParent_Json_File ownerObject) => OwnerObject = ownerObject;
 
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo, bool autoDeserialise = false ) : this(ownerObject)
+        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo, bool autoDeserialise = false )
+            : this(ownerObject)
         {
-            Debug.Print("Json_File.ctor(FileInfo) called {0}", passedFileInfo.FullName);
-            File = passedFileInfo ?? throw new NullReferenceException("passedFileInfo was null.");
+            //Debug.Print("Json_File.ctor(FileInfo) called {0}", passedFileInfo.FullName);
+
+            // Set the FileInfo object and ensure it's not null.
+            File = passedFileInfo ?? throw new NullReferenceException("Json_File.ctor(FileInfo) - passedFileInfo was null.");
 
             // Load the file.
-            LoadFile();
+            if (LoadFile()) Debug.Print("File failed to load from constructor - LoadFile() returned true.");
+            else
+            {
+                // Trigger the first de-serialisation.
+                if (autoDeserialise) Deserialise();
 
-            // Trigger the first de-serialisation.
-            if (autoDeserialise) Deserialise();
+                // Switch on automatic de-serialisation of the JData when it changes, if specified.
+                // This is done _after_ the de-serialisation to prevent excessive 
+                // triggered de-serialisation.
+                AutoDeserialiseOnJdataModification = autoDeserialise;
 
-            // Switch on automatic de-serialisation of the JData when it changes.
-            AutoDeserialiseOnJdataModification = autoDeserialise;
+            }
         }
 
         /// <summary>
@@ -51,10 +56,11 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="ownerObject"></param>
         /// <param name="jdata"></param>
-        public Json_File(IParent_Json_File ownerObject, JToken jdata, bool autoDeserialise = false ) : this(ownerObject)
+        public Json_File(IParent_Json_File ownerObject, JToken jdata, bool autoDeserialise = false )
+            : this(ownerObject)
         {
-            Debug.Print("Json_File.ctor(FileInfo) called - HasValues [{0}]",
-                jdata != null ? jdata.HasValues.ToString() : "null");
+            //Debug.Print("Json_File.ctor(FileInfo) called - HasValues [{0}]",
+            //    jdata != null ? jdata.HasValues.ToString() : "null");
 
             // Switch on automatic de-serialisation of the JData when it changes.
             AutoDeserialiseOnJdataModification = autoDeserialise;
@@ -211,7 +217,7 @@ namespace HELLION.DataStructures
         /// <returns>Returns true if there was a loading error</returns>
         public virtual bool LoadFile()
         {
-            if (File.Exists)
+            if (File != null && File.Exists)
             {
                 try
                 {
@@ -228,35 +234,33 @@ namespace HELLION.DataStructures
                 {
                     // Some (better) error handling to be implemented here.
                     LoadError = true;
-                    if (_logToDebug) Debug.Print("Exception caught during StreamReader or JsonTextReader while processing " + File.Name
-                        + Environment.NewLine + ex);
+                    Debug.Print("LoadFile() - Exception caught during StreamReader or JsonTextReader while processing "
+                        + File.Name + Environment.NewLine + ex);
+                    return true;
                 }
 
                 if (JData == null)
                 {
                     // The data didn't load
                     LoadError = true;
-                    if (_logToDebug) Debug.Print("JData is null or empty: " + File.Name);
+                    Debug.Print("LoadFile() - JData is null or empty: " + File.Name);
+                    return true;
                 }
                 else
                 {
-                    // We should have some data
+                    // We should have some data - success!
                     Console.WriteLine("File loaded: {0} ({1}, {2} child tokens).", File.Name, JData.Type, JData.Count());
 
                     // Set the IsLoaded flag to true
                     IsLoaded = true;
+                    LoadError = false;
+                    return false;
                 }
             }
-            else
-            {
-                // File does not exist.
-                LoadError = true;
-                throw new FileNotFoundException();
 
-            }
-
-            // Return the value of LoadError
-            return LoadError;
+            // FileInfo was null or file does not exist.
+            LoadError = true;
+            return true;
         }
 
         /// <summary>
