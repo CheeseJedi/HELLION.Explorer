@@ -74,6 +74,7 @@
             this.saveTestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateStructureDefinitionsStubjsonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.triggerGarbageCollectorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.findOwningFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -104,10 +105,8 @@
             this.parentCelestialBodyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rootOfDockingTreeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
-            this.jsonDataViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.findOwningFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -502,6 +501,13 @@
             this.triggerGarbageCollectorToolStripMenuItem.Text = "Trigger Garbage Collector";
             this.triggerGarbageCollectorToolStripMenuItem.Click += new System.EventHandler(this.triggerGarbageCollectorToolStripMenuItem_Click);
             // 
+            // findOwningFileToolStripMenuItem
+            // 
+            this.findOwningFileToolStripMenuItem.Name = "findOwningFileToolStripMenuItem";
+            this.findOwningFileToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
+            this.findOwningFileToolStripMenuItem.Text = "Find Owning File";
+            this.findOwningFileToolStripMenuItem.Click += new System.EventHandler(this.findOwningFileToolStripMenuItem_Click);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.DefaultExt = "save";
@@ -688,11 +694,10 @@
             this.toolStripSeparator8,
             this.jumpToToolStripMenuItem,
             this.toolStripSeparator11,
-            this.jsonDataViewToolStripMenuItem,
             this.editToolStripMenuItem1,
             this.testToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 126);
             // 
             // subNodesToolStripMenuItem
             // 
@@ -703,7 +708,7 @@
             this.loadNextLevelToolStripMenuItem,
             this.loadAllLevelsToolStripMenuItem});
             this.subNodesToolStripMenuItem.Name = "subNodesToolStripMenuItem";
-            this.subNodesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.subNodesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.subNodesToolStripMenuItem.Text = "Sub Nodes";
             // 
             // expandAllToolStripMenuItem
@@ -742,7 +747,7 @@
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(177, 6);
             // 
             // jumpToToolStripMenuItem
             // 
@@ -753,7 +758,7 @@
             this.parentCelestialBodyToolStripMenuItem,
             this.rootOfDockingTreeToolStripMenuItem});
             this.jumpToToolStripMenuItem.Name = "jumpToToolStripMenuItem";
-            this.jumpToToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.jumpToToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.jumpToToolStripMenuItem.Text = "Jump to";
             // 
             // thisObjectInSolarSystemViewToolStripMenuItem
@@ -792,35 +797,21 @@
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
-            // 
-            // jsonDataViewToolStripMenuItem
-            // 
-            this.jsonDataViewToolStripMenuItem.Name = "jsonDataViewToolStripMenuItem";
-            this.jsonDataViewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.jsonDataViewToolStripMenuItem.Text = "Json Data View";
-            this.jsonDataViewToolStripMenuItem.Click += new System.EventHandler(this.jsonDataViewToolStripMenuItem_Click);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(177, 6);
             // 
             // editToolStripMenuItem1
             // 
             this.editToolStripMenuItem1.Name = "editToolStripMenuItem1";
-            this.editToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.editToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.editToolStripMenuItem1.Text = "Edit...";
             this.editToolStripMenuItem1.Click += new System.EventHandler(this.editToolStripMenuItem1_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Visible = false;
-            // 
-            // findOwningFileToolStripMenuItem
-            // 
-            this.findOwningFileToolStripMenuItem.Name = "findOwningFileToolStripMenuItem";
-            this.findOwningFileToolStripMenuItem.Size = new System.Drawing.Size(278, 22);
-            this.findOwningFileToolStripMenuItem.Text = "Find Owning File";
-            this.findOwningFileToolStripMenuItem.Click += new System.EventHandler(this.findOwningFileToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -916,7 +907,6 @@
         public System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem jsonDataViewToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem revertToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem jumpToToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem thisObjectInSolarSystemViewToolStripMenuItem;

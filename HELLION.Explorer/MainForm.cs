@@ -219,8 +219,8 @@ namespace HELLION.Explorer
         {
             // Update the object information panel
             //if (Program.docCurrent != null && Program.docCurrent.IsFileReady)
-            {
-            }
+            // {
+            // }
 
             // Update the object path + name + Tag in the object identifier bar
             HellionExplorerProgram.RefreshSelectedOjectPathBarText(e.Node);
@@ -232,190 +232,215 @@ namespace HELLION.Explorer
             {
                 Base_TN node = (Base_TN)e.Node;
                 // Get the node that the user has clicked.
-                if (node != null)
+                if (node == null) return;
+
+                // Select in the TreeView the node the user has clicked.
+                treeView1.SelectedNode = node;
+
+                // Determine node type and activate appropriate jump to menu items.
+                Type t = node.GetType();
+                // Handles Json_TN nodes for the Game Data representation.
+                if (t.Equals(typeof(Json_TN)))
                 {
-                    // Select the node the user has clicked.
-                    treeView1.SelectedNode = node;
+                    // We're working with a GAME DATA node
 
-                    // Determine node type and activate appropriate jump to menu items.
-                    Type t = node.GetType();
-                    if (t.Equals(typeof(Json_TN)))
+                    // Enable the Json Data View
+                    //jsonDataViewToolStripMenuItem.Enabled = true;
+
+                    // Editing of Json is now handled by the Edit menu item on the 
+                    // context menu. At this point only Objects and Arrays seem
+                    // suitable for use in the Json editor - otherwise de-serialisation
+                    // fails and changes can't be applied to the main document.
+
+                    switch (node.NodeType)
                     {
-                        // We're working with a GAME DATA node
+                        case Base_TN_NodeType.SaveFile:
+                        case Base_TN_NodeType.DataFile:
+                        case Base_TN_NodeType.JsonObject:
+                        case Base_TN_NodeType.JsonArray:
+                            // Show the Edit menu item.
+                            editToolStripMenuItem1.Enabled = true;
+                            break;
 
-                        // Hide the Edit menu item.
-                        editToolStripMenuItem1.Visible = false;
-
-                        // Enable the Json Data View
-                        jsonDataViewToolStripMenuItem.Enabled = true;
-
-                        // Enable the Jump to sub-menu
-                        jumpToToolStripMenuItem.Enabled = true;
-
-                        // GD nodes always have load items visible, even if enabled
-                        loadNextLevelToolStripMenuItem.Enabled = true;
-                        loadAllLevelsToolStripMenuItem.Enabled = true;
-
-                        // We're in the Game Data already, so disable selection of it
-                        thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
-                        thisObjectInGameDataViewToolStripMenuItem.Checked = true;
-
-                        // Disable these two as they're Solar System related
-                        rootOfDockingTreeToolStripMenuItem.Enabled = false;
-                        parentCelestialBodyToolStripMenuItem.Enabled = false;
-
-                        // Cast the node to an Json_TN type
-                        Json_TN gDnode = (Json_TN)treeView1.SelectedNode;
-
-                        // Disable the LoadNextLevel item if it's already been loaded.
-                        if (gDnode.ChildNodesLoaded) loadNextLevelToolStripMenuItem.Enabled = false;
-                        else loadNextLevelToolStripMenuItem.Enabled = true;
-
-                        if (gDnode.LinkedSolarSystemNode != null)
-                        {
-                            // It's a Game Data node that has a linked Solar System node 
-                            // Enable the Jump to menu item
-                            thisObjectInSolarSystemViewToolStripMenuItem.Enabled = true;
-                            thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
-                        }
-                        else
-                        {
-                            thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
-                            thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
-                        }
+                        default:
+                            // Disable the Edit menu item.
+                            editToolStripMenuItem1.Enabled = false;
+                            break;
                     }
-                    else if (t.Equals(typeof(SolarSystem_TN)))
+
+
+
+                    // Enable the Jump to sub-menu
+                    jumpToToolStripMenuItem.Enabled = true;
+
+                    // GD nodes always have load items visible, even if enabled
+                    loadNextLevelToolStripMenuItem.Enabled = true;
+                    loadAllLevelsToolStripMenuItem.Enabled = true;
+
+                    // We're in the Game Data already, so disable selection of it
+                    thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                    thisObjectInGameDataViewToolStripMenuItem.Checked = true;
+
+                    // Disable these two as they're Solar System related
+                    rootOfDockingTreeToolStripMenuItem.Enabled = false;
+                    parentCelestialBodyToolStripMenuItem.Enabled = false;
+
+                    // Cast the node to an Json_TN type
+                    Json_TN gDnode = (Json_TN)treeView1.SelectedNode;
+
+                    // Disable the LoadNextLevel item if it's already been loaded.
+                    if (gDnode.ChildNodesLoaded) loadNextLevelToolStripMenuItem.Enabled = false;
+                    else loadNextLevelToolStripMenuItem.Enabled = true;
+
+                    if (gDnode.LinkedSolarSystemNode != null)
                     {
-                        // We're working with a SOLAR SYSTEM node
-
-                        // Hide the Edit menu item.
-                        editToolStripMenuItem1.Visible = false;
-
-                        // Disable the Json Data View option.
-                        jsonDataViewToolStripMenuItem.Enabled = false;
-
-                        // Solar System nodes never have load options
-                        loadNextLevelToolStripMenuItem.Enabled = false;
-                        loadAllLevelsToolStripMenuItem.Enabled = false;
-
-                        // We're in the Solar System already, so disable selection of it
+                        // It's a Game Data node that has a linked Solar System node 
+                        // Enable the Jump to menu item
+                        thisObjectInSolarSystemViewToolStripMenuItem.Enabled = true;
+                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+                    }
+                    else
+                    {
                         thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
-                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = true;
+                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+                    }
+                }
+                
+                // Handles SolarSystem_TN Nodes for the Solar System representation.
+                else if (t.Equals(typeof(SolarSystem_TN)))
+                {
+                    // We're working with a SOLAR SYSTEM node
 
-                        // Cast the node as an SolarSystem_TN type
-                        SolarSystem_TN sSnode = (SolarSystem_TN)treeView1.SelectedNode;
+                    // Hide the Edit menu item.
+                    editToolStripMenuItem1.Enabled = false;
 
-                        if (sSnode.GUID == -1 || sSnode.NodeType == Base_TN_NodeType.SolarSystemView
-                            || sSnode.NodeType == Base_TN_NodeType.BlueprintHierarchyView)
+                    // Disable the Json Data View option.
+                    //jsonDataViewToolStripMenuItem.Enabled = false;
+
+                    // Solar System nodes never have load options
+                    loadNextLevelToolStripMenuItem.Enabled = false;
+                    loadAllLevelsToolStripMenuItem.Enabled = false;
+
+                    // We're in the Solar System already, so disable selection of it
+                    thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                    thisObjectInSolarSystemViewToolStripMenuItem.Checked = true;
+
+                    // Cast the node as an SolarSystem_TN type
+                    SolarSystem_TN sSnode = (SolarSystem_TN)treeView1.SelectedNode;
+
+                    if (sSnode.GUID == -1 || sSnode.NodeType == Base_TN_NodeType.SolarSystemView
+                        || sSnode.NodeType == Base_TN_NodeType.BlueprintHierarchyView)
+                    {
+                        // We're dealing with the Solar System Root Node or a Blueprint Hierarchy
+                        // View node, special cases.
+
+                        jumpToToolStripMenuItem.Enabled = false;
+                        thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                        thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+                    }
+                    else
+                    {
+                        if (sSnode.LinkedGameDataNode == null) // throw new NullReferenceException("sNode.LinkedGameDataNode was null.");
                         {
-                            // We're dealing with the Solar System Root Node or a Blueprint Hierarchy
-                            // View node, special cases.
-
-                            jumpToToolStripMenuItem.Enabled = false;
                             thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
                             thisObjectInGameDataViewToolStripMenuItem.Checked = false;
                         }
                         else
                         {
-                            if (sSnode.LinkedGameDataNode == null) // throw new NullReferenceException("sNode.LinkedGameDataNode was null.");
-                            {
-                                thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
-                                thisObjectInGameDataViewToolStripMenuItem.Checked = false;
-                            }
-                            else
-                            {
-                                thisObjectInGameDataViewToolStripMenuItem.Enabled = true;
-                                thisObjectInGameDataViewToolStripMenuItem.Checked = false;
-                            }
-                            // Enable the Jump to sub-menu unless it's the Solar System root node
-                            if (sSnode.GUID != -1) jumpToToolStripMenuItem.Enabled = true;
-                            else jumpToToolStripMenuItem.Enabled = false;
-
-                            // Enable the Root of Docking Tree option only if the node's parent type
-                            // is a ship, indicating it is docked to something (rather than something
-                            // being docked *to* this node i.e. child nodes).
-                            rootOfDockingTreeToolStripMenuItem.Enabled = sSnode.IsDockedToParent;
+                            thisObjectInGameDataViewToolStripMenuItem.Enabled = true;
+                            thisObjectInGameDataViewToolStripMenuItem.Checked = false;
                         }
+                        // Enable the Jump to sub-menu unless it's the Solar System root node
+                        if (sSnode.GUID != -1) jumpToToolStripMenuItem.Enabled = true;
+                        else jumpToToolStripMenuItem.Enabled = false;
+
+                        // Enable the Root of Docking Tree option only if the node's parent type
+                        // is a ship, indicating it is docked to something (rather than something
+                        // being docked *to* this node i.e. child nodes).
+                        rootOfDockingTreeToolStripMenuItem.Enabled = sSnode.IsDockedToParent;
                     }
-
-                    else if (t.Equals(typeof(Blueprint_TN)))
-                    {
-
-                        // Some decision making logic needed here
-
-                        if (node.NodeType == Base_TN_NodeType.Blueprint)
-                        {
-                            // Show the Edit menu item.
-                            editToolStripMenuItem1.Visible = true;
-                        }
-                        else editToolStripMenuItem1.Visible = false;
-
-
-
-                        // Disable the Json Data View
-                        jsonDataViewToolStripMenuItem.Enabled = false;
-
-                        // Disable the Jump to sub-menu
-                        jumpToToolStripMenuItem.Enabled = false;
-
-                        // Disable the Solar System Jump to option
-                        thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
-                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
-
-                        // Disable the Game Data Jump to option
-                        thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
-                        thisObjectInGameDataViewToolStripMenuItem.Checked = false;
-
-                        // Disable these two as they're Solar System related
-                        rootOfDockingTreeToolStripMenuItem.Enabled = false;
-                        parentCelestialBodyToolStripMenuItem.Enabled = false;
-
-                        // Disable the load options
-                        loadNextLevelToolStripMenuItem.Enabled = false;
-                        loadAllLevelsToolStripMenuItem.Enabled = false;
-
-                    }
-                    else
-                    {
-                        // Hide the Edit menu item.
-                        editToolStripMenuItem1.Visible = false;
-
-
-
-                        // Disable the Json Data View
-                        jsonDataViewToolStripMenuItem.Enabled = false;
-
-                        // Disable the Jump to sub-menu
-                        jumpToToolStripMenuItem.Enabled = false;
-
-                        // Disable the Solar System Jump to option
-                        thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
-                        thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
-
-                        // Disable the Game Data Jump to option
-                        thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
-                        thisObjectInGameDataViewToolStripMenuItem.Checked = false;
-
-                        // Disable these two as they're Solar System related
-                        rootOfDockingTreeToolStripMenuItem.Enabled = false;
-                        parentCelestialBodyToolStripMenuItem.Enabled = false;
-
-                        // Disable the load options
-                        loadNextLevelToolStripMenuItem.Enabled = false;
-                        loadAllLevelsToolStripMenuItem.Enabled = false;
-                    }
-
-                    // throw new InvalidOperationException("Unexpected node type " + t.ToString());
-
-                    contextMenuStrip1.Show(treeView1, e.Location);
-
-                    // Re-select the previously selected node.
-                    //treeView1.SelectedNode = m_OldSelectNode;
-                    //m_OldSelectNode = null;
                 }
+                
+                // Handles Blueprint_TN for blueprint files.
+                else if (t.Equals(typeof(Blueprint_TN)))
+                {
+
+                    // Some decision making logic needed here
+
+                    if (node.NodeType == Base_TN_NodeType.Blueprint)
+                    {
+                        // Show the Edit menu item.
+                        editToolStripMenuItem1.Enabled = true;
+                    }
+                    else editToolStripMenuItem1.Enabled = false;
+
+
+
+                    // Disable the Json Data View
+                    //jsonDataViewToolStripMenuItem.Enabled = false;
+
+                    // Disable the Jump to sub-menu
+                    jumpToToolStripMenuItem.Enabled = false;
+
+                    // Disable the Solar System Jump to option
+                    thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                    thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+
+                    // Disable the Game Data Jump to option
+                    thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                    thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+
+                    // Disable these two as they're Solar System related
+                    rootOfDockingTreeToolStripMenuItem.Enabled = false;
+                    parentCelestialBodyToolStripMenuItem.Enabled = false;
+
+                    // Disable the load options
+                    loadNextLevelToolStripMenuItem.Enabled = false;
+                    loadAllLevelsToolStripMenuItem.Enabled = false;
+
+                }
+
+                // Default behaviour - handles other node types.
+                else
+                {
+                    // Hide the Edit menu item.
+                    editToolStripMenuItem1.Enabled = false;
+
+                    // Disable the Json Data View
+                    //jsonDataViewToolStripMenuItem.Enabled = false;
+
+                    // Disable the Jump to sub-menu
+                    jumpToToolStripMenuItem.Enabled = false;
+
+                    // Disable the Solar System Jump to option
+                    thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                    thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+
+                    // Disable the Game Data Jump to option
+                    thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                    thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+
+                    // Disable these two as they're Solar System related
+                    rootOfDockingTreeToolStripMenuItem.Enabled = false;
+                    parentCelestialBodyToolStripMenuItem.Enabled = false;
+
+                    // Disable the load options
+                    loadNextLevelToolStripMenuItem.Enabled = false;
+                    loadAllLevelsToolStripMenuItem.Enabled = false;
+                }
+
+                // Show the ContextMenuStrip.
+                contextMenuStrip1.Show(treeView1, e.Location);
+
             }
         }
 
+        /// <summary>
+        /// Handles double clicks from the mouse - potentially triggering an additional
+        /// level of node generation.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (HellionExplorerProgram.MainForm.treeView1.SelectedNode != null)
@@ -565,14 +590,27 @@ namespace HELLION.Explorer
 
         private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.CreateNewJsonDataView((Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+
         }
 
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            // This needs updating to support the external Station Blueprint Editor.
-            MessageBox.Show("External editor not currently available.");
-            // HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+            // Base_TN node = (Base_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+
+            Type t = HellionExplorerProgram.MainForm.treeView1.SelectedNode.GetType();
+
+            if (t == typeof(Json_TN))
+            {
+                HellionExplorerProgram.CreateNewJsonDataView((Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+
+            }
+            else if (t == typeof(Blueprint_TN)) // && node.NodeType == Base_TN_NodeType.)
+            {
+                // This needs updating to support the external Station Blueprint Editor.
+                // HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
+                MessageBox.Show("External editor not currently available.");
+
+            }
         }
 
         private void thisObjectInSolarSystemViewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -713,6 +751,13 @@ namespace HELLION.Explorer
 
         private void findOwningFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
+            if (treeView1.SelectedNode.GetType() != typeof(Json_TN))
+            {
+                MessageBox.Show("Wasn't a Json_TN");
+                return;
+            }
+
             Json_TN node = (Json_TN)treeView1.SelectedNode;
 
             if (HellionExplorerProgram.docCurrent != null && node != null)

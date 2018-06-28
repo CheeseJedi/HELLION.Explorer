@@ -76,47 +76,20 @@ namespace HELLION.DataStructures.Document
         /// <returns></returns>
         public Json_File FindOwningFile(Json_TN treeNode)
         {
-
             if (treeNode == null) return null;
 
             // Check the Save File first.
             Debug.Print("Searching " + SaveFile.File.FullName);
-
             if (SaveFile.RootNode.AllNodes.Contains(treeNode)) return SaveFile;
 
             foreach (Json_File_UI file in StaticData.DataDictionary.Values)
             {
                 Debug.Print("Searching " + file.File.FullName);
                 if (file.RootNode.AllNodes.Contains(treeNode)) return file;
-
             }
-
-
+            // Unable to find a match.
             return null;     //FindOwningFile(token);
         }
-
-
-
-        //public Json_File FindOwningFile(JToken token)
-        //{
-        //    if (token == null) return null;
-        //    if (!token.HasValues) return null;
-
-        //    Json_File file = null;
-
-        //    // Search the open save file first.
-
-        //    if (SaveFile.JData != null)
-        //    {
-        //        if (  SaveFile.JData)
-        //    }
-
-        //    return file;
-        //}
-
-
-
-
 
         /// <summary>
         /// Handles closing this object and sub-objects that support being closed.
