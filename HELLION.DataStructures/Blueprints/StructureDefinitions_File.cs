@@ -51,7 +51,7 @@ namespace HELLION.DataStructures.Blueprints
         {
             BlueprintObject.__ObjectType = BlueprintObjectType.BlueprintStructureDefinitions;
             BlueprintObject.Version = StationBlueprintFormatVersion;
-            BlueprintObject.Name = String.Format("Hellion Station Blueprint Format - Structure Definitions Template Version {0} Generated {1}",
+            BlueprintObject.Name = String.Format("Hellion Station Blueprint File Format - Structure Definitions Template Version {0} Generated {1}",
                 StationBlueprintFormatVersion, DateTime.Now);
             BlueprintObject.LinkURI = new Uri(@"https://github.com/CheeseJedi/Hellion-Station-Blueprint-Format");
 

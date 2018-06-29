@@ -79,7 +79,7 @@ namespace HELLION.DataStructures.Document
         /// <summary>
         /// The BlueprintsHandler_UI object that handles loading and displaying blueprints.
         /// </summary>
-        public BlueprintsHandler_UI aBlueprints { get; private set; } = null;
+        //public BlueprintsHandler_UI aBlueprints { get; private set; } = null;
 
         /// <summary>
         /// The .save file that is being opened.

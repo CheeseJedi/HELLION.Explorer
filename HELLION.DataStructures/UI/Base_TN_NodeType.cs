@@ -38,8 +38,8 @@
         Star,               // Node type for the star in the Solar System view (GUID of the star)
         Planet,             // Node type for a planet (parent GUID of the star)
         Moon,               // Node type for a moon (not the star, or orbiting it directly)
-        BlueprintsView,     // Node type for the Blueprints view
-        Blueprint,          // Node type for a Blueprint file
+        // BlueprintsView,     // Node type for the Blueprints view 
+        StationBlueprintFile,      // Node type for a Blueprint file
         BlueprintCollection,
         BlueprintHierarchyView, // Node type for the root of a Blueprint's Hierarchy View
         BlueprintDataView,
@@ -49,5 +49,7 @@
         BlueprintStructureDefinition,
         BlueprintDockingPort,
         BlueprintDockingPortDefinition,
+        CollisionDataFolder,
+        LocalServer,
     };
 }

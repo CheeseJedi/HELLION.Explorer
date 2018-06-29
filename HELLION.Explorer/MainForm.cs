@@ -156,6 +156,38 @@ namespace HELLION.Explorer
             HellionExplorerProgram.VerifyGameDataFolder();
         }
 
+        #region Steam Integration - currently disabled
+
+        private void playerNameBySteamID64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _playerNameBySteamID64();
+        }
+
+        private void groupID64ByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _groupID64ByGroupName();
+        }
+
+        private void groupMembersByGroupID64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _groupMembersByGroupID64();
+        }
+
+        #endregion
+
+        private void stationBlueprintEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (treeView1.SelectedNode != null && ((Base_TN)treeView1.SelectedNode)
+                .NodeType == Base_TN_NodeType.StationBlueprintFile)
+            {
+                HellionExplorerProgram.CreateNewBlueprintEditor((Json_TN)treeView1.SelectedNode);
+            }
+            else
+            {
+                HellionExplorerProgram.CreateNewBlueprintEditor();
+            }
+        }
+
         #endregion
 
         #region Help Menu
@@ -367,7 +399,7 @@ namespace HELLION.Explorer
 
                     // Some decision making logic needed here
 
-                    if (node.NodeType == Base_TN_NodeType.Blueprint)
+                    if (node.NodeType == Base_TN_NodeType.StationBlueprintFile)
                     {
                         // Show the Edit menu item.
                         editToolStripMenuItem1.Enabled = true;
@@ -729,20 +761,6 @@ namespace HELLION.Explorer
         }
 
 
-        private void playerNameBySteamID64ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _playerNameBySteamID64();
-        }
-
-        private void groupID64ByGroupNameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _groupID64ByGroupName();
-        }
-
-        private void groupMembersByGroupID64ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _groupMembersByGroupID64();
-        }
 
         private void triggerGarbageCollectorToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -777,5 +795,6 @@ namespace HELLION.Explorer
 
 
         }
+
     }
 }

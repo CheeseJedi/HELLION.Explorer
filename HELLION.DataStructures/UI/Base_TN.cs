@@ -173,23 +173,7 @@ namespace HELLION.DataStructures.UI
         /// <summary>
         /// Returns a list including this node and all child nodes.
         /// </summary>
-        public List<Base_TN> AllNodes
-        {
-            get
-            {
-                // Create a new list and add this node to it.
-                List<Base_TN> results = new List<Base_TN>() { this };
-
-                foreach (Base_TN node in Nodes)
-                {
-                    // Add the node's nodes, via recursion.
-                    results.AddRange(node.AllNodes);
-                }
-
-                return results;
-            }
-        }
-
+        public List<Base_TN> AllNodes => GetChildNodes(true);
 
         /// <summary>
         /// Define a default name for nodes that don't auto-generate and haven't had one specified.
@@ -309,8 +293,7 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         protected void RefreshImageIndex()
         {
-            ImageIndex = GetIconImageIndexByNodeType(_nodeType);
-            SelectedImageIndex = ImageIndex;
+            SelectedImageIndex = GetIconImageIndexByNodeType(_nodeType);
         }
 
         #endregion
@@ -318,16 +301,21 @@ namespace HELLION.DataStructures.UI
         #region Methods
 
         /// <summary>
-        /// Returns a list of all first generation child nodes, or all descendants via recursion.
+        /// Returns a list of this plus all first generation child nodes, 
+        /// or all descendants via recursion.
         /// </summary>
         /// <param name="includeSubtrees"></param>
         /// <returns>Returns null if this node has no children.</returns>
         public List<Base_TN> GetChildNodes(bool includeSubtrees = false)
         {
+            // Create a new list and add this node to it.
             List<Base_TN> _listOfChildNodes = new List<Base_TN> { this };
+
             foreach (Base_TN child in Nodes)
             {
+                // If it's not sub-trees, then just add each child node.
                 if (!includeSubtrees) _listOfChildNodes.Add(child);
+                // Otherwise add the child node and it's nodes via recursion.
                 else _listOfChildNodes.AddRange(child.GetChildNodes(includeSubtrees: true));
             }
             return _listOfChildNodes.Count > 0 ? _listOfChildNodes : null;

@@ -12,6 +12,7 @@ using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Search;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
+using HELLION.StationBlueprintEditor;
 using Newtonsoft.Json.Linq;
 
 namespace HELLION.Explorer
@@ -57,7 +58,7 @@ namespace HELLION.Explorer
         /// <summary>
         /// Holds a list of the BlueprintEditorForm windows that have been created.
         /// </summary>
-        //internal static List<BlueprintEditorForm> blueprintEditorForms = new List<BlueprintEditorForm>();
+        //internal static List<StationBlueprintEditorProgram> blueprintEditorForms = new List<StationBlueprintEditorProgram>();
 
         #endregion
 
@@ -170,35 +171,26 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="selectedNode"></param>
-        //internal static void CreateNewBlueprintEditor(Blueprint_TN selectedNode)
-        //{
-        //    if (selectedNode != null)
-        //    {
-        //        // Look for an existing form for this node.
-        //        BlueprintEditorForm newBlueprintEditorForm = null;
-        //        foreach (BlueprintEditorForm form in blueprintEditorForms)
-        //        {
-        //            if (form.SourceNode == selectedNode)
-        //            {
-        //                newBlueprintEditorForm = form;
-        //                break;
-        //            }
-        //        }
+        internal static void CreateNewBlueprintEditor(Json_TN selectedNode = null)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
 
-        //        if (newBlueprintEditorForm == null)
-        //        {
-        //            // No existing form for this node was found, create a new one.
-        //            newBlueprintEditorForm = new BlueprintEditorForm(selectedNode);
+            StationBlueprintEditorProgram sbep = new StationBlueprintEditorProgram();
 
-        //            // Add the form to the jsonDataViews list.
-        //            blueprintEditorForms.Add(newBlueprintEditorForm);
-        //        }
+            psi.FileName = sbep.GetApplicationPath() + @"\HELLION.StationBlueprintEditor.exe";
 
-        //        // Show the form.
-        //        newBlueprintEditorForm.Show();
-        //        newBlueprintEditorForm.Activate();
-        //    }
-        //}
+            if (selectedNode != null)
+            {
+                Debug.Print("CreateNewBlueprintEditor() - selectedNode NodeType {0} ))", selectedNode.NodeType);
+                // Check the current node actually represents a StationBlueprintFile
+                // if (selectedNode.NodeType == Base_TN_NodeType.)
+
+                psi.Arguments = docCurrent.GameData.FindOwningFile(selectedNode).File.FullName;
+            }
+            else Debug.Print("CreateNewBlueprintEditor() - selectedNode not set, defaulting.");
+            Process.Start(psi);
+
+        }
 
         #endregion
 
@@ -292,6 +284,8 @@ namespace HELLION.Explorer
             sb.Append(Application.ProductName);
             sb.Append("   Version ");
             sb.Append(Application.ProductVersion);
+            sb.Append(sNL);
+            sb.Append("Part of HELLION.Explorer - https://github.com/CheeseJedi/HELLION.Explorer");
             sb.Append(sNL2);
 
             // Add version information for HELLION.DataStructures.dll

@@ -267,11 +267,13 @@ namespace HELLION.DataStructures.EmbeddedImages
                 case Base_TN_NodeType.DataFolderError:
                     return (int)HEIconsImageNames.FolderError_16x;
 
-                case Base_TN_NodeType.BlueprintsView:
+                case Base_TN_NodeType.CollisionDataFolder:
+                    return (int)HEIconsImageNames.DocumentLibraryFolder_16x;
+
+                case Base_TN_NodeType.StationBlueprintFile:
                     return (int)HEIconsImageNames.CordovaMultidevice_16x;
 
-                case Base_TN_NodeType.Blueprint:
-                    return (int)HEIconsImageNames.CSWorkflowDiagram_16x;
+                    //return (int)HEIconsImageNames.CSWorkflowDiagram_16x;
 
                 case Base_TN_NodeType.BlueprintCollection:
                     return (int)HEIconsImageNames.BlueprintFolder_16x;
@@ -295,6 +297,10 @@ namespace HELLION.DataStructures.EmbeddedImages
                 case Base_TN_NodeType.BlueprintDockingPort:
                 case Base_TN_NodeType.BlueprintDockingPortDefinition:
                     return (int)HEIconsImageNames.Bolt_16x;
+
+                case Base_TN_NodeType.LocalServer:
+                    return (int)HEIconsImageNames.LocalServer_16x;
+
 
                 default:
                     return (int)HEIconsImageNames.Checkerboard_16x;

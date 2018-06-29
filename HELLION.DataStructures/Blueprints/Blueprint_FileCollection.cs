@@ -16,7 +16,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="passedCollectionType"></param>
         /// <param name="autoPopulateTreeDepth"></param>
-        public Blueprint_FileCollection(BlueprintsHandler_UI passedParent, DirectoryInfo passedDirectoryInfo,
+        public Blueprint_FileCollection(BlueprintsHandler passedParent, DirectoryInfo passedDirectoryInfo,
              int autoPopulateTreeDepth = 0) : base()
         {
             // Set up the data dictionary
@@ -38,7 +38,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <summary>
         /// Public property to access the parent object.
         /// </summary>
-        public new BlueprintsHandler_UI OwnerObject { get; protected set; } = null;
+        public new BlueprintsHandler OwnerObject { get; protected set; } = null;
             
         /// <summary>
         /// The Data Dictionary holds Json_File_UI objects, with the file name as the key.

@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace HELLION.StationBlueprintEditor
 {
-    public static class StationBlueprintEditorProgram
+    public class StationBlueprintEditorProgram
     {
 
         #region Logging Objects
@@ -194,6 +194,8 @@ namespace HELLION.StationBlueprintEditor
             sb.Append(Application.ProductName);
             sb.Append("   Version ");
             sb.Append(Application.ProductVersion);
+            sb.Append(sNL);
+            sb.Append("Part of HELLION.Explorer - https://github.com/CheeseJedi/HELLION.Explorer");
             sb.Append(sNL2);
 
             // Add version information for HELLION.DataStructures.dll
@@ -220,8 +222,8 @@ namespace HELLION.StationBlueprintEditor
             sb.Append(sNL2);
 
             // Credit
-            sb.Append("Uses the FastColoredTextBox library. https://github.com/PavelTorgashov/FastColoredTextBox");
-            sb.Append(sNL2);
+            //sb.Append("Uses the FastColoredTextBox library. https://github.com/PavelTorgashov/FastColoredTextBox");
+            //sb.Append(sNL2);
 
             // Credit
             sb.Append("HELLION trademarks, content and materials are property of Zero Gravity Games or it's licensors. http://www.zerogravitygames.com");
@@ -248,7 +250,7 @@ namespace HELLION.StationBlueprintEditor
         /// <summary>
         /// Exits the program in a controlled manner - closes an open document etc.
         /// </summary>
-        internal static void ControlledExit()
+        public static void ControlledExit()
         {
             // Check the current document isn't null
             if (DocCurrent != null)
@@ -273,6 +275,14 @@ namespace HELLION.StationBlueprintEditor
             */
         }
 
+        /// <summary>
+        /// Gets the application path.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>This process may be better off using reflection.</remarks>
+        public string GetApplicationPath() => Environment.CurrentDirectory;
+
+
         #endregion
 
         #region File Menu Methods
@@ -289,7 +299,7 @@ namespace HELLION.StationBlueprintEditor
             // Create a new StationBlueprint file, passing the JToken.
             DocCurrent = new StationBlueprint_File(null, jdata);
 
-            if (DocCurrent.BlueprintObject == null) Debug.Print("Newly created Blueprint file doesn't contain a blueprint object.");
+            if (DocCurrent.BlueprintObject == null) Debug.Print("Newly created StationBlueprintFile doesn't contain a blueprint object.");
 
         }
 
@@ -465,13 +475,15 @@ namespace HELLION.StationBlueprintEditor
         {
             if (DocCurrent != null)
             {
-                Debug.Print("File Close called; Filename={0} BlueprintName={1}", DocCurrent.File?.FullName, DocCurrent.BlueprintObject?.Name);
+                Debug.Print("File Close called; Filename={0} BlueprintName={1}",
+                    DocCurrent.File?.FullName, DocCurrent.BlueprintObject?.Name);
 
                 // isFileDirty check before closing
                 if (DocCurrent.IsDirty)
                 {
                     // Unsaved changes, prompt user to save
-                    string sMessage = DocCurrent.File.FullName + " has been modified." + Environment.NewLine + "Do you want to save changes to this Blueprint before exiting?";
+                    string sMessage = DocCurrent.File.FullName + " has been modified." + Environment.NewLine 
+                        + "Do you want to save changes to this Station Blueprint File before exiting?";
                     const string sCaption = "Unsaved Changes";
                     DialogResult result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
@@ -572,8 +584,11 @@ namespace HELLION.StationBlueprintEditor
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
+        /// <remarks>
+        /// Public access modifier added to allow calling from the Explorer.
+        /// </remarks>
         [STAThread]
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             // Make a record of the starting time.
             DateTime operationStartTime = DateTime.Now;

@@ -6,6 +6,7 @@ using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static HELLION.DataStructures.Blueprints.StationBlueprint;
 using static HELLION.StationBlueprintEditor.StationBlueprintEditorProgram;
@@ -409,7 +410,7 @@ namespace HELLION.StationBlueprintEditor
                     }
                 }
             }
-            else Debug.Print("RefreshTreeViews - DocCurrent or Blueprint was null");
+            else Debug.Print("RefreshTreeViews - DocCurrent or BlueprintObject was null");
         }
 
         /// <summary>
@@ -617,7 +618,7 @@ namespace HELLION.StationBlueprintEditor
                 Debug.Print(clipboardText);
 
                 // Attempt to parse the text in to a JToken.
-                if (clipboardText.TryParseJson(out JToken jtoken))
+                if (clipboardText.TryParseJson(out JToken jtoken, out JsonReaderException jrex))
                 {
                     Debug.Print("JToken HasValues: {0}", jtoken.HasValues.ToString());
                     Debug.Print(jtoken.ToString());
@@ -627,7 +628,7 @@ namespace HELLION.StationBlueprintEditor
                 }
 
                 else
-                    Debug.Print("newFromClipboardToolStripMenuItem - Parse failure.");
+                    Debug.Print("newFromClipboardToolStripMenuItem - Parse failure." + Environment.NewLine + jrex.Message);
             }
             else MessageBox.Show("Clipboard needs to contain valid JSON data as text.", "Error creating new blueprint from clipboard",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);

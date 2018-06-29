@@ -40,6 +40,34 @@ namespace HELLION.DataStructures.Document
                 StaticData = new Json_FileCollection(this, StaticDataFolderInfo, autoPopulateTreeDepth: 1);
                 if (StaticData.RootNode == null) throw new Exception("StaticData rootNode was null");
                 else RootNode.Nodes.Insert(0, StaticData.RootNode);
+
+                // Create the Station Blueprint folder
+                DirectoryInfo stationsInfo = new DirectoryInfo(StaticDataFolderInfo.FullName + @"\Stations");
+                StationsData = new Json_FileCollection(this, stationsInfo, autoPopulateTreeDepth: 0);
+                if (StationsData.RootNode == null) throw new Exception("StationsData rootNode was null");
+                else
+                {
+                    // Set this level's type (overriding the default for a file collection)
+                    StationsData.RootNode.NodeType = Base_TN_NodeType.BlueprintCollection;
+
+                    // Override each of the blueprint file types also.
+                    foreach (Base_TN node in StationsData.RootNode.Nodes)
+                    {
+                        node.NodeType = Base_TN_NodeType.StationBlueprintFile;
+                    }
+                    StaticData.RootNode.Nodes.Add(StationsData.RootNode);
+                }
+
+                // Create the Collisions folder.
+                DirectoryInfo collsionInfo = new DirectoryInfo(StaticDataFolderInfo.FullName + @"\Collision");
+                CollisionData = new Json_FileCollection(this, collsionInfo, autoPopulateTreeDepth: 0);
+                if (CollisionData.RootNode == null) throw new Exception("CollisionData rootNode was null");
+                else
+                {
+                    CollisionData.RootNode.NodeType = Base_TN_NodeType.CollisionDataFolder;
+                    StaticData.RootNode.Nodes.Add(CollisionData.RootNode);
+                }
+
             }
         }
 
@@ -64,6 +92,11 @@ namespace HELLION.DataStructures.Document
         /// </summary>
         public Json_FileCollection StaticData { get; private set; } = null;
 
+        public Json_FileCollection StationsData { get; private set; } = null;
+
+        public Json_FileCollection CollisionData { get; private set; } = null;
+
+
         #endregion
 
         #region Methods
@@ -74,7 +107,7 @@ namespace HELLION.DataStructures.Document
         /// </summary>
         /// <param name="treeNode"></param>
         /// <returns></returns>
-        public Json_File FindOwningFile(Json_TN treeNode)
+        public Json_File FindOwningFile(Base_TN treeNode)
         {
             if (treeNode == null) return null;
 
@@ -87,6 +120,21 @@ namespace HELLION.DataStructures.Document
                 Debug.Print("Searching " + file.File.FullName);
                 if (file.RootNode.AllNodes.Contains(treeNode)) return file;
             }
+
+            foreach (Json_File_UI file in StationsData.DataDictionary.Values)
+            {
+                Debug.Print("Searching " + file.File.FullName);
+                if (file.RootNode.AllNodes.Contains(treeNode)) return file;
+            }
+
+            foreach (Json_File_UI file in CollisionData.DataDictionary.Values)
+            {
+                Debug.Print("Searching " + file.File.FullName);
+                if (file.RootNode.AllNodes.Contains(treeNode)) return file;
+            }
+
+
+
             // Unable to find a match.
             return null;     //FindOwningFile(token);
         }

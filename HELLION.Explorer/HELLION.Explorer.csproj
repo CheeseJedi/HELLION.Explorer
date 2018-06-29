@@ -207,6 +207,10 @@
       <Project>{a750a0e0-6fc9-4ad8-9ea1-409bb2eef214}</Project>
       <Name>HELLION.DataStructures</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HELLION.StationBlueprintEditor\HELLION.StationBlueprintEditor.csproj">
+      <Project>{ee667242-57f1-48da-8c40-84c9eda05af4}</Project>
+      <Name>HELLION.StationBlueprintEditor</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HELLION.Explorer.ico" />
@@ -214,7 +218,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
