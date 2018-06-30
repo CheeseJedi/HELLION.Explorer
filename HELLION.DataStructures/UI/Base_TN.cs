@@ -293,7 +293,8 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         protected void RefreshImageIndex()
         {
-            SelectedImageIndex = GetIconImageIndexByNodeType(_nodeType);
+            ImageIndex = GetIconImageIndexByNodeType(_nodeType);
+            SelectedImageIndex = ImageIndex;
         }
 
         #endregion
