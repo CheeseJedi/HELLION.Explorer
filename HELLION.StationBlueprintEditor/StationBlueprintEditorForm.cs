@@ -723,8 +723,8 @@ namespace HELLION.StationBlueprintEditor
 
         #region Fields
 
-        private StationBlueprint_File _jsonBlueprintFile = null;
-        private StationBlueprint _blueprint = null;
+        //private StationBlueprint_File _jsonBlueprintFile = null;
+        //private StationBlueprint _blueprint = null;
         private string _formTitleText = null;
         private Base_TN _selectedPrimaryStructureNode = null;
         private Base_TN _selectedSecondaryStructureNode = null;

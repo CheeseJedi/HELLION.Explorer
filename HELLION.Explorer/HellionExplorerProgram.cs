@@ -1031,7 +1031,7 @@ namespace HELLION.Explorer
             StringBuilder sb2 = new StringBuilder();
 
             //if (nSelectedNode != null) //  && docCurrent != null && docCurrent.IsFileReady) // temp change to allow for tree use without a doc loaded
-            if (false)
+            if (nSelectedNode != null)
             {
                 Base_TN nSelectedHETNNode = (Base_TN)nSelectedNode;
 
@@ -1049,7 +1049,6 @@ namespace HELLION.Explorer
                 sb1.Append(Environment.NewLine);
                 //sb1.Append("SceneID: " + nSelectedNode.SceneID.ToString());
                 sb1.Append(Environment.NewLine);
-                //sb1.Append("Type: " + nSelectedNode.Type.ToString());
                 sb1.Append(Environment.NewLine);
                 sb1.Append(Environment.NewLine);
 
@@ -1060,19 +1059,19 @@ namespace HELLION.Explorer
                     || nSelectedHETNNode.NodeType == Base_TN_NodeType.Asteroid)
                 {
 
-                    SolarSystem_TN nSelectedOrbitalObjNode = (SolarSystem_TN)nSelectedNode;
+                    SolarSystem_TN solSysNode = (SolarSystem_TN)nSelectedNode;
 
-                    sb1.Append("GUID: " + nSelectedOrbitalObjNode.GUID.ToString());
+                    sb1.Append("GUID: " + solSysNode.GUID.ToString());
                     sb1.Append(Environment.NewLine);
 
                     sb1.Append(Environment.NewLine);
                     sb1.Append("DOCKING DATA");
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("DockedToShipGUID: " + nSelectedOrbitalObjNode.DockedToShipGUID.ToString());
+                    sb1.Append("DockedToShipGUID: " + solSysNode.DockedToShipGUID.ToString());
 
                     /*
                     SolarSystem_TN tempNode = null;
-                    TreeNode[] tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(nSelectedOrbitalObjNode.DockedToShipGUID.ToString(), searchAllChildren: true);
+                    TreeNode[] tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(solSysNode.DockedToShipGUID.ToString(), searchAllChildren: true);
                     if (tempNodes.Length > 0)
                     {
                         tempNode = (SolarSystem_TN)tempNodes[0];
@@ -1086,18 +1085,20 @@ namespace HELLION.Explorer
                     else throw new InvalidOperationException("tempNodes array length not greater than zero.");
                     */
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("DockedPortID: " + nSelectedOrbitalObjNode.DockedPortID.ToString());
+                    sb1.Append("DockedPortID: " + solSysNode.DockedPortID.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("DockedToPortID: " + nSelectedOrbitalObjNode.DockedToPortID.ToString());
+                    sb1.Append("DockedToPortID: " + solSysNode.DockedToPortID.ToString());
                     sb1.Append(Environment.NewLine);
                     sb1.Append(Environment.NewLine);
+
                     sb1.Append("ORBITAL DATA");
+                    OrbitalData od = solSysNode.OrbitData;
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("ParentGUID: " + nSelectedOrbitalObjNode.OrbitData.ParentGUID.ToString());
+                    sb1.Append("ParentGUID: " + od.ParentGUID.ToString());
                     /*
                     tempNodes = null;
                     tempNode = null;
-                    tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(nSelectedOrbitalObjNode.OrbitData.ParentGUID.ToString(), searchAllChildren: true);
+                    tempNodes = docCurrent.SolarSystem.RootNode.Nodes.Find(od.ParentGUID.ToString(), searchAllChildren: true);
                     if (tempNodes.Length > 0) tempNode = (SolarSystem_TN)tempNodes[0];
                     if (tempNode != null)
                     {
@@ -1107,19 +1108,24 @@ namespace HELLION.Explorer
                     sb1.Append(Environment.NewLine);
 
 
-                    sb1.Append("SemiMajorAxis: " + nSelectedOrbitalObjNode.OrbitData.SemiMajorAxis.ToString());
+                    sb1.Append("SemiMajorAxis: " + od.SemiMajorAxis.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("Inclination: " + nSelectedOrbitalObjNode.OrbitData.Inclination.ToString());
+                    sb1.Append("Eccentricity: " + od.Eccentricity.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("Eccentricity: " + nSelectedOrbitalObjNode.OrbitData.Eccentricity.ToString());
+                    sb1.Append("[CALCULATED: Apoapsis " + od.Apoapsis.ToString());
+                    sb1.Append(" Periapsis " + od.Periapsis.ToString() +"]");
+                    //sb1.Append(Environment.NewLine);
+                    //sb1.Append("[CALCULATED: Orbital Period " + od.CalculateOrbitalPeriod() + "]");
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("LongitudeOfAscendingNode: " + nSelectedOrbitalObjNode.OrbitData.LongitudeOfAscendingNode.ToString());
+                    sb1.Append("Inclination: " + od.Inclination.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("ArgumentOfPeriapsis: " + nSelectedOrbitalObjNode.OrbitData.ArgumentOfPeriapsis.ToString());
+                    sb1.Append("LongitudeOfAscendingNode: " + od.LongitudeOfAscendingNode.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("OrbitData.TimeSincePeriapsis: " + nSelectedOrbitalObjNode.OrbitData.TimeSincePeriapsis.ToString());
+                    sb1.Append("ArgumentOfPeriapsis: " + od.ArgumentOfPeriapsis.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + nSelectedOrbitalObjNode.OrbitData.SolarSystemPeriapsisTime.ToString());
+                    sb1.Append("OrbitData.TimeSincePeriapsis: " + od.TimeSincePeriapsis.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("OrbitData.SolarSystemPeriapsisTime: " + od.SolarSystemPeriapsisTime.ToString());
                     sb1.Append(Environment.NewLine);
                 }
 

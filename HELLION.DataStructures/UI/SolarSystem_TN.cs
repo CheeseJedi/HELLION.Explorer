@@ -42,7 +42,6 @@ namespace HELLION.DataStructures.UI
             JToken tmpTkn = _linkedGameDataJson["StructureID"];
             if (tmpTkn != null)
             {
-                throw new Exception("Got here for some reason!");
                 Debug.Print("Got here for some reason!");
                 
                 // Set the node's Name to the StructureID of the object.
@@ -50,6 +49,8 @@ namespace HELLION.DataStructures.UI
 
                 // Set the GUID to the StructureID
                 GUID = (long)_linkedGameDataJson["StructureID"];
+                throw new Exception("Got here for some reason!");
+
             }
             else
             {

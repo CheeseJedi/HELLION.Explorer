@@ -183,19 +183,27 @@ namespace HELLION.DataStructures.Document
                             if (testToken != null) newNodeFakeGUID = (long)obj["FakeGUID"];
 
                             SolarSystem_TN newNode = node.CreateLinkedSolarSystemNode(nodeType);
-                            if (nodeType == Base_TN_NodeType.Player && newNodeParentGUID == newNodeFakeGUID)
+                            if (nodeType == Base_TN_NodeType.Player)
                             {
-                                Debug.Print("FakeGUID: " + newNodeFakeGUID);
-                                Debug.Print("ParentGUID: " + newNodeParentGUID);
+                                if (newNodeParentGUID == newNodeFakeGUID)
+                                {
+                                    // Player is ALIVE and in space
+                                    Debug.Print("FakeGUID: " + newNodeFakeGUID);
+                                    Debug.Print("ParentGUID: " + newNodeParentGUID);
 
-                                newNode.ParentGUID = -1;
-                                // Needs to be greater than zero to place players below the star node.
-                                newNode.OrbitData.SemiMajorAxis = 1;
+                                    newNode.ParentGUID = -1;
+                                    // Needs to be greater than zero to place players below the star node.
+                                    newNode.OrbitData.SemiMajorAxis = 1;
+                                }
+                                else
+                                {
+                                    // Player is dead, display below alive players.
+                                    newNode.OrbitData.SemiMajorAxis = 10;
+                                }
                             }
 
                             RootNode.Nodes.Insert(0, newNode);
                         }
-
                     }
                     else Debug.Print("subRootNode was null.");
 
