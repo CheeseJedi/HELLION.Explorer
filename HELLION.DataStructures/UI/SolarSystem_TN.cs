@@ -11,6 +11,7 @@ namespace HELLION.DataStructures.UI
     /// </summary>
     public class SolarSystem_TN : Base_TN
     {
+        private long _gUID = 0;
         #region Constructors
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace HELLION.DataStructures.UI
             Base_TN_NodeType nodeType = Base_TN_NodeType.Unknown)
             : base(passedOwner, nodeType, nodeName)
         {
-            // OrbitData = new OrbitalData();
+
         }
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace HELLION.DataStructures.UI
             if (tmpTkn != null)
             {
                 Debug.Print("Got here for some reason!");
-                
+
                 // Set the node's Name to the StructureID of the object.
                 Name = (string)_linkedGameDataJson["StructureID"];
 
@@ -75,7 +76,8 @@ namespace HELLION.DataStructures.UI
 
                 // Can't use these presently as it messes with the TreeView's Path system,
                 // which annoyingly uses the TreeNode's Text field rather than the Name field
-                // in path generation.
+                // in path generation, which would have allowed the Text property to be used like
+                // a DisplayName property.
                 // Text_Prefix = ((string)_linkedGameDataJson["Name"]).Trim();
                 // Text_Suffix = ((string)_linkedGameDataJson["GUID"]).Trim();
 
@@ -137,7 +139,20 @@ namespace HELLION.DataStructures.UI
         /// <summary>
         /// The GUID for this object.
         /// </summary>
-        public long GUID { get; set; } = 0;
+        public long GUID
+        {
+            get => _gUID;
+            set
+            {
+                if (_gUID != value)
+                {
+                    _gUID = value;
+
+                    // Triggered update.
+                    RefreshToolTipText();
+                }
+            }
+        }
 
         /// <summary>
         /// The OrbitData for this node - de-serialised directly from the Json data for
@@ -165,16 +180,6 @@ namespace HELLION.DataStructures.UI
         /// Primary field for sorting objects that have the same ParentGUID.
         /// </remarks>
         public double SemiMajorAxis => OrbitData.SemiMajorAxis != null ? (double)OrbitData.SemiMajorAxis : -1L;
-
-        /// <summary>
-        /// The Angle of Inclination of the orbiting body.
-        /// </summary>
-        //public double Inclination => OrbitData.Inclination;
-
-        /// <summary>
-        /// The Type of the object, as defined by the game.
-        /// </summary>
-        // public int Type { get; set; } = 0;
 
         /// <summary>
         /// If this ship/module is docked TO another, the other ship's 
@@ -268,10 +273,11 @@ namespace HELLION.DataStructures.UI
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("DisplayName: " + Text + Environment.NewLine);
-            sb.Append("GUID: " + GUID + Environment.NewLine);
+            sb.Append("Text: " + Text + Environment.NewLine);
             sb.Append("NodeType: " + NodeType.ToString() + Environment.NewLine);
-            sb.Append("ParentGUID: " + OrbitData?.ParentGUID + Environment.NewLine);
+            sb.Append("GUID: " + GUID + Environment.NewLine);
+
+            //sb.Append("ParentGUID: " + OrbitData?.ParentGUID + Environment.NewLine);
 
             return sb.ToString();
         }

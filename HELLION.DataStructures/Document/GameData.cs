@@ -22,7 +22,7 @@ namespace HELLION.DataStructures.Document
         /// <param name="StaticDataFolderInfo">The DirectoryInfo representing the Data folder.</param>
         public GameData(FileInfo SaveFileInfo, DirectoryInfo StaticDataFolderInfo)
         {
-            RootNode = new Base_TN(ownerObject: this, nodeType: Base_TN_NodeType.DataView, nodeName: "Game Data");
+            RootNode = new Base_TN(ownerObject: this, nodeType: Base_TN_NodeType.LocalServer, nodeName: "Game Data");
             if (SaveFileInfo != null && SaveFileInfo.Exists)
             {
                 // Create new save file object.

@@ -64,10 +64,9 @@ namespace HELLION.DataStructures.UI
                 {
                     base.Name = value;
 
-                    // Trigger updates here.
+                    // Triggered updates.
                     //if (value == null) RefreshName();
                     RefreshText();
-                    //RefreshToolTipText();
                 }
             }
         }
@@ -78,7 +77,18 @@ namespace HELLION.DataStructures.UI
         public new string Text
         {
             get => base.Text;
-            private set => base.Text = value;
+            private set
+            {
+                if (base.Text != value)
+                {
+                    base.Text = value;
+
+                    // Triggered updates.
+                    // This could be bad :/
+                    RefreshToolTipText();
+                }
+                
+            }
         }
 
         /// <summary>
@@ -191,16 +201,28 @@ namespace HELLION.DataStructures.UI
         public virtual void Refresh(bool includeSubTrees = false)
         {
             //Debug.Print("Base_TN.Refresh called: node Name [{0}], Text [{1}], (parent hash [{2}], type [{3}])", Name, Text, OwnerObject.GetHashCode(), OwnerObject.GetType());
-            RefreshName(includeSubTrees);
-            RefreshText(includeSubTrees);
-            RefreshToolTipText(includeSubTrees);
+            RefreshName();
+            RefreshText();
+            RefreshToolTipText();
+
+            // Process child nodes if necessary.
+            if (includeSubTrees)
+            {
+                foreach (Base_TN node in Nodes)
+                {
+                    Refresh(includeSubTrees);
+                }
+            }
+
+
+
         }
 
         /// <summary>
         /// Refreshes the node's name.
         /// </summary>
         /// <param name="includeSubTrees"></param>
-        protected virtual void RefreshName(bool includeSubTrees = false)
+        protected virtual void RefreshName()
         {
             if (AutoGenerateName)
             {
@@ -213,13 +235,6 @@ namespace HELLION.DataStructures.UI
                     AutoGenerateName = false;
                 }
             }
-            if (includeSubTrees)
-            {
-                foreach (Base_TN node in Nodes)
-                {
-                    RefreshName(includeSubTrees);
-                }
-            }
         }
 
         /// <summary>
@@ -228,10 +243,6 @@ namespace HELLION.DataStructures.UI
         protected virtual void RefreshText(bool includeSubTrees = false)
         {
             Text = GenerateText();
-            if (includeSubTrees)
-            {
-                foreach (Base_TN node in Nodes) RefreshText(includeSubTrees);
-            }
         }
 
         /// <summary>
@@ -241,10 +252,6 @@ namespace HELLION.DataStructures.UI
         protected virtual void RefreshToolTipText(bool includeSubTrees = false)
         {
             ToolTipText = GenerateToolTipText();
-            if (includeSubTrees)
-            {
-                foreach (Base_TN node in Nodes) RefreshToolTipText(includeSubTrees);
-            }
         }
 
         /// <summary>

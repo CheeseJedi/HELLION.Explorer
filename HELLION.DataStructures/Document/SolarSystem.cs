@@ -244,6 +244,7 @@ namespace HELLION.DataStructures.Document
                         currentParentNode = (SolarSystem_TN)node.Parent;
 
                         // Remove the ship to be re-parented from it's current parent's node collection.
+                        // FIXME - the following line may be why the try catch is here.
                         currentParentNode.Nodes.Remove(node);
 
                         // Add the ship being re-parented to the new parent's node collection.

@@ -63,7 +63,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <summary>
         /// This class overrides the type of root node to represent a blueprint.
         /// </summary>
-        public new Blueprint_TN RootNode { get; protected set; } = null;
+        public Blueprint_TN RootNode { get; protected set; } = null;
 
         /// <summary>
         /// A reference to the DataView's root node.

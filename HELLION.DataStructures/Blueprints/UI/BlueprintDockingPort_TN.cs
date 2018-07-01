@@ -20,7 +20,7 @@ namespace HELLION.DataStructures.Blueprints
         /// Refreshes the node's name.
         /// </summary>
         /// <param name="includeSubTrees"></param>
-        protected override void RefreshName(bool includeSubTrees = false)
+        protected override void RefreshName()
         {
             BlueprintDockingPort dockingPort = (BlueprintDockingPort)OwnerObject;
             BlueprintStructure structure = dockingPort.OwnerStructure;
@@ -50,13 +50,6 @@ namespace HELLION.DataStructures.Blueprints
                 // Debug.Print("RefreshName() generated [{0}].", Name);
             }
 
-            if (includeSubTrees)
-            {
-                foreach (Base_TN node in Nodes)
-                {
-                    RefreshName(includeSubTrees);
-                }
-            }
         }
 
         /// <summary>

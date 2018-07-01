@@ -115,11 +115,18 @@ namespace HELLION.DataStructures
         /// </summary>
         public double Periapsis => (double)SemiMajorAxis * (1 - (double)Eccentricity);
 
+        public double SemiMajorAxis_in_AU => (double)SemiMajorAxis / Astronomical_Unit_Length;
+        public double Apoapsis_in_AU => Apoapsis / Astronomical_Unit_Length;
+        public double Periapsis_in_AU => Periapsis / Astronomical_Unit_Length;
+
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// INCOMPLETE - Processes a ParentGUID change - finds a reference to the CelestialBody obj.
+        /// </summary>
         private void ProcessParentGUIDChange()
         {
             // TODO - to be implemented: look up parent body etc.
@@ -141,7 +148,10 @@ namespace HELLION.DataStructures
             throw new NotImplementedException("Fuzzy clone is not yet implemented.");
         }
 
-
+        /// <summary>
+        /// INCOMPLETE - Calculates the orbital period from the Semi-Major axis and planet mass.
+        /// </summary>
+        /// <returns></returns>
         public double CalculateOrbitalPeriod()
         {
 
@@ -151,10 +161,6 @@ namespace HELLION.DataStructures
             // of the two masses, and inversely proportional to the square of the distance
             // between them.
             // Force F acting between two objects = G * ( (m1 * m2 ) / r^2)
-
-            // Gravitational constant.
-            const double G = 6.673E-11;
-
 
 
             // Kepler's 3rd law:
@@ -168,7 +174,7 @@ namespace HELLION.DataStructures
 
             double PlanetMass = 1.2500000414766919E+31; // Hellion's mass for testing - this will be read from the orbiting body.
 
-            double theConstant = (G * PlanetMass) / (4 * Math.PI * Math.PI);
+            double theConstant = (Gravitational_Constant * PlanetMass) / (4 * Math.PI * Math.PI);
 
             double periodSquared = theConstant / (Math.Pow((double)SemiMajorAxis, 3));
 
@@ -194,5 +200,28 @@ namespace HELLION.DataStructures
         private long? _parentGUID = null;
 
         #endregion
+
+
+        #region Constants
+
+        /// <summary>
+        /// The Universal Gravitational Constant G.
+        /// </summary>
+        /// <remarks>
+        /// G = 6.674×10−11 N · kg^–2 · m^2
+        /// or 0.00000000006673 N m^2 kg^-2
+        /// </remarks>
+        public const double Gravitational_Constant = 6.673E-11;
+
+        /// <summary>
+        /// The length of an Astronomical Unit in Metres.
+        /// </summary>
+        /// <remarks>
+        /// 1 AU = 149,597,870.7 km
+        /// </remarks>
+        public const double Astronomical_Unit_Length = 149597870700.0;
+
+        #endregion
+
     }
 }

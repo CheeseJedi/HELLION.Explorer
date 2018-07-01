@@ -72,9 +72,10 @@ namespace HELLION.DataStructures.UI
         public bool ChildNodesLoaded => VerifyAllJTokensHaveNodes();
 
         /// <summary>
-        /// Returns a count of the number of child tokens in the JData JToken.
+        /// Returns a count of the number of child tokens in the JData JToken
+        /// or -1 if the JData is null.
         /// </summary>
-        private int numChildTokens => JData.Count();
+        private int NumChildTokens => JData != null ? JData.Count() : -1;
 
         /// <summary>
         /// Used to store a reference to the tree node in the Solar System that was created
@@ -152,7 +153,7 @@ namespace HELLION.DataStructures.UI
             sb.Append("Name: " + Name + Environment.NewLine);
             sb.Append("Text: " + Text + Environment.NewLine);
             sb.Append("Type: " + NodeType.ToString() + Environment.NewLine);
-            sb.Append("Tokens: " + numChildTokens.ToString() + Environment.NewLine);
+            sb.Append("Tokens: " + NumChildTokens.ToString() + Environment.NewLine);
             sb.Append("Nodes: " + Nodes.Count.ToString());
             // sb.Append("NodeType: " + NodeType + Environment.NewLine);
             // sb.Append("FullPath: " + FullPath + Environment.NewLine);
@@ -246,7 +247,7 @@ namespace HELLION.DataStructures.UI
         /// <returns></returns>
         private bool VerifyAllJTokensHaveNodes()
         {
-            if (JData == null || numChildTokens != Nodes.Count) return false;
+            if (JData == null || NumChildTokens != Nodes.Count) return false;
             return true;
         }
 

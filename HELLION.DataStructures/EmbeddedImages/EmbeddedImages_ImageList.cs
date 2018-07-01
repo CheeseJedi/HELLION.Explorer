@@ -262,7 +262,7 @@ namespace HELLION.DataStructures.EmbeddedImages
                     return (int)HEIconsImageNames.FileError_16x;
 
                 case Base_TN_NodeType.DataFolder:
-                    return (int)HEIconsImageNames.Folder_16x;
+                    return (int)HEIconsImageNames.ListFolder_16x; // Folder_16x;
 
                 case Base_TN_NodeType.DataFolderError:
                     return (int)HEIconsImageNames.FolderError_16x;

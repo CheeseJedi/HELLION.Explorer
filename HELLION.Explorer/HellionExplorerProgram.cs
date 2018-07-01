@@ -1108,20 +1108,22 @@ namespace HELLION.Explorer
                     sb1.Append(Environment.NewLine);
 
 
-                    sb1.Append("SemiMajorAxis: " + od.SemiMajorAxis.ToString());
+                    sb1.Append("Semi-Major Axis (Metres): " + od.SemiMajorAxis.ToString());
+                    sb1.Append(Environment.NewLine);
+                    sb1.Append("Semi-Major Axis (AU) " + Math.Round(od.SemiMajorAxis_in_AU,2));
                     sb1.Append(Environment.NewLine);
                     sb1.Append("Eccentricity: " + od.Eccentricity.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("[CALCULATED: Apoapsis " + od.Apoapsis.ToString());
-                    sb1.Append(" Periapsis " + od.Periapsis.ToString() +"]");
+                    sb1.Append(String.Format("[CALCULATED: Apoapsis {0} Metres ({1} AU)  Periapsis {2} Metres ({3} AU)]",
+                        od.Apoapsis, Math.Round(od.Apoapsis_in_AU, 2), od.Periapsis, Math.Round(od.Periapsis_in_AU, 2)));
                     //sb1.Append(Environment.NewLine);
                     //sb1.Append("[CALCULATED: Orbital Period " + od.CalculateOrbitalPeriod() + "]");
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("Inclination: " + od.Inclination.ToString());
+                    sb1.Append("Inclination (degrees): " + od.Inclination.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("LongitudeOfAscendingNode: " + od.LongitudeOfAscendingNode.ToString());
+                    sb1.Append("LongitudeOfAscendingNode (degrees): " + od.LongitudeOfAscendingNode.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append("ArgumentOfPeriapsis: " + od.ArgumentOfPeriapsis.ToString());
+                    sb1.Append("ArgumentOfPeriapsis (degrees): " + od.ArgumentOfPeriapsis.ToString());
                     sb1.Append(Environment.NewLine);
                     sb1.Append("OrbitData.TimeSincePeriapsis: " + od.TimeSincePeriapsis.ToString());
                     sb1.Append(Environment.NewLine);
