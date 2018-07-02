@@ -180,30 +180,16 @@ namespace HELLION.DataStructures
         /// </summary>
         public bool IsDirty
         {
-            get
+            get => _isDirty;
+            set
             {
-                return _isDirty;
-            }
-            private set
-            {
-                if (value)
+                if (_isDirty != value)
                 {
-                    if (!_isDirty)
-                    {
-                        // Set the _isDirty flag
-                        _isDirty = true;
+                    _isDirty = value;
 
-                        /*
-                        // Fire the event
-                        OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Changes detected in file {0}", File.FullName)));
-                        */
-                    }
-                }
-                else
-                {
-                    _isDirty = false;
-                }
+                    // Potential trigger mount point.
 
+                }
             }
         }
 

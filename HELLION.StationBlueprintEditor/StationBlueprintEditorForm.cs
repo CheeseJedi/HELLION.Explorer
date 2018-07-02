@@ -15,7 +15,7 @@ namespace HELLION.StationBlueprintEditor
 {
     public partial class StationBlueprintEditorForm : Form
     {
-        #region Constructors
+        #region Constructor
 
         /// <summary>
         /// Basic Constructor.
@@ -29,12 +29,15 @@ namespace HELLION.StationBlueprintEditor
             treeViewSecondaryStructures.ImageList = hEImageList.IconImageList;
 
             // Enable sorting (default sorter).
-            //treeViewPrimaryStructure.Sorted = true;
-            //treeViewSecondaryStructures.Sorted = true;
+            treeViewPrimaryStructure.Sorted = true;
+            treeViewSecondaryStructures.Sorted = true;
 
             // Enable ToolTips for the TreeViews.
             treeViewPrimaryStructure.ShowNodeToolTips = true;
             treeViewSecondaryStructures.ShowNodeToolTips = true;
+
+            // Set the form title.
+            RefreshBlueprintEditorFormTitleText();
 
             // Fills the drop down list of module types that can be added.
             RefreshDropDownModuleTypes();
@@ -43,20 +46,6 @@ namespace HELLION.StationBlueprintEditor
         #endregion
 
         #region Properties
-
-        public String FormTitleText
-        {
-            get => _formTitleText;
-            set
-            {
-                if (_formTitleText != value)
-                {
-                    _formTitleText = value;
-
-                    RefreshBlueprintEditorFormTitleText();
-                }
-            }
-        }
 
         /// <summary>
         /// Determines whether the text has been changed.
@@ -110,6 +99,48 @@ namespace HELLION.StationBlueprintEditor
 
                     RefreshDockButtonEnabledStatus();
                     RefreshUndockButtonEnabledStatus();
+
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Represents the currently selected structure.
+        /// </summary>
+        public BlueprintStructure SelectedPrimaryStructure
+        {
+            get => _currentStructure;
+            private set
+            {
+                if (_currentStructure != value)
+                {
+                    _currentStructure = value;
+
+                    // Trigger updates.
+
+                    if (value == null) SelectedPrimaryDockingPort = null;
+
+                    RefreshPictureBoxSelectedPrimaryStructure();
+                    RefreshLabelSelectedPrimaryStructure();
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Represents the currently selected docking port.
+        /// </summary>
+        public BlueprintDockingPort SelectedPrimaryDockingPort
+        {
+            get => _currentDockingPort;
+            private set
+            {
+                if (_currentDockingPort != value)
+                {
+                    _currentDockingPort = value;
+
+                    // Trigger updates.
+                    RefreshLabelSelectedPrimaryDockingPort();
 
                 }
             }
@@ -173,48 +204,6 @@ namespace HELLION.StationBlueprintEditor
         }
 
         /// <summary>
-        /// Represents the currently selected structure.
-        /// </summary>
-        public BlueprintStructure SelectedPrimaryStructure
-        {
-            get => _currentStructure;
-            private set
-            {
-                if (_currentStructure != value)
-                {
-                    _currentStructure = value;
-
-                    // Trigger updates.
-
-                    if (value == null) SelectedPrimaryDockingPort = null;
-
-                    RefreshPictureBoxSelectedPrimaryStructure();
-                    RefreshLabelSelectedPrimaryStructure();
-
-                }
-            }
-        }
-
-        /// <summary>
-        /// Represents the currently selected docking port.
-        /// </summary>
-        public BlueprintDockingPort SelectedPrimaryDockingPort
-        {
-            get => _currentDockingPort;
-            private set
-            {
-                if (_currentDockingPort != value)
-                {
-                    _currentDockingPort = value;
-
-                    // Trigger updates.
-                    RefreshLabelSelectedPrimaryDockingPort();
-
-                }
-            }
-        }
-
-        /// <summary>
         /// Represents the selected destination structure for docking.
         /// </summary>
         public BlueprintStructure SelectedSecondaryStructure
@@ -262,6 +251,16 @@ namespace HELLION.StationBlueprintEditor
         #region Refresh Methods
 
         /// <summary>
+        /// Refreshes the form's title text with the file name if there is one, 'untitled'
+        /// if not and with a marker if the object is dirty.
+        /// </summary>
+        private void RefreshBlueprintEditorFormTitleText()
+        {
+            string newText = DocCurrent?.File == null ? _baseText + " - untitled" : _baseText + " - " + DocCurrent.File.FullName;
+            Text = IsDirty ? newText + "*" : newText;
+        }
+
+        /// <summary>
         /// Updates the label text for the Primary Structure.
         /// </summary>
         private void RefreshLabelSelectedPrimaryStructure()
@@ -276,8 +275,8 @@ namespace HELLION.StationBlueprintEditor
         private void RefreshPictureBoxSelectedPrimaryStructure()
         {
             pictureBoxSelectedPrimaryStructure.Image = SelectedPrimaryStructure == null ? null
-                : StationBlueprintEditorProgram.hEImageList.StructureImageList.Images[
-                    EmbeddedImages_ImageList.GetStructureImageIndexBySceneID(SelectedPrimaryStructure.SceneID.Value)];
+                : hEImageList.StructureImageList.Images[EmbeddedImages_ImageList.
+                GetStructureImageIndexBySceneID(SelectedPrimaryStructure.SceneID.Value)];
         }
 
         /// <summary>
@@ -285,7 +284,7 @@ namespace HELLION.StationBlueprintEditor
         /// </summary>
         private void RefreshLabelSelectedPrimaryDockingPort()
         {
-            labelSelectedPrimaryDockingPort.Text = SelectedPrimaryDockingPort == null ? "Unspecified"
+            labelSelectedPrimaryDockingPort.Text = SelectedPrimaryStructure == null || SelectedPrimaryDockingPort == null ? "Unspecified"
                 : String.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryDockingPort.PortName.ToString());
 
             //Debug.Print("SelectedPrimaryDockingPort.PortName = " + SelectedPrimaryDockingPort.PortName.ToString());
@@ -306,8 +305,8 @@ namespace HELLION.StationBlueprintEditor
         private void RefreshPictureBoxSelectedSecondaryStructure()
         {
             pictureBoxSelectedSecondaryStructure.Image = SelectedSecondaryStructure == null ? null
-                : StationBlueprintEditorProgram.hEImageList.StructureImageList.Images[
-                    EmbeddedImages_ImageList.GetStructureImageIndexBySceneID(SelectedSecondaryStructure.SceneID.Value)];
+                : hEImageList.StructureImageList.Images[EmbeddedImages_ImageList.
+                GetStructureImageIndexBySceneID(SelectedSecondaryStructure.SceneID.Value)];
         }
 
         /// <summary>
@@ -315,17 +314,10 @@ namespace HELLION.StationBlueprintEditor
         /// </summary>
         private void RefreshLabelSelectedSecondaryDockingPort()
         {
-            labelSelectedSecondaryDockingPort.Text = SelectedSecondaryDockingPort == null ? "Unspecified"
-                : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID, SelectedSecondaryDockingPort.PortName.ToString());
-        }
-
-        /// <summary>
-        /// Updates the form's title text with a marker if the object is dirty.
-        /// </summary>
-        private void RefreshBlueprintEditorFormTitleText()
-        {
-            string newText = DocCurrent?.File == null ? _baseText + " [untitled]" : _baseText + " [" + FormTitleText + "]";
-            Text = IsDirty ? newText + "*" : newText;
+            labelSelectedSecondaryDockingPort.Text = SelectedSecondaryStructure == null || 
+                SelectedSecondaryDockingPort == null ? "Unspecified"
+                : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID,
+                SelectedSecondaryDockingPort.PortName.ToString());
         }
 
         /// <summary>
@@ -369,6 +361,14 @@ namespace HELLION.StationBlueprintEditor
                 buttonUndockPort.Enabled = true;
             }
             else buttonUndockPort.Enabled = false;
+        }
+
+        /// <summary>
+        /// Refreshes the status of the Add (structure) button.
+        /// </summary>
+        private void RefreshAddButtonEnabledStatus()
+        {
+            buttonAddStructure.Enabled = comboBoxStructureList.SelectedIndex != 0 ? true : false;
         }
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace HELLION.StationBlueprintEditor
         /// <param name="e"></param>
         private void comboBoxStructureList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            buttonAddStructure.Enabled = comboBoxStructureList.SelectedIndex != 0 ? true : false;
+            RefreshAddButtonEnabledStatus();
         }
 
         #endregion
@@ -709,6 +709,20 @@ namespace HELLION.StationBlueprintEditor
 
         #endregion
 
+        #region Tools > Docking PortsMenu
+
+        private void addMissingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void removeUnusedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
+
         #region Help Menu
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -725,7 +739,6 @@ namespace HELLION.StationBlueprintEditor
 
         //private StationBlueprint_File _jsonBlueprintFile = null;
         //private StationBlueprint _blueprint = null;
-        private string _formTitleText = null;
         private Base_TN _selectedPrimaryStructureNode = null;
         private Base_TN _selectedSecondaryStructureNode = null;
         private BlueprintStructure _currentStructure = null;
@@ -736,5 +749,6 @@ namespace HELLION.StationBlueprintEditor
         #endregion
 
         private const string _baseText = "Station Blueprint Editor";
+
     }
 }

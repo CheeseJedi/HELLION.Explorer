@@ -26,8 +26,8 @@ namespace HELLION.DataStructures.Blueprints
         {
             Structures = new List<BlueprintStructure>();
             RootNode = new Blueprint_TN(passedOwner: this, newNodeType: Base_TN_NodeType.BlueprintHierarchyView,
-                nodeName: "Hierarchy View"); 
-                //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
+                nodeName: "Hierarchy View");
+            //nodeToolTipText: "Shows a tree-based view of the modules and their docking hierarchy.");
         }
 
         /// <summary>
@@ -51,7 +51,21 @@ namespace HELLION.DataStructures.Blueprints
         /// <summary>
         /// A reference to the Parent object.
         /// </summary>
-        public StationBlueprint_File OwnerObject { get; set; } = null;
+        public StationBlueprint_File OwnerObject
+        {
+            get => _ownerObject;
+            set
+            {
+                if (_ownerObject != value)
+                {
+                    _ownerObject = value;
+
+                    // trigger check for IsDirty propagation to the owner file.
+                    if (OwnerObject != null) OwnerObject.IsDirty = _isDirty;
+                }
+
+            }
+        }
 
         public Base_TN RootNode { get; protected set; } = null;
 
@@ -59,7 +73,30 @@ namespace HELLION.DataStructures.Blueprints
 
         public bool IsTemplate { get; protected set; } = false;
 
-        public bool IsDirty { get; protected set; } = false;
+        /// <summary>
+        /// The Station Blueprint's IsDirty property. If a parent owner object file is set
+        /// it will use the parent's IsDirty property.
+        /// </summary>
+        public bool IsDirty
+        {
+            get
+            {
+                if (OwnerObject != null) return OwnerObject.IsDirty;
+                return _isDirty;
+            }
+            protected set
+            {
+                if (_isDirty != value)
+                {
+                    // Update private field.
+                    _isDirty = value;
+
+                    // If there's an owner file, update it's IsDirty.
+                    if (OwnerObject != null) OwnerObject.IsDirty = _isDirty;
+                }
+
+            }
+        }
 
         public BlueprintStructure PrimaryStructureRoot
         {
@@ -150,10 +187,12 @@ namespace HELLION.DataStructures.Blueprints
         {
             if (__ObjectType != null && __ObjectType == BlueprintObjectType.StationBlueprint)
             {
-                // Evaluate and repair docking ports as per the DockingPortHelper
-                RepairDockingPorts();
                 // Reconnects docking ports to their parent structure.
                 ReconnectChildToParentObjectHierarchy();
+
+                // Evaluate and repair docking ports as per the DockingPortHelper
+                RepairDockingPorts();
+
                 // Re-establishes the docking hierarchy.
                 ReconnectDockedObjects();
                 // Sets the primary structure root (StructureID of zero).
@@ -173,14 +212,62 @@ namespace HELLION.DataStructures.Blueprints
                 Debug.Print("StructureID [{0}] StructureType [{1}] SceneID [{2}]", structure.StructureID,
                     structure.StructureType, (StructureSceneID)structure.SceneID);
 
-
-                List<BlueprintDockingPort> newDockingPorts = DockingPortHelper.
-                    GenerateBlueprintDockingPorts((StructureSceneID)structure.SceneID);
-
-                Debug.Print("DockingPorts count {0} newDockingPorts count {1}", structure.DockingPorts.Count, newDockingPorts.Count);
-
+                // Repair existing ports to aid in building the new port list.
                 foreach (BlueprintDockingPort port in structure.DockingPorts)
                 {
+                    Debug.Print("____________________");
+
+                    // If the port has only an OrderID
+                    if (port.OrderID != null && port.PortName == null)
+                    {
+                        Debug.Print("FIXING: PortName missing, only OrderID present.");
+                        // Look up and set the Port Name from it.
+                        port.AttemptSetPortNameFromOrderID();
+                    }
+
+                    // If the port has only a Port Name
+                    if (port.PortName != null && port.OrderID == null)
+                    {
+                        Debug.Print("FIXING: OrderID missing, only PortName present.");
+                        // Look up and set the OrderID from it.
+                        port.AttemptSetOrderIDFromPortName();
+                    }
+
+                    // Error handling for Hellion Station Planner current exports.
+                    // If the original port has both a name and an OrderID
+                    if (port.PortName != null && port.OrderID != null)
+                    {
+                        // Cross-check look-up: PortName (aka type).
+                        DockingPortType lookedUpPortName = DockingPortHelper.GetDockingPortType(
+                            (StructureSceneID)structure.SceneID, (int)port.OrderID);
+                        // Sanity check.
+                        if (lookedUpPortName == DockingPortType.Unspecified)
+                            throw new InvalidOperationException("lookedUpPortName was unspecified.");
+
+                        // Cross-check look-up: OrderID.
+                        int? lookedUpOrderId = DockingPortHelper.GetOrderID(
+                            (StructureSceneID)structure.SceneID, (DockingPortType)port.PortName);
+                        // Sanity check.
+                        if (lookedUpOrderId == null)
+                            throw new InvalidOperationException("lookedUpOrderID was null.");
+
+                        // If they don't match, handle appropriately.
+                        if (port.PortName != lookedUpPortName || 
+                            port.OrderID != lookedUpOrderId)
+                        {
+                            Debug.Print("FIXING: Mismatched Port Name and Order ID for this structure type.");
+                            // Use the Port Name in preference, for (0.3, HSP) blueprints with 
+                            // incorrect OrderIDs for some modules (CTM, CLM, CRM, possibly CSM)
+                            port.AttemptSetOrderIDFromPortName();
+                        }
+                        else
+                        {
+                            Debug.Print("PortName and OrderID match.");
+                        }
+                    }
+
+                    // Repairs to existing ports complete.
+
                     Debug.Print("PortName [{0}] OrderID [{1}] DockedStructureID [{2}] DockedPortName [{3}] Locked [{4}]",
                         port.PortName, port.OrderID, port.DockedStructureID, port.DockedPortName, port.Locked);
 
@@ -189,15 +276,59 @@ namespace HELLION.DataStructures.Blueprints
 
                     int? tmp;
 
-                    if (port.PortName != null)
-                    {
-                        tmp = DockingPortHelper.GetOrderID((StructureSceneID)structure.SceneID, (DockingPortType)port.PortName);
-                    }
+                    if (port.PortName != null) tmp = DockingPortHelper.GetOrderID(
+                        (StructureSceneID)structure.SceneID, (DockingPortType)port.PortName);
                     else tmp = -1;
 
                     Debug.Print("OrderID(lookup) {0}", tmp != -1 ? tmp.ToString() : "null");
 
                 }
+
+                List<BlueprintDockingPort> newDockingPorts = DockingPortHelper.
+                    GenerateBlueprintDockingPorts((StructureSceneID)structure.SceneID);
+
+                foreach (BlueprintDockingPort port in newDockingPorts)
+                {
+                    port.OwnerStructure = structure;
+                }
+
+                Debug.Print("DockingPorts count {0} newDockingPorts count {1}", structure.DockingPorts.Count, newDockingPorts.Count);
+
+
+                // Copy over ID and PortName of the other docked port if there is one.
+                foreach (BlueprintDockingPort port in structure.DockingPorts)
+                {
+                    // Attempt to find the match in the newDockingPorts list.
+
+                    BlueprintDockingPort newPort = newDockingPorts.Where(p => p.PortName == port.PortName).Single();
+
+                    newPort.DockedStructureID = port.DockedStructureID;
+                    newPort.DockedPortName = port.DockedPortName;
+                    newPort.Locked = port.Locked;
+                }
+                // Set the new DockingPort list.
+                structure.DockingPorts = newDockingPorts;
+
+
+                if (structure.DockingPorts.Count != newDockingPorts.Count)
+                {
+                    // There are ports missing, Figure out which.
+
+                    //List<BlueprintDockingPort> missingPorts = newDockingPorts.Except(structure.DockingPorts).ToList();
+
+                    //foreach (var port in missingPorts)
+                    //{
+                    //    port.OwnerStructure = structure;
+                    //}
+
+                    //structure.DockingPorts.AddRange(missingPorts);
+
+                }
+                else Debug.Print("All docking ports present.");
+
+
+
+
             }
 
         }
@@ -214,7 +345,7 @@ namespace HELLION.DataStructures.Blueprints
             {
                 // Set the structure's parent object (this, the blueprint object)
                 structure.OwnerObject = this;
-                
+
                 // Recently added - This might be necessary, see below
                 structure.RootNode.AutoGenerateName = true;
 
@@ -313,7 +444,8 @@ namespace HELLION.DataStructures.Blueprints
                             Debug.Print("&&& REASSEMBLE &&& Port.IsDocked = true but docked structure was null");
                             return;
                         }
-                        Reassemble(port.DockedStructure, hierarchyRoot);
+                        else
+                            Reassemble(port.DockedStructure, hierarchyRoot);
                     }
                 }
             }
@@ -322,29 +454,29 @@ namespace HELLION.DataStructures.Blueprints
             /// The recursive bit.
             /// </summary>
             void Reassemble(BlueprintStructure structure, BlueprintStructure parent)
+            {
+                if (structure == null) throw new NullReferenceException("Structure was null.");
+                Debug.Print("###  Reassemble-recurse [{0}] [{1}]", structure.StructureType, structure.StructureID);
+
+                // Figure out which port is docking us to the parent and vice versa.
+                BlueprintDockingPort linkToParent = structure.GetDockingPort(parent);
+                BlueprintDockingPort linkFromParent = parent.GetDockingPort(structure);
+
+                // Add the node for the link to parent to the link from parent's node collection.
+                linkFromParent.RootNode.Nodes.Insert(0, linkToParent.RootNode);
+
+                // Add the structures's node to the link to parent node collection.
+                linkToParent.RootNode.Nodes.Insert(0, structure.RootNode);
+
+                foreach (BlueprintDockingPort port in structure.DockingPorts.ToArray()) // .Reverse())
                 {
-                    if (structure == null) throw new NullReferenceException("Structure was null.");
-                    Debug.Print("###  Reassemble-recurse [{0}] [{1}]", structure.StructureType, structure.StructureID);
-
-                    // Figure out which port is docking us to the parent and vice versa.
-                    BlueprintDockingPort linkToParent = structure.GetDockingPort(parent);
-                    BlueprintDockingPort linkFromParent = parent.GetDockingPort(structure);
-
-                    // Add the node for the link to parent to the link from parent's node collection.
-                    linkFromParent.RootNode.Nodes.Insert(0, linkToParent.RootNode);
-
-                    // Add the structures's node to the link to parent node collection.
-                    linkToParent.RootNode.Nodes.Insert(0, structure.RootNode);
-
-                    foreach (BlueprintDockingPort port in structure.DockingPorts.ToArray()) // .Reverse())
+                    if (port != linkToParent)
                     {
-                        if (port != linkToParent)
-                        {
-                            structure.RootNode.Nodes.Insert(0, port.RootNode);
-                            if (port.IsDocked) Reassemble(GetStructure(port.DockedStructureID), structure);
-                        }
+                        structure.RootNode.Nodes.Insert(0, port.RootNode);
+                        if (port.IsDocked) Reassemble(GetStructure(port.DockedStructureID), structure);
                     }
                 }
+            }
 
         }
 
@@ -373,13 +505,13 @@ namespace HELLION.DataStructures.Blueprints
                 SceneID = sceneID,
                 StructureID = Structures.Count()
             };
-            
+
             // Set this blueprint as the owner.
             newStructure.OwnerObject = this;
 
             // Populate the DockingPorts collection with ports appropriate
             // for this structure type.
-            newStructure.AddAppropriateDockingPorts(); 
+            newStructure.AddAppropriateDockingPorts();
 
             // Add the new structure to the main Structures list.
             Structures.Add(newStructure);
@@ -424,10 +556,10 @@ namespace HELLION.DataStructures.Blueprints
 
             // Actually remove the structure.
             Structures.Remove(structure);
-            
+
             // Modifications to the secondary structures list don't constitute a modification of the blueprint.
             // IsDirty = true;
-            
+
             return Structures.Contains(structure);
 
         }
@@ -716,8 +848,10 @@ namespace HELLION.DataStructures.Blueprints
 
         #region Fields
 
-        public const decimal StationBlueprintFormatVersion = 0.38m;
+        public const decimal StationBlueprintFormatVersion = 0.4m;
         private BlueprintStructure _primaryStructureRoot = null;
+        private bool _isDirty = false;
+        private StationBlueprint_File _ownerObject = null;
 
         #endregion
 
@@ -752,6 +886,7 @@ namespace HELLION.DataStructures.Blueprints
             PortsOnSameStructure,
             IncompatiblePortTypes,
             WillCauseOrphanedStructure,
+            PartnerError,
         }
 
         #endregion

@@ -28,16 +28,12 @@ namespace HELLION.StationBlueprintEditor
 
         #endregion
 
-        #region Form Related Objects
+        #region Properties
 
         /// <summary>
         /// Defines the main form object.
         /// </summary>
         internal static StationBlueprintEditorForm MainForm { get; private set; }
-
-        #endregion
-
-        #region File Handling Properties
 
         /// <summary>
         /// Defines an object to hold the current open document
@@ -365,6 +361,8 @@ namespace HELLION.StationBlueprintEditor
         /// <returns>Returns true on error.</returns>
         internal static bool FileOpen(FileInfo saveFileInfo)
         {
+            // Take care of any existing open (including modified) file.
+            if (DocCurrent != null) FileClose();
 
             Debug.Print("FileOpen(FileInfo) called.");
             // Make a note of the starting time
@@ -523,10 +521,6 @@ namespace HELLION.StationBlueprintEditor
                 // Clear both primary and secondary selections.
                 MainForm.SelectedPrimaryStructureNode = null;
                 MainForm.SelectedSecondaryStructureNode = null;
-
-
-                // TODO: Doing this here is probably wrong.
-                MainForm.FormTitleText = String.Empty;
 
                 // Disable the Save and Save As menu items.
                 MainForm.saveToolStripMenuItem.Enabled = false;

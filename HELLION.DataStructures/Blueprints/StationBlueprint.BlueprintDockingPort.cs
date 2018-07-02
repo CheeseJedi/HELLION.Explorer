@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using HELLION.DataStructures.StaticData;
 using HELLION.DataStructures.UI;
 using Newtonsoft.Json;
@@ -158,6 +159,8 @@ namespace HELLION.DataStructures.Blueprints
                 get => DockedStructure == null || DockedStructureID == null ? false : true;
             }
 
+            public bool AutoConvert_PortName_OrderID { get; set; } = false;
+
             /// <summary>
             /// The parent structure's SceneID - is updated when an appropriate OwnerStructure is set
             /// or can be set manually when there is no parent object linked.
@@ -194,7 +197,13 @@ namespace HELLION.DataStructures.Blueprints
                     {
                         _portName = value;
 
-                        AttemptSetOrderIDFromPortName();
+                        if (AutoConvert_PortName_OrderID)
+                        {
+                            if (OrderID != null && OwnerStructure != null)
+                            {
+                                AttemptSetOrderIDFromPortName();
+                            }
+                        }
 
                         RootNode.Refresh();
                     }
@@ -218,8 +227,13 @@ namespace HELLION.DataStructures.Blueprints
                         _orderID = value;
 
 
-
-                        if (OrderID != null && OwnerStructure != null) AttemptSetPortNameFromOrderID(); // This is causing an issue
+                        if (AutoConvert_PortName_OrderID)
+                        {
+                            if (OrderID != null && OwnerStructure != null)
+                            {
+                                AttemptSetPortNameFromOrderID(); // This is/was causing an issue
+                            }
+                        }
                     }
                 }
             }
@@ -292,6 +306,150 @@ namespace HELLION.DataStructures.Blueprints
             #region Methods
 
             /// <summary>
+            /// Handles a port docking operation - calls itself on the other docking port.
+            /// </summary>
+            /// <param name="otherPort"></param>
+            /// <param name="notifyPartner"></param>
+            public DockingResultStatus Dock(BlueprintDockingPort otherPort, bool notifyPartner = true)
+            {
+                // portA should be the Primary Structure side, otherPort the Secondary Structure.
+
+                // Check the passed port is valid.
+                if (otherPort == null) return DockingResultStatus.InvalidPortB;
+
+                // check the ports parent structures are valid.
+                if (OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
+                if (otherPort.OwnerStructure == null) return DockingResultStatus.InvalidStructurePortB;
+
+                // Ensure that the two ports aren't on the same structure.
+                if (OwnerStructure == otherPort.OwnerStructure) return DockingResultStatus.PortsOnSameStructure;
+
+                // Ensure that both ports are not already docked.
+                if (IsDocked) return DockingResultStatus.AlreadyDockedPortA;
+                if (otherPort.IsDocked) return DockingResultStatus.AlreadyDockedPortB;
+
+                // Proceed with docking operation.
+
+                if (notifyPartner)
+                {
+                    DockingResultStatus partnerResult = otherPort.Dock(this, notifyPartner: false);
+
+                    if (partnerResult != DockingResultStatus.Success)
+                    {
+                        Debug.Print("Dock Partner Error: " + partnerResult.ToString());
+                        return DockingResultStatus.PartnerError;
+                    }
+                }
+
+
+                // Update this port.
+                DockedStructure = otherPort.OwnerStructure;
+                DockedPort = otherPort;
+
+                // Update otherPort.
+                //otherPort.DockedStructure = portA.OwnerStructure;
+                //otherPort.DockedPort = portA;
+                otherPort.OwnerStructure.IsStructureHierarchyRoot = false;
+
+                // Mark the blueprint object as dirty.
+                OwnerStructure.OwnerObject.IsDirty = true;
+
+                return DockingResultStatus.Success;
+
+
+
+
+            }
+
+            /// <summary>
+            /// Handles a port un-docking operation - calls itself on the other docking port.
+            /// </summary>
+            /// <param name="notifyPartner"></param>
+            public DockingResultStatus Undock(bool notifyPartner = true)
+            {
+
+                if (!IsDocked) return DockingResultStatus.PortANotDocked;
+
+                // Find structure A (the one selected)
+                if (OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
+
+                // Find otherPort (the other side)
+                BlueprintDockingPort otherPort = DockedPort;
+
+                if (otherPort == null) return DockingResultStatus.InvalidPortB;
+                if (!otherPort.IsDocked) return DockingResultStatus.PortBNotDocked;
+
+                // Find structureB
+                BlueprintStructure structureB = DockedStructure;
+                if (structureB == null) return DockingResultStatus.InvalidStructurePortB;
+
+
+                if (OwnerStructure != otherPort.DockedStructure)
+                    return DockingResultStatus.PortAandBNotDocked;
+
+                // Process the un-docking.
+
+
+                // TODO: the notifyPartner checks etc need to be implemented.
+
+                // Set the DockedStructures to null
+                DockedStructure = null;
+                DockedPort = null;
+
+                //otherPort.DockedStructure = null;
+                //otherPort.DockedPort = null;
+
+                //otherPort.OwnerStructure.IsStructureHierarchyRoot = true;
+
+                // Figure out which structure to add to the Secondary Structures list.
+
+                if (OwnerStructure.IsConnectedToPrimaryStructure)
+                {
+                    if (structureB.IsConnectedToPrimaryStructure) throw new InvalidOperationException("Both structures connected to primary.");
+
+                    // structureB is not connected to the Primary.
+                    // Check if structureB is connected to a secondary root.
+                    if (structureB.GetStructureRoot() != null) throw new InvalidOperationException("structureB is connected to a root.");
+
+                    // Structure B is not connected to a root, make it one.
+                    structureB.IsStructureHierarchyRoot = true;
+                }
+
+                if (structureB.IsConnectedToPrimaryStructure)
+                {
+                    if (OwnerStructure.IsConnectedToPrimaryStructure) throw new InvalidOperationException("Both structures connected to primary.");
+
+                    // structureB is not connected to the Primary.
+                    // Check if structureB is connected to a secondary root.
+                    if (OwnerStructure.GetStructureRoot() != null) throw new InvalidOperationException("structureA is connected to a root.");
+
+                    // Structure B is not connected to a root, make it one.
+                    OwnerStructure.IsStructureHierarchyRoot = true;
+                }
+
+
+
+                structureB.IsStructureHierarchyRoot = true;
+
+                //SecondaryStructures.Add(structureB);
+
+                IsDirty = true;
+
+                return DockingResultStatus.Success;
+
+
+
+
+
+
+
+
+
+
+            }
+
+
+            /// <summary>
             /// Attempt to update the DockedStructure object.
             /// </summary>
             /// <returns>
@@ -348,18 +506,22 @@ namespace HELLION.DataStructures.Blueprints
             /// <summary>
             /// Attempts to set the PortName from OrderID.
             /// </summary>
-            private void AttemptSetPortNameFromOrderID()
+            public void AttemptSetPortNameFromOrderID()
             {
                 // Look up the correct port name for this structure and orderID
-                if (OwnerStructure != null) PortName = GetDockingPortType((StructureSceneID)OwnerStructure?.SceneID, (int)OrderID);
+                if (OwnerStructure != null) PortName = GetDockingPortType(
+                    (StructureSceneID)OwnerStructure.SceneID, (int)OrderID);
+                else Debug.Print("AttemptSetPortNameFromOrderID - OwnerStructure was null");
             }
 
             /// <summary>
             /// Attempts to set the OrderID from the PortName.
             /// </summary>
-            private void AttemptSetOrderIDFromPortName()
+            public void AttemptSetOrderIDFromPortName()
             {
-                if (OwnerStructure != null) OrderID = (int)GetOrderID((StructureSceneID)OwnerStructure?.SceneID, (DockingPortType)PortName);
+                if (OwnerStructure != null) OrderID = (int)GetOrderID(
+                    (StructureSceneID)OwnerStructure.SceneID, (DockingPortType)PortName);
+                else Debug.Print("AttemptSetOrderIDFromPortName - OwnerStructure was null");
             }
 
 

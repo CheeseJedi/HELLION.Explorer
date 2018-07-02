@@ -64,6 +64,9 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dockingPortsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addMissingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeUnusedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.indexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,8 +116,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.viewToolStripMenuItem,
             this.toolsToolStripMenuItem,
+            this.viewToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -396,17 +399,17 @@
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.customizeToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.dockingPortsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
-            this.toolsToolStripMenuItem.Visible = false;
             // 
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Enabled = false;
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.customizeToolStripMenuItem.Text = "&Customize";
             this.customizeToolStripMenuItem.Visible = false;
             // 
@@ -414,8 +417,34 @@
             // 
             this.optionsToolStripMenuItem.Enabled = false;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
+            this.optionsToolStripMenuItem.Visible = false;
+            // 
+            // dockingPortsToolStripMenuItem
+            // 
+            this.dockingPortsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addMissingToolStripMenuItem,
+            this.removeUnusedToolStripMenuItem});
+            this.dockingPortsToolStripMenuItem.Enabled = false;
+            this.dockingPortsToolStripMenuItem.Name = "dockingPortsToolStripMenuItem";
+            this.dockingPortsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dockingPortsToolStripMenuItem.Text = "&Docking Ports";
+            this.dockingPortsToolStripMenuItem.Visible = false;
+            // 
+            // addMissingToolStripMenuItem
+            // 
+            this.addMissingToolStripMenuItem.Name = "addMissingToolStripMenuItem";
+            this.addMissingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addMissingToolStripMenuItem.Text = "&Add Missing";
+            this.addMissingToolStripMenuItem.Click += new System.EventHandler(this.addMissingToolStripMenuItem_Click);
+            // 
+            // removeUnusedToolStripMenuItem
+            // 
+            this.removeUnusedToolStripMenuItem.Name = "removeUnusedToolStripMenuItem";
+            this.removeUnusedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeUnusedToolStripMenuItem.Text = "&Remove Unused";
+            this.removeUnusedToolStripMenuItem.Click += new System.EventHandler(this.removeUnusedToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -769,7 +798,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(700, 790);
             this.Name = "StationBlueprintEditorForm";
-            this.Text = "Station Blueprint Editor [untitled]";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlueprintEditorForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -856,5 +884,8 @@
         private System.Windows.Forms.ComboBox comboBoxStructureList;
         private System.Windows.Forms.GroupBox groupBoxRemoveStructure;
         private System.Windows.Forms.Button buttonRemoveStructure;
+        private System.Windows.Forms.ToolStripMenuItem dockingPortsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem addMissingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeUnusedToolStripMenuItem;
     }
 }
