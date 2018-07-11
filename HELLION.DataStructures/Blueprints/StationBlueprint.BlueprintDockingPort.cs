@@ -312,10 +312,12 @@ namespace HELLION.DataStructures.Blueprints
             /// <param name="notifyPartner"></param>
             public DockingResultStatus Dock(BlueprintDockingPort otherPort, bool notifyPartner = true)
             {
-                // portA should be the Primary Structure side, otherPort the Secondary Structure.
-
                 // Check the passed port is valid.
                 if (otherPort == null) return DockingResultStatus.InvalidPortB;
+
+                // Ensure that both ports are not already docked.
+                if (IsDocked) return DockingResultStatus.AlreadyDockedPortA;
+                if (otherPort.IsDocked) return DockingResultStatus.AlreadyDockedPortB;
 
                 // check the ports parent structures are valid.
                 if (OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
@@ -324,9 +326,6 @@ namespace HELLION.DataStructures.Blueprints
                 // Ensure that the two ports aren't on the same structure.
                 if (OwnerStructure == otherPort.OwnerStructure) return DockingResultStatus.PortsOnSameStructure;
 
-                // Ensure that both ports are not already docked.
-                if (IsDocked) return DockingResultStatus.AlreadyDockedPortA;
-                if (otherPort.IsDocked) return DockingResultStatus.AlreadyDockedPortB;
 
                 // Proceed with docking operation.
 
@@ -346,17 +345,15 @@ namespace HELLION.DataStructures.Blueprints
                 DockedStructure = otherPort.OwnerStructure;
                 DockedPort = otherPort;
 
-                // Update otherPort.
-                //otherPort.DockedStructure = portA.OwnerStructure;
-                //otherPort.DockedPort = portA;
-                otherPort.OwnerStructure.IsStructureHierarchyRoot = false;
+
+
+
+                //otherPort.OwnerStructure.IsStructureHierarchyRoot = false;
 
                 // Mark the blueprint object as dirty.
                 OwnerStructure.OwnerObject.IsDirty = true;
 
                 return DockingResultStatus.Success;
-
-
 
 
             }
@@ -367,7 +364,9 @@ namespace HELLION.DataStructures.Blueprints
             /// <param name="notifyPartner"></param>
             public DockingResultStatus Undock(bool notifyPartner = true)
             {
+                // FINDME
 
+                //aa
                 if (!IsDocked) return DockingResultStatus.PortANotDocked;
 
                 // Find structure A (the one selected)
@@ -388,63 +387,28 @@ namespace HELLION.DataStructures.Blueprints
                     return DockingResultStatus.PortAandBNotDocked;
 
                 // Process the un-docking.
+                if (notifyPartner)
+                {
+                    DockingResultStatus partnerResult = otherPort.Undock(notifyPartner: false);
 
-
-                // TODO: the notifyPartner checks etc need to be implemented.
+                    if (partnerResult != DockingResultStatus.Success)
+                    {
+                        Debug.Print("Undock Partner Error: " + partnerResult.ToString());
+                        return DockingResultStatus.PartnerError;
+                    }
+                }
 
                 // Set the DockedStructures to null
                 DockedStructure = null;
                 DockedPort = null;
 
-                //otherPort.DockedStructure = null;
-                //otherPort.DockedPort = null;
+                // If the OwnerStructure is not connected to a root, make it one.
+                if (OwnerStructure.GetStructureRoot() == null) OwnerStructure.IsStructureHierarchyRoot = true;
 
-                //otherPort.OwnerStructure.IsStructureHierarchyRoot = true;
-
-                // Figure out which structure to add to the Secondary Structures list.
-
-                if (OwnerStructure.IsConnectedToPrimaryStructure)
-                {
-                    if (structureB.IsConnectedToPrimaryStructure) throw new InvalidOperationException("Both structures connected to primary.");
-
-                    // structureB is not connected to the Primary.
-                    // Check if structureB is connected to a secondary root.
-                    if (structureB.GetStructureRoot() != null) throw new InvalidOperationException("structureB is connected to a root.");
-
-                    // Structure B is not connected to a root, make it one.
-                    structureB.IsStructureHierarchyRoot = true;
-                }
-
-                if (structureB.IsConnectedToPrimaryStructure)
-                {
-                    if (OwnerStructure.IsConnectedToPrimaryStructure) throw new InvalidOperationException("Both structures connected to primary.");
-
-                    // structureB is not connected to the Primary.
-                    // Check if structureB is connected to a secondary root.
-                    if (OwnerStructure.GetStructureRoot() != null) throw new InvalidOperationException("structureA is connected to a root.");
-
-                    // Structure B is not connected to a root, make it one.
-                    OwnerStructure.IsStructureHierarchyRoot = true;
-                }
-
-
-
-                structureB.IsStructureHierarchyRoot = true;
-
-                //SecondaryStructures.Add(structureB);
-
-                IsDirty = true;
+                // Mark the blueprint object as dirty.
+                OwnerStructure.OwnerObject.IsDirty = true;
 
                 return DockingResultStatus.Success;
-
-
-
-
-
-
-
-
-
 
             }
 

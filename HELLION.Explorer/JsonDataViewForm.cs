@@ -273,5 +273,9 @@ namespace HELLION.Explorer
 
         #endregion
 
+        private void deserialiseAsYouTypeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
