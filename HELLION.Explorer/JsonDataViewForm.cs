@@ -46,6 +46,10 @@ namespace HELLION.Explorer
             FormTitleText = passedSourceNode.FullPath;
             Text = FormTitleText;
             AppliedText = passedSourceNode.JData.ToString();
+            // Character length limit -  this is a guessed figure!
+            if (AppliedText.Length > 25000)
+                deserialiseAsYouTypeToolStripMenuItem.Checked = false;
+
             fastColoredTextBox1.Text = AppliedText;
             // Required as setting the FastColouredTextBox triggers the _isDirty
             IsDirty = false;
@@ -123,47 +127,66 @@ namespace HELLION.Explorer
         /// <summary>
         /// Refreshes the Serialise-As-You-Type status indicator (text and icon).
         /// </summary>
-        private void Refresh_toolStrip_DeserialisatonStatus()
+        private void RefreshToolStripDeserialisatonStatus(bool bypass = false)
         {
-            if (fastColoredTextBox1.Text.
-                TryParseJson(out JToken tmp, out JsonReaderException jrex))
+            if (bypass)
             {
-                toolStripStatusLabel3.Text = "De-serialisation PASSED";
-
-                if (_imageList != null)
-                {
-                    toolStripStatusLabel_SerialisationStatus.Image =
-                        _imageList.IconImageList.Images[(int)HEIconsImageNames.FileOK_16x];
-                }
-
-                toolStripStatusLabel_SerialisationStatus.ToolTipText =
-                    "The text is syntactically correct and de-serialised OK.";
-                toolStripMainStatusLabel.Text = toolStripStatusLabel_SerialisationStatus.ToolTipText;
-
+                toolStripStatusLabel3.Text = "Deserialisation OFF";
+                toolStripMainStatusLabel.Text = "Deserialise As-You-Type is tuned off.";
             }
             else
             {
-                toolStripStatusLabel3.Text = "De-serialisation ERROR";
-
-                if (_imageList != null)
+                if (fastColoredTextBox1.Text.
+                    TryParseJson(out JToken tmp, out JsonReaderException jrex))
                 {
-                    toolStripStatusLabel_SerialisationStatus.Image =
-                        _imageList.IconImageList.Images[(int)HEIconsImageNames.FileError_16x];
-                }
+                    toolStripStatusLabel3.Text = "Deserialisation PASSED";
 
-                toolStripStatusLabel_SerialisationStatus.ToolTipText = jrex != null ? jrex.Message : "Non-JsonTextReader error.";
-                toolStripMainStatusLabel.Text = toolStripStatusLabel_SerialisationStatus.ToolTipText;
+                    if (_imageList != null)
+                    {
+                        toolStripStatusLabel_SerialisationStatus.Image =
+                            _imageList.IconImageList.Images[(int)HEIconsImageNames.FileOK_16x];
+                    }
+
+                    toolStripStatusLabel_SerialisationStatus.ToolTipText =
+                        "The text is syntactically correct and deserialised OK.";
+                    toolStripMainStatusLabel.Text = toolStripStatusLabel_SerialisationStatus.ToolTipText;
+
+                }
+                else
+                {
+                    toolStripStatusLabel3.Text = "Deserialisation ERROR";
+
+                    if (_imageList != null)
+                    {
+                        toolStripStatusLabel_SerialisationStatus.Image =
+                            _imageList.IconImageList.Images[(int)HEIconsImageNames.FileError_16x];
+                    }
+
+                    toolStripStatusLabel_SerialisationStatus.ToolTipText = jrex != null ? jrex.Message : "Non-JsonTextReader error.";
+                    toolStripMainStatusLabel.Text = toolStripStatusLabel_SerialisationStatus.ToolTipText;
+                }
             }
+        }
+
+
+        /// <summary>
+        /// Refreshes the cursor position indicator.
+        /// </summary>
+        private void RefreshToolStripLineAndCharCount()
+        {
+            toolStripStatusLineCharCount.Text = string.Format("[Lines {0:n0} Chars {1:n0}]",
+                fastColoredTextBox1.LinesCount,
+                fastColoredTextBox1.Text.Length);
         }
 
         /// <summary>
         /// Refreshes the cursor position indicator.
         /// </summary>
-        private void refresh_toolStrip_toolStripCursorPositionLabel()
+        private void RefreshToolStripCursorPositionLabel()
         {
             if (fastColoredTextBox1.Selection.Start != null)
             {
-                toolStripCursorPositionLabel.Text = string.Format("[Ln {0} Col {1}]",
+                toolStripCursorPositionLabel.Text = string.Format("[Ln {0:n0} Col {1:n0}]",
                 // The line number position for the cursor is returned by the FastColouredTextBox
                 // counting from zero, seemingly regardless of the configured starting line number.
                 fastColoredTextBox1.Selection.Start.iLine + 1,
@@ -240,13 +263,14 @@ namespace HELLION.Explorer
 
             //e.ChangedRange.SetFoldingMarkers(@"#region\b", @"#endregion\b");
 
-            Refresh_toolStrip_DeserialisatonStatus();
+            RefreshToolStripDeserialisatonStatus(!deserialiseAsYouTypeToolStripMenuItem.Checked);
+            RefreshToolStripLineAndCharCount();
 
         }
 
         private void fastColoredTextBox1_SelectionChanged(object sender, EventArgs e)
         {
-            refresh_toolStrip_toolStripCursorPositionLabel();
+            RefreshToolStripCursorPositionLabel();
         }
 
         #region menuStrip1
@@ -271,10 +295,16 @@ namespace HELLION.Explorer
             if (ApplyChanges()) IsDirty = false;
         }
 
+
+
+
         #endregion
 
         private void deserialiseAsYouTypeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // 
+            deserialiseAsYouTypeToolStripMenuItem.Checked = !deserialiseAsYouTypeToolStripMenuItem.Checked;
+            RefreshToolStripDeserialisatonStatus(!deserialiseAsYouTypeToolStripMenuItem.Checked);
 
         }
     }

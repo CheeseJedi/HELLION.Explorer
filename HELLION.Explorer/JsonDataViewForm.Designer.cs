@@ -39,13 +39,14 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deserialiseAsYouTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripMainStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip_SpringSeperator = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripCursorPositionLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_SerialisationStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.deserialiseAsYouTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripStatusLineCharCount = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.fastColoredTextBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -71,7 +72,6 @@
             this.fastColoredTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fastColoredTextBox1.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.fastColoredTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fastColoredTextBox1.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fastColoredTextBox1.IsReplaceMode = false;
             this.fastColoredTextBox1.Location = new System.Drawing.Point(0, 24);
             this.fastColoredTextBox1.Name = "fastColoredTextBox1";
@@ -155,11 +155,21 @@
             this.replaceToolStripMenuItem.Text = "Replace...";
             this.replaceToolStripMenuItem.Click += new System.EventHandler(this.replaceToolStripMenuItem_Click);
             // 
+            // deserialiseAsYouTypeToolStripMenuItem
+            // 
+            this.deserialiseAsYouTypeToolStripMenuItem.Checked = true;
+            this.deserialiseAsYouTypeToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.deserialiseAsYouTypeToolStripMenuItem.Name = "deserialiseAsYouTypeToolStripMenuItem";
+            this.deserialiseAsYouTypeToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.deserialiseAsYouTypeToolStripMenuItem.Text = "Deserialise As-You-Type";
+            this.deserialiseAsYouTypeToolStripMenuItem.Click += new System.EventHandler(this.deserialiseAsYouTypeToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMainStatusLabel,
             this.toolStrip_SpringSeperator,
+            this.toolStripStatusLineCharCount,
             this.toolStripCursorPositionLabel,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel_SerialisationStatus});
@@ -179,7 +189,7 @@
             // toolStrip_SpringSeperator
             // 
             this.toolStrip_SpringSeperator.Name = "toolStrip_SpringSeperator";
-            this.toolStrip_SpringSeperator.Size = new System.Drawing.Size(586, 17);
+            this.toolStrip_SpringSeperator.Size = new System.Drawing.Size(437, 17);
             this.toolStrip_SpringSeperator.Spring = true;
             // 
             // toolStripCursorPositionLabel
@@ -201,14 +211,11 @@
             this.toolStripStatusLabel_SerialisationStatus.Size = new System.Drawing.Size(16, 17);
             this.toolStripStatusLabel_SerialisationStatus.Text = "   ";
             // 
-            // deserialiseAsYouTypeToolStripMenuItem
+            // toolStripStatusLineCharCount
             // 
-            this.deserialiseAsYouTypeToolStripMenuItem.Checked = true;
-            this.deserialiseAsYouTypeToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.deserialiseAsYouTypeToolStripMenuItem.Name = "deserialiseAsYouTypeToolStripMenuItem";
-            this.deserialiseAsYouTypeToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
-            this.deserialiseAsYouTypeToolStripMenuItem.Text = "Deserialise As-You-Type";
-            this.deserialiseAsYouTypeToolStripMenuItem.Click += new System.EventHandler(this.deserialiseAsYouTypeToolStripMenuItem_Click);
+            this.toolStripStatusLineCharCount.Name = "toolStripStatusLineCharCount";
+            this.toolStripStatusLineCharCount.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLineCharCount.Text = "toolStripStatusLabel1";
             // 
             // JsonDataViewForm
             // 
@@ -249,5 +256,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_SerialisationStatus;
         private System.Windows.Forms.ToolStripStatusLabel toolStripCursorPositionLabel;
         private System.Windows.Forms.ToolStripMenuItem deserialiseAsYouTypeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLineCharCount;
     }
 }
