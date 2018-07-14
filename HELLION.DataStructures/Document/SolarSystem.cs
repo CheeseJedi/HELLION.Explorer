@@ -20,11 +20,12 @@ namespace HELLION.DataStructures.Document
         /// <param name="gameData"></param>
         public SolarSystem(GameData gameData)
         {
-            // Basic constructor
-
-            RootNode = new SolarSystem_TN(passedOwner: this, nodeName: "Solar System", nodeType: Base_TN_NodeType.SolarSystemView) //, "Solar System")
+            RootNode = new SolarSystem_TN(passedOwner: this, nodeName: "Solar System", 
+                nodeType: Base_TN_NodeType.SolarSystemView) //, "Solar System")
             {
-                GUID = -1 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to the Solar System root node
+                // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to
+                // the Solar System root node by giving that a GUID of -1 (and no parentGUID).
+                GUID = -1 
             };
 
             if (gameData == null) throw new NullReferenceException("gameData was null.");
@@ -97,15 +98,19 @@ namespace HELLION.DataStructures.Document
                         throw new InvalidOperationException("Unable to access the CelestialBodies.json from the Static Data Dictionary.");
                     else
                     {
-                        if (!(celestialBodiesJsonBaseFile.RootNode.Nodes.Count > 0)) throw new InvalidOperationException("CelestialBodies RootNode had no child nodes.");
+                        // We're expecting the Array or Object nodes as the parent token.
 
-                        foreach (Json_TN node in celestialBodiesJsonBaseFile.RootNode.Nodes)
+                        if (celestialBodiesJsonBaseFile.RootNode.Nodes.Count != 1) throw new InvalidOperationException
+                                ("AddSolarSystemObjectsByType: celestialBodiesJsonBaseFile.RootNode.Nodes.Count != 1");
+
+                        foreach (Json_TN node in celestialBodiesJsonBaseFile.RootNode.FirstNode.Nodes)
                         {
                             Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown;
 
                             JObject obj = (JObject)node.JData;
 
-                            if (obj == null) throw new NullReferenceException("Adding CelestialBodies - obj was null.");
+                            if (obj == null) throw new NullReferenceException
+                                    ("Adding CelestialBodies - obj was null.");
 
                             long newNodeParentGUID = 0;
                             JToken testToken = obj["ParentGUID"];

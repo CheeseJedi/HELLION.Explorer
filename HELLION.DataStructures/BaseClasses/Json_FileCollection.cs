@@ -23,7 +23,7 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="passedDirectoryInfo"></param>
         /// <param name="autoPopulateTree"></param>
-        public Json_FileCollection(IParent_Json_File passedParent, DirectoryInfo passedDirectoryInfo, int autoPopulateTreeDepth = 0)
+        public Json_FileCollection(IParent_Json_File passedParent, DirectoryInfo passedDirectoryInfo, int populateDepth = 0)
         {
             // Set up the data dictionary
             DataDictionary = new Dictionary<string, Json_File_UI>();
@@ -36,7 +36,7 @@ namespace HELLION.DataStructures
             RootNode = new Base_TN(ownerObject: this, nodeType: Base_TN_NodeType.DataFolder,
                 nodeName: DataDirectoryInfo.Name);
 
-            Load(PopulateNodeTreeDepth: autoPopulateTreeDepth);
+            Load(populateDepth: populateDepth);
         }
 
         /// <summary>
@@ -85,22 +85,23 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="PopulateNodeTrees"></param>
         /// <returns></returns>
-        public bool Load(int PopulateNodeTreeDepth = 0)
+        public bool Load(int populateDepth = 0)
         {
             // Loads the static data and builds the trees representing the data files
             if (!DataDirectoryInfo.Exists) return false;
             else
             {
-                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension)) // .Reverse())
+                foreach (FileInfo dataFile in DataDirectoryInfo.GetFiles(targetFileExtension))
                 {
                     // Create a new Json_File_UI and populate the path.
-                    Json_File_UI tempJsonFile = new Json_File_UI(this, dataFile, PopulateNodeTreeDepth);
+                    Json_File_UI tempJsonFile = new Json_File_UI(this, dataFile, populateDepth);
                     // Add the file to the Data Dictionary 
                     DataDictionary.Add(dataFile.Name, tempJsonFile);
 
                     if (tempJsonFile.IsLoaded && !LoadError)
                     {
-                        if (tempJsonFile.RootNode == null) throw new Exception();
+                        if (tempJsonFile.RootNode == null) throw new NullReferenceException
+                                ("Json_FileCollection.Load: tempJsonFile.RootNode was null.");
                         else RootNode.Nodes.Insert(0, tempJsonFile.RootNode);
                     }
                 }

@@ -50,7 +50,7 @@ namespace HELLION.DataStructures.UI
         /// <summary>
         /// Stores a reference to the owning object.
         /// </summary>
-        public IParent_Base_TN OwnerObject { get; protected set; } = null;
+        public IParent_Base_TN OwnerObject { get; set; } = null;
 
         /// <summary>
         /// Redefines the Name accessor to track changes.

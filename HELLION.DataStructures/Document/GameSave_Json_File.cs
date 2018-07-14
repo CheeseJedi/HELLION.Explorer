@@ -17,8 +17,8 @@ namespace HELLION.DataStructures.Document
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="passedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public GameSave_Json_File(IParent_Json_File passedParentObject, FileInfo passedFileInfo, int populateNodeTreeDepth)
-            : base(passedParentObject, passedFileInfo, populateNodeTreeDepth)
+        public GameSave_Json_File(IParent_Json_File passedParentObject, FileInfo passedFileInfo, int populateDepth)
+            : base(passedParentObject, passedFileInfo, populateDepth)
         {
             RootNode.Name = File.Name;
             RootNode.NodeType = Base_TN_NodeType.SaveFile;

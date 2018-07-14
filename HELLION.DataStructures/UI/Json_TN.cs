@@ -20,7 +20,8 @@ namespace HELLION.DataStructures.UI
         /// <param name="nodeType">Type of the new node (Base_TN_NodeType enum)</param>
         /// <param name="nodeText">Text of the new node (Display Name). If not specified this defaults to the node's name.</param>
         /// <param name="nodeToolTipText">Tool tip text of the new node. If not specified this defaults to the node's text.</param>
-        public Json_TN(IParent_Base_TN ownerObject, Base_TN_NodeType newNodeType = Base_TN_NodeType.Unknown, string nodeName = null)
+        public Json_TN(IParent_Base_TN ownerObject, Base_TN_NodeType newNodeType = 
+            Base_TN_NodeType.Unknown, string nodeName = null)
             : base(ownerObject, newNodeType, nodeName)
         { }
 
@@ -29,13 +30,19 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         /// <param name="json"></param>
         /// <param name="nodeName">Accepts a passed Name, if not provided a name will be auto-generated.</param>
-        public Json_TN(IParent_Base_TN ownerObject, JToken passedJson, string nodeName = null) : base(ownerObject)
+        public Json_TN(IParent_Base_TN ownerObject, JToken passedJson, string nodeName = null, int populateDepth = 0)
+            : base(ownerObject)
         {
+            // Set the auto-population depth.
+            _populateDepth = populateDepth;
+
             // Enable auto-name generation.
             AutoGenerateName = true;
 
-            // Set the JData.
-            JData = passedJson ?? throw new NullReferenceException("Unable to construct Json_TN: Passed JToken was null.");
+            // Set the JData - this will trigger child nodes to be built to the specified depth.
+            JData = passedJson ?? throw new NullReferenceException
+                ("Json_TN(JToken).ctor: Passed JToken was null.");
+
         }
 
         #endregion
@@ -56,11 +63,14 @@ namespace HELLION.DataStructures.UI
 
                     // Trigger node regeneration.
 
-                    // Set the node type.
+                    // (Re)Set the node type.
                     NodeType = DetectNodeTypeFromJToken();
 
-                    // Trigger name generation.
+                    // Trigger name (re)generation.
                     RefreshName();
+
+                    // (Re)Build child nodes to the specified depth.
+                    RefreshChildNodesFromjData(_populateDepth);
 
                 }
             }
@@ -166,32 +176,53 @@ namespace HELLION.DataStructures.UI
         #region Methods
 
         /// <summary>
+        /// Refreshes the child nodes - triggered when the JData changes.
+        /// </summary>
+        /// <param name="populateDepth"></param>
+        public void RefreshChildNodesFromjData(int populateDepth = 1)
+        {
+            if (populateDepth > 0 && JData != null && JData.Count() > 0)
+            {
+                // Remove any existing nodes.
+                if (Nodes.Count > 0) Nodes.Clear();
+
+                // Loop through the child tokens.
+                foreach (JToken childToken in JData)
+                {
+                    // Create and insert a new Json_TN based on this token.
+                    Nodes.Insert(0, new Json_TN(this, childToken, populateDepth: populateDepth - 1));
+                }
+            }
+            // This node's child node count may have changed so refresh the tool tip text.
+            RefreshToolTipText();
+        }
+
+        /// <summary>
         /// Creates child nodes appropriate to the child tokens in the JData.
         /// </summary>
         /// <param name="maxDepth">Defaults to 1</param>
-        public void CreateChildNodesFromjData(int maxDepth = 1)
-        {
-            //JToken JData = (JToken)Tag;
-            if (JData != null && JData.Count() > 0)
-            {
-                if (!ChildNodesLoaded) // <-- check this
-                {
-                    foreach (JToken childToken in JData) // .Reverse<JToken>())
-                    {
-                        Json_TN newNode = new Json_TN(this, childToken);
-                        Nodes.Insert(0, newNode);
-                    }
-                    // ChildNodesLoaded = true;
-                }
-                if (maxDepth > 1)
-                {
-                    foreach (Json_TN childNode in Nodes)
-                    {
-                        childNode.CreateChildNodesFromjData(maxDepth - 1);
-                    }
-                }
-            }
-        }
+        //public void oldCreateChildNodesFromjData(int maxDepth = 1)
+        //{
+        //    //JToken JData = (JToken)Tag;
+        //    if (JData != null && JData.Count() > 0)
+        //    {
+        //        if (!ChildNodesLoaded) // <-- check this
+        //        {
+        //            foreach (JToken childToken in JData) // .Reverse<JToken>())
+        //            {
+        //                Nodes.Insert(0, new Json_TN(this, childToken));
+        //            }
+        //            // ChildNodesLoaded = true;
+        //        }
+        //        if (maxDepth > 1)
+        //        {
+        //            foreach (Json_TN childNode in Nodes)
+        //            {
+        //                //childNode.CreateChildNodesFromjData(maxDepth - 1);
+        //            }
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Determines the appropriate node type for the JToken's content type.
@@ -301,6 +332,7 @@ namespace HELLION.DataStructures.UI
         #region Fields
 
         private JToken _jData = null;
+        private int _populateDepth;
 
         #endregion
 

@@ -474,9 +474,13 @@ namespace HELLION.Explorer
 
                 // TODO: Possibly needs to use the .Insert(0, node) method.
                 // Add the nodes to the TreeView control.
+
+                // TODO FINDME FIXME
+
+                // Sol sys and search are disabled to track down an issue in the GameData class.
+
                 MainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
-                // MainForm.treeView1.Nodes.Add(docCurrent.Blueprints.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
 
                 // Trigger a refresh on each of the node trees.
@@ -490,10 +494,17 @@ namespace HELLION.Explorer
 
                 // Expand the Solar System root node.
                 docCurrent.SolarSystem.RootNode.Expand();
+                
+                // TODO FINDME FIXME temp disabled
+                
                 // Expand the star node, Hellion.
-                docCurrent.SolarSystem.RootNode.FirstNode.Expand();
+                //docCurrent.SolarSystem.RootNode.FirstNode.Expand();
+
                 // Set the star node as the selected node.
-                MainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
+                //MainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
+
+
+
 
                 // Enable the Find option, leaving the FindNext disabled.
                 MainForm.findToolStripMenuItem.Enabled = true;
@@ -1131,7 +1142,7 @@ namespace HELLION.Explorer
                     sb1.Append(Environment.NewLine);
                 }
 
-                if (true) // nSelectedHETNNode.NodeType != Base_TN_NodeType.SystemNAV) // temp addition
+                if (false) // nSelectedHETNNode.NodeType != Base_TN_NodeType.SystemNAV) // temp addition
                 {
                     // Get the count of the child nodes contained in the selected node
                     decimal iTotalNodeCount = docCurrent.SolarSystem.RootNode.GetNodeCount(includeSubTrees: true);

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures
@@ -22,27 +21,28 @@ namespace HELLION.DataStructures
         /// <param name="ownerObject"></param>
         public Json_File_UI(IParent_Json_File ownerObject) : base(ownerObject)
         {
-            RootNode = new Json_TN(ownerObject: this, newNodeType: Base_TN_NodeType.DataFile, nodeName: "unknown");
+            if (RootNode == null) ReGenerateRootNode();
+            RootNode.OwnerObject = this;
+
         }
 
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public Json_File_UI(IParent_Json_File ownerObject, FileInfo passedFileInfo, int populateNodeTreeDepth) 
+        public Json_File_UI(IParent_Json_File ownerObject, FileInfo passedFileInfo, int populateDepth = 1) 
             : base(ownerObject, passedFileInfo, autoDeserialise: false)
         {
-            RootNode = new Json_TN(ownerObject: this, newNodeType: Base_TN_NodeType.DataFile, nodeName: File.Name);
+            // Set the auto-population depth.
+            _populateDepth = populateDepth;
 
-            if (!File.Exists) throw new FileNotFoundException();
-            else
-            {
-                // Cast the root node as the appropriate type to use it's methods.
-                Json_TN tmpNode = (Json_TN)RootNode;
-                tmpNode.JData = JData;
-                tmpNode.CreateChildNodesFromjData(populateNodeTreeDepth);
-            }
+            // Create the root node for the file
+            if (RootNode == null) ReGenerateRootNode();
+            else RootNode.Name = File.Name;
+            RootNode.OwnerObject = this;
+
         }
+
 
         #endregion
 
@@ -52,9 +52,25 @@ namespace HELLION.DataStructures
         /// Public property for read-only access to the root node of the tree.
         /// </summary>
         /// <remarks>
-        /// Casts the RootNode to an Json_TN.
+        /// RootNode is defined as a Base_TN however is likely to actually be a derived class.
         /// </remarks>
-        public Base_TN RootNode { get; protected set; } = null;
+        public Base_TN RootNode
+        {
+            get
+            {
+                if (_rootNode == null)
+                {
+                    ReGenerateRootNode();
+                }
+                return _rootNode;
+            }
+            protected set => _rootNode = value;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Json_TN JsonRootNode { get; protected set; } = null;
 
         /// <summary>
         /// Used to determine whether there was an error on load.
@@ -67,13 +83,46 @@ namespace HELLION.DataStructures
                 // Set the load error flag
                 base.LoadError = value;
                 // Change the node type so that the icon changes to the error type
-                if (RootNode != null) RootNode.NodeType = Base_TN_NodeType.DataFileError;
+                if (RootNode != null && value) RootNode.NodeType = Base_TN_NodeType.DataFileError;
             }
         }
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Handles changes to the JData object and additionally triggers the Json node
+        /// tree to regenerate.
+        /// </summary>
+        protected override void ProcessChangedJData()
+        {
+            // Call the base class function.
+            base.ProcessChangedJData();
+
+            // Trigger regeneration of nodes based on the new jdata.
+            if (JData != null) RegenerateJsonNodeTree();
+
+        }
+
+        protected void ReGenerateRootNode(string name = null)
+        {
+            string nodeName = name == null ? (File != null ? File.Name : "unknown") : name;
+            RootNode = new Base_TN(this, Base_TN_NodeType.DataFile, name);
+
+        }
+
+        protected void RegenerateJsonNodeTree()
+        {
+
+
+
+            // Create the root node for the Json tree and feed in the loaded JData.
+            JsonRootNode = new Json_TN(this, JData, File.Name, _populateDepth);
+
+            if (JsonRootNode != null && RootNode != null) RootNode.Nodes.Add(JsonRootNode);
+                        
+        }
 
         /// <summary>
         /// Handles closing of this file, and de-allocation of it's objects
@@ -111,5 +160,11 @@ namespace HELLION.DataStructures
 
         #endregion
 
+        #region Fields
+
+        private int _populateDepth;
+        private Base_TN _rootNode;
+
+        #endregion
     }
 }

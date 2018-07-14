@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using HELLION.DataStructures.UI;
-using Newtonsoft.Json.Linq;
 
 namespace HELLION.DataStructures.Document
 {
@@ -26,10 +25,10 @@ namespace HELLION.DataStructures.Document
             if (SaveFileInfo != null && SaveFileInfo.Exists)
             {
                 // Create new save file object.
-                SaveFile = new GameSave_Json_File(this, SaveFileInfo, populateNodeTreeDepth: 5);
+                SaveFile = new GameSave_Json_File(this, SaveFileInfo, populateDepth: Def_SaveFileNodeDepth);
 
                 // Pre-load in several levels of node.
-                ((Json_TN)SaveFile.RootNode).CreateChildNodesFromjData(3);
+                //((Json_TN)SaveFile.RootNode).CreateChildNodesFromjData(3);
 
                 if (SaveFile.RootNode == null) throw new Exception("SaveFile rootNode was null");
                 else RootNode.Nodes.Insert(0, SaveFile.RootNode);
@@ -37,13 +36,13 @@ namespace HELLION.DataStructures.Document
 
             if (StaticDataFolderInfo != null && StaticDataFolderInfo.Exists)
             {
-                StaticData = new Json_FileCollection(this, StaticDataFolderInfo, autoPopulateTreeDepth: 1);
+                StaticData = new Json_FileCollection(this, StaticDataFolderInfo, populateDepth: Def_DataFileNodeDepth);
                 if (StaticData.RootNode == null) throw new Exception("StaticData rootNode was null");
                 else RootNode.Nodes.Insert(0, StaticData.RootNode);
 
-                // Create the Station Blueprint folder
+                // Create the Station Blueprint sub-folder
                 DirectoryInfo stationsInfo = new DirectoryInfo(StaticDataFolderInfo.FullName + @"\Stations");
-                StationsData = new Json_FileCollection(this, stationsInfo, autoPopulateTreeDepth: 0);
+                StationsData = new Json_FileCollection(this, stationsInfo, populateDepth: 0);
                 if (StationsData.RootNode == null) throw new Exception("StationsData rootNode was null");
                 else
                 {
@@ -58,9 +57,9 @@ namespace HELLION.DataStructures.Document
                     StaticData.RootNode.Nodes.Add(StationsData.RootNode);
                 }
 
-                // Create the Collisions folder.
+                // Create the Collisions sub-folder.
                 DirectoryInfo collsionInfo = new DirectoryInfo(StaticDataFolderInfo.FullName + @"\Collision");
-                CollisionData = new Json_FileCollection(this, collsionInfo, autoPopulateTreeDepth: 0);
+                CollisionData = new Json_FileCollection(this, collsionInfo, populateDepth: 0);
                 if (CollisionData.RootNode == null) throw new Exception("CollisionData rootNode was null");
                 else
                 {
@@ -162,5 +161,13 @@ namespace HELLION.DataStructures.Document
         }
 
         #endregion
+
+        #region Constants
+
+        public const int Def_SaveFileNodeDepth = 5;
+        public const int Def_DataFileNodeDepth = 3;
+
+        #endregion
+
     }
 }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FastColoredTextBoxNS;
+using HELLION.DataStructures;
 using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
@@ -45,12 +46,15 @@ namespace HELLION.Explorer
             SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
             FormTitleText = passedSourceNode.FullPath;
             Text = FormTitleText;
-            AppliedText = passedSourceNode.JData.ToString();
+            AppliedText = SourceNode.JData.ToString();
+
             // Character length limit -  this is a guessed figure!
             if (AppliedText.Length > 25000)
                 deserialiseAsYouTypeToolStripMenuItem.Checked = false;
 
+            // Apply the text.
             fastColoredTextBox1.Text = AppliedText;
+
             // Required as setting the FastColouredTextBox triggers the _isDirty
             IsDirty = false;
         }
@@ -75,7 +79,7 @@ namespace HELLION.Explorer
             }
         }
 
-        public Json_TN SourceNode { get; } = null;
+        public Json_TN SourceNode { get; private set; } = null;
 
         #endregion
 
@@ -96,21 +100,39 @@ namespace HELLION.Explorer
         {
 
             if (fastColoredTextBox1.Text.
-                TryParseJson(out JToken tmp, out JsonReaderException jrex))
+                TryParseJson(out JToken newToken, out JsonReaderException jrex))
             {
-                // Successful parse
+                // Successful parse.
+
+                // Find the parent Json_File.
+                Json_File parentFile = HellionExplorerProgram.docCurrent?.GameData.FindOwningFile(SourceNode);
+                if (parentFile == null) throw new NullReferenceException("ApplyChanges: parentFile was null.");
+
+                // Check to make sure it's a .save file, as that's all that's supported currently.
+                if (parentFile != HellionExplorerProgram.docCurrent.GameData.SaveFile)
+                {
+                    MessageBox.Show("Only the main .save file is currently supported for saving edited changes"
+                        + "- other Json files are view only.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+
 
                 // Set the AppliedText.
                 AppliedText = fastColoredTextBox1.Text;
 
-
-                // do some important stuff like actually apply the data changes.
-
-
+                // Mark this editor as not dirty.
                 IsDirty = false;
 
-                MessageBox.Show("fake-applied.");
+                // Set the new token.
+                SourceNode.JData.Replace(newToken);
 
+
+
+
+
+                parentFile.IsDirty = true;
+                
+                MessageBox.Show("ApplyChanges exiting.");
                 return true;
 
             }
@@ -167,7 +189,6 @@ namespace HELLION.Explorer
                 }
             }
         }
-
 
         /// <summary>
         /// Refreshes the cursor position indicator.
@@ -268,6 +289,11 @@ namespace HELLION.Explorer
 
         }
 
+        /// <summary>
+        /// Handles updating the cursor position indicator when the selection changes.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void fastColoredTextBox1_SelectionChanged(object sender, EventArgs e)
         {
             RefreshToolStripCursorPositionLabel();
@@ -302,7 +328,6 @@ namespace HELLION.Explorer
 
         private void deserialiseAsYouTypeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // 
             deserialiseAsYouTypeToolStripMenuItem.Checked = !deserialiseAsYouTypeToolStripMenuItem.Checked;
             RefreshToolStripDeserialisatonStatus(!deserialiseAsYouTypeToolStripMenuItem.Checked);
 

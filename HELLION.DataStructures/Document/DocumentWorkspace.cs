@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using HELLION.DataStructures.Blueprints;
 using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Search;
 using HELLION.DataStructures.UI;
@@ -21,14 +20,13 @@ namespace HELLION.DataStructures.Document
         #region Constructors
 
         /// <summary>
-        /// Constructor that takes a FileInfo and a DirectoryInfo.
+        /// Default Constructor.
         /// </summary>
-        /// <param name="passedFileInfo">The FileInfo that represents the .save file.</param>
-        /// <param name="passedDirectoryInfo">The DirectoryInfo that represents the Static Data folder.</param>
-        /// <param name="autoLoad"></param>
-        /// <param name="passedListView"></param>
+        /// <param name="passedFileInfo"></param>
+        /// <param name="passedDirectoryInfo"></param>
         /// <param name="passedTreeView"></param>
-        /// <param name="passedImageList"></param>
+        /// <param name="passedListView"></param>
+        /// <param name="passedHEImageList"></param>
         public DocumentWorkspace(FileInfo passedFileInfo, DirectoryInfo passedDirectoryInfo,
             TreeView passedTreeView, ListView passedListView, EmbeddedImages_ImageList passedHEImageList)
         {
@@ -38,10 +36,11 @@ namespace HELLION.DataStructures.Document
                 throw new InvalidOperationException("DocumentWorkspace Constructor: A problem occurred with a passed parameter - something doesn't exist.");
             else
             {
+                // Create the core objects.
                 GameData = new GameData(passedFileInfo, passedDirectoryInfo);
                 SolarSystem = new SolarSystem(GameData);
                 SearchHandler = new SearchHandler(GameData, SolarSystem);
-                //Blueprints = new BlueprintsHandler_UI();
+
 
                 // Add the parameters related to the MainForm controls.
                 _mainFormTreeView = passedTreeView ?? throw new NullReferenceException("passedTreeView was null.");

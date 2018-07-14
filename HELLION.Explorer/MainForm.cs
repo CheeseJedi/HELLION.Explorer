@@ -180,7 +180,7 @@ namespace HELLION.Explorer
             if (treeView1.SelectedNode != null && ((Base_TN)treeView1.SelectedNode)
                 .NodeType == Base_TN_NodeType.StationBlueprintFile)
             {
-                HellionExplorerProgram.CreateNewBlueprintEditor((Json_TN)treeView1.SelectedNode);
+                HellionExplorerProgram.CreateNewBlueprintEditor((Json_TN)treeView1.SelectedNode.FirstNode);
             }
             else
             {
@@ -494,7 +494,7 @@ namespace HELLION.Explorer
                         if (!tempGameDataNode.ChildNodesLoaded)
                         {
                             // Load next level
-                            tempGameDataNode.CreateChildNodesFromjData(maxDepth: 1);
+                            tempGameDataNode.RefreshChildNodesFromjData(populateDepth: 1);
 
                             // Update node counts, this may need to be triggered from the parent(s) also.
                             //tempNode.UpdateCounts();
@@ -595,7 +595,7 @@ namespace HELLION.Explorer
         {
             // Load next level
             Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
-            tempNode.CreateChildNodesFromjData(maxDepth: 1);
+            tempNode.RefreshChildNodesFromjData(populateDepth: 1);
             //tempNode.UpdateCounts();
         }
 
@@ -603,7 +603,7 @@ namespace HELLION.Explorer
         {
             // Load all levels (up to depth of 15)
             Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
-            tempNode.CreateChildNodesFromjData(maxDepth: 15);
+            tempNode.RefreshChildNodesFromjData(populateDepth: 15);
             //tempNode.UpdateCounts();
             tempNode.Expand();
         }

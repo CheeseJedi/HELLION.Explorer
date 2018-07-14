@@ -245,6 +245,10 @@ namespace HELLION.DataStructures
             }
 
             // FileInfo was null or file does not exist.
+
+            if (File == null) Debug.Print("FileInfo was null.");
+            if (!File.Exists) Debug.Print("File does not exist");
+
             LoadError = true;
             return true;
         }
