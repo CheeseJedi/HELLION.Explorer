@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using HELLION.DataStructures;
@@ -249,11 +250,6 @@ namespace HELLION.Explorer
 
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            // Update the object information panel
-            //if (Program.docCurrent != null && Program.docCurrent.IsFileReady)
-            // {
-            // }
-
             // Update the object path + name + Tag in the object identifier bar
             HellionExplorerProgram.RefreshSelectedOjectPathBarText(e.Node);
             HellionExplorerProgram.RefreshListView(e.Node);
@@ -475,37 +471,44 @@ namespace HELLION.Explorer
         /// <param name="e"></param>
         private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (HellionExplorerProgram.MainForm.treeView1.SelectedNode != null)
+            HandleExpansionRequest();
+        }
+
+        /// <summary>
+        /// Handles KeyDown events when the TreeView has focus.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void treeView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            Debug.Print("treeView1_KeyDown fired. [" + e.KeyData.ToString() + "] [" + e.Modifiers.ToString() + "]");
+
+
+            // Handle Control+Enter as an expansion/load ALL request.
+            if (e.KeyData.HasFlag(Keys.Enter) && e.KeyData.HasFlag(Keys.Control))
             {
-                // Cast the TreeNode to an HETreeNode to determine it's type
-                Base_TN tempHETreeNode = (Base_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+                Debug.Print("Expansion (all) Request");
+                HandleExpansionRequest(DefaultLoadAllDepth);
+                return;
+            }
 
-                switch (tempHETreeNode.NodeType)
-                {
-                    case Base_TN_NodeType.SaveFile:
-                    case Base_TN_NodeType.DataFile:
-                    case Base_TN_NodeType.JsonArray:
-                    case Base_TN_NodeType.JsonObject:
-                    case Base_TN_NodeType.JsonProperty:
-                    case Base_TN_NodeType.JsonValue:
-                        // We're in the Game Data section
 
-                        Json_TN tempGameDataNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
-                        if (!tempGameDataNode.ChildNodesLoaded)
-                        {
-                            // Load next level
-                            tempGameDataNode.RefreshChildNodesFromjData(populateDepth: 1);
-
-                            // Update node counts, this may need to be triggered from the parent(s) also.
-                            //tempNode.UpdateCounts();
-
-                            // Expand the current node
-                            tempGameDataNode.Expand();
-                        }
-                        break;
-                    default:
-                        break;
-                }
+            // Handle Shift+Enter as an expansion/load request.
+            if (e.KeyData.HasFlag(Keys.Enter) && e.KeyData.HasFlag(Keys.Shift))
+            {
+                Debug.Print("Expansion Request");
+                HandleExpansionRequest();
+                return;
+            }
+                        
+            // Handle the Enter key similarly to a click.
+            if (e.KeyData == Keys.Enter)
+            {
+                Debug.Print("Selection Request");
+                HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
+                HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
+                HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                return;
             }
         }
 
@@ -593,19 +596,12 @@ namespace HELLION.Explorer
 
         private void loadNextLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Load next level
-            Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
-            tempNode.RefreshChildNodesFromjData(populateDepth: 1);
-            //tempNode.UpdateCounts();
+            LoadNextLevel();
         }
 
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Load all levels (up to depth of 15)
-            Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
-            tempNode.RefreshChildNodesFromjData(populateDepth: 15);
-            //tempNode.UpdateCounts();
-            tempNode.Expand();
+            LoadAllLevels();
         }
 
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -796,5 +792,62 @@ namespace HELLION.Explorer
 
         }
 
+
+        /// <summary>
+        /// Handles an expansion request when the keyboard has been used to issue the request.
+        /// </summary>
+        /// <param name="populateDepth"></param>
+        private static void HandleExpansionRequest(int populateDepth = 1)
+        {
+            TreeNode node = HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+
+            if (node != null && node.GetType() == typeof(Json_TN))
+            {
+
+
+                // Cast the TreeNode to an HETreeNode to determine it's type
+                Json_TN jsonNode = (Json_TN)node;
+                if (populateDepth == 1)
+                {
+                    // Load next level
+                    LoadNextLevel();
+
+                }
+                else
+                {
+                    LoadAllLevels();
+                }
+                
+                // Expand the current node
+                jsonNode.Expand();
+
+            }
+        }
+
+        /// <summary>
+        /// Triggers the selected node to load (create nodes from) the next level of data.
+        /// </summary>
+        private static void LoadNextLevel() => LoadLevels(1, skipThroughPopulatedNodes: true);
+
+
+        private static void LoadAllLevels() => LoadLevels(DefaultLoadAllDepth, skipThroughPopulatedNodes: true);
+
+
+
+        /// <summary>
+        /// Triggers the selected node to load (create nodes from) all levels of data up to the
+        /// DefaultLoadAllDepth unless another value is specified.
+        /// </summary>
+        private static void LoadLevels(int depth, bool skipThroughPopulatedNodes = false)
+        {
+            // Load all levels (up to specified depth)
+            Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+            tempNode.RefreshChildNodesFromjData(depth, skipThroughPopulatedNodes);
+            //tempNode.UpdateCounts();
+            tempNode.Expand();
+        }
+
+
+        private const int DefaultLoadAllDepth = 15;
     }
 }

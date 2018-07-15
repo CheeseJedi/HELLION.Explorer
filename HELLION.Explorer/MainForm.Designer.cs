@@ -66,6 +66,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setDataFolderLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verifyDataFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.stationBlueprintEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updatecheckToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
@@ -107,7 +108,6 @@
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stationBlueprintEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -442,6 +442,13 @@
             this.verifyDataFolderToolStripMenuItem.Text = "Verify Data folder";
             this.verifyDataFolderToolStripMenuItem.Click += new System.EventHandler(this.verifyDataFolderToolStripMenuItem_Click);
             // 
+            // stationBlueprintEditorToolStripMenuItem
+            // 
+            this.stationBlueprintEditorToolStripMenuItem.Name = "stationBlueprintEditorToolStripMenuItem";
+            this.stationBlueprintEditorToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            this.stationBlueprintEditorToolStripMenuItem.Text = "Station Blueprint Editor";
+            this.stationBlueprintEditorToolStripMenuItem.Click += new System.EventHandler(this.stationBlueprintEditorToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -568,6 +575,7 @@
             this.treeView1.Size = new System.Drawing.Size(326, 578);
             this.treeView1.TabIndex = 0;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
+            this.treeView1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.treeView1_KeyDown);
             this.treeView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDoubleClick);
             // 
             // splitContainer2
@@ -814,13 +822,6 @@
             this.testToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.testToolStripMenuItem.Text = "Test";
             this.testToolStripMenuItem.Visible = false;
-            // 
-            // stationBlueprintEditorToolStripMenuItem
-            // 
-            this.stationBlueprintEditorToolStripMenuItem.Name = "stationBlueprintEditorToolStripMenuItem";
-            this.stationBlueprintEditorToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.stationBlueprintEditorToolStripMenuItem.Text = "Station Blueprint Editor";
-            this.stationBlueprintEditorToolStripMenuItem.Click += new System.EventHandler(this.stationBlueprintEditorToolStripMenuItem_Click);
             // 
             // MainForm
             // 

@@ -44,16 +44,16 @@ namespace HELLION.Explorer
             _imageList = imageList ?? throw new NullReferenceException("passed ImageList was null.");
 
             SourceNode = passedSourceNode ?? throw new NullReferenceException("passedSourceNode was null.");
-            FormTitleText = passedSourceNode.FullPath;
-            Text = FormTitleText;
-            AppliedText = SourceNode.JData.ToString();
+            _formTitleText = passedSourceNode.FullPath;
+            Text = _formTitleText;
+            _appliedText = SourceNode.JData.ToString();
 
             // Character length limit -  this is a guessed figure!
-            if (AppliedText.Length > 25000)
+            if (_appliedText.Length > 25000)
                 deserialiseAsYouTypeToolStripMenuItem.Checked = false;
 
             // Apply the text.
-            fastColoredTextBox1.Text = AppliedText;
+            fastColoredTextBox1.Text = _appliedText;
 
             // Required as setting the FastColouredTextBox triggers the _isDirty
             IsDirty = false;
@@ -87,8 +87,8 @@ namespace HELLION.Explorer
 
         private void RefreshJsonDataViewFormTitleText()
         {
-            if (IsDirty) Text = FormTitleText + "*";
-            else Text = FormTitleText;
+            if (IsDirty) Text = _formTitleText + "*";
+            else Text = _formTitleText;
         }
 
         /// <summary>
@@ -116,23 +116,19 @@ namespace HELLION.Explorer
                     return false;
                 }
 
+                // Set the new token.
+                SourceNode.JData.Replace(newToken);
+
+                // Mark the parent file as dirty.
+                parentFile.IsDirty = true;
 
                 // Set the AppliedText.
-                AppliedText = fastColoredTextBox1.Text;
+                _appliedText = fastColoredTextBox1.Text;
 
                 // Mark this editor as not dirty.
                 IsDirty = false;
 
-                // Set the new token.
-                SourceNode.JData.Replace(newToken);
-
-
-
-
-
-                parentFile.IsDirty = true;
-                
-                MessageBox.Show("ApplyChanges exiting.");
+                MessageBox.Show("Changes applied.", "SUCCESS");
                 return true;
 
             }
@@ -224,8 +220,8 @@ namespace HELLION.Explorer
         /// <summary>
         /// Stores a copy of the unmodified text - updated after the apply changes operation.
         /// </summary>
-        private string AppliedText = null;
-        private string FormTitleText = null;
+        private string _appliedText = null;
+        private string _formTitleText = null;
 
         private EmbeddedImages_ImageList _imageList = null;
 
@@ -245,17 +241,20 @@ namespace HELLION.Explorer
             if (IsDirty)
             {
                 // Unsaved changes, prompt the user to apply them before closing the window.
-                DialogResult result = MessageBox.Show("Do you want to apply changes to the main file?",
-                    "Un-Applied Changes Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
 
-                switch (result)
+                switch (MessageBox.Show("Do you want to apply changes to the main file?",
+                    "Un-Applied Changes Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation))
                 {
                     case DialogResult.Cancel:
+                        e.Cancel = true;
                         return;
 
                     case DialogResult.Yes:
-                        MessageBox.Show("User selected to apply changes.", "NonImplemented Notice",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        ApplyChanges();
+                        break;
+
+                    default:
                         break;
                 }
             }

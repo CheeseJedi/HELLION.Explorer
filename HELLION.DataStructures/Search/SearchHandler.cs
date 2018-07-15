@@ -71,7 +71,7 @@ namespace HELLION.DataStructures.Search
 
         private GameData _gameData = null;
         private SolarSystem _solarSystem = null;
-        private HESearchOperator _currentOperator = null;
+        //private HESearchOperator _currentOperator = null; // could be defunct.
 
         #endregion
 

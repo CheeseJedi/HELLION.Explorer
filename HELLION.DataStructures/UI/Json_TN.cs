@@ -181,22 +181,35 @@ namespace HELLION.DataStructures.UI
         /// Refreshes the child nodes - triggered when the JData changes.
         /// </summary>
         /// <param name="populateDepth"></param>
-        public void RefreshChildNodesFromjData(int populateDepth = 1)
+        public void RefreshChildNodesFromjData(int populateDepth = 1, bool skipThroughPopulatedNodes = false)
         {
-            if (populateDepth > 0 && JData != null && JData.Count() > 0)
+            if (populateDepth > 0)
             {
-                // Remove any existing nodes.
-                if (Nodes.Count > 0) Nodes.Clear();
-
-                // Loop through the child tokens.
-                foreach (JToken childToken in JData)
+                if (skipThroughPopulatedNodes && ChildNodesLoaded)
                 {
-                    // Create and insert a new Json_TN based on this token.
-                    Nodes.Insert(0, new Json_TN(this, childToken, populateDepth: populateDepth - 1));
+                    foreach (Json_TN node in Nodes) node.RefreshChildNodesFromjData
+                            (populateDepth - 1, skipThroughPopulatedNodes: true);
+                    return;
                 }
+
+                if (JData != null && JData.Count() > 0)
+                {
+                    // Remove any existing nodes.
+                    if (Nodes.Count > 0) Nodes.Clear();
+
+                    // Loop through the child tokens.
+                    foreach (JToken childToken in JData)
+                    {
+                        // Create and insert a new Json_TN based on this token.
+                        Nodes.Insert(0, new Json_TN(this, childToken, populateDepth: populateDepth - 1));
+                    }
+
+                    // This node's child node count probably changed so refresh the tool tip text.
+                    RefreshToolTipText();
+
+                }
+
             }
-            // This node's child node count may have changed so refresh the tool tip text.
-            RefreshToolTipText();
         }
 
         /// <summary>
