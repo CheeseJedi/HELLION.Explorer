@@ -101,7 +101,7 @@ namespace HELLION.DataStructures
                     if (tempJsonFile.IsLoaded && !LoadError)
                     {
                         if (tempJsonFile.RootNode == null) throw new NullReferenceException
-                                ("Json_FileCollection.Load: tempJsonFile.RootNode was null.");
+                            ("Json_FileCollection.Load: tempJsonFile.RootNode was null.");
                         else RootNode.Nodes.Insert(0, tempJsonFile.RootNode);
                     }
                 }

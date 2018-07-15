@@ -42,7 +42,7 @@ namespace HELLION.DataStructures.Document
 
                 // Create the Station Blueprint sub-folder
                 DirectoryInfo stationsInfo = new DirectoryInfo(StaticDataFolderInfo.FullName + @"\Stations");
-                StationsData = new Json_FileCollection(this, stationsInfo, populateDepth: 0);
+                StationsData = new Json_FileCollection(this, stationsInfo, populateDepth: Def_DataFileNodeDepth);
                 if (StationsData.RootNode == null) throw new Exception("StationsData rootNode was null");
                 else
                 {
@@ -59,7 +59,7 @@ namespace HELLION.DataStructures.Document
 
                 // Create the Collisions sub-folder.
                 DirectoryInfo collsionInfo = new DirectoryInfo(StaticDataFolderInfo.FullName + @"\Collision");
-                CollisionData = new Json_FileCollection(this, collsionInfo, populateDepth: 0);
+                CollisionData = new Json_FileCollection(this, collsionInfo, populateDepth: Def_DataFileNodeDepth);
                 if (CollisionData.RootNode == null) throw new Exception("CollisionData rootNode was null");
                 else
                 {
@@ -164,8 +164,8 @@ namespace HELLION.DataStructures.Document
 
         #region Constants
 
-        public const int Def_SaveFileNodeDepth = 5;
-        public const int Def_DataFileNodeDepth = 3;
+        public const int Def_SaveFileNodeDepth = 3;
+        public const int Def_DataFileNodeDepth = 1;
 
         #endregion
 

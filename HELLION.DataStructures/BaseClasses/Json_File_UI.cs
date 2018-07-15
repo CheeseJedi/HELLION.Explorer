@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using HELLION.DataStructures.UI;
 
 namespace HELLION.DataStructures
@@ -34,7 +35,7 @@ namespace HELLION.DataStructures
             : base(ownerObject, passedFileInfo, autoDeserialise: false)
         {
             // Set the auto-population depth.
-            _populateDepth = populateDepth;
+            PopulateDepth = populateDepth;
 
             // Create the root node for the file
             if (RootNode == null) ReGenerateRootNode();
@@ -87,6 +88,23 @@ namespace HELLION.DataStructures
             }
         }
 
+        public int PopulateDepth
+        {
+            get => _populateDepth;
+            set
+            {
+                if (_populateDepth != value)
+                {
+                    _populateDepth = value;
+
+                    // Trigger child node regeneration.
+
+                    RegenerateJsonNodeTree();
+
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -115,12 +133,19 @@ namespace HELLION.DataStructures
         protected void RegenerateJsonNodeTree()
         {
 
-
+            RootNode.Nodes.Clear();
 
             // Create the root node for the Json tree and feed in the loaded JData.
-            JsonRootNode = new Json_TN(this, JData, File.Name, _populateDepth);
+            JsonRootNode = new Json_TN(this, JData, File.Name, PopulateDepth);
 
-            if (JsonRootNode != null && RootNode != null) RootNode.Nodes.Add(JsonRootNode);
+            if (JsonRootNode != null && RootNode != null)
+            {
+                RootNode.Nodes.Add(JsonRootNode);
+            }
+            else
+            {
+                Debug.Print("## RegenerateJsonNodeTree: Error - RootNode or JsonRootNode was null.");
+            }
                         
         }
 

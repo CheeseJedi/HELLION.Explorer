@@ -11,7 +11,8 @@ namespace HELLION.DataStructures.UI
     /// </summary>
     public class SolarSystem_TN : Base_TN
     {
-        private long _gUID = 0;
+        private long _guid = 0;
+
         #region Constructors
 
         /// <summary>
@@ -141,12 +142,12 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         public long GUID
         {
-            get => _gUID;
+            get => _guid;
             set
             {
-                if (_gUID != value)
+                if (_guid != value)
                 {
-                    _gUID = value;
+                    _guid = value;
 
                     // Triggered update.
                     RefreshToolTipText();
@@ -170,7 +171,18 @@ namespace HELLION.DataStructures.UI
         public long ParentGUID
         {
             get => OrbitData.ParentGUID != null ? (long)OrbitData.ParentGUID : -1L;
-            set => OrbitData.ParentGUID = value;
+            set
+            {
+                if (OrbitData.ParentGUID != value)
+                {
+
+                    OrbitData.ParentGUID = value;
+
+                    // Trigger refresh.
+                    RefreshToolTipText();
+
+                }
+            }
         }
 
         /// <summary>
@@ -244,6 +256,9 @@ namespace HELLION.DataStructures.UI
         /// Determines whether this node is docked *to* it's parent, or just orbiting
         /// it in the case of a celestial body parent.
         /// </summary>
+        /// <remarks>
+        /// Returns true if this object is docked to the parent, false if it is orbiting it.
+        /// </remarks>
         public bool IsDockedToParent
         {
             get
@@ -277,7 +292,28 @@ namespace HELLION.DataStructures.UI
             sb.Append("NodeType: " + NodeType.ToString() + Environment.NewLine);
             sb.Append("GUID: " + GUID + Environment.NewLine);
 
-            //sb.Append("ParentGUID: " + OrbitData?.ParentGUID + Environment.NewLine);
+            if (LinkedGameDataNode != null && NodeType == Base_TN_NodeType.Player)
+            {
+                sb.Append("IsAlive: " + (string)LinkedGameDataNode.JData["IsAlive"] + Environment.NewLine);
+                string healthPoints = (string)LinkedGameDataNode.JData["HealthPoints"];
+                sb.Append(string.Format("HealthPoints: {0}" + Environment.NewLine, (healthPoints == null ? "null" : healthPoints)));
+
+            }
+
+            if (LinkedGameDataNode != null && NodeType == Base_TN_NodeType.Ship)
+            {
+                string health = (string)LinkedGameDataNode.JData["Health"];
+                sb.Append(string.Format("Health: {0}" + Environment.NewLine, (health == null ? "null" : health)));
+            }
+
+            if (OrbitData != null && OrbitData.ParentGUID != null)
+            {
+                sb.Append("ParentGUID: " + OrbitData.ParentGUID + Environment.NewLine);
+
+                if (Parent != null) sb.Append("Parent Name: " + Parent.Name + Environment.NewLine);
+
+            }
+
 
             return sb.ToString();
         }

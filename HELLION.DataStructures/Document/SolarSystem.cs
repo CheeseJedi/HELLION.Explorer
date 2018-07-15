@@ -20,12 +20,13 @@ namespace HELLION.DataStructures.Document
         /// <param name="gameData"></param>
         public SolarSystem(GameData gameData)
         {
-            RootNode = new SolarSystem_TN(passedOwner: this, nodeName: "Solar System", 
+            RootNode = new SolarSystem_TN(passedOwner: this, nodeName: "Solar System",
                 nodeType: Base_TN_NodeType.SolarSystemView) //, "Solar System")
             {
                 // Hellion, the star, has a ParentGUID of -1, so we utilise this to attach it to
                 // the Solar System root node by giving that a GUID of -1 (and no parentGUID).
-                GUID = -1 
+                GUID = -1,
+                ParentGUID = -100
             };
 
             if (gameData == null) throw new NullReferenceException("gameData was null.");
@@ -112,12 +113,16 @@ namespace HELLION.DataStructures.Document
                             if (obj == null) throw new NullReferenceException
                                     ("Adding CelestialBodies - obj was null.");
 
-                            long newNodeParentGUID = 0;
-                            JToken testToken = obj["ParentGUID"];
-                            if (testToken != null)
-                            {
-                                newNodeParentGUID = (long)obj["ParentGUID"];
-                            }
+                            //long newNodeParentGUID = 0;
+                            //JToken testToken = obj["ParentGUID"];
+                            //if (testToken != null)
+                            //{
+                            //    newNodeParentGUID = (long)obj["ParentGUID"];
+                            //}
+
+                            // If the node doesn't have a parent guid set it to -1000.
+                            long newNodeParentGUID = obj["ParentGUID"] != null ? (long)obj["ParentGUID"] : -1000L;
+
 
                             switch (newNodeParentGUID)
                             {
@@ -162,14 +167,14 @@ namespace HELLION.DataStructures.Document
                     }
                     if (findKey == String.Empty) throw new Exception("findKey was empty.");
 
-                    TreeNode[] tmpMatches = GameData.SaveFile.RootNode.Nodes.Find(findKey, searchAllChildren: false);
+                    TreeNode[] tmpMatches = GameData.SaveFile.RootNode.FirstNode.Nodes.Find(findKey, searchAllChildren: false);
 
                     Json_TN sectionRootNode = null;
                     if (tmpMatches.Count() > 0)
                     {
                         sectionRootNode = (Json_TN)tmpMatches?[0];
                     }
-                    //else Debug.Print("sectionRootNode was null.");
+                    else Debug.Print("AddSolarSystemObjectsByType({0}) - sectionRootNode was null.", nodeType);
 
                     Json_TN arrayRootNode = null;
                     if (sectionRootNode?.Nodes.Count > 0)
@@ -210,7 +215,7 @@ namespace HELLION.DataStructures.Document
                             RootNode.Nodes.Insert(0, newNode);
                         }
                     }
-                    else Debug.Print("subRootNode was null.");
+                    else Debug.Print("AddSolarSystemObjectsByType({0}) - subRootNode was null.", nodeType);
 
                     break;
             }
@@ -226,7 +231,7 @@ namespace HELLION.DataStructures.Document
             foreach (SolarSystem_TN node in RootNode.GetChildNodes(includeSubtrees: true))
             {
                 // If this node has a non-zero value for DockedToShipGUID, process it.
-                if (node.ParentGUID == 0)
+                if (node.ParentGUID == -100)
                 {
                     // There should be only one case where the node processed has a value of zero that is valid and
                     // that's the Solar System node, which has no parent node - it's parent is the TreeViewControl.
@@ -236,37 +241,23 @@ namespace HELLION.DataStructures.Document
                 {
                     // Find the single node that has the GUID matching the DockedToShipGUID of this node.
                     // There can be only one!
-                    try
-                    {
-                        SolarSystem_TN newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
-                            .Cast<SolarSystem_TN>()
-                            .Where(p => p.GUID == node.ParentGUID)
-                            .Single();
-                        // If the .Single() causes an exception, there's more than one module docked to that port, 
-                        // or the GUID that it's docked to can't be found :(
+                    SolarSystem_TN newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
+                        .Cast<SolarSystem_TN>()
+                        .Where(p => p.GUID == node.ParentGUID)
+                        .Single();
+                    // If the .Single() causes an exception, there's more than one module docked to that port (!), 
+                    // or the GUID that it's docked to can't be found :(
 
-                        // Cast the node.Parent to an SolarSystem_TN (so we can access ClearCachedData)
-                        currentParentNode = (SolarSystem_TN)node.Parent;
+                    // Cast the node.Parent to an SolarSystem_TN (so we can access ClearCachedData)
+                    currentParentNode = (SolarSystem_TN)node.Parent;
 
-                        // Remove the ship to be re-parented from it's current parent's node collection.
-                        // FIXME - the following line may be why the try catch is here.
-                        currentParentNode.Nodes.Remove(node);
+                    // Remove the ship to be re-parented from it's current parent's node collection.
+                    // The null case is the Solar System RootNode that's parent is the TreeView control not a node.
+                    if (currentParentNode != null) currentParentNode.Nodes.Remove(node);
 
-                        // Add the ship being re-parented to the new parent's node collection.
-                        newParentNode.Nodes.Insert(0, node);
+                    // Add the ship being re-parented to the new parent's node collection.
+                    newParentNode.Nodes.Insert(0, node);
 
-                    }
-                    catch (Exception e)
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("Exception in RehydrateGUIDHierarchy" + Environment.NewLine);
-                        sb.Append("Text: " + node.Text + Environment.NewLine);
-                        sb.Append("GUID: " + node.GUID + Environment.NewLine);
-                        sb.Append("ParentGUID: " + node.ParentGUID + Environment.NewLine);
-                        sb.Append(e.ToString());
-                        Debug.Print(sb.ToString());
-                        errorState = true;
-                    }
                 }
             }
             return errorState;

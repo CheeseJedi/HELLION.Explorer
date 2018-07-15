@@ -190,6 +190,16 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         protected virtual string DefaultObjectName => "Unnamed node";
 
+        /// <summary>
+        /// Tracks the lock status of this node. 
+        /// </summary>
+        /// <remarks>
+        /// Used to implement branch locking, to allow safe editing.
+        /// </remarks>
+        public bool Locked { get; protected set; } = false;
+
+
+
         #endregion
 
         #region Refresh and Generation Methods
@@ -329,20 +339,85 @@ namespace HELLION.DataStructures.UI
             return _listOfChildNodes.Count > 0 ? _listOfChildNodes : null;
         }
 
-        /*
-
         /// <summary>
-        /// Gets the first node that matches the given key in the current nodes children.
+        /// Attempts to lock this node.
         /// </summary>
-        /// <param name="nCurrentNode"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public HETreeNode GetFirstChildNodeByName(string key)
+        /// <returns>Returns false if the node was not able to be locked. </returns>
+        public bool AttemptLock()
         {
-            TreeNode[] _nodes = Nodes.Find(key, searchAllChildren: true);
-            return _nodes.Length > 0 ? (HETreeNode)_nodes[0] : null;
+            // Redundant check?
+            if (Locked) return false;
+
+            if (SelfOrAncestorLocked()) return false;
+            if (SelfOrDescendantLocked()) return false;
+
+            // Got this far, so lock the node.
+            Locked = true;
+
+            return true;
         }
 
+        /// <summary>
+        /// Unlocks the node.
+        /// </summary>
+        public void Unlock() => Locked = false;
+
+        /// <summary>
+        /// Determines whether this node, or an ancestor, is locked.
+        /// </summary>
+        /// <returns>Returns true if this or an ancestor node is locked.</returns>
+        public bool SelfOrAncestorLocked()
+        {
+            if (Locked) return true;
+
+            // If the Parent is null we've reached the top of the tree (a tree root node has no parent)
+            if (Parent == null) return false;
+
+            // Attempt to cast the parent to a Json_TN.
+            Base_TN parent = (Base_TN)Parent;
+
+            // Sanity check.
+            if (parent == null) throw new NullReferenceException("SelfOrAncestorLocked: Cast Parent to Base_TN resulted in null.");
+
+            // Ask the parent the same question via recursion.
+            return parent.SelfOrAncestorLocked();
+
+        }
+
+        /// <summary>
+        /// Determines whether this node, or a descendant, is locked.
+        /// </summary>
+        /// <returns>Returns true if this or an descendant node is locked.</returns>
+        public bool SelfOrDescendantLocked()
+        {
+            if (Locked) return true;
+
+            foreach (Json_TN node in Nodes)
+            {
+                if (node.SelfOrDescendantLocked()) return true;
+
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// The number of descendants that are locked. Not currently used.
+        /// </summary>
+        /// <returns></returns>
+        public int CountOfLockedDescendants()
+        {
+            int count = 0;
+            foreach (Json_TN node in Nodes)
+            {
+                if (node.Locked) count++;
+                count += node.CountOfLockedDescendants();
+            }
+
+            return count;
+        }
+
+        /*
         /// <summary>
         /// Returns the Path of this node, with reference to the TreeView control.
         /// </summary>
@@ -364,7 +439,6 @@ namespace HELLION.DataStructures.UI
                 else return "Path Unavailable (no TreeView)";
             }
         }
-
         */
 
         #endregion
