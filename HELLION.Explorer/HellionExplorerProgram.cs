@@ -136,16 +136,16 @@ namespace HELLION.Explorer
         /// <summary>
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
-        /// <param name="nSelectedNode"></param>
-        internal static void CreateNewJsonDataView(Json_TN nSelectedNode)
+        /// <param name="node"></param>
+        internal static void CreateNewJsonDataView(Json_TN node)
         {
-            if (nSelectedNode != null && nSelectedNode.JData != null)
+            if (node != null && node.JData != null)
             {
                 // Look for an existing form for this node.
                 JsonDataViewForm newDataView = null;
                 foreach (JsonDataViewForm form in jsonDataViews)
                 {
-                    if (form.SourceNode == nSelectedNode)
+                    if (form.SourceNode == node)
                     {
                         newDataView = form;
                         break;
@@ -154,8 +154,20 @@ namespace HELLION.Explorer
 
                 if (newDataView == null)
                 {
-                    // No existing form for this node was found, create a new one.
-                    newDataView = new JsonDataViewForm(nSelectedNode, hEImageList);
+                    // No existing form for this node was found
+
+                    if (!node.AttemptLock())
+                    {
+                        // Failed to get a lock on the node, notify user.
+                        MessageBox.Show("Failed to obtain editing lock on node " + node.Name + ".", 
+                            "Unable to open Json Data View", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    // Obtained a lock successfully.
+
+                    // create a new JsonDataViewForm targeting the node specified.
+                    newDataView = new JsonDataViewForm(node, hEImageList);
 
                     // Add the form to the jsonDataViews list.
                     jsonDataViews.Add(newDataView);

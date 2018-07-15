@@ -198,8 +198,6 @@ namespace HELLION.DataStructures.UI
         /// </remarks>
         public bool Locked { get; protected set; } = false;
 
-
-
         #endregion
 
         #region Refresh and Generation Methods

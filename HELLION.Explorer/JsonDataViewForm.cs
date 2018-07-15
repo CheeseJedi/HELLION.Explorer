@@ -235,8 +235,11 @@ namespace HELLION.Explorer
         //Create style for highlighting
         //TextStyle brownStyle = new TextStyle(Brushes.Brown, null, FontStyle.Regular);
 
-
-        // This really needs to happen before form closing
+        /// <summary>
+        /// This code really needs to happen _before_ form closing
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void JsonDataViewForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (IsDirty)
@@ -256,6 +259,10 @@ namespace HELLION.Explorer
                         break;
                 }
             }
+
+            // Clear the lock on the node
+            SourceNode.Unlock();
+
             // Remove the current JsonDataViewForm from the jsonDataViews list
             HellionExplorerProgram.jsonDataViews.Remove(this);
             GC.Collect();
