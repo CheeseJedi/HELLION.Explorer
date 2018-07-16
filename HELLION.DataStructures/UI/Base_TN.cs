@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
@@ -241,6 +242,7 @@ namespace HELLION.DataStructures.UI
                     Name = newName;
                     // Name has been generated, deactivate.
                     AutoGenerateName = false;
+                    Debug.Print("Base_TN.RefreshName: Generated name [" + Name +"]");
                 }
             }
         }

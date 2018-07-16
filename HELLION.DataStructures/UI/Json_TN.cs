@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
@@ -62,15 +63,7 @@ namespace HELLION.DataStructures.UI
                     _jData = value;
 
                     // Trigger node regeneration.
-
-                    // (Re)Set the node type.
-                    NodeType = DetectNodeTypeFromJToken();
-
-                    // Trigger name (re)generation.
-                    RefreshName();
-
-                    // (Re)Build child nodes to the specified depth.
-                    RefreshChildNodesFromjData(_populateDepth);
+                    RegenerateAfterJDataChange();
 
                 }
             }
@@ -121,6 +114,10 @@ namespace HELLION.DataStructures.UI
             const string noJData = "No JData";
 
             if (JData == null) return noJData;
+
+            //Debug.Print("Json_TN.GenerateName called.");
+
+
 
             switch (JData.Type)
             {
@@ -176,6 +173,55 @@ namespace HELLION.DataStructures.UI
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Called by a new JToken being set to the JData, or after an editing operation.
+        /// </summary>
+        public void RegenerateAfterJDataChange()
+        {
+            // (Re)Set the node type.
+            NodeType = DetectNodeTypeFromJToken();
+
+            // Trigger name (re)generation.
+            AutoGenerateName = true;
+            RefreshName();
+
+            // (Re)Build child nodes to the specified depth.
+            RefreshChildNodesFromjData(_populateDepth);
+
+            if (Locked) Debug.Print("Json_TN [" + Name + "]: RegenerateAfterJDataChange completed while locked.");
+
+        }
+
+        /// <summary>
+        /// Attempts to build a user-friendly name from available data in a JObject
+        /// </summary>
+        /// <param name="obj">Takes a JObject and attempts to generate a name from expected fields</param>
+        /// <returns></returns>
+        private string GenerateNameFromJObject(JObject obj)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
+            sb.Append((string)obj["GameName"]);
+            sb.Append((string)obj["CategoryName"]);
+            sb.Append((string)obj["name"]);
+            //string[] prefabPathParts = obj["PrefabPath"].ToString().Split('\\');
+            //sb.Append(prefabPathParts[prefabPathParts.Length - 1]);
+            sb.Append((string)obj["PrefabPath"]);
+            sb.Append((string)obj["RuleName"]);
+            sb.Append((string)obj["TierName"]);
+            sb.Append((string)obj["GroupName"]);
+
+            // The following three are to support the Hellion Station Blueprint Format
+            sb.Append((string)obj["DisplayName"]);
+            sb.Append((string)obj["StructureType"]);
+            sb.Append((string)obj["PortName"]);
+
+            if (sb.Length > 0) sb.Append(" ");
+            sb.Append((string)obj["ItemID"]);
+            return sb.ToString().Trim();
+        }
+
 
         /// <summary>
         /// Refreshes the child nodes - triggered when the JData changes.
@@ -295,35 +341,6 @@ namespace HELLION.DataStructures.UI
         {
             if (JData == null || NumChildTokens != Nodes.Count) return false;
             return true;
-        }
-
-        /// <summary>
-        /// Attempts to build a user-friendly name from available data in a JObject
-        /// </summary>
-        /// <param name="obj">Takes a JObject and attempts to generate a name from expected fields</param>
-        /// <returns></returns>
-        private string GenerateNameFromJObject(JObject obj)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(((string)obj["Registration"] + " " + (string)obj["Name"]).Trim());
-            sb.Append((string)obj["GameName"]);
-            sb.Append((string)obj["CategoryName"]);
-            sb.Append((string)obj["name"]);
-            //string[] prefabPathParts = obj["PrefabPath"].ToString().Split('\\');
-            //sb.Append(prefabPathParts[prefabPathParts.Length - 1]);
-            sb.Append((string)obj["PrefabPath"]);
-            sb.Append((string)obj["RuleName"]);
-            sb.Append((string)obj["TierName"]);
-            sb.Append((string)obj["GroupName"]);
-
-            // The following three are to support the Hellion Station Blueprint Format
-            sb.Append((string)obj["DisplayName"]);
-            sb.Append((string)obj["StructureType"]);
-            sb.Append((string)obj["PortName"]);
-
-            if (sb.Length > 0) sb.Append(" ");
-            sb.Append((string)obj["ItemID"]);
-            return sb.ToString().Trim();
         }
 
         /// <summary>

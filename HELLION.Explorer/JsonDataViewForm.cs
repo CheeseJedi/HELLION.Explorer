@@ -116,8 +116,27 @@ namespace HELLION.Explorer
                     return false;
                 }
 
-                // Set the new token.
-                SourceNode.JData.Replace(newToken);
+
+                if (SourceNode.JData.Parent == null) throw new Exception();
+
+                // Get a reference to this current token prior to any changes.
+                JToken oldToken = SourceNode.JData;
+
+                // Add the replacement token after this token to the JData.
+                SourceNode.JData.AddAfterSelf(newToken);
+
+                // Remove the previousToken.
+                oldToken.Remove();
+
+                // Set the new token for the node, triggering updates.
+                SourceNode.JData = newToken;
+
+
+
+
+
+                // Regenerate based on the new token.
+                //SourceNode.RegenerateAfterJDataChange();
 
                 // Mark the parent file as dirty.
                 parentFile.IsDirty = true;
@@ -128,7 +147,9 @@ namespace HELLION.Explorer
                 // Mark this editor as not dirty.
                 IsDirty = false;
 
-                MessageBox.Show("Changes applied.", "SUCCESS");
+                MessageBox.Show("Changes applied. Remember to save the main document!", "SUCCESS");
+
+
                 return true;
 
             }

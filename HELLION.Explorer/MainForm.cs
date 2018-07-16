@@ -481,13 +481,12 @@ namespace HELLION.Explorer
         /// <param name="e"></param>
         private void treeView1_KeyDown(object sender, KeyEventArgs e)
         {
-            Debug.Print("treeView1_KeyDown fired. [" + e.KeyData.ToString() + "] [" + e.Modifiers.ToString() + "]");
-
+            //Debug.Print("treeView1_KeyDown fired. [" + e.KeyData.ToString() + "] [" + e.Modifiers.ToString() + "]");
 
             // Handle Control+Enter as an expansion/load ALL request.
             if (e.KeyData.HasFlag(Keys.Enter) && e.KeyData.HasFlag(Keys.Control))
             {
-                Debug.Print("Expansion (all) Request");
+                Debug.Print("Load (all) Request");
                 HandleExpansionRequest(DefaultLoadAllDepth);
                 return;
             }
@@ -496,7 +495,7 @@ namespace HELLION.Explorer
             // Handle Shift+Enter as an expansion/load request.
             if (e.KeyData.HasFlag(Keys.Enter) && e.KeyData.HasFlag(Keys.Shift))
             {
-                Debug.Print("Expansion Request");
+                Debug.Print("Load Request");
                 HandleExpansionRequest();
                 return;
             }
@@ -829,10 +828,7 @@ namespace HELLION.Explorer
         /// </summary>
         private static void LoadNextLevel() => LoadLevels(1, skipThroughPopulatedNodes: true);
 
-
         private static void LoadAllLevels() => LoadLevels(DefaultLoadAllDepth, skipThroughPopulatedNodes: true);
-
-
 
         /// <summary>
         /// Triggers the selected node to load (create nodes from) all levels of data up to the
