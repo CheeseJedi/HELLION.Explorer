@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using HELLION.DataStructures.Document;
 using Newtonsoft.Json.Linq;
 
 namespace HELLION.DataStructures.UI
@@ -186,8 +187,10 @@ namespace HELLION.DataStructures.UI
             AutoGenerateName = true;
             RefreshName();
 
+            if ((!(_populateDepth > 0)) && Locked ) _populateDepth = GameData.Def_LoadAllNodeDepth;
+
             // (Re)Build child nodes to the specified depth.
-            RefreshChildNodesFromjData(_populateDepth);
+            RefreshChildNodesFromjData(_populateDepth, skipThroughPopulatedNodes: false);
 
             if (Locked) Debug.Print("Json_TN [" + Name + "]: RegenerateAfterJDataChange completed while locked.");
 
@@ -254,8 +257,11 @@ namespace HELLION.DataStructures.UI
                     RefreshToolTipText();
 
                 }
+                else Debug.Print("Json_TN.RefreshChildNodesFromjData: JData was null or child token count was zero.");
 
             }
+            else Debug.Print("Json_TN.RefreshChildNodesFromjData: populateDepth was zero.");
+
         }
 
         /// <summary>

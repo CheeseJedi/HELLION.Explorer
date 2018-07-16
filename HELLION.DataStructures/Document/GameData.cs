@@ -166,6 +166,7 @@ namespace HELLION.DataStructures.Document
 
         public const int Def_SaveFileNodeDepth = 3;
         public const int Def_DataFileNodeDepth = 1;
+        public const int Def_LoadAllNodeDepth = 15;
 
         #endregion
 

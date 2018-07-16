@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using HELLION.DataStructures;
 using HELLION.DataStructures.Blueprints;
+using HELLION.DataStructures.Document;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 
@@ -487,7 +488,7 @@ namespace HELLION.Explorer
             if (e.KeyData.HasFlag(Keys.Enter) && e.KeyData.HasFlag(Keys.Control))
             {
                 Debug.Print("Load (all) Request");
-                HandleExpansionRequest(DefaultLoadAllDepth);
+                HandleExpansionRequest(GameData.Def_LoadAllNodeDepth);
                 return;
             }
 
@@ -828,7 +829,7 @@ namespace HELLION.Explorer
         /// </summary>
         private static void LoadNextLevel() => LoadLevels(1, skipThroughPopulatedNodes: true);
 
-        private static void LoadAllLevels() => LoadLevels(DefaultLoadAllDepth, skipThroughPopulatedNodes: true);
+        private static void LoadAllLevels() => LoadLevels(GameData.Def_LoadAllNodeDepth, skipThroughPopulatedNodes: true);
 
         /// <summary>
         /// Triggers the selected node to load (create nodes from) all levels of data up to the
@@ -843,7 +844,5 @@ namespace HELLION.Explorer
             tempNode.Expand();
         }
 
-
-        private const int DefaultLoadAllDepth = 15;
     }
 }
