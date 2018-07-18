@@ -36,7 +36,7 @@ namespace HELLION.DataStructures.Document
                 GameData = gameData;
 
                 // Create Solar System hierarchical structure from the Celestial Bodies
-                BuildSolarSystem();
+                RebuildSolarSystem();
             }
         }
 
@@ -53,12 +53,15 @@ namespace HELLION.DataStructures.Document
         /// <summary>
         /// Builds tree nodes from the GameData nodes, with cross-references
         /// </summary>
-        public void BuildSolarSystem()
+        public void RebuildSolarSystem()
         {
             // Basic operation
             // The following types of HESolarSystemTreeNodes to be created as child nodes of the
             // Solar System root node, then the hierarchy will be applied and nodes re-parented
             // to the appropriate place.
+
+            // 0. Remove any existing nodes.
+            if (RootNode.Nodes.Count > 0) RootNode.Nodes.Clear();
 
             // 1. Create Planets nodes from GameData - CelestialBodies.json 
             // Note that this only needs to be run once and with one of the celestial body

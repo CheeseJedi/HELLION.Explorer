@@ -104,40 +104,57 @@ namespace HELLION.Explorer
             {
                 // Successful parse.
 
+                // Make a note of the starting time
+                DateTime startingTime = DateTime.Now;
+
+                //Application.UseWaitCursor = true;
+                Cursor = Cursors.WaitCursor;
+
+                // Suppress repainting the TreeView until all the objects have been created.
+                HellionExplorerProgram.MainForm.treeView1.BeginUpdate();
+
+                // Update the status bar
+                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text =
+                    String.Format("Applying changes...");
+
+
+
                 // Find the parent Json_File.
                 Json_File parentFile = HellionExplorerProgram.docCurrent?.GameData.FindOwningFile(SourceNode);
+                Debug.Print("ApplyChanges: parentFile = " + parentFile.File.FullName);
+
                 if (parentFile == null) throw new NullReferenceException("ApplyChanges: parentFile was null.");
 
                 // Check to make sure it's a .save file, as that's all that's supported currently.
                 if (parentFile != HellionExplorerProgram.docCurrent.GameData.SaveFile)
                 {
+                    // Begin repainting the TreeView.
+                    HellionExplorerProgram.MainForm.treeView1.EndUpdate();
+
+                    //Application.UseWaitCursor = false;
+                    Cursor = Cursors.Default;
+
                     MessageBox.Show("Only the main .save file is currently supported for saving edited changes"
                         + "- other Json files are view only.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                     return false;
                 }
 
-
                 if (SourceNode.JData.Parent == null) throw new Exception();
 
-                // Get a reference to this current token prior to any changes.
+                // Get a reference to the old (current) token.
                 JToken oldToken = SourceNode.JData;
 
-                // Add the replacement token after this token to the JData.
-                SourceNode.JData.AddAfterSelf(newToken);
+                // Add the new token to the parent token directly after this one.
+                oldToken.AddAfterSelf(newToken);
 
-                // Remove the previousToken.
+                // Remove the old token.
                 oldToken.Remove();
 
                 // Set the new token for the node, triggering updates.
                 SourceNode.JData = newToken;
 
-
-
-
-
-                // Regenerate based on the new token.
-                //SourceNode.RegenerateAfterJDataChange();
-
+                Debug.Print("Marking parent file " + parentFile.File.FullName + " as dirty.");
                 // Mark the parent file as dirty.
                 parentFile.IsDirty = true;
 
@@ -146,6 +163,23 @@ namespace HELLION.Explorer
 
                 // Mark this editor as not dirty.
                 IsDirty = false;
+
+                // Trigger the Solar System to rebuild - SLOW!
+                HellionExplorerProgram.docCurrent.SolarSystem.RebuildSolarSystem();
+
+                HellionExplorerProgram.RefreshMainFormTitleText();
+
+                // Begin repainting the TreeView.
+                HellionExplorerProgram.MainForm.treeView1.EndUpdate();
+
+                //Application.UseWaitCursor = false;
+                Cursor = Cursors.Default;
+
+                // Update the status bar
+                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text =
+                    String.Format("Changes applied and Node regeneration completed in {0:mm}m{0:ss}s",
+                    DateTime.Now - startingTime);
+
 
                 MessageBox.Show("Changes applied. Remember to save the main document!", "SUCCESS");
 

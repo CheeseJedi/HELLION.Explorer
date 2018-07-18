@@ -242,7 +242,7 @@ namespace HELLION.DataStructures.UI
                     Name = newName;
                     // Name has been generated, deactivate.
                     AutoGenerateName = false;
-                    Debug.Print("Base_TN.RefreshName: Generated name [" + Name +"]");
+                    //Debug.Print("Base_TN.RefreshName: Generated name [" + Name +"]");
                 }
             }
         }

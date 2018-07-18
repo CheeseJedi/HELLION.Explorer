@@ -257,10 +257,10 @@ namespace HELLION.DataStructures.UI
                     RefreshToolTipText();
 
                 }
-                else Debug.Print("Json_TN.RefreshChildNodesFromjData: JData was null or child token count was zero.");
+                // else Debug.Print("Json_TN.RefreshChildNodesFromjData: JData was null or child token count was zero.");
 
             }
-            else Debug.Print("Json_TN.RefreshChildNodesFromjData: populateDepth was zero.");
+            // else Debug.Print("Json_TN.RefreshChildNodesFromjData: populateDepth was zero.");
 
         }
 

@@ -596,7 +596,7 @@ namespace HELLION.Explorer
 
         private void loadNextLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadNextLevel();
+            HandleExpansionRequest();
         }
 
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -797,13 +797,25 @@ namespace HELLION.Explorer
         /// Handles an expansion request when the keyboard has been used to issue the request.
         /// </summary>
         /// <param name="populateDepth"></param>
-        private static void HandleExpansionRequest(int populateDepth = 1)
+        private void HandleExpansionRequest(int populateDepth = 1)
         {
             TreeNode node = HellionExplorerProgram.MainForm.treeView1.SelectedNode;
 
             if (node != null && node.GetType() == typeof(Json_TN))
             {
 
+                // Make a note of the starting time
+                DateTime startingTime = DateTime.Now;
+
+                //Application.UseWaitCursor = true;
+                HellionExplorerProgram.MainForm.Cursor = Cursors.WaitCursor;
+
+                // Suppress repainting the TreeView until all the objects have been created.
+                HellionExplorerProgram.MainForm.treeView1.BeginUpdate();
+
+                // Update the status bar
+                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text =
+                    String.Format("Starting node loading and generation...");
 
                 // Cast the TreeNode to an HETreeNode to determine it's type
                 Json_TN jsonNode = (Json_TN)node;
@@ -821,21 +833,36 @@ namespace HELLION.Explorer
                 // Expand the current node
                 jsonNode.Expand();
 
+
+
+                // Begin repainting the TreeView.
+                HellionExplorerProgram.MainForm.treeView1.EndUpdate();
+
+                //Application.UseWaitCursor = false;
+                HellionExplorerProgram.MainForm.Cursor = Cursors.Default;
+
+                // Update the status bar
+                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text = 
+                    String.Format("Node loading and generation completed in {0:mm}m{0:ss}s", 
+                    DateTime.Now - startingTime);
+
+
+
             }
         }
 
         /// <summary>
         /// Triggers the selected node to load (create nodes from) the next level of data.
         /// </summary>
-        private static void LoadNextLevel() => LoadLevels(1, skipThroughPopulatedNodes: true);
+        private void LoadNextLevel() => LoadLevels(1, skipThroughPopulatedNodes: true);
 
-        private static void LoadAllLevels() => LoadLevels(GameData.Def_LoadAllNodeDepth, skipThroughPopulatedNodes: true);
+        private void LoadAllLevels() => LoadLevels(GameData.Def_LoadAllNodeDepth, skipThroughPopulatedNodes: true);
 
         /// <summary>
         /// Triggers the selected node to load (create nodes from) all levels of data up to the
         /// DefaultLoadAllDepth unless another value is specified.
         /// </summary>
-        private static void LoadLevels(int depth, bool skipThroughPopulatedNodes = false)
+        private void LoadLevels(int depth, bool skipThroughPopulatedNodes = false)
         {
             // Load all levels (up to specified depth)
             Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;

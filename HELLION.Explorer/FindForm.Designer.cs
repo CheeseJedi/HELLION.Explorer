@@ -123,6 +123,7 @@
             this.Controls.Add(this.checkBoxMatchCase);
             this.Controls.Add(this.labelTextBoxQuery);
             this.Controls.Add(this.textBoxQuery);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FindForm";
