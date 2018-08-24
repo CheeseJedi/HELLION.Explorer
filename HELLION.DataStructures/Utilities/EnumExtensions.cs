@@ -39,7 +39,8 @@ namespace HELLION.DataStructures.Utilities
 
             foreach (var field in fields)
             {
-                DescriptionAttribute[] attributes = (DescriptionAttribute[])field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                DescriptionAttribute[] attributes = (DescriptionAttribute[])field.
+                    GetCustomAttributes(typeof(DescriptionAttribute), false);
 
                 // Attempt to parse to the enumerator's description.
                 if (attributes != null && attributes.Length > 0 && attributes[0].Description == description)
@@ -53,7 +54,7 @@ namespace HELLION.DataStructures.Utilities
             }
             catch (NotSupportedException)
             {
-                // Unable to parse, return the default for the type.
+                // Unable to parse, return the default for the enumeration.
                 return default;
             }
            
@@ -65,6 +66,9 @@ namespace HELLION.DataStructures.Utilities
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
+        /// <remarks>
+        /// Seems like the source for this one https://stackoverflow.com/questions/972307/can-you-loop-through-all-enum-values
+        /// </remarks>
         public static IEnumerable<T> GetValues<T>()
         {
             return Enum.GetValues(typeof(T)).Cast<T>();

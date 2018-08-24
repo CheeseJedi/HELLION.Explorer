@@ -191,7 +191,7 @@ namespace HELLION.DataStructures.UI
         /// <remarks>
         /// Primary field for sorting objects that have the same ParentGUID.
         /// </remarks>
-        public double SemiMajorAxis => OrbitData.SemiMajorAxis != null ? (double)OrbitData.SemiMajorAxis : -1L;
+        public double SemiMajorAxis => OrbitData.SemiMajorAxis != null ? (double)OrbitData.SemiMajorAxis : -1;
 
         /// <summary>
         /// If this ship/module is docked TO another, the other ship's 
@@ -288,32 +288,30 @@ namespace HELLION.DataStructures.UI
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("Text: " + Text + Environment.NewLine);
-            sb.Append("NodeType: " + NodeType.ToString() + Environment.NewLine);
+            sb.Append(base.GenerateToolTipText());
+
             sb.Append("GUID: " + GUID + Environment.NewLine);
 
             if (LinkedGameDataNode != null && NodeType == Base_TN_NodeType.Player)
             {
                 sb.Append("IsAlive: " + (string)LinkedGameDataNode.JData["IsAlive"] + Environment.NewLine);
                 string healthPoints = (string)LinkedGameDataNode.JData["HealthPoints"];
-                sb.Append(string.Format("HealthPoints: {0}" + Environment.NewLine, (healthPoints == null ? "null" : healthPoints)));
-
+                sb.Append(string.Format("HealthPoints: {0}" + Environment.NewLine, healthPoints ?? "null"));
             }
 
             if (LinkedGameDataNode != null && NodeType == Base_TN_NodeType.Ship)
             {
                 string health = (string)LinkedGameDataNode.JData["Health"];
-                sb.Append(string.Format("Health: {0}" + Environment.NewLine, (health == null ? "null" : health)));
+                sb.Append(string.Format("Health: {0}" + Environment.NewLine, health ?? "null"));
             }
 
             if (OrbitData != null && OrbitData.ParentGUID != null)
             {
                 sb.Append("ParentGUID: " + OrbitData.ParentGUID + Environment.NewLine);
 
+                // The following line probably never runs as this is called before it's connected to the parent.
                 if (Parent != null) sb.Append("Parent Name: " + Parent.Name + Environment.NewLine);
-
             }
-
 
             return sb.ToString();
         }

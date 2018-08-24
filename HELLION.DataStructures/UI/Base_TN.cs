@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using static HELLION.DataStructures.EmbeddedImages.EmbeddedImages_ImageList;
+using static HELLION.DataStructures.Utilities.TreeNodeExtensions;
 
 namespace HELLION.DataStructures.UI
 {
@@ -18,6 +19,7 @@ namespace HELLION.DataStructures.UI
         public Base_TN(IParent_Base_TN ownerObject = null)
         {
             OwnerObject = ownerObject;
+            base.ToolTipText = null;
         }
 
         /// <summary>
@@ -97,7 +99,13 @@ namespace HELLION.DataStructures.UI
         /// </summary>
         public new string ToolTipText
         {
-            get => base.ToolTipText;
+            get
+            {
+                if (string.IsNullOrEmpty(base.ToolTipText))
+                    base.ToolTipText = GenerateToolTipText();
+
+                return base.ToolTipText;
+            }
             private set => base.ToolTipText = value;
         }
 
@@ -184,7 +192,7 @@ namespace HELLION.DataStructures.UI
         /// <summary>
         /// Returns a list including this node and all child nodes.
         /// </summary>
-        public List<Base_TN> AllNodes => GetChildNodes(true);
+        public List<Base_TN> AllNodes => this.GetChildNodes(true);
 
         /// <summary>
         /// Define a default name for nodes that don't auto-generate and haven't had one specified.
@@ -198,6 +206,23 @@ namespace HELLION.DataStructures.UI
         /// Used to implement branch locking, to allow safe editing.
         /// </remarks>
         public bool Locked { get; protected set; } = false;
+
+        public string DefaultPathSeperator { get; } = ">";
+
+        /// <summary>
+        /// The Path to the node using node Names instead of Text.
+        /// </summary>
+        /// <remarks>
+        /// Does not include the node itself.
+        /// </remarks>
+        //public string Path => Parent != null ? FullPathBasedOnName(Parent, DefaultPathSeperator) : null;
+
+        //public string Path => Parent?.FullPath;
+
+        /// <summary>
+        /// The path to the node including the node using Names instead of Text.
+        /// </summary>
+        //public new string FullPath => FullPathBasedOnName(this, DefaultPathSeperator);
 
         #endregion
 
@@ -222,8 +247,6 @@ namespace HELLION.DataStructures.UI
                     Refresh(includeSubTrees);
                 }
             }
-
-
 
         }
 
@@ -297,10 +320,7 @@ namespace HELLION.DataStructures.UI
             sb.Append("Name: " + Name + Environment.NewLine);
             sb.Append("Text: " + Text + Environment.NewLine);
             sb.Append("NodeType: " + NodeType + Environment.NewLine);
-            sb.Append("FullPath: ");
-            if (TreeView == null) sb.Append("Not available");
-            else sb.Append(FullPath);
-            sb.Append(Environment.NewLine);
+            //sb.Append("RealPath: " + this.RealPath() + Environment.NewLine);
 
             return sb.ToString();
         }
@@ -317,6 +337,42 @@ namespace HELLION.DataStructures.UI
         #endregion
 
         #region Methods
+
+
+
+        /// <summary>
+        /// Returns the path of the node generated from node the Name field (rather than the
+        /// default of using the Text field. 
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="seperator"></param>
+        /// <returns></returns>
+        //private string FullPathBasedOnName(TreeNode node, string separator)
+        //{
+        //    // if (string.IsNullOrEmpty(separator)) separator = DefaultPathSeperator;
+
+        //    if (node != null) throw new Exception();
+        //    {
+        //        Debug.Print("FullPathBasedOnName Name " + node.Name);
+
+        //        if (Parent != null)
+        //        {
+        //            string parentPath = FullPathBasedOnName(node.Parent, separator);
+        //            return !string.IsNullOrEmpty(parentPath) ? parentPath + separator + Name : Name;
+
+        //        }
+
+
+
+
+
+
+        //    }
+        //    Debug.Print("FullPathBasedOnName null - hit a root");
+        //    return string.Empty;
+
+        //}
+
 
         /// <summary>
         /// Returns a list of this plus all first generation child nodes, 
@@ -373,7 +429,7 @@ namespace HELLION.DataStructures.UI
             // If the Parent is null we've reached the top of the tree (a tree root node has no parent)
             if (Parent == null) return false;
 
-            // Attempt to cast the parent to a Json_TN.
+            // Attempt to cast the parent to a Base_TN.
             Base_TN parent = (Base_TN)Parent;
 
             // Sanity check.
@@ -392,7 +448,7 @@ namespace HELLION.DataStructures.UI
         {
             if (Locked) return true;
 
-            foreach (Json_TN node in Nodes)
+            foreach (Base_TN node in Nodes)
             {
                 if (node.SelfOrDescendantLocked()) return true;
 
@@ -408,7 +464,7 @@ namespace HELLION.DataStructures.UI
         public int CountOfLockedDescendants()
         {
             int count = 0;
-            foreach (Json_TN node in Nodes)
+            foreach (Base_TN node in Nodes)
             {
                 if (node.Locked) count++;
                 count += node.CountOfLockedDescendants();
@@ -417,29 +473,27 @@ namespace HELLION.DataStructures.UI
             return count;
         }
 
-        /*
         /// <summary>
         /// Returns the Path of this node, with reference to the TreeView control.
         /// </summary>
         /// <remarks>
         /// Returns FullPath but strips off the node name and last path separator.
         /// </remarks>
-        public string Path
-        {
-            get
-            {
-                if (TreeView != null)
-                {
-                    string fullPath = FullPath;
-                    int lastIndex = fullPath.LastIndexOf(TreeView.PathSeparator);
-                    // Ensure the lastIndex is not -1, present zero instead.
-                    lastIndex = lastIndex != -1 ? lastIndex : 0;
-                    return fullPath.Substring(0, lastIndex);
-                }
-                else return "Path Unavailable (no TreeView)";
-            }
-        }
-        */
+        //public string Path
+        //{
+        //    get
+        //    {
+        //        if (TreeView != null)
+        //        {
+        //            string fullPath = FullPath;
+        //            int lastIndex = fullPath.LastIndexOf(TreeView.PathSeparator);
+        //            // Ensure the lastIndex is not -1, present zero instead.
+        //            lastIndex = lastIndex != -1 ? lastIndex : 0;
+        //            return fullPath.Substring(0, lastIndex);
+        //        }
+        //        else return "Path Unavailable (no TreeView)";
+        //    }
+        //}
 
         #endregion
 

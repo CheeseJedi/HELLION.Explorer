@@ -43,10 +43,11 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripMainStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip_SpringSeperator = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripReadOnlyStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLineCharCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripCursorPositionLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_SerialisationStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLineCharCount = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.fastColoredTextBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -78,7 +79,7 @@
             this.fastColoredTextBox1.Paddings = new System.Windows.Forms.Padding(0);
             this.fastColoredTextBox1.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.fastColoredTextBox1.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fastColoredTextBox1.ServiceColors")));
-            this.fastColoredTextBox1.Size = new System.Drawing.Size(815, 495);
+            this.fastColoredTextBox1.Size = new System.Drawing.Size(815, 493);
             this.fastColoredTextBox1.TabIndex = 2;
             this.fastColoredTextBox1.Text = "fastColoredTextBox1";
             this.fastColoredTextBox1.Zoom = 100;
@@ -169,53 +170,64 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMainStatusLabel,
             this.toolStrip_SpringSeperator,
+            this.toolStripReadOnlyStatus,
             this.toolStripStatusLineCharCount,
             this.toolStripCursorPositionLabel,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel_SerialisationStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 519);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 517);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.ShowItemToolTips = true;
-            this.statusStrip1.Size = new System.Drawing.Size(815, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(815, 24);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripMainStatusLabel
             // 
             this.toolStripMainStatusLabel.Name = "toolStripMainStatusLabel";
-            this.toolStripMainStatusLabel.Size = new System.Drawing.Size(16, 17);
+            this.toolStripMainStatusLabel.Size = new System.Drawing.Size(16, 19);
             this.toolStripMainStatusLabel.Text = "   ";
             // 
             // toolStrip_SpringSeperator
             // 
             this.toolStrip_SpringSeperator.Name = "toolStrip_SpringSeperator";
-            this.toolStrip_SpringSeperator.Size = new System.Drawing.Size(437, 17);
+            this.toolStrip_SpringSeperator.Size = new System.Drawing.Size(389, 19);
             this.toolStrip_SpringSeperator.Spring = true;
+            // 
+            // toolStripReadOnlyStatus
+            // 
+            this.toolStripReadOnlyStatus.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripReadOnlyStatus.Name = "toolStripReadOnlyStatus";
+            this.toolStripReadOnlyStatus.Size = new System.Drawing.Size(73, 19);
+            this.toolStripReadOnlyStatus.Text = "READ ONLY";
+            this.toolStripReadOnlyStatus.Visible = false;
+            // 
+            // toolStripStatusLineCharCount
+            // 
+            this.toolStripStatusLineCharCount.Name = "toolStripStatusLineCharCount";
+            this.toolStripStatusLineCharCount.Size = new System.Drawing.Size(93, 19);
+            this.toolStripStatusLineCharCount.Text = "Line/Char count";
             // 
             // toolStripCursorPositionLabel
             // 
             this.toolStripCursorPositionLabel.Name = "toolStripCursorPositionLabel";
-            this.toolStripCursorPositionLabel.Size = new System.Drawing.Size(77, 17);
+            this.toolStripCursorPositionLabel.Size = new System.Drawing.Size(77, 19);
             this.toolStripCursorPositionLabel.Text = "Cursor [    ,   ]";
             // 
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(105, 17);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(105, 19);
             this.toolStripStatusLabel3.Text = "Serialisation Status";
             // 
             // toolStripStatusLabel_SerialisationStatus
             // 
             this.toolStripStatusLabel_SerialisationStatus.AutoToolTip = true;
             this.toolStripStatusLabel_SerialisationStatus.Name = "toolStripStatusLabel_SerialisationStatus";
-            this.toolStripStatusLabel_SerialisationStatus.Size = new System.Drawing.Size(16, 17);
+            this.toolStripStatusLabel_SerialisationStatus.Size = new System.Drawing.Size(16, 19);
             this.toolStripStatusLabel_SerialisationStatus.Text = "   ";
-            // 
-            // toolStripStatusLineCharCount
-            // 
-            this.toolStripStatusLineCharCount.Name = "toolStripStatusLineCharCount";
-            this.toolStripStatusLineCharCount.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLineCharCount.Text = "toolStripStatusLabel1";
             // 
             // JsonDataViewForm
             // 
@@ -257,5 +269,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripCursorPositionLabel;
         private System.Windows.Forms.ToolStripMenuItem deserialiseAsYouTypeToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLineCharCount;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripReadOnlyStatus;
     }
 }

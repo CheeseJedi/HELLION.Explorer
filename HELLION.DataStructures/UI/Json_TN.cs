@@ -116,10 +116,6 @@ namespace HELLION.DataStructures.UI
 
             if (JData == null) return noJData;
 
-            //Debug.Print("Json_TN.GenerateName called.");
-
-
-
             switch (JData.Type)
             {
                 case JTokenType.Object:
@@ -160,13 +156,10 @@ namespace HELLION.DataStructures.UI
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append("Name: " + Name + Environment.NewLine);
-            sb.Append("Text: " + Text + Environment.NewLine);
-            sb.Append("Type: " + NodeType.ToString() + Environment.NewLine);
+            sb.Append(base.GenerateToolTipText());
+
             sb.Append("Tokens: " + NumChildTokens.ToString() + Environment.NewLine);
-            sb.Append("Nodes: " + Nodes.Count.ToString());
-            // sb.Append("NodeType: " + NodeType + Environment.NewLine);
-            // sb.Append("FullPath: " + FullPath + Environment.NewLine);
+            sb.Append("Nodes: " + Nodes.Count.ToString() + Environment.NewLine);
 
             return sb.ToString();
         }

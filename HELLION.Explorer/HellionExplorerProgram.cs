@@ -183,7 +183,7 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="selectedNode"></param>
-        internal static void CreateNewBlueprintEditor(Json_TN selectedNode = null)
+        internal static void CreateNewBlueprintEditor(Base_TN selectedNode = null)
         {
             ProcessStartInfo psi = new ProcessStartInfo();
 
@@ -393,7 +393,7 @@ namespace HELLION.Explorer
         /// tells it to load.
         /// </summary>
         /// <param name="sFileName"></param>
-        internal static void FileOpen(string sFileName = "")
+        internal static void FileOpen(string sFileName = null)
         {
             // Make a note of the starting time
             DateTime startingTime = DateTime.Now;
@@ -416,7 +416,7 @@ namespace HELLION.Explorer
                 // Create a new OpenFileDialog box and set some parameters
                 var openFileDialog1 = new OpenFileDialog()
                 {
-                    Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
+                    Filter = "HELLION DS Save Files|*.save|All files|*.*", // JSON Files|*.json|
                     Title = "Open .save file",
                     CheckFileExists = true
                 };
@@ -430,11 +430,6 @@ namespace HELLION.Explorer
                 // Check that the file exists when the user clicked OK
                 if (dialogResult == DialogResult.OK)
                 {
-                    // Check for an existing document and close it if necessary
-                    if (docCurrent != null)
-                    {
-                        FileClose();
-                    }
                     sFileName = openFileDialog1.FileName;
                 }
             }
@@ -444,21 +439,28 @@ namespace HELLION.Explorer
                 if (!System.IO.File.Exists(sFileName))
                 {
                     // The file name passed doesn't exist
-                    MessageBox.Show(String.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, sFileName));
+                    MessageBox.Show(string.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, sFileName));
 
                     return;
                 }
             }
+
+            // Check for an existing document and close it if necessary.
+            if (docCurrent != null)
+            {
+                FileClose();
+            }
+
 
             saveFileInfo = new FileInfo(sFileName);
             dataDirectoryInfo = new DirectoryInfo(Properties.HELLIONExplorer.Default.sGameDataFolder);
 
             if (saveFileInfo.Exists && dataDirectoryInfo.Exists)
             {
-                // Set the status strip message
-                MainForm.toolStripStatusLabel1.Text = ("Loading file: " + saveFileInfo.FullName);
+                // Set the status strip message.
+                RefreshStatusStrip("Loading file: " + saveFileInfo.FullName);
 
-                // Update the main window's title text to reflect the filename selected
+                // Update the main window's title text to reflect the filename selected.
                 RefreshMainFormTitleText(saveFileInfo.FullName);
 
                 //Application.UseWaitCursor = true;
@@ -467,10 +469,10 @@ namespace HELLION.Explorer
                 // Suppress repainting the TreeView until all the objects have been created.
                 MainForm.treeView1.BeginUpdate();
 
-                // Create a new DocumentWorkspace
+                // Create a new DocumentWorkspace.
                 docCurrent = new DocumentWorkspace(saveFileInfo, dataDirectoryInfo, MainForm.treeView1, MainForm.listView1, hEImageList);
 
-                // Set up the GuidManager
+                // Set up the GuidManager.
                 GuidManager.ClearObservedGuidsList();
                 // Add the Celestial Bodies GUIDs.
                 if (docCurrent.GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out Json_File_UI celestialBodiesJsonBaseFile))
@@ -489,11 +491,14 @@ namespace HELLION.Explorer
 
                 // TODO FINDME FIXME
 
-                // Sol sys and search are disabled to track down an issue in the GameData class.
+
+
 
                 MainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
+
+
 
                 // Trigger a refresh on each of the node trees.
                 //docCurrent.SolarSystem.RootNode.Refresh(includeSubTrees: true);
@@ -538,12 +543,11 @@ namespace HELLION.Explorer
                 RefreshMainFormTitleText();
                 //RefreshSelectedObjectSummaryText(docCurrent.SolarSystemRootNode);
 
-                MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
+                MainForm.toolStripStatusLabel1.Text = string.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
 
                 MainForm.closeToolStripMenuItem.Enabled = true;
                 MainForm.revertToolStripMenuItem.Enabled = true;
 
-                
             }
         }
 
@@ -604,68 +608,74 @@ namespace HELLION.Explorer
         {
             // Handles closing of files and cleanup of the document workspace.
 
-            // isFileDirty check before exiting
-            if (docCurrent.IsDirty)
-            {
-                // Unsaved changes, prompt user to save
-                string sMessage = docCurrent.SaveFileInfo.FullName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
-                const string sCaption = "Unsaved Changes";
-                var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-                if (result == DialogResult.Cancel) return;
-
-                // If the yes button was pressed ...
-                if (result == DialogResult.Yes)
-                {
-                    // User selected Yes, call save routine
-                    MessageBox.Show("User selected Yes to save changes", "Unsaved Changes Dialog", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    MessageBox.Show("Saving is not yet implemented.");
-                }
-            }
-
-            // Close and remove the ObservedGuidsForm
-            ObservedGuidsForm.Close();
-            ObservedGuidsForm = null;
-            // Clear the GuidManager observed GUIDs list
-            GuidManager.ClearObservedGuidsList();
-
-            // Close down any jsonDataView windows.
-            while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
-
-            // Disable both the Find and FindNext menu items.
-            MainForm.findToolStripMenuItem.Enabled = false;
-            MainForm.findNextToolStripMenuItem.Enabled = false;
-
-            // Disable the Save and Save As menu items.
-            MainForm.saveToolStripMenuItem.Enabled = false;
-            MainForm.saveAsToolStripMenuItem.Enabled = false;
-
-            // Disable the Observed GUIDs menu item.
-            MainForm.observedGUIDsToolStripMenuItem.Enabled = false;
-
-            // Clear any existing nodes from the tree view
-            MainForm.treeView1.Nodes.Clear();
-
-            // Clear any items from the list view
-            MainForm.listView1.Items.Clear();
-
             // Check for an existing document and close it if necessary
             if (docCurrent != null)
             {
+                // Handle a dirty (unsaved changes) file.
+                if (docCurrent.IsDirty)
+                {
+                    // Unsaved changes, prompt user to save
+                    string sMessage = docCurrent.SaveFileInfo.FullName + Environment.NewLine + "This file has been modified. Do you want to save changes before exiting?";
+                    const string sCaption = "Unsaved Changes";
+                    var result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Cancel) return;
+
+                    // If the yes button was pressed ...
+                    if (result == DialogResult.Yes)
+                    {
+                        // User selected Yes, call save routine
+                        MessageBox.Show("User selected Yes to save changes", "Unsaved Changes Dialog", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Saving is not yet implemented.");
+                    }
+                }
+
+                // Close and remove the ObservedGuidsForm
+                ObservedGuidsForm.Close();
+                ObservedGuidsForm = null;
+                // Clear the GuidManager observed GUIDs list
+                GuidManager.ClearObservedGuidsList();
+
+                // Close down any jsonDataView windows.
+                while (jsonDataViews.Count > 0) jsonDataViews[0].Close();
+
+                // Disable both the Find and FindNext menu items.
+                MainForm.findToolStripMenuItem.Enabled = false;
+                MainForm.findNextToolStripMenuItem.Enabled = false;
+
+                // Disable the Save and Save As menu items.
+                MainForm.saveToolStripMenuItem.Enabled = false;
+                MainForm.saveAsToolStripMenuItem.Enabled = false;
+
+                // Disable the Observed GUIDs menu item.
+                MainForm.observedGUIDsToolStripMenuItem.Enabled = false;
+
+                // Clear any existing nodes from the tree view
+                MainForm.treeView1.Nodes.Clear();
+
+                // Clear any items from the list view
+                MainForm.listView1.Items.Clear();
+
+
                 // Clear the existing document
                 docCurrent.Close();
                 docCurrent = null;
+
+
+                MainForm.closeToolStripMenuItem.Enabled = false;
+                MainForm.revertToolStripMenuItem.Enabled = false;
+
+                // Trigger refresh of UI elements
+                RefreshMainFormTitleText();
+
+                RefreshSelectedOjectPathBarText(null);
+                RefreshListView(null);
+                RefreshSelectedObjectSummaryText(null);
+                RefreshStatusStrip("File closed.");
+
             }
-
-            MainForm.closeToolStripMenuItem.Enabled = false;
-            MainForm.revertToolStripMenuItem.Enabled = false;
-
-            // Trigger refresh of UI elements
-            RefreshMainFormTitleText();
-
-            RefreshSelectedOjectPathBarText(null);
-            RefreshListView(null);
-            RefreshSelectedObjectSummaryText(null);
+            else
+                Debug.WriteLine("FileClose was called but docCurrent was null.");
 
             // Initiate Garbage Collection
             GC.Collect();
@@ -680,8 +690,31 @@ namespace HELLION.Explorer
         internal static void FileRevert()
         {
             string currentFileName = docCurrent.GameData.SaveFile.File.FullName;
-            FileClose();
+
+            // Calling FileOpen with an already existing file will trigger the FileClose.
             FileOpen(currentFileName);
+
+
+            //FileClose();
+
+            //MainForm.Cursor = Cursors.WaitCursor;
+
+            //int ms; // = 3000;
+
+            // DateTime start; // = DateTime.Now;
+            //while ((DateTime.Now - start).TotalMilliseconds < ms)
+            //    Application.DoEvents();
+
+            //// Initiate Garbage Collection
+            //GC.Collect();
+            //MainForm.Cursor = Cursors.Default;
+
+            //FileOpen(currentFileName);
+
+            //MainForm.Cursor = Cursors.WaitCursor;
+            //MainForm.Cursor = Cursors.Default;
+
+
         }
 
         #endregion
@@ -900,20 +933,20 @@ namespace HELLION.Explorer
         /// <summary>
         /// Regenerates and sets the object path bar on the main form.
         /// </summary>
-        /// <param name="nSelectedNode"></param>
-        internal static void RefreshSelectedOjectPathBarText(TreeNode nSelectedNode)
+        /// <param name="selectedNode"></param>
+        internal static void RefreshSelectedOjectPathBarText(TreeNode selectedNode)
         {
             if (docCurrent != null) //  && docCurrent.IsFileReady)
             {
                 // Update the object path + name + Tag in the object summary bar
-                StringBuilder sb = new StringBuilder();
+                //StringBuilder sb = new StringBuilder();
 
-                sb.Append(nSelectedNode.FullPath);
+                //sb.Append(selectedNode.FullPath);
                 //sb.Append("  (");
                 //sb.Append(nSelectedNode.NodeType.ToString());
                 //sb.Append(")");
 
-                MainForm.label1.Text = sb.ToString();
+                MainForm.label1.Text = selectedNode.FullPath; // sb.ToString();
             }
             else
             {
@@ -924,24 +957,25 @@ namespace HELLION.Explorer
         /// <summary>
         /// Regenerates the list view based on the currently selected tree node.
         /// </summary>
-        /// <param name="nSelectedNode"></param>
-        internal static void RefreshListView(TreeNode nSelectedNode)
+        /// <param name="selectedNode"></param>
+        internal static void RefreshListView(TreeNode selectedNode)
         {
-            if (nSelectedNode != null) // && docCurrent != null && docCurrent.IsFileReady) // temp change to allow unloaded document tree display
+            if (selectedNode != null)
             {
-                Base_TN nSelectedHETNNode = (Base_TN)nSelectedNode;
+                Base_TN selected_Base_TN = (Base_TN)selectedNode;
 
                 // Clear the list view's items
                 MainForm.listView1.Items.Clear();
 
-                // Test to see if we're drawing a <PARENT> and <THIS> item in the list view (option not yet implemented, on by default)
+                // Test to see if we're drawing a <PARENT> and <THIS> item in the list view.
+                // Option not yet implemented, so is on by default.
                 const bool bFakeTestResult = true;
                 if (bFakeTestResult)
                 {
                     // Only draw the <PARENT> node if it's not null
-                    if (nSelectedNode.Parent != null)
+                    if (selectedNode.Parent != null)
                     {
-                        Base_TN nodeParent = (Base_TN)nSelectedHETNNode.Parent;
+                        Base_TN nodeParent = (Base_TN)selected_Base_TN.Parent;
 
                         string[] arrParentItem = new string[2];
                         arrParentItem[0] = "<" + nodeParent.Text + ">";
@@ -950,40 +984,39 @@ namespace HELLION.Explorer
                         ListViewItem liParentItem = new ListViewItem(arrParentItem)
                         {
                             Name = "<PARENT>",
-                            Text = "<" + nSelectedNode.Parent.Text + ">",
-                            Tag = nSelectedNode.Parent,
+                            Text = "<" + selectedNode.Parent.Text + ">",
+                            Tag = selectedNode.Parent,
                             ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(nodeParent.NodeType)
                         };
                         // Add the item
                         MainForm.listView1.Items.Add(liParentItem);
                     }
 
-                    // Draw the <THIS> node if it's not null
-                    //if (nSelectedNode.Parent != null && )
-                    {
-                        string[] arrCurrentItem = new string[2];
-                        arrCurrentItem[0] = "<" + nSelectedNode.Text + ">";
-                        arrCurrentItem[1] = "<CURRENT>";
+                    // Draw the <THIS> node.
+                    string[] arrCurrentItem = new string[2];
+                    arrCurrentItem[0] = "<" + selectedNode.Text + ">";
+                    arrCurrentItem[1] = "<CURRENT>";
 
-                        ListViewItem liCurrentItem = new ListViewItem(arrCurrentItem)
-                        {
-                            Name = "<CURRENT>",
-                            Text = "<" + nSelectedNode.Text + ">",
-                            Tag = nSelectedNode,
-                            ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(nSelectedHETNNode.NodeType)
-                        };
-                        // Add the item
-                        MainForm.listView1.Items.Add(liCurrentItem);
-                    }
+                    ListViewItem liCurrentItem = new ListViewItem(arrCurrentItem)
+                    {
+                        Name = "<CURRENT>",
+                        Text = "<" + selectedNode.Text + ">",
+                        Tag = selectedNode,
+                        ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(selected_Base_TN.NodeType)
+                    };
+                    // Add the item
+                    MainForm.listView1.Items.Add(liCurrentItem);
                 }
 
-                if (nSelectedHETNNode.NodeType == Base_TN_NodeType.SearchResultsSet)
+                // Search results are already lists of nodes so need less work to generate
+                // the representation in the ListView.
+                if (selected_Base_TN.NodeType == Base_TN_NodeType.SearchResultsSet)
                 {
-                    SearchHandler_TN nSelectedHESearchHandlerNode = (SearchHandler_TN)nSelectedNode;
+                    SearchHandler_TN selected_SearchHandler_TN = (SearchHandler_TN)selectedNode;
 
-                    if (nSelectedHESearchHandlerNode.ParentSearchOperator.Results != null)
+                    if (selected_SearchHandler_TN.ParentSearchOperator.Results != null)
                     {
-                        foreach (Base_TN listItem in nSelectedHESearchHandlerNode.ParentSearchOperator.Results)
+                        foreach (Base_TN listItem in selected_SearchHandler_TN.ParentSearchOperator.Results)
                         {
                             string[] arr = new string[7];
                             arr[0] = listItem.Text;
@@ -994,59 +1027,56 @@ namespace HELLION.Explorer
                             arr[5] = String.Empty; // listItem.GUID.ToString();
                             arr[6] = String.Empty; // nodeChild.SceneID.ToString();
 
-                            ListViewItem liNewItem = new ListViewItem(arr)
+                            ListViewItem newItem = new ListViewItem(arr)
                             {
                                 Name = listItem.Name,
                                 Text = listItem.Text,
                                 Tag = listItem
                             };
 
-                            liNewItem.ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(listItem.NodeType);
+                            newItem.ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(listItem.NodeType);
 
                             // Add the item
-                            MainForm.listView1.Items.Add(liNewItem);
+                            MainForm.listView1.Items.Add(newItem);
                         }
                     }
                 }
                 else
                 {
-                    foreach (Base_TN nodeChild in nSelectedNode.Nodes)
+                    foreach (Base_TN node in selectedNode.Nodes)
                     {
                         string[] arr = new string[7];
-                        arr[0] = nodeChild.Text;
-                        arr[1] = nodeChild.NodeType.ToString();
-                        arr[2] = nodeChild.GetNodeCount(includeSubTrees: false).ToString();
-                        arr[3] = nodeChild.GetNodeCount(includeSubTrees: true).ToString();
-                        arr[4] = nodeChild.Path();
+                        arr[0] = node.Text;
+                        arr[1] = node.NodeType.ToString();
+                        arr[2] = node.GetNodeCount(includeSubTrees: false).ToString();
+                        arr[3] = node.GetNodeCount(includeSubTrees: true).ToString();
+                        arr[4] = node.Path();
                         arr[5] = String.Empty; // nodeChild.GUID.ToString();
                         arr[6] = String.Empty; // nodeChild.SceneID.ToString();
 
-                        ListViewItem liNewItem = new ListViewItem(arr)
+                        ListViewItem newItem = new ListViewItem(arr)
                         {
-                            Name = nodeChild.Text,
-                            Text = nodeChild.Text,
-                            Tag = nodeChild
+                            Name = node.Text,
+                            Text = node.Text,
+                            Tag = node
                         };
 
-                        liNewItem.ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(nodeChild.NodeType);
+                        newItem.ImageIndex = EmbeddedImages_ImageList.GetIconImageIndexByNodeType(node.NodeType);
 
                         // Add the item
-                        MainForm.listView1.Items.Add(liNewItem);
+                        MainForm.listView1.Items.Add(newItem);
                     }
                 }
 
             }
-            else
-            {
-                //MessageBox.Show("RefreshListView was passed a null nSelectedNode");
-            }
+            else Debug.Print("RefreshListView was passed a null nSelectedNode");
         }
 
         /// <summary>
         /// Regenerates the object summary texts.
         /// </summary>
-        /// <param name="nSelectedNode"></param>
-        internal static void RefreshSelectedObjectSummaryText(TreeNode nSelectedNode)
+        /// <param name="selectedNode"></param>
+        internal static void RefreshSelectedObjectSummaryText(TreeNode selectedNode)
         {
             // Updates the Object Information panel
 
@@ -1054,24 +1084,28 @@ namespace HELLION.Explorer
             StringBuilder sb2 = new StringBuilder();
 
             //if (nSelectedNode != null) //  && docCurrent != null && docCurrent.IsFileReady) // temp change to allow for tree use without a doc loaded
-            if (nSelectedNode != null)
+            if (selectedNode != null)
             {
-                Base_TN nSelectedHETNNode = (Base_TN)nSelectedNode;
+                Base_TN nSelectedHETNNode = (Base_TN)selectedNode;
 
                 sb1.Append("BASIC NODE DATA");
                 sb1.Append(Environment.NewLine);
-                sb1.Append("NodeType: " + nSelectedHETNNode.NodeType.ToString());
                 sb1.Append(Environment.NewLine);
-                sb1.Append("Name: " + nSelectedHETNNode.Name);
+
+                sb1.Append(nSelectedHETNNode.ToolTipText);
                 sb1.Append(Environment.NewLine);
-                sb1.Append("Text: " + nSelectedHETNNode.Text);
                 sb1.Append(Environment.NewLine);
+                sb1.Append(Environment.NewLine);
+
+                sb1.Append("RealPath: " + nSelectedHETNNode.RealPath());
+                sb1.Append(Environment.NewLine);
+
                 sb1.Append("FullPath: " + nSelectedHETNNode.FullPath);
                 sb1.Append(Environment.NewLine);
-                sb1.Append("ToolTipText:" + Environment.NewLine + nSelectedHETNNode.ToolTipText);
+
+                sb1.Append("Path: " + nSelectedHETNNode.Path());
                 sb1.Append(Environment.NewLine);
-                //sb1.Append("SceneID: " + nSelectedNode.SceneID.ToString());
-                sb1.Append(Environment.NewLine);
+
                 sb1.Append(Environment.NewLine);
                 sb1.Append(Environment.NewLine);
 
@@ -1082,7 +1116,7 @@ namespace HELLION.Explorer
                     || nSelectedHETNNode.NodeType == Base_TN_NodeType.Asteroid)
                 {
 
-                    SolarSystem_TN solSysNode = (SolarSystem_TN)nSelectedNode;
+                    SolarSystem_TN solSysNode = (SolarSystem_TN)selectedNode;
 
                     sb1.Append("GUID: " + solSysNode.GUID.ToString());
                     sb1.Append(Environment.NewLine);
@@ -1154,6 +1188,12 @@ namespace HELLION.Explorer
                     sb1.Append(Environment.NewLine);
                 }
 
+
+
+
+
+
+
                 if (false) // nSelectedHETNNode.NodeType != Base_TN_NodeType.SystemNAV) // temp addition
                 {
                     // Get the count of the child nodes contained in the selected node
@@ -1187,6 +1227,20 @@ namespace HELLION.Explorer
             MainForm.textBox2.Text = sb2.ToString();
 
         }
+
+        /// <summary>
+        /// Updates the status strip text based upon the passed TreeNode.
+        /// </summary>
+        /// <param name="selectedNode"></param>
+        internal static void RefreshStatusStrip(TreeNode selectedNode) => RefreshStatusStrip
+            ("(" + selectedNode.GetNodeCount(includeSubTrees: false).ToString() + ") " + selectedNode.FullPath);
+
+        /// <summary>
+        /// Updates the status strip text with the specified string.
+        /// </summary>
+        /// <param name="str"></param>
+        internal static void RefreshStatusStrip(string str) => MainForm.toolStripStatusLabel1.Text = str;
+
 
         #endregion
 

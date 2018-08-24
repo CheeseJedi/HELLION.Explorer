@@ -49,7 +49,16 @@ namespace HELLION.Explorer
 
         private void revertToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            HellionExplorerProgram.FileRevert();
+            //string currentFileName = HellionExplorerProgram.docCurrent.GameData.SaveFile.File.FullName;
+
+            //HellionExplorerProgram.FileClose();
+
+            // Calling FileOpen with an already existing file will trigger the FileClose.
+            HellionExplorerProgram.FileOpen(HellionExplorerProgram.docCurrent.GameData.SaveFile.File.FullName);
+
+            //HellionExplorerProgram.FileRevert();
+
+
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -179,16 +188,32 @@ namespace HELLION.Explorer
 
         private void stationBlueprintEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            LaunchBlueprintEditor();
+        }
+
+        private void LaunchBlueprintEditor()
+        {
             if (treeView1.SelectedNode != null && ((Base_TN)treeView1.SelectedNode)
                 .NodeType == Base_TN_NodeType.StationBlueprintFile)
             {
-                HellionExplorerProgram.CreateNewBlueprintEditor((Json_TN)treeView1.SelectedNode.FirstNode);
+                HellionExplorerProgram.CreateNewBlueprintEditor((Base_TN)treeView1.SelectedNode); //.FirstNode);
             }
             else
             {
                 HellionExplorerProgram.CreateNewBlueprintEditor();
             }
         }
+
+        private void triggerGarbageCollectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GC.Collect();
+        }
+
+
+
+
+
+
 
         #endregion
 
@@ -255,6 +280,7 @@ namespace HELLION.Explorer
             HellionExplorerProgram.RefreshSelectedOjectPathBarText(e.Node);
             HellionExplorerProgram.RefreshListView(e.Node);
             HellionExplorerProgram.RefreshSelectedObjectSummaryText(e.Node);
+            HellionExplorerProgram.RefreshStatusStrip(e.Node);
 
             // Show menu only if the right mouse button is clicked.
             if (e.Button == MouseButtons.Right)
@@ -277,7 +303,7 @@ namespace HELLION.Explorer
                     //jsonDataViewToolStripMenuItem.Enabled = true;
 
                     // Editing of Json is now handled by the Edit menu item on the 
-                    // context menu. At this point only Objects and Arrays seem
+                    // context menu. At this point only Objects seem
                     // suitable for use in the Json editor - otherwise de-serialisation
                     // fails and changes can't be applied to the main document.
 
@@ -285,8 +311,9 @@ namespace HELLION.Explorer
                     {
                         case Base_TN_NodeType.SaveFile:
                         case Base_TN_NodeType.DataFile:
+                        case Base_TN_NodeType.StationBlueprintFile:
                         case Base_TN_NodeType.JsonObject:
-                        case Base_TN_NodeType.JsonArray:
+                        //case Base_TN_NodeType.JsonArray:
                             // Show the Edit menu item.
                             editToolStripMenuItem1.Enabled = true;
                             break;
@@ -334,7 +361,31 @@ namespace HELLION.Explorer
                         thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
                     }
                 }
-                
+
+                else if (t.Equals(typeof(Base_TN)) && node.NodeType == Base_TN_NodeType.StationBlueprintFile)
+                {
+                    // Enable the Edit menu item.
+                    editToolStripMenuItem1.Enabled = true;
+
+                    // Disable the Jump to sub-menu
+                    jumpToToolStripMenuItem.Enabled = false;
+
+                    // Disable Jump to sub-items.
+                    thisObjectInGameDataViewToolStripMenuItem.Enabled = false;
+                    thisObjectInGameDataViewToolStripMenuItem.Checked = false;
+                    thisObjectInSolarSystemViewToolStripMenuItem.Enabled = false;
+                    thisObjectInSolarSystemViewToolStripMenuItem.Checked = false;
+                    rootOfDockingTreeToolStripMenuItem.Enabled = false;
+                    parentCelestialBodyToolStripMenuItem.Enabled = false;
+
+                    // Disable load items.
+                    loadNextLevelToolStripMenuItem.Enabled = false;
+                    loadAllLevelsToolStripMenuItem.Enabled = false;
+
+
+                }
+
+
                 // Handles SolarSystem_TN Nodes for the Solar System representation.
                 else if (t.Equals(typeof(SolarSystem_TN)))
                 {
@@ -487,8 +538,7 @@ namespace HELLION.Explorer
             // Handle Control+Enter as an expansion/load ALL request.
             if (e.KeyData.HasFlag(Keys.Enter) && e.KeyData.HasFlag(Keys.Control))
             {
-                Debug.Print("Load (all) Request");
-                HandleExpansionRequest(GameData.Def_LoadAllNodeDepth);
+                HandleExpansionRequest(loadAllLevels: true);
                 return;
             }
 
@@ -496,7 +546,6 @@ namespace HELLION.Explorer
             // Handle Shift+Enter as an expansion/load request.
             if (e.KeyData.HasFlag(Keys.Enter) && e.KeyData.HasFlag(Keys.Shift))
             {
-                Debug.Print("Load Request");
                 HandleExpansionRequest();
                 return;
             }
@@ -508,6 +557,7 @@ namespace HELLION.Explorer
                 HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
                 HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
                 HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                HellionExplorerProgram.RefreshStatusStrip(treeView1.SelectedNode);
                 return;
             }
         }
@@ -544,6 +594,7 @@ namespace HELLION.Explorer
                     HellionExplorerProgram.RefreshSelectedOjectPathBarText(node);
                     //Program.RefreshListView(node);
                     HellionExplorerProgram.RefreshSelectedObjectSummaryText(node);
+                    HellionExplorerProgram.RefreshStatusStrip(node);
                 }
             }
         }
@@ -601,7 +652,7 @@ namespace HELLION.Explorer
 
         private void loadAllLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadAllLevels();
+            HandleExpansionRequest(loadAllLevels: true);
         }
 
         private void expandAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -616,14 +667,9 @@ namespace HELLION.Explorer
             HellionExplorerProgram.MainForm.treeView1.SelectedNode.Collapse();
         }
 
-        private void jsonDataViewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void editToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            // Base_TN node = (Base_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
+            Base_TN node = (Base_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
 
             Type t = HellionExplorerProgram.MainForm.treeView1.SelectedNode.GetType();
 
@@ -632,11 +678,10 @@ namespace HELLION.Explorer
                 HellionExplorerProgram.CreateNewJsonDataView((Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
 
             }
-            else if (t == typeof(Blueprint_TN)) // && node.NodeType == Base_TN_NodeType.)
+
+            else if (t.Equals(typeof(Base_TN)) && node.NodeType == Base_TN_NodeType.StationBlueprintFile)
             {
-                // This needs updating to support the external Station Blueprint Editor.
-                // HellionExplorerProgram.CreateNewBlueprintEditor((Blueprint_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode);
-                MessageBox.Show("External editor not currently available.");
+                LaunchBlueprintEditor();
 
             }
         }
@@ -656,6 +701,7 @@ namespace HELLION.Explorer
                     HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
                     HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
                     HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshStatusStrip(treeView1.SelectedNode);
                 }
                 else throw new InvalidOperationException("Unexpected node type " + t.ToString());
             }
@@ -676,6 +722,8 @@ namespace HELLION.Explorer
                     HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
                     HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
                     HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+                    HellionExplorerProgram.RefreshStatusStrip(treeView1.SelectedNode);
+
                 }
                 else throw new InvalidOperationException("Unexpected node type " + t.ToString());
             }
@@ -691,6 +739,8 @@ namespace HELLION.Explorer
             HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
             HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
             HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshStatusStrip(treeView1.SelectedNode);
+
         }
 
         private void rootOfDockingTreeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -703,6 +753,8 @@ namespace HELLION.Explorer
             HellionExplorerProgram.RefreshSelectedOjectPathBarText(treeView1.SelectedNode);
             HellionExplorerProgram.RefreshListView(treeView1.SelectedNode);
             HellionExplorerProgram.RefreshSelectedObjectSummaryText(treeView1.SelectedNode);
+            HellionExplorerProgram.RefreshStatusStrip(treeView1.SelectedNode);
+
         }
 
         #endregion
@@ -758,10 +810,10 @@ namespace HELLION.Explorer
 
 
 
-        private void triggerGarbageCollectorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            GC.Collect();
-        }
+        //private void triggerGarbageCollectorToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    GC.Collect();
+        //}
 
         private void findOwningFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -797,66 +849,56 @@ namespace HELLION.Explorer
         /// Handles an expansion request when the keyboard has been used to issue the request.
         /// </summary>
         /// <param name="populateDepth"></param>
-        private void HandleExpansionRequest(int populateDepth = 1)
+        private void HandleExpansionRequest(bool loadAllLevels = false)
         {
+            // TODO - this may need to run parts asynchronously for large collections of
+            // large objects - the Ships collection for example.
+
             TreeNode node = HellionExplorerProgram.MainForm.treeView1.SelectedNode;
 
             if (node != null && node.GetType() == typeof(Json_TN))
             {
-
                 // Make a note of the starting time
                 DateTime startingTime = DateTime.Now;
 
-                //Application.UseWaitCursor = true;
-                HellionExplorerProgram.MainForm.Cursor = Cursors.WaitCursor;
+                // Update the status bar
+                HellionExplorerProgram.RefreshStatusStrip("Starting node loading and generation...");
+
+                // Set mouse cursor.
+                Cursor = Cursors.WaitCursor;
 
                 // Suppress repainting the TreeView until all the objects have been created.
-                HellionExplorerProgram.MainForm.treeView1.BeginUpdate();
+                treeView1.BeginUpdate();
 
-                // Update the status bar
-                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text =
-                    String.Format("Starting node loading and generation...");
 
-                // Cast the TreeNode to an HETreeNode to determine it's type
-                Json_TN jsonNode = (Json_TN)node;
-                if (populateDepth == 1)
+                if (loadAllLevels)
                 {
-                    // Load next level
-                    LoadNextLevel();
-
+                    // Load all levels up to the default maximum.
+                    Debug.Print("Load (all) Request");
+                    LoadLevels(GameData.Def_LoadAllNodeDepth, skipThroughPopulatedNodes: true);
                 }
                 else
                 {
-                    LoadAllLevels();
+                    // Load next level
+                    Debug.Print("Load (next) Request");
+                    LoadLevels(1, skipThroughPopulatedNodes: true);
                 }
-                
-                // Expand the current node
-                jsonNode.Expand();
-
-
 
                 // Begin repainting the TreeView.
-                HellionExplorerProgram.MainForm.treeView1.EndUpdate();
+                treeView1.EndUpdate();
 
-                //Application.UseWaitCursor = false;
-                HellionExplorerProgram.MainForm.Cursor = Cursors.Default;
+                // Reset cursor.
+                Cursor = Cursors.Default;
 
                 // Update the status bar
-                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text = 
-                    String.Format("Node loading and generation completed in {0:mm}m{0:ss}s", 
-                    DateTime.Now - startingTime);
+                HellionExplorerProgram.RefreshStatusStrip(string.Format(
+                    "Node loading and generation completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime));
 
-
+                // Expand the current node
+                node.Expand();
 
             }
         }
-
-        /// <summary>
-        /// Triggers the selected node to load (create nodes from) the next level of data.
-        /// </summary>
-        private void LoadNextLevel() => LoadLevels(1, skipThroughPopulatedNodes: true);
-
-        private void LoadAllLevels() => LoadLevels(GameData.Def_LoadAllNodeDepth, skipThroughPopulatedNodes: true);
 
         /// <summary>
         /// Triggers the selected node to load (create nodes from) all levels of data up to the
@@ -867,8 +909,6 @@ namespace HELLION.Explorer
             // Load all levels (up to specified depth)
             Json_TN tempNode = (Json_TN)HellionExplorerProgram.MainForm.treeView1.SelectedNode;
             tempNode.RefreshChildNodesFromjData(depth, skipThroughPopulatedNodes);
-            //tempNode.UpdateCounts();
-            tempNode.Expand();
         }
 
     }

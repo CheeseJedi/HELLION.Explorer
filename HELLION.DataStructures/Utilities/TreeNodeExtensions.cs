@@ -1,23 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace HELLION.DataStructures.Utilities
 {
     public static class TreeNodeExtensions
     {
-        /// <summary>
-        /// Gets the first node that matches the given key in the current nodes children.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static TreeNode GetFirstChildNodeByName(this TreeNode node, string key)
-        {
-            // May be defunct?
-            if (node == null) return null;
-            TreeNode[] _nodes = node.Nodes.Find(key, searchAllChildren: true);
-            return _nodes.Length > 0 ? (TreeNode)_nodes[0] : null;
-        }
 
         /// <summary>
         /// Returns the Path of this node, with reference to the TreeView control.
@@ -40,22 +26,16 @@ namespace HELLION.DataStructures.Utilities
         }
 
         /// <summary>
-        /// Returns a list of all first generation child nodes, or all descendants via recursion.
+        /// Returns the calculated path for the TreeNode based on the node's Name rather
+        /// than it's Text and doesn't care whether it's in a TreeView or not.
         /// </summary>
         /// <param name="node"></param>
-        /// <param name="includeSubtrees"></param>
-        /// <returns>Returns an empty list if the node has no children.</returns>
-        public static List<TreeNode> GetChildNodes(this TreeNode node, bool includeSubtrees = false)
+        /// <returns></returns>
+        public static string RealPath(this TreeNode node, string seperator = ">")
         {
-            List<TreeNode> _listOfChildNodes = new List<TreeNode> { node };
-            foreach (TreeNode child in node.Nodes)
-            {
-                if (!includeSubtrees) _listOfChildNodes.Add(child);
-                else _listOfChildNodes.AddRange(child.GetChildNodes(includeSubtrees: true));
-            }
-            return _listOfChildNodes.Count > 0 ? _listOfChildNodes : null;
+            if (node.Parent == null) return node.Name;
+            return RealPath(node.Parent, seperator) + seperator + node.Name;
         }
-
 
     }
 }

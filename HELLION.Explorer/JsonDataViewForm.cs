@@ -48,6 +48,29 @@ namespace HELLION.Explorer
             Text = _formTitleText;
             _appliedText = SourceNode.JData.ToString();
 
+
+            // Find the parent Json_File.
+            Json_File parentFile = HellionExplorerProgram.docCurrent?.GameData.FindOwningFile(SourceNode);
+
+            if (parentFile == HellionExplorerProgram.docCurrent.GameData.SaveFile)
+            {
+                fastColoredTextBox1.ReadOnly = false;
+                toolStripReadOnlyStatus.Visible = false;
+                deserialiseAsYouTypeToolStripMenuItem.Checked = true;
+                deserialiseAsYouTypeToolStripMenuItem.Enabled = true;
+                applyChangesToolStripMenuItem.Enabled = true;
+
+            }
+            else
+            {
+                fastColoredTextBox1.ReadOnly = true;
+                deserialiseAsYouTypeToolStripMenuItem.Checked = false;
+                deserialiseAsYouTypeToolStripMenuItem.Enabled = false;
+                toolStripReadOnlyStatus.Visible = true;
+                applyChangesToolStripMenuItem.Enabled = true;
+            }
+
+
             // Character length limit -  this is a guessed figure!
             if (_appliedText.Length > 25000)
                 deserialiseAsYouTypeToolStripMenuItem.Checked = false;
@@ -114,8 +137,7 @@ namespace HELLION.Explorer
                 HellionExplorerProgram.MainForm.treeView1.BeginUpdate();
 
                 // Update the status bar
-                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text =
-                    String.Format("Applying changes...");
+                HellionExplorerProgram.RefreshStatusStrip("Applying changes...");
 
 
 
@@ -141,6 +163,11 @@ namespace HELLION.Explorer
                 }
 
                 if (SourceNode.JData.Parent == null) throw new Exception();
+
+
+                // TODO - this doesn't handle certain editing conditions:
+                // Newtonsoft.Json.Linq.JProperty cannot have multiple values.
+
 
                 // Get a reference to the old (current) token.
                 JToken oldToken = SourceNode.JData;
@@ -176,9 +203,9 @@ namespace HELLION.Explorer
                 Cursor = Cursors.Default;
 
                 // Update the status bar
-                HellionExplorerProgram.MainForm.toolStripStatusLabel1.Text =
-                    String.Format("Changes applied and Node regeneration completed in {0:mm}m{0:ss}s",
-                    DateTime.Now - startingTime);
+                HellionExplorerProgram.RefreshStatusStrip(string.Format(
+                    "Changes applied and Node regeneration completed in {0:mm}m{0:ss}s",
+                    DateTime.Now - startingTime));
 
 
                 MessageBox.Show("Changes applied. Remember to save the main document!", "SUCCESS");
