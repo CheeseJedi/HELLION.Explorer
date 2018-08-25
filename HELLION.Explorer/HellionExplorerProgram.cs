@@ -563,7 +563,8 @@ namespace HELLION.Explorer
             {
                 string newFileName = passedFileName ?? docCurrent.GameData.SaveFile.File.FullName;
                 // Call the docCurrent's save file's .Save() method.
-                //docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+                docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+                RefreshMainFormTitleText();
             }
         }
 
@@ -578,7 +579,7 @@ namespace HELLION.Explorer
 
                 // Display Save As dialog, with current file name passed to be used as the
                 // default file name.
-                var saveFileDialog1 = new SaveFileDialog()
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog()
                 {
                     FileName = docCurrent.GameData.SaveFile.File.FullName,
                     Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
@@ -908,17 +909,17 @@ namespace HELLION.Explorer
         /// <summary>
         /// Regenerates and sets the application's main window title text.
         /// </summary>
-        /// <param name="FullFileNameHint"></param>
-        internal static void RefreshMainFormTitleText(string FullFileNameHint = "")
+        /// <param name="fileNameHint"></param>
+        internal static void RefreshMainFormTitleText(string fileNameHint = null)
         {
             StringBuilder sb = new StringBuilder();
 
             // Add the product name
             sb.Append(Application.ProductName);
 
-            if (FullFileNameHint != String.Empty)
+            if (!string.IsNullOrEmpty(fileNameHint))
             {
-                sb.Append(" [" + FullFileNameHint + "] ");
+                sb.Append(" [" + fileNameHint + "] ");
             }
             else if (docCurrent != null && docCurrent.GameData.SaveFile.File != null && docCurrent.IsWorkspaceReady)
             {

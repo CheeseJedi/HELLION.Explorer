@@ -83,7 +83,7 @@ namespace HELLION.DataStructures.Document
         /// <summary>
         /// The .save file that is being opened.
         /// </summary>
-        public FileInfo SaveFileInfo { get; private set; } = null;
+        public FileInfo SaveFileInfo => GameData?.SaveFile?.File;
 
         /// <summary>
         /// The DirectoryInfo that represents the Static Data folder.
@@ -103,7 +103,10 @@ namespace HELLION.DataStructures.Document
         /// <summary>
         /// 
         /// </summary>
-        public bool IsDirty { get; private set; } = false;
+        //public bool IsDirty { get; set; } = false;
+
+        public bool IsDirty => (bool)GameData?.SaveFile?.IsDirty;
+
 
         /// <summary>
         /// 
@@ -141,7 +144,6 @@ namespace HELLION.DataStructures.Document
                     GameData.Close();
                     GameData = null;
                 }
-                SaveFileInfo = null;
                 DataDirectoryInfo = null;
 
                 return true;

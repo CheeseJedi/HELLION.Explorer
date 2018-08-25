@@ -137,7 +137,7 @@ namespace HELLION.Explorer
                 HellionExplorerProgram.MainForm.treeView1.BeginUpdate();
 
                 // Update the status bar
-                HellionExplorerProgram.RefreshStatusStrip("Applying changes...");
+                HellionExplorerProgram.RefreshStatusStrip("Applying changes from Json Editor...");
 
 
 
@@ -185,6 +185,10 @@ namespace HELLION.Explorer
                 // Mark the parent file as dirty.
                 parentFile.IsDirty = true;
 
+                //HellionExplorerProgram.docCurrent.IsDirty = true;
+                HellionExplorerProgram.RefreshMainFormTitleText();
+
+
                 // Set the AppliedText.
                 _appliedText = fastColoredTextBox1.Text;
 
@@ -194,7 +198,6 @@ namespace HELLION.Explorer
                 // Trigger the Solar System to rebuild - SLOW!
                 HellionExplorerProgram.docCurrent.SolarSystem.RebuildSolarSystem();
 
-                HellionExplorerProgram.RefreshMainFormTitleText();
 
                 // Begin repainting the TreeView.
                 HellionExplorerProgram.MainForm.treeView1.EndUpdate();
