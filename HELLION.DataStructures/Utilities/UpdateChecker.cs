@@ -42,7 +42,7 @@ namespace HELLION.DataStructures.Utilities
         /// <remarks>
         /// Set when using the constructor.
         /// </remarks>
-        public string GitHubUserName { get; private set; } = String.Empty;
+        public string GitHubUserName { get; private set; } = string.Empty;
 
         /// <summary>
         /// The GitHub repository name of which the releases will be queried.
@@ -50,7 +50,7 @@ namespace HELLION.DataStructures.Utilities
         /// <remarks>
         /// Set when using the constructor.
         /// </remarks>
-        public string RepositoryName { get; private set; } = String.Empty;
+        public string RepositoryName { get; private set; } = string.Empty;
 
         /// <summary>
         /// Checks current build number against the latest release on GitHub repository and 
@@ -70,10 +70,13 @@ namespace HELLION.DataStructures.Utilities
             sb.Append(Environment.NewLine);
             sb.Append("Latest GitHub release version:");
             sb.Append(Environment.NewLine);
-            foreach (var release in AllReleases)
-            {
-                sb.Append(release["tag_name"] + Environment.NewLine); break;
-            }
+            //foreach (var release in AllReleases)
+            //{
+            //    sb.Append(release["tag_name"] + Environment.NewLine);
+            //    break;
+            //}
+
+            sb.Append(FindLatestRelease(includePreReleaseVersions: false) + Environment.NewLine);
             
             MessageBox.Show(sb.ToString(), "Version update check", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -99,13 +102,12 @@ namespace HELLION.DataStructures.Utilities
         /// Private field to cache the latest release version to prevent repeated web requests
         /// per session.
         /// </summary>
-        private string latestRelease = String.Empty;
+        private string latestRelease = string.Empty;
 
         /// <summary>
         /// Private field for the AllReleases Property
         /// </summary>
         private JArray _allReleases = null;
-
 
         /// <summary>
         /// The private property for the array of all releases for the repo as specified when 
@@ -133,21 +135,37 @@ namespace HELLION.DataStructures.Utilities
         /// <summary>
         /// Finds the latest release from a specified GitHub repo.
         /// </summary>
+        /// <param name="includePreReleaseVersions">Whether to include PreRelease versions in the check.</param>
         /// <returns></returns>
-        private string FindLatestRelease()
+        private string FindLatestRelease(bool includePreReleaseVersions = false)
         {
-            IOrderedEnumerable<JToken> orderedReleases = from s in AllReleases
-                                                         orderby (string)s["published_at"] descending
-                                                         select s;
-            string potentialLatestRelease = String.Empty;
+            IOrderedEnumerable<JToken> orderedReleases;
+
+            if (includePreReleaseVersions)
+            {
+                orderedReleases = from s in AllReleases
+                                  where (bool)s["prerelease"] == false
+                                  orderby (string)s["published_at"] descending
+                                  select s;
+            }
+            else
+            {
+                orderedReleases = from s in AllReleases
+                                  orderby (string)s["published_at"] descending
+                                  select s;
+            }
+
+            string potentialLatestRelease = string.Empty;
             if (orderedReleases.Count() > 0)
             {
                 // Grab the first item, as they're already sorted by reverse date order.
-                foreach (var item in orderedReleases)
-                {
-                    potentialLatestRelease = (string)item["tag_name"];
-                    break;
-                }
+                potentialLatestRelease = (string)orderedReleases.First()["tag_name"];
+
+                //foreach (var item in orderedReleases)
+                //{
+                //    potentialLatestRelease = (string)item["tag_name"];
+                //    break;
+                //}
             }
             return potentialLatestRelease;
         }
