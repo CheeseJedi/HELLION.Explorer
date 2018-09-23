@@ -55,7 +55,7 @@ namespace HELLION.DataStructures.Blueprints
                 StationBlueprintFormatVersion, DateTime.Now);
             BlueprintObject.LinkURI = new Uri(@"https://github.com/CheeseJedi/Hellion-Station-Blueprint-Format");
 
-            BlueprintObject.AuxData = new BlueprintStructure_AuxData(null);
+            //BlueprintObject.AuxData = new BlueprintStructure_AuxData(null);
 
             // Loop through all the structures in the Structures.Json file
             foreach (JToken jtStructure in structuresJsonFile.JData)
@@ -112,7 +112,7 @@ namespace HELLION.DataStructures.Blueprints
 
             Serialise();
 
-            SaveFile(CreateBackup: true);
+            SaveFile(createBackup: true);
 
         }
 

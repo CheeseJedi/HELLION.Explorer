@@ -305,21 +305,21 @@
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.refreshToolStripMenuItem.Text = "&Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(168, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(177, 6);
             // 
             // navigationPaneToolStripMenuItem
             // 
             this.navigationPaneToolStripMenuItem.Checked = true;
             this.navigationPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.navigationPaneToolStripMenuItem.Name = "navigationPaneToolStripMenuItem";
-            this.navigationPaneToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.navigationPaneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.navigationPaneToolStripMenuItem.Text = "&Navigation Pane";
             this.navigationPaneToolStripMenuItem.Click += new System.EventHandler(this.navigationPaneToolStripMenuItem_Click);
             // 
@@ -328,7 +328,7 @@
             this.dynamicListPaneToolStripMenuItem.Checked = true;
             this.dynamicListPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.dynamicListPaneToolStripMenuItem.Name = "dynamicListPaneToolStripMenuItem";
-            this.dynamicListPaneToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.dynamicListPaneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dynamicListPaneToolStripMenuItem.Text = "&Dynamic List Pane";
             this.dynamicListPaneToolStripMenuItem.Click += new System.EventHandler(this.dynamicListPaneToolStripMenuItem_Click);
             // 
@@ -337,19 +337,19 @@
             this.infoPaneToolStripMenuItem.Checked = true;
             this.infoPaneToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.infoPaneToolStripMenuItem.Name = "infoPaneToolStripMenuItem";
-            this.infoPaneToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.infoPaneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.infoPaneToolStripMenuItem.Text = "&Info Pane";
             this.infoPaneToolStripMenuItem.Click += new System.EventHandler(this.infoPaneToolStripMenuItem_Click);
             // 
             // toolStripSeparator12
             // 
             this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(168, 6);
+            this.toolStripSeparator12.Size = new System.Drawing.Size(177, 6);
             // 
             // observedGUIDsToolStripMenuItem
             // 
             this.observedGUIDsToolStripMenuItem.Name = "observedGUIDsToolStripMenuItem";
-            this.observedGUIDsToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.observedGUIDsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.observedGUIDsToolStripMenuItem.Text = "Observed &GUIDs";
             this.observedGUIDsToolStripMenuItem.Click += new System.EventHandler(this.observedGUIDsToolStripMenuItem_Click);
             // 
@@ -370,6 +370,7 @@
             // 
             // stationBlueprintEditorToolStripMenuItem
             // 
+            this.stationBlueprintEditorToolStripMenuItem.Enabled = false;
             this.stationBlueprintEditorToolStripMenuItem.Name = "stationBlueprintEditorToolStripMenuItem";
             this.stationBlueprintEditorToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
             this.stationBlueprintEditorToolStripMenuItem.Text = "Station Blueprint Editor";
@@ -499,9 +500,11 @@
             this.saveTestToolStripMenuItem,
             this.generateStructureDefinitionsStubjsonToolStripMenuItem,
             this.findOwningFileToolStripMenuItem});
+            this.testToolStripMenuItem1.Enabled = false;
             this.testToolStripMenuItem1.Name = "testToolStripMenuItem1";
             this.testToolStripMenuItem1.Size = new System.Drawing.Size(40, 20);
             this.testToolStripMenuItem1.Text = "Test";
+            this.testToolStripMenuItem1.Visible = false;
             // 
             // saveTestToolStripMenuItem
             // 

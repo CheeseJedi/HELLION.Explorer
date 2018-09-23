@@ -185,7 +185,7 @@ namespace HELLION.DataStructures.Blueprints
             // public bool ShouldSerializeSceneName() { return OwnerStructure == null || (OwnerStructure != null && OwnerStructure.IsTemplate) ? true : false; }
 
             [JsonProperty]
-            public String StructureType
+            public string StructureType
             {
                 get => SceneID?.GetEnumDescription(); // ?? HEBlueprintStructureSceneID.Unspecified.ToString();
                 set
@@ -262,7 +262,7 @@ namespace HELLION.DataStructures.Blueprints
             /// <returns></returns>
             public BlueprintDockingPort GetDockingPort(string name)
             {
-                if (name == null || name == String.Empty || !(DockingPorts.Count > 0)) return null;
+                if (name == null || name == string.Empty || !(DockingPorts.Count > 0)) return null;
 
                 IEnumerable<BlueprintDockingPort> results = DockingPorts.
                     Where(f => f.PortName.ToString() == name);
@@ -300,6 +300,19 @@ namespace HELLION.DataStructures.Blueprints
 
                 return results.Count() == 1 ? results.Single() : null;
             }
+
+
+            public BlueprintDockingPort GetDockingPortByOrderID(int orderID)
+            {
+                //if (orderID > 0 || !(DockingPorts.Count > 0)) return null;
+
+                IEnumerable<BlueprintDockingPort> results = DockingPorts.
+                    Where(f => f.OrderID == orderID);
+
+                return results.Count() == 1 ? results.Single() : null;
+
+            }
+
 
             /// <summary>
             /// Gets the Structure Root for this structure.

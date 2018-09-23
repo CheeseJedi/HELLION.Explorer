@@ -563,7 +563,7 @@ namespace HELLION.Explorer
             {
                 string newFileName = passedFileName ?? docCurrent.GameData.SaveFile.File.FullName;
                 // Call the docCurrent's save file's .Save() method.
-                docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+                docCurrent.GameData.SaveFile.SaveFile(createBackup: true);
                 RefreshMainFormTitleText();
             }
         }

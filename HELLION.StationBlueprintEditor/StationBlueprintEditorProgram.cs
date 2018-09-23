@@ -423,12 +423,16 @@ namespace HELLION.StationBlueprintEditor
         /// <param name="passedFileName"></param>
         internal static void FileSave(string passedFileName = null)
         {
-            if (DocCurrent == null) throw new NullReferenceException("_docCurrent was null.");
+            if (DocCurrent == null) throw new NullReferenceException("FileSave: DocCurrent was null.");
             else
             {
-                string newFileName = passedFileName ?? DocCurrent.File.FullName;
-                // Call the _docCurrent's save file's .Save() method.
-                //_docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+                DocCurrent.Serialise();
+
+                if (!string.IsNullOrEmpty(passedFileName))
+                    DocCurrent.SaveFile(true, new FileInfo(passedFileName));
+
+                else DocCurrent.SaveFile(createBackup: true);
+
             }
         }
 
@@ -437,7 +441,7 @@ namespace HELLION.StationBlueprintEditor
         /// </summary>
         internal static void FileSaveAs()
         {
-            if (DocCurrent == null) throw new NullReferenceException("_docCurrent was null.");
+            if (DocCurrent == null) throw new NullReferenceException("FileSaveAs: DocCurrent was null.");
             else
             {
 
@@ -621,7 +625,7 @@ namespace HELLION.StationBlueprintEditor
             FileNew((JToken)null);
 
             // Process the command line arguments.
-            // If a file is specified to open, it will replace the cur
+            // If a file is specified to open, it will replace the just created new (empty) file.
             ProcessCommandLineArguments(args);
 
             // Start the Windows Forms message loop

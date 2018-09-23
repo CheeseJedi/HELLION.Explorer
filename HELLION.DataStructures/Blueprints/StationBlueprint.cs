@@ -140,7 +140,7 @@ namespace HELLION.DataStructures.Blueprints
         /// Should reflect the version no. of the StructureDefinitions.json file.
         /// </remarks>
         [JsonProperty]
-        public decimal? Version { get; set; } = null;
+        public decimal? Version { get; set; } = StationBlueprintFormatVersion;
 
         /// <summary>
         /// The Station's name as displayed in-game.
@@ -158,13 +158,24 @@ namespace HELLION.DataStructures.Blueprints
         [JsonProperty]
         public Uri LinkURI { get; set; } = null;
 
+        [JsonProperty]
+        public bool? Invulnerable { get; set; } = false;
+
+        [JsonProperty]
+        public bool? SystemsOnline { get; set; } = true;
+
+        [JsonProperty]
+        public bool? DoorsLocked { get; set; } = false;
+
+
+
         /// <summary>
         /// Auxiliary data for this blueprint. If this is set it applies to all structures in
         /// the blueprint. Individual structures can also implement an AuxData that will over-
         /// ride the blueprint level AuxData.
         /// </summary>
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-        public BlueprintStructure_AuxData AuxData { get; set; } = null;
+        //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+        //public BlueprintStructure_AuxData AuxData { get; set; } = null;
 
         /// <summary>
         /// The list of all structures in the blueprint.
@@ -497,13 +508,13 @@ namespace HELLION.DataStructures.Blueprints
         /// Adds a new structure to the Secondary Structures list.
         /// </summary>
         /// <returns>Returns true if the added structure is in the Structures list once created.</returns>
-        public BlueprintStructure AddStructure(StructureSceneID sceneID)
+        public BlueprintStructure AddStructure(StructureSceneID sceneID, int? structureID = null)
         {
 
             BlueprintStructure newStructure = new BlueprintStructure
             {
                 SceneID = sceneID,
-                StructureID = Structures.Count()
+                StructureID = structureID ?? Structures.Count()
             };
 
             // Set this blueprint as the owner.

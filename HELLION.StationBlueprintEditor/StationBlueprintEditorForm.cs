@@ -285,7 +285,7 @@ namespace HELLION.StationBlueprintEditor
         private void RefreshLabelSelectedPrimaryDockingPort()
         {
             labelSelectedPrimaryDockingPort.Text = SelectedPrimaryStructure == null || SelectedPrimaryDockingPort == null ? "Unspecified"
-                : String.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryDockingPort.PortName.ToString());
+                : string.Format("[{0:000}] {1}", SelectedPrimaryStructure.StructureID, SelectedPrimaryDockingPort.PortName.ToString());
 
             //Debug.Print("SelectedPrimaryDockingPort.PortName = " + SelectedPrimaryDockingPort.PortName.ToString());
         }
@@ -316,7 +316,7 @@ namespace HELLION.StationBlueprintEditor
         {
             labelSelectedSecondaryDockingPort.Text = SelectedSecondaryStructure == null || 
                 SelectedSecondaryDockingPort == null ? "Unspecified"
-                : String.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID,
+                : string.Format("[{0:000}] {1}", SelectedSecondaryStructure.StructureID,
                 SelectedSecondaryDockingPort.PortName.ToString());
         }
 
@@ -646,8 +646,12 @@ namespace HELLION.StationBlueprintEditor
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DocCurrent.Serialise();
-            DocCurrent.SaveFile(CreateBackup: true);
+            //DocCurrent.Serialise();
+            //DocCurrent.SaveFile(CreateBackup: true);
+
+            //StationBlueprintEditorProgram.FileSave();
+
+
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)

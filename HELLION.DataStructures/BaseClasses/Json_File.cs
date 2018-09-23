@@ -28,27 +28,30 @@ namespace HELLION.DataStructures
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
         /// </summary>
         /// <param name="PassedFileInfo">The FileInfo representing the file to be loaded.</param>
-        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo, bool autoDeserialise = false )
+        public Json_File(IParent_Json_File ownerObject, FileInfo passedFileInfo, bool autoDeserialise = false)
             : this(ownerObject)
         {
             //Debug.Print("Json_File.ctor(FileInfo) called {0}", passedFileInfo.FullName);
+
+            AutoLoadOnFileInfoSet = true;
+            AutoDeserialiseOnJdataModification = autoDeserialise;
 
             // Set the FileInfo object and ensure it's not null.
             File = passedFileInfo ?? throw new NullReferenceException("Json_File.ctor(FileInfo) - passedFileInfo was null.");
 
             // Load the file.
-            if (LoadFile()) Debug.Print("File failed to load from constructor - LoadFile() returned true.");
-            else
-            {
-                // Trigger the first de-serialisation.
-                if (autoDeserialise) Deserialise();
+            //if (LoadFile()) Debug.Print("File failed to load from constructor - LoadFile() returned true.");
+            //else
+            //{
+            //    // Trigger the first de-serialisation.
+            //    if (autoDeserialise) Deserialise();
 
-                // Switch on automatic de-serialisation of the JData when it changes, if specified.
-                // This is done _after_ the de-serialisation to prevent excessive 
-                // triggered de-serialisation.
-                AutoDeserialiseOnJdataModification = autoDeserialise;
+            //    // Switch on automatic de-serialisation of the JData when it changes, if specified.
+            //    // This is done _after_ the de-serialisation to prevent excessive 
+            //    // triggered de-serialisation.
+            //    AutoDeserialiseOnJdataModification = autoDeserialise;
 
-            }
+            //}
         }
 
         /// <summary>
@@ -56,11 +59,13 @@ namespace HELLION.DataStructures
         /// </summary>
         /// <param name="ownerObject"></param>
         /// <param name="jdata"></param>
-        public Json_File(IParent_Json_File ownerObject, JToken jdata, bool autoDeserialise = false )
+        public Json_File(IParent_Json_File ownerObject, JToken jdata, bool autoDeserialise = false)
             : this(ownerObject)
         {
             //Debug.Print("Json_File.ctor(FileInfo) called - HasValues [{0}]",
             //    jdata != null ? jdata.HasValues.ToString() : "null");
+
+            AutoLoadOnFileInfoSet = false;
 
             // Switch on automatic de-serialisation of the JData when it changes.
             AutoDeserialiseOnJdataModification = autoDeserialise;
@@ -85,7 +90,21 @@ namespace HELLION.DataStructures
         /// <summary>
         /// FileInfo object that represents the file on disk that is to be worked with.
         /// </summary>
-        public FileInfo File { get; protected set; } = null;
+        public FileInfo File
+        {
+            get => _file;
+            protected set
+            {
+                if (_file != value)
+                {
+                    _file = value;
+
+                    ProcessChangedFileInfo();
+
+                }
+            }
+        }
+
 
         /// <summary>
         /// Public property to get and set the JToken that was loaded from the file.
@@ -108,6 +127,11 @@ namespace HELLION.DataStructures
         /// Determines whether a change to the jData will trigger de-serialisation.
         /// </summary>
         public bool AutoDeserialiseOnJdataModification { get; set; } = false;
+
+        /// <summary>
+        /// Determines whether a new FileInfo being set will trigger a LoadFile() operation.
+        /// </summary>
+        public bool AutoLoadOnFileInfoSet { get; set; } = false;
 
         /// <summary>
         /// Used to determine whether the file is loaded.
@@ -198,6 +222,35 @@ namespace HELLION.DataStructures
         #region Methods
 
         /// <summary>
+        /// Responsible for triggering load and de-serialisation when the FileInfo changes.
+        /// </summary>
+        private void ProcessChangedFileInfo()
+        {
+            if (AutoLoadOnFileInfoSet)
+            {
+                bool autoDeserialise = AutoDeserialiseOnJdataModification;
+
+                // The JData object changes a lot during a load so the auto-deserialise is deactivated.
+                AutoDeserialiseOnJdataModification = false;
+
+                // Load the file.
+                if (LoadFile()) Debug.Print("File failed to load from constructor - LoadFile() returned true.");
+                else
+                {
+
+                    // Trigger the first de-serialisation.
+                    if (autoDeserialise) Deserialise();
+
+                    // Switch on automatic de-serialisation of the JData when it changes, if specified.
+                    // This is done _after_ the de-serialisation to prevent excessive 
+                    // triggered de-serialisation.
+                    AutoDeserialiseOnJdataModification = autoDeserialise;
+
+                }
+            }
+        }
+
+        /// <summary>
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>
         /// </summary>
         /// <returns>Returns true if there was a loading error</returns>
@@ -246,24 +299,52 @@ namespace HELLION.DataStructures
 
             // FileInfo was null or file does not exist.
 
-            if (File == null) Debug.Print("FileInfo was null.");
-            if (!File.Exists) Debug.Print("File does not exist");
+            if (File != null && !File.Exists) Debug.Print("File does not exist");
+            else Debug.Print("FileInfo was null.");
 
             LoadError = true;
             return true;
         }
 
         /// <summary>
+        /// Handles changes to the JData object.
+        /// </summary>
+        protected virtual void ProcessChangedJData()
+        {
+            if (AutoDeserialiseOnJdataModification)
+            {
+                // Triggered de-serialisation.
+                Deserialise();
+            }
+        }
+
+        /// <summary>
+        /// Does nothing - This method is a stub to be overridden by derived classes.
+        /// </summary>
+        public virtual void Deserialise() => throw new NotImplementedException
+            ("This method is a stub to be overridden by derived classes.");
+
+        /// <summary>
+        /// Does nothing - This method is a stub to be overridden by derived classes.
+        /// </summary>
+        public virtual void Serialise() => throw new NotImplementedException
+            ("This method is a stub to be overridden by derived classes.");
+
+        /// <summary>
         /// Save the file data.
         /// </summary>
         /// <returns></returns>
-        public bool SaveFile(bool CreateBackup = true)
+        public bool SaveFile(bool createBackup = true, FileInfo file = null)
         {
             //Debug.Print("SaveFile Called, CreateBackup="+CreateBackup.ToString());
 
-            if (File.Exists && CreateBackup)
+            // Unless a new FileInfo was specified (SaveAs), use the existing File (Save)
+            if (file == null) file = File;
+
+
+            if (file.Exists && createBackup)
             {
-                string backupFullName = File.FullName + ".backup";
+                string backupFullName = file.FullName + ".backup";
                 // Check to see if the backup file already exists
                 if (System.IO.File.Exists(backupFullName))
                 {
@@ -271,21 +352,21 @@ namespace HELLION.DataStructures
                     Console.WriteLine("Deleting {0}", backupFullName);
                     System.IO.File.Delete(backupFullName);
                 }
-                // MainFile already exists, create a backup copy (.save.bak)
-                Console.WriteLine("Backing up {0} to {1}", File.FullName, backupFullName);
-                System.IO.File.Move(File.FullName, backupFullName);
+                // The file already exists, create a backup copy (.save.bak)
+                Console.WriteLine("Backing up {0} to {1}", file.FullName, backupFullName);
+                System.IO.File.Move(file.FullName, backupFullName);
             }
             else
             {
                 // Remove the existing file
-                File.Delete();
+                file.Delete();
             }
 
             //try
             {
-                Console.WriteLine("Writing to file: {0}...", File.FullName);
+                Console.WriteLine("Writing to file: {0}...", file.FullName);
 
-                using (StreamWriter sw = new StreamWriter(File.FullName))
+                using (StreamWriter sw = new StreamWriter(file.FullName))
                 {
                     // Process the stream with the Json Text Reader in to a JToken
                     using (JsonTextWriter jtw = new JsonTextWriter(sw))
@@ -302,8 +383,12 @@ namespace HELLION.DataStructures
                 // Some error handling to be implemented here
             }
 
-            // We should have some data in the array
+            // Clear the IsDirty flag.
             IsDirty = false;
+
+            // Set the FileInfo to the new file
+            File = file;
+
 
             return false;
         }
@@ -332,29 +417,12 @@ namespace HELLION.DataStructures
             }
         }
 
-        /// <summary>
-        /// Does nothing - This method is a stub to be overridden by derived classes.
-        /// </summary>
-        public virtual void Serialise() => throw new NotImplementedException
-            ("This method is a stub to be overridden by derived classes.");
 
-        /// <summary>
-        /// Does nothing - This method is a stub to be overridden by derived classes.
-        /// </summary>
-        public virtual void Deserialise() => throw new NotImplementedException
-            ("This method is a stub to be overridden by derived classes.");
 
-        /// <summary>
-        /// Handles changes to the JData object.
-        /// </summary>
-        protected virtual void ProcessChangedJData()
-        {
-            if (AutoDeserialiseOnJdataModification)
-            {
-                // Triggered de-serialisation.
-                Deserialise();
-            }
-        }
+
+
+
+
 
         /// <summary>
         /// 
@@ -383,6 +451,7 @@ namespace HELLION.DataStructures
         protected bool _isDirty = false;
         protected bool _readOnlyOverride = true;
         protected bool _logToDebug = true;
+        private FileInfo _file = null;
 
         #endregion
 

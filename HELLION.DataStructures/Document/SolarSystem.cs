@@ -244,22 +244,42 @@ namespace HELLION.DataStructures.Document
                 {
                     // Find the single node that has the GUID matching the DockedToShipGUID of this node.
                     // There can be only one!
-                    SolarSystem_TN newParentNode = RootNode.GetChildNodes(includeSubtrees: true)
+
+                    IEnumerable<SolarSystem_TN> newParentNodes = RootNode.GetChildNodes(includeSubtrees: true)
                         .Cast<SolarSystem_TN>()
-                        .Where(p => p.GUID == node.ParentGUID)
-                        .Single();
-                    // If the .Single() causes an exception, there's more than one module docked to that port (!), 
-                    // or the GUID that it's docked to can't be found :(
+                        .Where(p => p.GUID == node.ParentGUID);
+                    //.Single();
 
-                    // Cast the node.Parent to an SolarSystem_TN (so we can access ClearCachedData)
-                    currentParentNode = (SolarSystem_TN)node.Parent;
+                    try
+                    {
+                        SolarSystem_TN newParentNode = newParentNodes.Single();
 
-                    // Remove the ship to be re-parented from it's current parent's node collection.
-                    // The null case is the Solar System RootNode that's parent is the TreeView control not a node.
-                    if (currentParentNode != null) currentParentNode.Nodes.Remove(node);
+                        // Cast the node.Parent to an SolarSystem_TN (so we can access ClearCachedData)
+                        currentParentNode = (SolarSystem_TN)node.Parent;
 
-                    // Add the ship being re-parented to the new parent's node collection.
-                    newParentNode.Nodes.Insert(0, node);
+                        // Remove the ship to be re-parented from it's current parent's node collection.
+                        // The null case is the Solar System RootNode that's parent is the TreeView control not a node.
+                        if (currentParentNode != null) currentParentNode.Nodes.Remove(node);
+
+                        // Add the ship being re-parented to the new parent's node collection.
+                        newParentNode.Nodes.Insert(0, node);
+
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        // If the .Single() causes an exception, there's more than one module docked to that port (!), 
+                        // or the GUID that it's docked to can't be found :(
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("RehydrateGUIDHierarchy threw an InvalidOperationException." + Environment.NewLine);
+                        sb.Append("newParentNodes.Count() " + newParentNodes.Count() + Environment.NewLine);
+                        sb.Append(Environment.NewLine);
+                        sb.Append("Exception Details" + Environment.NewLine);
+                        sb.Append(ex);
+
+                        //throw new Exception(sb.ToString());
+                    }
+
 
                 }
             }

@@ -239,7 +239,7 @@ namespace HELLION.Explorer
             if (HellionExplorerProgram.docCurrent != null) //  && Program.docCurrent.IsDirty)
             {
                 // Currently always returns false
-                bool result = HellionExplorerProgram.docCurrent.GameData.SaveFile.SaveFile(CreateBackup: true);
+                bool result = HellionExplorerProgram.docCurrent.GameData.SaveFile.SaveFile(createBackup: true);
             }
             else MessageBox.Show("Must have an open document first.");
         }

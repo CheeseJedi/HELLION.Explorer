@@ -241,15 +241,23 @@ namespace HELLION.DataStructures.Blueprints
             /// <summary>
             /// Whether this docking port is locked (and not advertised to the docking system.)
             /// </summary>
+            /// <remarks>
+            /// Defaults to unlocked, and converts nulls to unlocked.
+            /// </remarks>
             [JsonProperty]
             public bool? Locked
             {
-                get => _locked;
+                get
+                {
+                    if (_locked == null) return false;
+                    else return (bool)_locked;
+                }
                 set
                 {
                     if (_locked != value)
                     {
-                        _locked = value;
+                        if (value == null) _locked = false;
+                        else _locked = value;
                     }
                 }
             }
@@ -502,7 +510,7 @@ namespace HELLION.DataStructures.Blueprints
             private DockingPortType? _dockedPortName = null;
             private BlueprintDockingPort _dockedPort = null;
             private int? _orderID = null;
-            private bool? _locked = null;
+            private bool? _locked = false;
             private StructureSceneID _structureSceneID;
 
             #endregion
