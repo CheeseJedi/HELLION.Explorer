@@ -22,7 +22,7 @@ namespace HELLION.DataStructures.Utilities
         /// </summary>
         /// <param name="gitHubUserName">GitHub User name</param>
         /// <param name="repositoryName">GitHub Repository name</param>
-        public UpdateChecker (string gitHubUserName, string repositoryName)
+        public UpdateChecker(string gitHubUserName, string repositoryName)
         {
             // Only proceed if both the username and repository name have non-empty strings.
             if (gitHubUserName != String.Empty && repositoryName != String.Empty)
@@ -58,51 +58,41 @@ namespace HELLION.DataStructures.Utilities
         /// </summary>
         public void CheckForUpdates(bool notifyIfCurrent = false)
         {
+            Version currentVersion = new Version(Application.ProductVersion);
+
             StringBuilder sb = new StringBuilder();
 
             sb.Append(Environment.NewLine);
 
-            sb.Append("Currently running version:");
-            sb.Append(Environment.NewLine);
-            sb.Append("v" + Application.ProductVersion);
-            sb.Append(Environment.NewLine);
+            sb.Append("Currently running version: " + Application.ProductVersion + Environment.NewLine);
+
+            //sb.Append(Environment.NewLine);
+            //sb.Append(Application.ProductVersion);
+            //sb.Append(Environment.NewLine);
 
             sb.Append(Environment.NewLine);
-            sb.Append("Latest GitHub release version:");
-            sb.Append(Environment.NewLine);
+            //sb.Append(Environment.NewLine);
             //foreach (var release in AllReleases)
             //{
             //    sb.Append(release["tag_name"] + Environment.NewLine);
             //    break;
             //}
 
-            sb.Append(FindLatestRelease(includePreReleaseVersions: false) + Environment.NewLine);
-            
+            GitHubRelease latestRelease = FindLatestRelease(includePreReleaseVersions: false);
+            if (latestRelease != null)
+            {
+                Version latestReleaseVersion = new Version(latestRelease.tag_name.TrimStart('v'));
+                sb.Append("Latest GitHub release version: " + latestReleaseVersion.ToString() + Environment.NewLine);
+                sb.Append(Environment.NewLine);
+
+                var result = currentVersion.CompareTo(latestReleaseVersion);
+                if (result > 0) sb.Append("You appear to be running a pre-release version :)" + Environment.NewLine);
+                else if (result < 0) sb.Append("Newer version available!");
+                else sb.Append("You have the latest version.");
+            }
+            else sb.Append("Error during lookup of latest release from GitHub.");
             MessageBox.Show(sb.ToString(), "Version update check", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-        /// <summary>
-        /// Public read-only property to access the latestRelease field and trigger the generation
-        /// of the data if it doesn't already exist.
-        /// </summary>
-        public string LatestRelease
-        {
-            get
-            {
-                if (latestRelease == String.Empty)
-                {
-                    // Generate the latest release info
-                    latestRelease = FindLatestRelease();
-                }
-                return latestRelease;
-            }
-        }
-
-        /// <summary>
-        /// Private field to cache the latest release version to prevent repeated web requests
-        /// per session.
-        /// </summary>
-        private string latestRelease = string.Empty;
 
         /// <summary>
         /// Private field for the AllReleases Property
@@ -137,7 +127,7 @@ namespace HELLION.DataStructures.Utilities
         /// </summary>
         /// <param name="includePreReleaseVersions">Whether to include PreRelease versions in the check.</param>
         /// <returns></returns>
-        private string FindLatestRelease(bool includePreReleaseVersions = false)
+        private GitHubRelease FindLatestRelease(bool includePreReleaseVersions = false)
         {
             IOrderedEnumerable<JToken> orderedReleases;
 
@@ -155,19 +145,14 @@ namespace HELLION.DataStructures.Utilities
                                   select s;
             }
 
-            string potentialLatestRelease = string.Empty;
+            GitHubRelease potentialLatestRelease;
             if (orderedReleases.Count() > 0)
             {
                 // Grab the first item, as they're already sorted by reverse date order.
-                potentialLatestRelease = (string)orderedReleases.First()["tag_name"];
-
-                //foreach (var item in orderedReleases)
-                //{
-                //    potentialLatestRelease = (string)item["tag_name"];
-                //    break;
-                //}
+                potentialLatestRelease = orderedReleases.First().ToObject<GitHubRelease>();
+                return potentialLatestRelease;
             }
-            return potentialLatestRelease;
+            return null;
         }
 
         /// <summary>
@@ -214,6 +199,28 @@ namespace HELLION.DataStructures.Utilities
             // return the JArray
             return jData;
         }
+
+
+        public class GitHubRelease
+        {
+            public string url { get; set; }
+            public string assets_url { get; set; }
+            public string html_url { get; set; }
+            public string node_id { get; set; }
+            public string tag_name { get; set; }
+            public string name { get; set; }
+            public bool draft { get; set; }
+            public bool prerelease { get; set; }
+            public DateTime created_at { get; set; }
+            public DateTime published_at { get; set; }
+            public string body { get; set; }
+        }
+
+
+
+
+
+
     }
 
     /*
