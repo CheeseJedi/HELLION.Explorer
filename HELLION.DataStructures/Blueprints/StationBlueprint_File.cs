@@ -176,6 +176,10 @@ namespace HELLION.DataStructures.Blueprints
                 // Call the BlueprintObject's AddStructure method with the sceneID and structureID.
                 BlueprintStructure newStructure = BlueprintObject.AddStructure(sceneID, structureID);
 
+                // A StationBlueprint file should have only one docking tree and StructureID=0 is the root.
+                if (newStructure.StructureID != 0) newStructure.IsStructureHierarchyRoot = false;
+
+
                 Debug.Print(" newStructure ports (" + newStructure.DockingPorts.Count + ")");
                 foreach (BlueprintDockingPort tmpPort in newStructure.DockingPorts)
                 {
@@ -212,7 +216,7 @@ namespace HELLION.DataStructures.Blueprints
                     Debug.Print(" dockedStructureID " + dockedStructureID);
 
 
-                    bool locked = (bool)dockingPort["Locked"];
+                    bool locked = dockingPort["Locked"] != null ? (bool)dockingPort["Locked"] : false;
                     Debug.Print(" locked " + locked);
 
                     BlueprintDockingPort newPort = newStructure.GetDockingPortByOrderID(orderID);
@@ -225,27 +229,10 @@ namespace HELLION.DataStructures.Blueprints
 
                     newPort.Locked = locked;
 
-
-
-
-
-
                 }
-
-
             }
 
-
-
-
-
-
-
-
-
         }
-
-
 
 
         /// <summary>

@@ -63,21 +63,9 @@ namespace HELLION.DataStructures.Utilities
             StringBuilder sb = new StringBuilder();
 
             sb.Append(Environment.NewLine);
-
             sb.Append("Currently running version: " + Application.ProductVersion + Environment.NewLine);
 
-            //sb.Append(Environment.NewLine);
-            //sb.Append(Application.ProductVersion);
-            //sb.Append(Environment.NewLine);
-
             sb.Append(Environment.NewLine);
-            //sb.Append(Environment.NewLine);
-            //foreach (var release in AllReleases)
-            //{
-            //    sb.Append(release["tag_name"] + Environment.NewLine);
-            //    break;
-            //}
-
             GitHubRelease latestRelease = FindLatestRelease(includePreReleaseVersions: false);
             if (latestRelease != null)
             {
@@ -87,7 +75,11 @@ namespace HELLION.DataStructures.Utilities
 
                 var result = currentVersion.CompareTo(latestReleaseVersion);
                 if (result > 0) sb.Append("You appear to be running a pre-release version :)" + Environment.NewLine);
-                else if (result < 0) sb.Append("Newer version available!");
+                else if (result < 0)
+                {
+                    sb.Append("There is a newer version available!" + Environment.NewLine);
+                    sb.Append(" - more info available at " + latestRelease.html_url + Environment.NewLine);
+                }
                 else sb.Append("You have the latest version.");
             }
             else sb.Append("Error during lookup of latest release from GitHub.");
@@ -200,7 +192,6 @@ namespace HELLION.DataStructures.Utilities
             return jData;
         }
 
-
         public class GitHubRelease
         {
             public string url { get; set; }
@@ -215,11 +206,6 @@ namespace HELLION.DataStructures.Utilities
             public DateTime published_at { get; set; }
             public string body { get; set; }
         }
-
-
-
-
-
 
     }
 

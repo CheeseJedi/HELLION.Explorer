@@ -202,7 +202,7 @@ namespace HELLION.DataStructures.Blueprints
                 ReconnectChildToParentObjectHierarchy();
 
                 // Evaluate and repair docking ports as per the DockingPortHelper
-                RepairDockingPorts();
+                //RepairDockingPorts();
 
                 // Re-establishes the docking hierarchy.
                 ReconnectDockedObjects();

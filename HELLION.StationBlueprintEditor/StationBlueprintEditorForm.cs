@@ -754,5 +754,10 @@ namespace HELLION.StationBlueprintEditor
 
         private const string _baseText = "Station Blueprint Editor";
 
+        private void propertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BlueprintPropertiesForm propertiesForm = new BlueprintPropertiesForm();
+            propertiesForm.ShowDialog(this);
+        }
     }
 }

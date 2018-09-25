@@ -151,13 +151,6 @@ namespace HELLION.StationBlueprintEditor
                 }
 
                 // We got here so everything checked out so far.
-                Logging.WriteLine("Loading station blueprint file...");
-                if (FileOpen(arg_blueprintFileInfo))
-                {
-                    Logging.WriteLine("Problem loading save file.");
-                    return false;
-                }
-                Logging.WriteLine("Complete.");
 
                 return true;
             }
@@ -296,6 +289,8 @@ namespace HELLION.StationBlueprintEditor
             DocCurrent = new StationBlueprint_File(null, jdata);
 
             if (DocCurrent.BlueprintObject == null) Debug.Print("Newly created StationBlueprintFile doesn't contain a blueprint object.");
+
+            MainForm.RefreshEverything();
 
         }
 
@@ -484,7 +479,7 @@ namespace HELLION.StationBlueprintEditor
                 if (DocCurrent.IsDirty)
                 {
                     // Unsaved changes, prompt user to save
-                    string sMessage = DocCurrent.File.FullName + " has been modified." + Environment.NewLine 
+                    string sMessage = DocCurrent.File?.FullName + " has been modified." + Environment.NewLine 
                         + "Do you want to save changes to this Station Blueprint File before exiting?";
                     const string sCaption = "Unsaved Changes";
                     DialogResult result = MessageBox.Show(sMessage, sCaption, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -503,10 +498,8 @@ namespace HELLION.StationBlueprintEditor
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
                             break;
 
-
+                        case DialogResult.No:
                         default:
-                            // Save operation to be triggered here.
-                            
                             break;
                     }
 
@@ -621,12 +614,32 @@ namespace HELLION.StationBlueprintEditor
             // Show the main form
             MainForm.Show();
 
-            // Generate a new file.
-            FileNew((JToken)null);
 
             // Process the command line arguments.
             // If a file is specified to open, it will replace the just created new (empty) file.
             ProcessCommandLineArguments(args);
+
+            if (arg_blueprintFileInfo != null && arg_blueprintFileInfo.Exists)
+            {
+
+                Logging.WriteLine("Loading station blueprint file...");
+                if (FileOpen(arg_blueprintFileInfo))
+                {
+                    Logging.WriteLine("Problem loading save file.");
+                }
+                Logging.WriteLine("Complete.");
+
+
+
+            }
+            else
+            {
+                // Generate a new file.
+                FileNew((JToken)null);
+            }
+
+
+
 
             // Start the Windows Forms message loop
             Application.Run(); // Application.Run(new MainForm());
