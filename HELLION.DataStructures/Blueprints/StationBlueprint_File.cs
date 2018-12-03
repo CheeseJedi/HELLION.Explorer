@@ -113,19 +113,21 @@ namespace HELLION.DataStructures.Blueprints
 
             Debug.Print("BuildStationBlueprintFromJData: Starting.");
 
-            // Check it's for the correct __ObjectType.
-            JToken testToken = JData["__ObjectType"];
-            if (testToken == null || (string)testToken != "StationBlueprint")
-            {
-                Debug.Print("BuildStationBlueprintFromJData: ObjectType not StationBlueprint");
-                return;
-            }
+            //// Check it's for the correct __ObjectType.
+            //JToken testToken = JData["__ObjectType"];
+            //if (testToken == null || (string)testToken != "StationBlueprint")
+            //{
+            //    Debug.Print("BuildStationBlueprintFromJData: ObjectType not StationBlueprint");
+            //    return;
+            //}
+
+            JToken testToken;
 
             // Create a new StationBlueprint.
             BlueprintObject = new StationBlueprint
             {
                 OwnerObject = this,
-                __ObjectType = BlueprintObjectType.StationBlueprint
+                // __ObjectType = BlueprintObjectType.StationBlueprint
             };
 
 

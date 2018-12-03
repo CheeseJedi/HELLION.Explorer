@@ -71,6 +71,14 @@ namespace HELLION.DataStructures.StaticData
         FlatShipTest = 29, // 0x0000001D
         // ActaeonProbe = 30, // 0x0000001E
 
+        // NEEDS VERIFICATION
+        Altcorp_PatchModule = 30,  // 0x0000001E
+        SOE_Location002 = 31, // 0x0000001F
+        AltCorp_Secure_Module = 32, // 0x00000020 // SkylineDefenseSystems_Fortified_Module
+        AltCorp_Destroyed_Shuttle_CECA = 33, // 0x00000021
+        AltCorp_CorridorIntersection_MKII = 34, // 0x00000022
+        AlrCorp_Corridor_MKII = 35, // 0x00000023
+
         //Asteroid01 = 1000, // 0x000003E8
         //Asteroid02 = 1001, // 0x000003E9
         //Asteroid03 = 1002, // 0x000003EA

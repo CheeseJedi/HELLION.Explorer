@@ -58,7 +58,7 @@ namespace HELLION.StationBlueprintEditor
                     .Select(x => new { SceneID = x.Key, Count = x.Distinct().Count() });
 
 
-                foreach (var result in results.OrderByDescending(r => r.Count))
+                foreach (var result in results.OrderByDescending(r => r.Count).ThenBy(r => r.SceneID.ToString()))
                 {
 
                     string[] arr = new string[2];

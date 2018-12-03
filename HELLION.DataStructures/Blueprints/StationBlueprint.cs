@@ -40,7 +40,7 @@ namespace HELLION.DataStructures.Blueprints
         {
             OwnerObject = ownerObject ?? throw new NullReferenceException("passedParent was null.");
             StructureDefinitions = structureDefs; // ?? throw new NullReferenceException("structureDefs was null.");
-            __ObjectType = BlueprintObjectType.StationBlueprint;
+            // __ObjectType = BlueprintObjectType.StationBlueprint;
             Version = StationBlueprintFormatVersion;
         }
 
@@ -129,9 +129,9 @@ namespace HELLION.DataStructures.Blueprints
         /// Should be either "StationBlueprint" for a blueprint object or "StructureDefinitions"
         /// for a StructureDefinitions template object.)
         /// </summary>
-        [JsonProperty]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public BlueprintObjectType? __ObjectType { get; set; } = null;
+        //[JsonProperty]
+        //[JsonConverter(typeof(StringEnumConverter))]
+        //public BlueprintObjectType? __ObjectType { get; set; } = null;
 
         /// <summary>
         /// The Hellion Station Blueprint Format version number.
@@ -158,15 +158,27 @@ namespace HELLION.DataStructures.Blueprints
         [JsonProperty]
         public Uri LinkURI { get; set; } = null;
 
-        [JsonProperty]
-        public bool? Invulnerable { get; set; } = false;
+        //[JsonProperty]
+        // public bool? Invulnerable { get; set; } = false; // not present in Hellion 0.3
 
+        [JsonProperty]
+        public bool Invulnerable { get; set; } // Added in Hellion 0.3 - defaults to true in-game.
+        [JsonProperty]
+        public double[] LocalPosition { get; set; } // Added in Hellion 0.3
+        [JsonProperty]
+        public double[] LocalRotation { get; set; } // Added in Hellion 0.3
         [JsonProperty]
         public bool? SystemsOnline { get; set; } = true;
-
         [JsonProperty]
         public bool? DoorsLocked { get; set; } = false;
-
+        [JsonProperty]
+        public float? HealthMultiplier { get; set; } // Added in Hellion 0.3
+        [JsonProperty]
+        public bool? DockingControlsDisabled { get; set; } // Added in Hellion 0.3
+        [JsonProperty]
+        public float? AirPressure { get; set; } // Added in Hellion 0.3
+        [JsonProperty]
+        public float? AirQuality { get; set; } // Added in Hellion 0.3
 
 
         /// <summary>
@@ -196,7 +208,7 @@ namespace HELLION.DataStructures.Blueprints
         /// </summary>
         public virtual void PostDeserialisationInit()
         {
-            if (__ObjectType != null && __ObjectType == BlueprintObjectType.StationBlueprint)
+            if (true) //__ObjectType != null && __ObjectType == BlueprintObjectType.StationBlueprint)
             {
                 // Reconnects docking ports to their parent structure.
                 ReconnectChildToParentObjectHierarchy();
@@ -426,6 +438,8 @@ namespace HELLION.DataStructures.Blueprints
             // Assemble the primary blueprint structure's docked node tree.
             ReassembleTreeNodeDockingStructure(PrimaryStructureRoot);
 
+            Debug.Print("There are " + SecondaryStructureRoots.Count + " SecondaryStructureRoots.");
+
             // Assemble the secondary structures node trees.
             foreach (BlueprintStructure _secondaryStructure in SecondaryStructureRoots)
             {
@@ -447,7 +461,11 @@ namespace HELLION.DataStructures.Blueprints
 
                 foreach (BlueprintDockingPort port in hierarchyRoot.DockingPorts.ToArray()) // .Reverse())
                 {
+                    Debug.Print(" ## Reassembling " + port.PortName);
+                    Debug.Print("  #  port.RootNode.Parent " + (port.RootNode.Parent==null ? "is null" : "is named [" + port.RootNode.Parent.Name + "]"));
+
                     hierarchyRoot.RootNode.Nodes.Insert(0, port.RootNode);
+
                     if (port.IsDocked)
                     {
                         if (port.DockedStructure == null)

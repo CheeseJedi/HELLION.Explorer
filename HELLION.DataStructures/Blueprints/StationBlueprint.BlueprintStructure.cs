@@ -82,6 +82,9 @@ namespace HELLION.DataStructures.Blueprints
                 }
             }
 
+            public bool IsPrimaryStructure => this == OwnerObject.PrimaryStructureRoot ? true : false;
+
+
             /// <summary>
             /// Determines whether this structure is connected to the blueprint's primary structure.
             /// </summary>
@@ -90,11 +93,8 @@ namespace HELLION.DataStructures.Blueprints
             {
                 get
                 {
-                    // Shortcut check.
-                    if (this == OwnerObject.PrimaryStructureRoot) return true;
-
                     // Full check.
-                    if (ConnectedStructures(new List<BlueprintStructure> { this })
+                    if (ConnectedStructures(visitedtedStructures: new List<BlueprintStructure> { this })
                         .Contains(OwnerObject.PrimaryStructureRoot)) return true;
 
                     // This structure wasn't in the PrimaryStructureRoot's list of connected structures.
@@ -175,15 +175,6 @@ namespace HELLION.DataStructures.Blueprints
                 }
             }
 
-            /// <summary>
-            /// The SceneName of the Structure. 
-            /// Shadow Property - also comes from the SceneID field using the SceneID enum.
-            /// </summary>
-            [JsonProperty]
-            [JsonConverter(typeof(StringEnumConverter))]
-            public StructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
-            // public bool ShouldSerializeSceneName() { return OwnerStructure == null || (OwnerStructure != null && OwnerStructure.IsTemplate) ? true : false; }
-
             [JsonProperty]
             public string StructureType
             {
@@ -207,31 +198,55 @@ namespace HELLION.DataStructures.Blueprints
                 }
             }
 
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            public float? StandbyPowerRequirement { get; set; } = null;
+            /// <summary>
+            /// The list of docking ports for this individual structure.
+            /// </summary>
+            [JsonProperty]
+            public List<BlueprintDockingPort> DockingPorts { get; set; } = null;
 
-            // [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            // public float? NominalPowerRequirement { get; set; } = null;
+            [JsonProperty]
+            public bool? SystemsOnline { get; set; }
+            [JsonProperty]
+            public bool? Invulnerable { get; set; }
+            [JsonProperty]
+            public bool DoorsLocked { get; set; }
+            [JsonProperty]
+            public string Tag { get; set; }
+            [JsonProperty]
+            public float? HealthMultiplier { get; set; }
+            [JsonProperty]
+            public bool? DockingControlsDisabled { get; set; }
+            [JsonProperty]
+            public float? AirPressure { get; set; }
+            [JsonProperty]
+            public float? AirQuality { get; set; }
 
-            // [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            // public float? NominalPowerContribution { get; set; } = null;
+            /// <summary>
+            /// The SceneName of the Structure. 
+            /// Shadow Property - also comes from the SceneID field using the SceneID enum.
+            /// </summary>
+            [JsonProperty]
+            [JsonConverter(typeof(StringEnumConverter))]
+            public StructureSceneID? SceneName { get => SceneID; set => SceneID = value; }
+            // public bool ShouldSerializeSceneName() { return OwnerStructure == null || (OwnerStructure != null && OwnerStructure.IsTemplate) ? true : false; }
 
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            public float? NominalAirVolume { get; set; } = null;
+            //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            //public float? StandbyPowerRequirement { get; set; } = null;
+            //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            //public float? NominalPowerRequirement { get; set; } = null;
+            //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            //public float? NominalPowerContribution { get; set; } = null;
+            //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            //public float? NominalAirVolume { get; set; } = null;
 
             /// <summary>
             /// Auxiliary data for this blueprint. If this is set it applies to all structures in
             /// the blueprint. Individual structures can also implement an AuxData that will over-
             /// ride the blueprint level AuxData.
             /// </summary>
-            [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
-            public BlueprintStructure_AuxData AuxData { get; set; } = null;
+            //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+            //public BlueprintStructure_AuxData AuxData { get; set; } = null;
 
-            /// <summary>
-            /// The list of docking ports for this individual structure.
-            /// </summary>
-            [JsonProperty]
-            public List<BlueprintDockingPort> DockingPorts { get; set; } = null;
 
             /*
             /// <summary>

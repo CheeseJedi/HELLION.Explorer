@@ -237,31 +237,7 @@ namespace HELLION.DataStructures.Blueprints
                     }
                 }
             }
-
-            /// <summary>
-            /// Whether this docking port is locked (and not advertised to the docking system.)
-            /// </summary>
-            /// <remarks>
-            /// Defaults to unlocked, and converts nulls to unlocked.
-            /// </remarks>
-            [JsonProperty]
-            public bool? Locked
-            {
-                get
-                {
-                    if (_locked == null) return false;
-                    else return (bool)_locked;
-                }
-                set
-                {
-                    if (_locked != value)
-                    {
-                        if (value == null) _locked = false;
-                        else _locked = value;
-                    }
-                }
-            }
-
+            
             /// <summary>
             /// The ID of the structure this port is docked to.
             /// </summary>
@@ -309,116 +285,144 @@ namespace HELLION.DataStructures.Blueprints
                 }
             }
 
+            /// <summary>
+            /// Whether this docking port is locked (and not advertised to the docking system.)
+            /// </summary>
+            /// <remarks>
+            /// Defaults to unlocked, and converts nulls to unlocked.
+            /// </remarks>
+            [JsonProperty]
+            public bool? Locked
+            {
+                get
+                {
+                    if (_locked == null) return false;
+                    else return (bool)_locked;
+                }
+                set
+                {
+                    if (_locked != value)
+                    {
+                        if (value == null) _locked = false;
+                        else _locked = value;
+                    }
+                }
+            }
+
+
             #endregion
 
             #region Methods
 
             /// <summary>
             /// Handles a port docking operation - calls itself on the other docking port.
+            /// To be called from the 'root' side.
             /// </summary>
             /// <param name="otherPort"></param>
             /// <param name="notifyPartner"></param>
-            public DockingResultStatus Dock(BlueprintDockingPort otherPort, bool notifyPartner = true)
-            {
-                // Check the passed port is valid.
-                if (otherPort == null) return DockingResultStatus.InvalidPortB;
+            //public DockingResultStatus Dock(BlueprintDockingPort otherPort, bool notifyPartner = true)
+            //{
+            //    // Check the passed port is valid.
+            //    if (otherPort == null) return DockingResultStatus.InvalidPortB;
 
-                // Ensure that both ports are not already docked.
-                if (IsDocked) return DockingResultStatus.AlreadyDockedPortA;
-                if (otherPort.IsDocked) return DockingResultStatus.AlreadyDockedPortB;
+            //    // Ensure that neither port is already docked.
+            //    if (IsDocked) return DockingResultStatus.AlreadyDockedPortA;
+            //    if (otherPort.IsDocked) return DockingResultStatus.AlreadyDockedPortB;
 
-                // check the ports parent structures are valid.
-                if (OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
-                if (otherPort.OwnerStructure == null) return DockingResultStatus.InvalidStructurePortB;
+            //    // check the ports parent structures are valid.
+            //    if (OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
+            //    if (otherPort.OwnerStructure == null) return DockingResultStatus.InvalidStructurePortB;
 
-                // Ensure that the two ports aren't on the same structure.
-                if (OwnerStructure == otherPort.OwnerStructure) return DockingResultStatus.PortsOnSameStructure;
-
-
-                // Proceed with docking operation.
-
-                if (notifyPartner)
-                {
-                    DockingResultStatus partnerResult = otherPort.Dock(this, notifyPartner: false);
-
-                    if (partnerResult != DockingResultStatus.Success)
-                    {
-                        Debug.Print("Dock Partner Error: " + partnerResult.ToString());
-                        return DockingResultStatus.PartnerError;
-                    }
-                }
+            //    // Ensure that the two ports aren't on the same structure.
+            //    if (OwnerStructure == otherPort.OwnerStructure) return DockingResultStatus.PortsOnSameStructure;
 
 
-                // Update this port.
-                DockedStructure = otherPort.OwnerStructure;
-                DockedPort = otherPort;
+            //    // Proceed with docking operation.
+
+            //    if (notifyPartner)
+            //    {
+            //        // Call Dock on the partner's port to complete the docking.
+            //        DockingResultStatus partnerResult = otherPort.Dock(this, notifyPartner: false);
+
+            //        if (partnerResult != DockingResultStatus.Success)
+            //        {
+            //            Debug.Print("Dock Partner Error: " + partnerResult.ToString());
+            //            return DockingResultStatus.PartnerError;
+            //        }
+            //    }
+
+
+            //    // Update this port.
+            //    DockedStructure = otherPort.OwnerStructure;
+            //    DockedPort = otherPort;
+
+            //    // Figure out what to do with HierarchyRoot setting.
+            //    // The 'partner' should revoke root on docking.
+            //    if (!notifyPartner) DockedStructure.IsStructureHierarchyRoot = false;
 
 
 
+            //    // Mark the blueprint object as dirty.
+            //    OwnerStructure.OwnerObject.IsDirty = true;
 
-                //otherPort.OwnerStructure.IsStructureHierarchyRoot = false;
-
-                // Mark the blueprint object as dirty.
-                OwnerStructure.OwnerObject.IsDirty = true;
-
-                return DockingResultStatus.Success;
+            //    return DockingResultStatus.Success;
 
 
-            }
+            //}
 
             /// <summary>
             /// Handles a port un-docking operation - calls itself on the other docking port.
             /// </summary>
             /// <param name="notifyPartner"></param>
-            public DockingResultStatus Undock(bool notifyPartner = true)
-            {
-                // FINDME
+            //public DockingResultStatus Undock(bool notifyPartner = true)
+            //{
+            //    // FINDME
 
-                //aa
-                if (!IsDocked) return DockingResultStatus.PortANotDocked;
+            //    //aa
+            //    if (!IsDocked) return DockingResultStatus.PortANotDocked;
 
-                // Find structure A (the one selected)
-                if (OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
+            //    // Find structure A (the one selected)
+            //    if (OwnerStructure == null) return DockingResultStatus.InvalidStructurePortA;
 
-                // Find otherPort (the other side)
-                BlueprintDockingPort otherPort = DockedPort;
+            //    // Find otherPort (the other side)
+            //    BlueprintDockingPort otherPort = DockedPort;
 
-                if (otherPort == null) return DockingResultStatus.InvalidPortB;
-                if (!otherPort.IsDocked) return DockingResultStatus.PortBNotDocked;
+            //    if (otherPort == null) return DockingResultStatus.InvalidPortB;
+            //    if (!otherPort.IsDocked) return DockingResultStatus.PortBNotDocked;
 
-                // Find structureB
-                BlueprintStructure structureB = DockedStructure;
-                if (structureB == null) return DockingResultStatus.InvalidStructurePortB;
+            //    // Find structureB
+            //    BlueprintStructure structureB = DockedStructure;
+            //    if (structureB == null) return DockingResultStatus.InvalidStructurePortB;
 
 
-                if (OwnerStructure != otherPort.DockedStructure)
-                    return DockingResultStatus.PortAandBNotDocked;
+            //    if (OwnerStructure != otherPort.DockedStructure)
+            //        return DockingResultStatus.PortAandBNotDocked;
 
-                // Process the un-docking.
-                if (notifyPartner)
-                {
-                    DockingResultStatus partnerResult = otherPort.Undock(notifyPartner: false);
+            //    // Process the un-docking.
+            //    if (notifyPartner)
+            //    {
+            //        DockingResultStatus partnerResult = otherPort.Undock(notifyPartner: false);
 
-                    if (partnerResult != DockingResultStatus.Success)
-                    {
-                        Debug.Print("Undock Partner Error: " + partnerResult.ToString());
-                        return DockingResultStatus.PartnerError;
-                    }
-                }
+            //        if (partnerResult != DockingResultStatus.Success)
+            //        {
+            //            Debug.Print("Undock Partner Error: " + partnerResult.ToString());
+            //            return DockingResultStatus.PartnerError;
+            //        }
+            //    }
 
-                // Set the DockedStructures to null
-                DockedStructure = null;
-                DockedPort = null;
+            //    // Set the DockedStructures to null
+            //    DockedStructure = null;
+            //    DockedPort = null;
 
-                // If the OwnerStructure is not connected to a root, make it one.
-                if (OwnerStructure.GetStructureRoot() == null) OwnerStructure.IsStructureHierarchyRoot = true;
+            //    // If the OwnerStructure is not connected to a root, make it one.
+            //    if (OwnerStructure.GetStructureRoot() == null) OwnerStructure.IsStructureHierarchyRoot = true;
 
-                // Mark the blueprint object as dirty.
-                OwnerStructure.OwnerObject.IsDirty = true;
+            //    // Mark the blueprint object as dirty.
+            //    OwnerStructure.OwnerObject.IsDirty = true;
 
-                return DockingResultStatus.Success;
+            //    return DockingResultStatus.Success;
 
-            }
+            //}
 
 
             /// <summary>

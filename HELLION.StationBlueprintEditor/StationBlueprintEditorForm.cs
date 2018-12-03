@@ -541,7 +541,11 @@ namespace HELLION.StationBlueprintEditor
             BlueprintDockingPort a = SelectedPrimaryDockingPort ?? throw new NullReferenceException("SelectedPrimaryDockingPort was null.");
             BlueprintDockingPort b = SelectedSecondaryDockingPort ?? throw new NullReferenceException("SelectedSecondaryDockingPort was null.");
 
+            // The old way
             DockingResultStatus result = DocCurrent.BlueprintObject.DockPorts(a, b);
+
+            // The new way
+            //DockingResultStatus result = a.Dock(b);
 
             if (result == DockingResultStatus.Success) SelectedSecondaryStructureNode = null;
             else MessageBox.Show("Result: " + result.ToString(), "Docking Operation Result", MessageBoxButtons.OK, MessageBoxIcon.Error);

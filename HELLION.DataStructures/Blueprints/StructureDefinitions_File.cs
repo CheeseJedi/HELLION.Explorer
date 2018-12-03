@@ -49,7 +49,7 @@ namespace HELLION.DataStructures.Blueprints
         /// <param name="structuresJsonFile"></param>
         public void GenerateAndSaveNewStructureDefinitionsFile(FileInfo passedFileInfo, Json_File_UI structuresJsonFile)
         {
-            BlueprintObject.__ObjectType = BlueprintObjectType.BlueprintStructureDefinitions;
+            // BlueprintObject.__ObjectType = BlueprintObjectType.BlueprintStructureDefinitions;
             BlueprintObject.Version = StationBlueprintFormatVersion;
             BlueprintObject.Name = String.Format("Hellion Station Blueprint File Format - Structure Definitions Template Version {0} Generated {1}",
                 StationBlueprintFormatVersion, DateTime.Now);
@@ -66,15 +66,15 @@ namespace HELLION.DataStructures.Blueprints
                     SceneID = (StructureSceneID)Enum
                         .Parse(typeof(StructureSceneID), (string)jtStructure["ItemID"]),
 
-                    AuxData = new BlueprintStructure_AuxData(null),
+                    //AuxData = new BlueprintStructure_AuxData(null),
 
                     // Calculate the total (nominal) air volume.
-                    NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume")),
+                    //NominalAirVolume = (float)jtStructure["Rooms"].Sum(v => (float)v.SelectToken("Volume")),
 
                     // Look up the Power requirement for this module.
                     // Select subsystem type 13 (VesselBasePowerConsumer) usually with RoomID of -1
-                    StandbyPowerRequirement = (float)jtStructure.SelectToken(
-                        "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Standby"),
+                    //StandbyPowerRequirement = (float)jtStructure.SelectToken(
+                    //    "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Standby"),
 
                     // NominalPowerRequirement = (float)jtStructure.SelectToken(
                     //  "$.SubSystems.[?(@.Type == 13)].ResourceRequirements[0].Nominal"),
