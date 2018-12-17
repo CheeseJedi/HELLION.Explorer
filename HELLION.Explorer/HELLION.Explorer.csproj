@@ -63,7 +63,7 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>HELLION.Explorer.ico</ApplicationIcon>
+    <ApplicationIcon>HellionExplorer.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -193,6 +193,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HELLION.Explorer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HellionExplorer.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

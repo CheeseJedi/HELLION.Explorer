@@ -5,4 +5,10 @@
   {
     "AllDynamicObjects": "Game Data>*>Ships>Array>*>DynamicObjects>Array>*"
   }
+  {
+    "AllTurrets": "Game Data>*>Ships>Array>*>DynamicObjects>Array>*>ItemID>79"
+  }
+  {
+	"StationBlueprintStructuresWithLockedDoors": "Game Data>Data>Stations>*>*>Structures>*>*>DoorsLocked>*"
+  }
 ]

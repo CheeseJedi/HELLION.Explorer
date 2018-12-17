@@ -1322,7 +1322,7 @@ namespace HELLION.Explorer
 
                 // Set the form's icon
                 var exe = System.Reflection.Assembly.GetExecutingAssembly();
-                var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HELLION.Explorer.ico");
+                var iconStream = exe.GetManifestResourceStream("HELLION.Explorer.HellionExplorer.ico");
                 if (iconStream != null) MainForm.Icon = new Icon(iconStream);
 
                 // Update the main form's title text - this adds the application name

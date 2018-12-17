@@ -99,7 +99,8 @@ namespace HELLION.DataStructures.Document
                 case Base_TN_NodeType.Moon:
                     // These come from the Static Data - handled by the CelestialBodies.json member of the DataDictionary
                     if (!GameData.StaticData.DataDictionary.TryGetValue("CelestialBodies.json", out Json_File_UI celestialBodiesJsonBaseFile))
-                        throw new InvalidOperationException("Unable to access the CelestialBodies.json from the Static Data Dictionary.");
+                        throw new InvalidOperationException
+                            ("AddSolarSystemObjectsByType: Unable to access the CelestialBodies.json from the Static Data Dictionary.");
                     else
                     {
                         // We're expecting the Array or Object nodes as the parent token.
@@ -116,21 +117,15 @@ namespace HELLION.DataStructures.Document
                             if (obj == null) throw new NullReferenceException
                                     ("Adding CelestialBodies - obj was null.");
 
-                            //long newNodeParentGUID = 0;
-                            //JToken testToken = obj["ParentGUID"];
-                            //if (testToken != null)
-                            //{
-                            //    newNodeParentGUID = (long)obj["ParentGUID"];
-                            //}
-
                             // If the node doesn't have a parent guid set it to -1000.
                             long newNodeParentGUID = obj["ParentGUID"] != null ? (long)obj["ParentGUID"] : -1000L;
-
 
                             switch (newNodeParentGUID)
                             {
                                 case 0:
-                                    throw new Exception("Failed to read ParentGUID");
+                                case -1000:
+                                    throw new InvalidOperationException
+                                        ("AddSolarSystemObjectsByType: Failed to read ParentGUID for node " + node.Name);
                                 case -1:
                                     // It's the star, Hellion.
                                     newNodeType = Base_TN_NodeType.Star;
@@ -153,9 +148,9 @@ namespace HELLION.DataStructures.Document
                 case Base_TN_NodeType.Asteroid:
                 case Base_TN_NodeType.Ship:
                 case Base_TN_NodeType.Player:
-
-                    // Set up the find key
-                    string findKey = String.Empty;
+                    // Set up the find key that's used to locate the TreeNode representing
+                    // the Ships, Asteroids and Players collections in the .save file.
+                    string findKey = string.Empty;
                     switch (nodeType)
                     {
                         case Base_TN_NodeType.Asteroid:
@@ -168,17 +163,20 @@ namespace HELLION.DataStructures.Document
                             findKey = "Players";
                             break;
                     }
-                    if (findKey == String.Empty) throw new Exception("findKey was empty.");
+                    if (findKey == string.Empty) throw new InvalidOperationException
+                            ("AddSolarSystemObjectsByType: findKey was empty.");
 
                     TreeNode[] tmpMatches = GameData.SaveFile.RootNode.FirstNode.Nodes.Find(findKey, searchAllChildren: false);
 
                     Json_TN sectionRootNode = null;
                     if (tmpMatches.Count() > 0)
                     {
+                        // Grab the first match - there shouldn't be more then one anyway.
                         sectionRootNode = (Json_TN)tmpMatches?[0];
                     }
                     else Debug.Print("AddSolarSystemObjectsByType({0}) - sectionRootNode was null.", nodeType);
 
+                    // The nodes of interest are children of the node representing the JArray.
                     Json_TN arrayRootNode = null;
                     if (sectionRootNode?.Nodes.Count > 0)
                     {
@@ -186,24 +184,23 @@ namespace HELLION.DataStructures.Document
 
                         foreach (Json_TN node in arrayRootNode.Nodes)
                         {
+                            Debug.Print("Node Name: " + node.Name);
                             JObject obj = (JObject)node.JData;
-                            long newNodeParentGUID = 0;
-                            long newNodeFakeGUID = 0;
-                            JToken testToken = obj["ParentGUID"];
-                            if (testToken != null) newNodeParentGUID = (long)obj["ParentGUID"];
 
-                            testToken = obj["FakeGUID"];
-                            if (testToken != null) newNodeFakeGUID = (long)obj["FakeGUID"];
+                            long newNodeParentGUID;
+                            if (nodeType == Base_TN_NodeType.Player) newNodeParentGUID = (long)obj["ParentGUID"];
+                            else newNodeParentGUID = (long)obj["OrbitData"]["ParentGUID"];
+
+                            long? newNodeGUID = (long?)obj["GUID"];
+                            Debug.Print("ParentGUID: " + newNodeParentGUID);
+                            Debug.Print("GUID: " + newNodeGUID);
 
                             SolarSystem_TN newNode = node.CreateLinkedSolarSystemNode(nodeType);
                             if (nodeType == Base_TN_NodeType.Player)
                             {
-                                if (newNodeParentGUID == newNodeFakeGUID)
+                                if (newNodeParentGUID == newNodeGUID)
                                 {
                                     // Player is ALIVE and in space
-                                    Debug.Print("FakeGUID: " + newNodeFakeGUID);
-                                    Debug.Print("ParentGUID: " + newNodeParentGUID);
-
                                     newNode.ParentGUID = -1;
                                     // Needs to be greater than zero to place players below the star node.
                                     newNode.OrbitData.SemiMajorAxis = 1;
@@ -233,6 +230,7 @@ namespace HELLION.DataStructures.Document
             bool errorState = false;
             foreach (SolarSystem_TN node in RootNode.GetChildNodes(includeSubtrees: true))
             {
+                Debug.WriteLine(">>>Rehydrating " + node.Name + ">>" + node.Text);
                 // If this node has a non-zero value for DockedToShipGUID, process it.
                 if (node.ParentGUID == -100)
                 {
@@ -249,6 +247,9 @@ namespace HELLION.DataStructures.Document
                         .Cast<SolarSystem_TN>()
                         .Where(p => p.GUID == node.ParentGUID);
                     //.Single();
+
+                    if (newParentNodes.Count() != 1)
+                        Debug.WriteLine("newParentNodes.count=" + newParentNodes.Count());
 
                     try
                     {
