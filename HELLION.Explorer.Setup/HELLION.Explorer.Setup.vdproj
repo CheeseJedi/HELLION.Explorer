@@ -33,8 +33,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_18119A1531594708AF2906D76735C170"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_8E8E4765A7EAA99700D30BA6D39086DB"
+        "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -46,7 +46,19 @@
         "Entry"
         {
         "MsmKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
-        "OwnerKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
+        "OwnerKey" = "8:_8E8E4765A7EAA99700D30BA6D39086DB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
+        "OwnerKey" = "8:_AF4C8B271D59080938909751B7560396"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
+        "OwnerKey" = "8:_F41197E61B1243CA9CFB4722ECC0DF14"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -59,6 +71,36 @@
         {
         "MsmKey" = "8:_AD9E342F192FB9BA326200C4B15663AF"
         "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AF4C8B271D59080938909751B7560396"
+        "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AF4C8B271D59080938909751B7560396"
+        "OwnerKey" = "8:_F41197E61B1243CA9CFB4722ECC0DF14"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AF4C8B271D59080938909751B7560396"
+        "OwnerKey" = "8:_D2210E58FE3D4763AE870704279AB893"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AF4C8B271D59080938909751B7560396"
+        "OwnerKey" = "8:_8E8E4765A7EAA99700D30BA6D39086DB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BE9883287ED745459570402C93C429A5"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -75,18 +117,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
-        "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
-        "OwnerKey" = "8:_D2210E58FE3D4763AE870704279AB893"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F41197E61B1243CA9CFB4722ECC0DF14"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -95,6 +125,18 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8E8E4765A7EAA99700D30BA6D39086DB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_AF4C8B271D59080938909751B7560396"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -113,12 +155,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_98F5D29C322268871F4CCD44584C3092"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_D53F3B8B8514AFF52CC28DA8D85166FA"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -145,7 +181,7 @@
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
-        "Compression" = "3:2"
+        "Compression" = "3:3"
         "SignOutput" = "11:FALSE"
         "CertificateFile" = "8:"
         "PrivateKeyFile" = "8:"
@@ -177,7 +213,7 @@
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
-        "Compression" = "3:2"
+        "Compression" = "3:3"
         "SignOutput" = "11:FALSE"
         "CertificateFile" = "8:"
         "PrivateKeyFile" = "8:"
@@ -259,10 +295,21 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18119A1531594708AF2906D76735C170"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8E8E4765A7EAA99700D30BA6D39086DB"
             {
-            "SourcePath" = "8:..\\HELLION.Explorer\\HELLION.Explorer.ico"
-            "TargetName" = "8:HELLION.Explorer.ico"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:HELLION.StationBlueprintEditor, Version=1.0.0.603, Culture=neutral, processorArchitecture=AMD64"
+                "ScatterAssemblies"
+                {
+                    "_8E8E4765A7EAA99700D30BA6D39086DB"
+                    {
+                    "Name" = "8:HELLION.StationBlueprintEditor.exe"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:HELLION.StationBlueprintEditor.exe"
+            "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
             "Condition" = "8:"
@@ -276,7 +323,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_98F5D29C322268871F4CCD44584C3092"
@@ -341,14 +388,14 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D53F3B8B8514AFF52CC28DA8D85166FA"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AF4C8B271D59080938909751B7560396"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.0.5.543, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.1.0.84, Culture=neutral, processorArchitecture=AMD64"
                 "ScatterAssemblies"
                 {
-                    "_D53F3B8B8514AFF52CC28DA8D85166FA"
+                    "_AF4C8B271D59080938909751B7560396"
                     {
                     "Name" = "8:HELLION.DataStructures.dll"
                     "Attributes" = "3:512"
@@ -372,17 +419,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BE9883287ED745459570402C93C429A5"
+            {
+            "SourcePath" = "8:..\\HELLION.Explorer\\HellionExplorer.ico"
+            "TargetName" = "8:HellionExplorer.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
             "{5EB83D71-FA18-4901-BE56-DE22E13CC478}:_E8556C45CA0243AD95A93D36FC66E7EB"
             {
-            "Name" = "8:HELLION DS Save File"
-            "Description" = "8:HELLION DS Save File"
+            "Name" = "8:HELLION Save File"
+            "Description" = "8:HELLION Save File"
             "Extensions" = "8:.save"
             "MIME" = "8:application/json"
-            "Icon" = "8:_18119A1531594708AF2906D76735C170"
-            "IconIndex" = "3:0"
+            "Icon" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+            "IconIndex" = "3:32512"
                 "Command"
                 {
                 "Command" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
@@ -464,7 +531,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:HELLION.Explorer"
         "ProductCode" = "8:{88B11E6D-5129-4499-AB88-6CA04F5673C0}"
-        "PackageCode" = "8:{C92055A9-8871-45C9-8CBB-8AD4663D0105}"
+        "PackageCode" = "8:{0424E15E-2BBD-4904-95E0-22D244766AB6}"
         "UpgradeCode" = "8:{F183209F-F0D2-48DA-A90A-31E212313BD9}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -481,8 +548,8 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:Installs HELLION.Explorer"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:_18119A1531594708AF2906D76735C170"
-        "ARPIconIndex" = "3:0"
+        "ARPPRODUCTICON" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
+        "ARPIconIndex" = "3:32512"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
         "TargetPlatform" = "3:1"
@@ -590,12 +657,12 @@
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
+            "IconIndex" = "3:32512"
             "Transitive" = "11:FALSE"
             "Target" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
             "Folder" = "8:_FB0676C07F544113A9869E423A0066CB"
             "WorkingFolder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
-            "Icon" = "8:_18119A1531594708AF2906D76735C170"
+            "Icon" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E2818ED86F534CC6B17421BE8B0CE219"
@@ -604,12 +671,12 @@
             "Arguments" = "8:"
             "Description" = "8:Launches HELLION.Explorer."
             "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
+            "IconIndex" = "3:32512"
             "Transitive" = "11:FALSE"
             "Target" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
             "Folder" = "8:_B3E744336FAC48DB866FC0879B5DB9C8"
             "WorkingFolder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
-            "Icon" = "8:_18119A1531594708AF2906D76735C170"
+            "Icon" = "8:_C94CC3BB5A4A43FFACA2121E609E803E"
             "Feature" = "8:"
             }
         }
@@ -744,8 +811,8 @@
                             "Type" = "3:3"
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
-                            "Setting" = "3:1"
-                            "Value" = "8:#1202"
+                            "Setting" = "3:2"
+                            "Value" = "8:This software is distributed under the MIT License."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -902,8 +969,8 @@
                             "Type" = "3:3"
                             "ContextData" = "8:"
                             "Attributes" = "3:0"
-                            "Setting" = "3:1"
-                            "Value" = "8:#1202"
+                            "Setting" = "3:2"
+                            "Value" = "8:This software is distributed under the MIT License."
                             "DefaultValue" = "8:#1202"
                             "UsePlugInResources" = "11:TRUE"
                             }
@@ -1041,7 +1108,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C94CC3BB5A4A43FFACA2121E609E803E"
             {
-            "SourcePath" = "8:..\\HELLION.Explorer\\obj\\Debug\\HELLION.Explorer.exe"
+            "SourcePath" = "8:..\\HELLION.Explorer\\obj\\x64\\Release\\HELLION.Explorer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
@@ -1069,7 +1136,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_D2210E58FE3D4763AE870704279AB893"
             {
-            "SourcePath" = "8:..\\HELLION.CrewSync\\obj\\Debug\\HELLION.CrewSync.exe"
+            "SourcePath" = "8:..\\HELLION.CrewSync\\obj\\x64\\Release\\HELLION.CrewSync.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
@@ -1097,7 +1164,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F41197E61B1243CA9CFB4722ECC0DF14"
             {
-            "SourcePath" = "8:..\\HELLION.StationBlueprintEditor\\obj\\Debug\\HELLION.StationBlueprintEditor.exe"
+            "SourcePath" = "8:..\\HELLION.StationBlueprintEditor\\obj\\x64\\Release\\HELLION.StationBlueprintEditor.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_B02CCD518C9F4CF5883370B3C726AB23"
