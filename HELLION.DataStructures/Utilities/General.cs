@@ -64,7 +64,7 @@ namespace HELLION.DataStructures.Utilities
 
                 prompt.AcceptButton = confirmation;
 
-                return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : String.Empty;
+                return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : string.Empty;
             }
         }
 
@@ -109,13 +109,13 @@ namespace HELLION.DataStructures.Utilities
 
             public override string ToString()
             {
-                return String.Format("H: {0:#0.##} S: {1:#0.##} L: {2:#0.##}", Hue, Saturation, Luminosity);
+                return string.Format("H: {0:#0.##} S: {1:#0.##} L: {2:#0.##}", Hue, Saturation, Luminosity);
             }
 
             public string ToRGBString()
             {
                 Color color = (Color)this;
-                return String.Format("R: {0:#0.##} G: {1:#0.##} B: {2:#0.##}", color.R, color.G, color.B);
+                return string.Format("R: {0:#0.##} G: {1:#0.##} B: {2:#0.##}", color.R, color.G, color.B);
             }
 
             #region Casts to/from System.Drawing.Color

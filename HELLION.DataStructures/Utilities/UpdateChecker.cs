@@ -25,7 +25,7 @@ namespace HELLION.DataStructures.Utilities
         public UpdateChecker(string gitHubUserName, string repositoryName)
         {
             // Only proceed if both the username and repository name have non-empty strings.
-            if (gitHubUserName != String.Empty && repositoryName != String.Empty)
+            if (gitHubUserName != string.Empty && repositoryName != string.Empty)
             {
                 GitHubUserName = gitHubUserName;
                 RepositoryName = repositoryName;

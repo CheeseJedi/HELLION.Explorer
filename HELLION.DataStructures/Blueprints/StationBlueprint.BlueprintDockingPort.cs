@@ -32,7 +32,7 @@ namespace HELLION.DataStructures.Blueprints
                 //    nodeName: PortName.ToString())
                 {
                     Text_Prefix = OwnerStructure != null && OwnerStructure.StructureID != null ?
-                        String.Format("[{0:000}] ", (int)OwnerStructure.StructureID) : "[ERR] "
+                        string.Format("[{0:000}] ", (int)OwnerStructure.StructureID) : "[ERR] "
                 };
             }
 
@@ -453,7 +453,7 @@ namespace HELLION.DataStructures.Blueprints
 
             public void RefreshAfterParentStructureIDChange()
             {
-                RootNode.Text_Prefix = OwnerStructure != null ? String.Format("[{0:000}] ", (int)OwnerStructure.StructureID) : "[ERR] ";
+                RootNode.Text_Prefix = OwnerStructure != null ? string.Format("[{0:000}] ", (int)OwnerStructure.StructureID) : "[ERR] ";
                 RootNode.Name = _portName.ToString();
 
                 //RootNode.RefreshText();

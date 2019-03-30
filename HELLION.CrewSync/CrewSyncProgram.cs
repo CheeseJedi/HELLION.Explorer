@@ -108,7 +108,7 @@ namespace HELLION.CrewSync
                         groupPrefix = arguments[i].ToUpper();
                         Logging.WriteLine("Argument: Vessel Prefix " + groupPrefix);
 
-                        if (String.IsNullOrEmpty(groupPrefix))
+                        if (string.IsNullOrEmpty(groupPrefix))
                         {
                             Logging.WriteLine("Invalid prefix.");
                             PauseIfDebuggerAttached();
@@ -236,13 +236,13 @@ namespace HELLION.CrewSync
                     _tmpList.Add(newPerson);
                 }
                 if (verboseOutput)
-                    Logging.WriteLine(String.Format(" {0} SteamID64: {1,-17} GUID: {2,-19} PlayerName: {3}",
+                    Logging.WriteLine(string.Format(" {0} SteamID64: {1,-17} GUID: {2,-19} PlayerName: {3}",
                         markerChar, player["SteamId"], player["GUID"], player["Name"]));
             }
             crewList = _tmpList;
 
-            Logging.WriteLine(String.Format("Save file Players collection contains {0} member(s).", _playersCollection.Children().Count()));
-            Logging.WriteLine(String.Format("{0} Player(s) are members of the group and were added to the Master Crew List.", _tmpList.Count));
+            Logging.WriteLine(string.Format("Save file Players collection contains {0} member(s).", _playersCollection.Children().Count()));
+            Logging.WriteLine(string.Format("{0} Player(s) are members of the group and were added to the Master Crew List.", _tmpList.Count));
 
             return true;
         }
@@ -266,13 +266,13 @@ namespace HELLION.CrewSync
                     _tmpList.Add(vessel);
                 }
                 if (verboseOutput)
-                    Logging.WriteLine(String.Format(" {0} Reg: {1,-25} GUID: {2,-13} Name: {3}", 
+                    Logging.WriteLine(string.Format(" {0} Reg: {1,-25} GUID: {2,-13} Name: {3}", 
                         markerChar, vessel["Registration"], vessel["GUID"], vessel["Name"]));
             }
             vesselList = _tmpList;
 
-            Logging.WriteLine(String.Format("Save file Ships collection contains {0} vessel(s).", _shipsCollection.Children().Count()));
-            Logging.WriteLine(String.Format("{0} Vessels(s) have name prefixes that match and have been added to the Master Vessel List.", _tmpList.Count));
+            Logging.WriteLine(string.Format("Save file Ships collection contains {0} vessel(s).", _shipsCollection.Children().Count()));
+            Logging.WriteLine(string.Format("{0} Vessels(s) have name prefixes that match and have been added to the Master Vessel List.", _tmpList.Count));
 
             // foreach (AuthorizedPerson person in tmpList) Logging.WriteLine(JToken.FromObject(person).ToString());
 
@@ -295,7 +295,7 @@ namespace HELLION.CrewSync
                     List<AuthorisedPerson> _vesselAuthorisedPersonnel = vessel["AuthorizedPersonel"]
                         .ToObject<List<AuthorisedPerson>>();
 
-                    Logging.WriteLine(String.Format("Vessel: {0}  Commanding Officer: {1}  Existing Crew: {2}",
+                    Logging.WriteLine(string.Format("Vessel: {0}  Commanding Officer: {1}  Existing Crew: {2}",
                         vessel["Name"], GetCommandingOfficerName(vessel), _vesselAuthorisedPersonnel.Count));
 
                     // Create a list of all members of the Master Crew List except 
@@ -305,7 +305,7 @@ namespace HELLION.CrewSync
                         .Where(p => p.Rank != AuthorisedPersonRank.CommandingOfficer)
                         .ToList();
 
-                    Logging.WriteLine(String.Format("Adding {0} Players to vessel crew.", _PlayersToAdd.Count));
+                    Logging.WriteLine(string.Format("Adding {0} Players to vessel crew.", _PlayersToAdd.Count));
 
                     foreach (var player in _PlayersToAdd)
                     {
@@ -388,7 +388,7 @@ namespace HELLION.CrewSync
                 return;
             }
             Logging.WriteLine("Complete.");
-            Logging.WriteLine(String.Format("Steam Group {0} ({1}) has {2} member(s).", 
+            Logging.WriteLine(string.Format("Steam Group {0} ({1}) has {2} member(s).", 
                 groupID64, groupName, groupMembers.Count));
 
             Logging.WriteLine("Building in-game player list...");
@@ -410,7 +410,7 @@ namespace HELLION.CrewSync
 
             TimeSpan timeElapsed = DateTime.Now - operationStartTime;
 
-            Logging.WriteLine(String.Format("Operation completed in {0}.{1} second(s).",
+            Logging.WriteLine(string.Format("Operation completed in {0}.{1} second(s).",
                 timeElapsed.Seconds, timeElapsed.Milliseconds));
 
             Logging.FlushBuffer();

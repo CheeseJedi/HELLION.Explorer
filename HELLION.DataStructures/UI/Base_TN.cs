@@ -34,7 +34,7 @@ namespace HELLION.DataStructures.UI
         {
             NodeType = nodeType;
 
-            if (nodeName != null && nodeName != String.Empty)
+            if (nodeName != null && nodeName != string.Empty)
             {
                 // A value for the name was supplied - no auto-generation.
                 Name = nodeName;
@@ -260,7 +260,7 @@ namespace HELLION.DataStructures.UI
             {
                 string newName = GenerateName();
 
-                if (newName != String.Empty)
+                if (newName != string.Empty)
                 {
                     Name = newName;
                     // Name has been generated, deactivate.
@@ -304,9 +304,9 @@ namespace HELLION.DataStructures.UI
         protected virtual string GenerateText()
         {
             // Alterations to the name formatting can be applied by overriding this method.
-            return String.Format("{0}{1}{2}",
-                (Text_Prefix?.Length > 0 ? Text_Prefix + _text_Seperator : String.Empty), Name,
-                (Text_Suffix?.Length > 0 ? _text_Seperator + Text_Suffix : String.Empty));
+            return string.Format("{0}{1}{2}",
+                (Text_Prefix?.Length > 0 ? Text_Prefix + _text_Seperator : string.Empty), Name,
+                (Text_Suffix?.Length > 0 ? _text_Seperator + Text_Suffix : string.Empty));
         }
 
         /// <summary>

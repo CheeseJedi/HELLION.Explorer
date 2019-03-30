@@ -59,7 +59,7 @@ namespace HELLION.Explorer
         public void ResetForm()
         {
             textBoxQuery.Enabled = true;
-            textBoxQuery.Text = String.Empty;
+            textBoxQuery.Text = string.Empty;
             checkBoxMatchCase.Enabled = true;
             checkBoxMatchCase.Checked = false;
             checkBoxPathSearch.Enabled = true;

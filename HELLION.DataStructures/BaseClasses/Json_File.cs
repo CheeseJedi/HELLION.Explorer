@@ -157,7 +157,7 @@ namespace HELLION.DataStructures
                         _loadError = true;
                         /*
                         // Fire the event
-                        OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(String.Format("Load Error in file {0}", File.FullName)));
+                        OnRaiseCustomEvent(new HEJsonBaseFileEventArgs(string.Format("Load Error in file {0}", File.FullName)));
                         */
                     }
                 }
@@ -234,7 +234,11 @@ namespace HELLION.DataStructures
                 AutoDeserialiseOnJdataModification = false;
 
                 // Load the file.
-                if (LoadFile()) Debug.Print("File failed to load from constructor - LoadFile() returned true.");
+                if (LoadFile())
+                {
+                    Debug.Print("File failed to load from constructor - LoadFile() returned true.");
+                    LoadError = true;
+                }
                 else
                 {
 
@@ -249,6 +253,8 @@ namespace HELLION.DataStructures
                 }
             }
         }
+
+
 
         /// <summary>
         /// Load file data from FileName and parse to the JData JObject of type IOrderedEnumerable<JToken>

@@ -41,9 +41,14 @@ namespace HELLION.DataStructures.UI
             // Enable auto-name generation.
             AutoGenerateName = true;
 
+            if (passedJson == null)
+            {
+                Debug.WriteLine($"Json_TN.ctor({nodeName}): Passed JToken was null.");
+            }
+
             // Set the JData - this will trigger child nodes to be built to the specified depth.
-            JData = passedJson ?? throw new NullReferenceException
-                ("Json_TN(JToken).ctor: Passed JToken was null.");
+            JData = passedJson;
+                //?? throw new NullReferenceException                 ("Json_TN(JToken).ctor: Passed JToken was null.");
 
         }
 
@@ -120,7 +125,7 @@ namespace HELLION.DataStructures.UI
             {
                 case JTokenType.Object:
                     string _generatedName = GenerateNameFromJObject((JObject)JData);
-                    return (_generatedName == String.Empty) ? DefaultObjectName : _generatedName;
+                    return (_generatedName == string.Empty) ? DefaultObjectName : _generatedName;
 
                 case JTokenType.Array:
                     return DefaultArrayName;

@@ -98,7 +98,7 @@ namespace HELLION.DataStructures
                     // Add the file to the Data Dictionary 
                     DataDictionary.Add(dataFile.Name, tempJsonFile);
 
-                    if (tempJsonFile.IsLoaded && !LoadError)
+                    //if (tempJsonFile.IsLoaded) // && !LoadError)
                     {
                         if (tempJsonFile.RootNode == null) throw new NullReferenceException
                             ("Json_FileCollection.Load: tempJsonFile.RootNode was null.");

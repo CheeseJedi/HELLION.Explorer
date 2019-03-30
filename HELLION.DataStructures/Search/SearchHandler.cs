@@ -173,7 +173,7 @@ namespace HELLION.DataStructures.Search
             /// <returns>Returns true if the result set has more than zero members.</returns>
             public bool Execute()
             {
-                if (_query == null || _query == String.Empty) return false;
+                if (_query == null || _query == string.Empty) return false;
 
                 if ((OperatorFlags & HESearchOperatorFlags.ByPath) == HESearchOperatorFlags.ByPath)
                 {
@@ -305,7 +305,7 @@ namespace HELLION.DataStructures.Search
             /// <returns></returns>
             protected virtual string GenerateResultSetDisplayName()
             {
-                string postfix = String.Empty;
+                string postfix = string.Empty;
                 if (_query != null)
                 {
                     postfix = " " + _query + " (" + _results.Count().ToString() + ")";

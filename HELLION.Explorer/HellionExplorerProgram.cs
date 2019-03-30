@@ -33,6 +33,8 @@ namespace HELLION.Explorer
     /// </remarks>
     static class HellionExplorerProgram
     {
+
+
         #region Form Related Objects
 
         /// <summary>
@@ -117,6 +119,9 @@ namespace HELLION.Explorer
         /// </summary>
         internal static UpdateChecker hEUpdateChecker = new UpdateChecker
             ("CheeseJedi", "HELLION.Explorer");
+
+        // URL of Steam Guide.
+        internal static string userGuideWebLink = "https://steamcommunity.com/sharedfiles/filedetails/?id=1591655196";
 
         /// <summary>
         /// Initialises an EmbeddedImages_ImageList object to supply the image list to the tree view and
@@ -223,8 +228,8 @@ namespace HELLION.Explorer
             if (arguments.Length > 0)
             {
                 // There are arguments 
-                string saveFilePath = String.Empty;
-                string dataFolderPath = String.Empty;
+                string saveFilePath = string.Empty;
+                string dataFolderPath = string.Empty;
                 string helpText = Application.ProductName + ".exe [<full file name of .save file to open>] [/data <full path to the dedi's Data folder>]";
 
                 for (int i = 0; i < arguments.Length; i++)
@@ -261,13 +266,13 @@ namespace HELLION.Explorer
                     }
                 }
 
-                if (dataFolderPath != String.Empty)
+                if (dataFolderPath != string.Empty)
                 {
                     // Set the Data folder
                     SetGameDataFolder(dataFolderPath);
                 }
 
-                if (saveFilePath != String.Empty)
+                if (saveFilePath != string.Empty)
                 {
                     // Open the .save file
                     FileOpen(saveFilePath);
@@ -322,7 +327,7 @@ namespace HELLION.Explorer
             sb.Append(sNL2);
 
             // Add an estimate of current memory usage from the garbage collector
-            sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
+            sb.Append(string.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
             sb.Append(sNL2);
             sb.Append(sNL);
 
@@ -821,7 +826,7 @@ namespace HELLION.Explorer
         /// </summary>
         internal static void SetGameDataFolder(string passedFolder = "")
         {
-            if (passedFolder == String.Empty)
+            if (passedFolder == string.Empty)
             {
                 // We weren't passed a folder so prompt the user to select one.
                 MessageBox.Show("Please use the following folder browser window to select the location of the game Data folder." + Environment.NewLine + Environment.NewLine +
@@ -880,7 +885,7 @@ namespace HELLION.Explorer
             string StoredDataFolderPath = Properties.HELLIONExplorer.Default.sGameDataFolder.Trim();
 
             // Check GameDataFolder path in settings is not null or empty
-            if (StoredDataFolderPath == null || StoredDataFolderPath == String.Empty) return false;
+            if (StoredDataFolderPath == null || StoredDataFolderPath == string.Empty) return false;
 
             // Check the folder exists
             if (!Directory.Exists(StoredDataFolderPath)) return false;
@@ -1025,8 +1030,8 @@ namespace HELLION.Explorer
                             arr[2] = listItem.GetNodeCount(includeSubTrees: false).ToString();
                             arr[3] = listItem.GetNodeCount(includeSubTrees: true).ToString();
                             arr[4] = listItem.Path();
-                            arr[5] = String.Empty; // listItem.GUID.ToString();
-                            arr[6] = String.Empty; // nodeChild.SceneID.ToString();
+                            arr[5] = string.Empty; // listItem.GUID.ToString();
+                            arr[6] = string.Empty; // nodeChild.SceneID.ToString();
 
                             ListViewItem newItem = new ListViewItem(arr)
                             {
@@ -1052,8 +1057,8 @@ namespace HELLION.Explorer
                         arr[2] = node.GetNodeCount(includeSubTrees: false).ToString();
                         arr[3] = node.GetNodeCount(includeSubTrees: true).ToString();
                         arr[4] = node.Path();
-                        arr[5] = String.Empty; // nodeChild.GUID.ToString();
-                        arr[6] = String.Empty; // nodeChild.SceneID.ToString();
+                        arr[5] = string.Empty; // nodeChild.GUID.ToString();
+                        arr[6] = string.Empty; // nodeChild.SceneID.ToString();
 
                         ListViewItem newItem = new ListViewItem(arr)
                         {
@@ -1172,7 +1177,7 @@ namespace HELLION.Explorer
                     sb1.Append(Environment.NewLine);
                     sb1.Append("Eccentricity: " + od.Eccentricity.ToString());
                     sb1.Append(Environment.NewLine);
-                    sb1.Append(String.Format("[CALCULATED: Apoapsis {0} Metres ({1} AU)  Periapsis {2} Metres ({3} AU)]",
+                    sb1.Append(string.Format("[CALCULATED: Apoapsis {0} Metres ({1} AU)  Periapsis {2} Metres ({3} AU)]",
                         od.Apoapsis, Math.Round(od.Apoapsis_in_AU, 2), od.Periapsis, Math.Round(od.Periapsis_in_AU, 2)));
                     //sb1.Append(Environment.NewLine);
                     //sb1.Append("[CALCULATED: Orbital Period " + od.CalculateOrbitalPeriod() + "]");
@@ -1244,6 +1249,14 @@ namespace HELLION.Explorer
 
 
         #endregion
+
+        /// <summary>
+        /// Launches the User Guide in the default browser.
+        /// </summary>
+        internal static void LaunchUserGuide()
+        {
+            Process.Start(userGuideWebLink);
+        }
 
         /// <summary>
         /// Returns a single TreeNode with a given path.

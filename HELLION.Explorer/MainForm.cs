@@ -765,7 +765,7 @@ namespace HELLION.Explorer
         private void _playerNameBySteamID64()
         {
             string result = General.Prompt.ShowDialog("Enter SteamID64:", "Lookup Steam Player Name", false, null);
-            if (result != null && result != String.Empty)
+            if (result != null && result != string.Empty)
             {
                 MessageBox.Show(SteamIntegration.GetPlayerName(Convert.ToInt64(result)), "Result");
             }
@@ -774,7 +774,7 @@ namespace HELLION.Explorer
         private void _groupID64ByGroupName()
         {
             string groupName = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam GroupID64", false, null);
-            if (groupName != null && groupName != String.Empty)
+            if (groupName != null && groupName != string.Empty)
             {
                 long? result = SteamIntegration.GetGroupID(groupName);
                 MessageBox.Show((result != null ? result.ToString() : "No result."), "GroupID64:");
@@ -784,7 +784,7 @@ namespace HELLION.Explorer
         private void _groupMembersByGroupID64()
         {
             string result = General.Prompt.ShowDialog("Enter GroupName:", "Lookup Steam Group Members", false, null);
-            if (result != null && result != String.Empty)
+            if (result != null && result != string.Empty)
             {
                 List<long> iDs = SteamIntegration.GetGroupMembers(result);
 
@@ -801,7 +801,7 @@ namespace HELLION.Explorer
                 }
 
                 sb.Append(Environment.NewLine);
-                sb.Append(String.Format("Group contains {0} member(s).", iDs.Count));
+                sb.Append(string.Format("Group contains {0} member(s).", iDs.Count));
                 sb.Append(Environment.NewLine);
 
                 MessageBox.Show(sb.ToString());
@@ -852,7 +852,7 @@ namespace HELLION.Explorer
         private void HandleExpansionRequest(bool loadAllLevels = false)
         {
             // TODO - this may need to run parts asynchronously for large collections of
-            // large objects - the Ships collection for example.
+            // objects - the Ships collection for example.
 
             TreeNode node = HellionExplorerProgram.MainForm.treeView1.SelectedNode;
 
@@ -911,5 +911,6 @@ namespace HELLION.Explorer
             tempNode.RefreshChildNodesFromjData(depth, skipThroughPopulatedNodes);
         }
 
+        private void userGuideToolStripMenuItem_Click(object sender, EventArgs e) => HellionExplorerProgram.LaunchUserGuide();
     }
 }

@@ -202,7 +202,7 @@ namespace HELLION.StationBlueprintEditor
             sb.Append(sNL);
 
             // Add an estimate of current memory usage from the garbage collector
-            sb.Append(String.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
+            sb.Append(string.Format("Approx. memory usage (bytes): {0:N0}", GC.GetTotalMemory(false)));
             sb.Append(sNL2);
             sb.Append(sNL);
 
@@ -338,7 +338,7 @@ namespace HELLION.StationBlueprintEditor
                 if (!System.IO.File.Exists(fileName))
                 {
                     // The file name passed doesn't exist
-                    MessageBox.Show(String.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, fileName));
+                    MessageBox.Show(string.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, fileName));
 
                     return true;
                 }
@@ -406,7 +406,7 @@ namespace HELLION.StationBlueprintEditor
             MainForm.closeToolStripMenuItem.Enabled = true;
             MainForm.revertToolStripMenuItem.Enabled = true;
 
-            MainForm.toolStripStatusLabel1.Text = String.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
+            MainForm.toolStripStatusLabel1.Text = string.Format("File load and processing completed in {0:mm}m{0:ss}s", DateTime.Now - startingTime);
 
             return false;
         }

@@ -13,7 +13,7 @@ namespace HELLION.DataStructures.Utilities
         /// <returns></returns>
         public static string GetPlayerName(long steamID64)
         {
-            string uri = String.Format(@"http://steamcommunity.com/profiles/{0}/?xml=1", steamID64);
+            string uri = string.Format(@"http://steamcommunity.com/profiles/{0}/?xml=1", steamID64);
 
             XmlDocument document = new XmlDocument();
             document.Load(uri);
@@ -32,7 +32,7 @@ namespace HELLION.DataStructures.Utilities
         /// <returns></returns>
         public static long? GetGroupID(string groupName)
         {
-            string uri = String.Format(@"https://steamcommunity.com/groups/{0}/memberslistxml/?xml=1", groupName);
+            string uri = string.Format(@"https://steamcommunity.com/groups/{0}/memberslistxml/?xml=1", groupName);
 
             XmlDocument document = new XmlDocument();
             document.Load(uri);
@@ -51,7 +51,7 @@ namespace HELLION.DataStructures.Utilities
         /// <returns></returns>
         public static string GetGroupName(long groupID64)
         {
-            string uri = String.Format(@"https://steamcommunity.com/gid/{0}/memberslistxml/?xml=1", groupID64);
+            string uri = string.Format(@"https://steamcommunity.com/gid/{0}/memberslistxml/?xml=1", groupID64);
 
             XmlDocument document = new XmlDocument();
             document.Load(uri);
@@ -69,7 +69,7 @@ namespace HELLION.DataStructures.Utilities
         /// <returns></returns>
         public static string GetGroupURL(long groupID64)
         {
-            string uri = String.Format(@"https://steamcommunity.com/gid/{0}/memberslistxml/?xml=1", groupID64);
+            string uri = string.Format(@"https://steamcommunity.com/gid/{0}/memberslistxml/?xml=1", groupID64);
 
             XmlDocument document = new XmlDocument();
             document.Load(uri);
@@ -88,7 +88,7 @@ namespace HELLION.DataStructures.Utilities
         /// <returns></returns>
         public static List<long> GetGroupMembers(string groupName)
         {
-            Uri uri = new Uri(String.Format(@"https://steamcommunity.com/groups/{0}/memberslistxml/?xml=1", groupName));
+            Uri uri = new Uri(string.Format(@"https://steamcommunity.com/groups/{0}/memberslistxml/?xml=1", groupName));
             return GetGroupMembers(uri);
         }
 
@@ -99,7 +99,7 @@ namespace HELLION.DataStructures.Utilities
         /// <returns></returns>
         public static List<long> GetGroupMembers(long groupID64)
         {
-            Uri uri = new Uri(String.Format(@"https://steamcommunity.com/gid/{0}/memberslistxml/?xml=1", groupID64));
+            Uri uri = new Uri(string.Format(@"https://steamcommunity.com/gid/{0}/memberslistxml/?xml=1", groupID64));
             return GetGroupMembers(uri);
         }
 

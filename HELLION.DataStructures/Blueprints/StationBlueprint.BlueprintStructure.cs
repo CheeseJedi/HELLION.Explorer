@@ -406,12 +406,12 @@ namespace HELLION.DataStructures.Blueprints
                 StringBuilder sb = new StringBuilder();
 
                 //
-                sb.Append(String.Format("Removal called on StructureType {0} StructureID {1}", StructureType, StructureID) + Environment.NewLine);
+                sb.Append(string.Format("Removal called on StructureType {0} StructureID {1}", StructureType, StructureID) + Environment.NewLine);
 
                 // Process DockingPorts first - prepare them for removal.
                 foreach (BlueprintDockingPort port in DockingPorts)
                 {
-                    sb.Append(String.Format("* Processing PortName {0}; OrderID {1}; IsDocked {2}", port.PortName, port.OrderID, IsDocked) + Environment.NewLine);
+                    sb.Append(string.Format("* Processing PortName {0}; OrderID {1}; IsDocked {2}", port.PortName, port.OrderID, IsDocked) + Environment.NewLine);
 
                     if (!port.PrepareForRemoval(removeOrphanedStructures)) return true;
                     
@@ -476,7 +476,7 @@ namespace HELLION.DataStructures.Blueprints
                     //RootNode.DisplayRootStructureIcon = (StructureID != null && StructureID == 0) ? true : false;
 
                     // RootNode.BaseNodeName = StructureType.ToString();
-                    RootNode.Text_Prefix = String.Format("[{0:000}] ", (int)StructureID);
+                    RootNode.Text_Prefix = string.Format("[{0:000}] ", (int)StructureID);
                     //RootNode.RefreshText();
                     //RootNode.RefreshName();
 
