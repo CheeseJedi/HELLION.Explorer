@@ -12,8 +12,10 @@ using HELLION.DataStructures.EmbeddedImages;
 using HELLION.DataStructures.Search;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
+using HELLION.Explorer.Settings;
 using HELLION.StationBlueprintEditor;
 using Newtonsoft.Json.Linq;
+
 
 namespace HELLION.Explorer
 {
@@ -33,7 +35,10 @@ namespace HELLION.Explorer
     /// </remarks>
     static class HellionExplorerProgram
     {
-
+        const string coName = "Cheeseware";
+        const string appName = "Hellion Explorer";
+        const string settingsFileName = "HellionExplorerSettings.json";
+        const string GameDataFolderSettingName = "GameDataFolder";
 
         #region Form Related Objects
 
@@ -65,6 +70,8 @@ namespace HELLION.Explorer
         #endregion
 
         #region File Handling Objects
+
+        internal static SettingsManager settingsManager = new SettingsManager(coName, appName);
 
         /// <summary>
         /// The DirectoryInfo object representing the Static Data directory.
@@ -404,10 +411,10 @@ namespace HELLION.Explorer
             DateTime startingTime = DateTime.Now;
 
             // Check that the Data folder path has been defined and the expected files are there
-            if (!IsGameDataFolderValid())
+            if (!IsGameDataFolderValid(settingsManager.GetSetting(GameDataFolderSettingName)))
             {
                 // The checks failed, throw up an error message and cancel the load
-                MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu."); // this needs to be massively improved!
+                MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu.");
                 // Begin repainting the TreeView.
                 MainForm.treeView1.EndUpdate();
                 // Restore mouse cursor
@@ -458,7 +465,7 @@ namespace HELLION.Explorer
 
 
             saveFileInfo = new FileInfo(sFileName);
-            dataDirectoryInfo = new DirectoryInfo(Properties.HELLIONExplorer.Default.sGameDataFolder);
+            dataDirectoryInfo = new DirectoryInfo(settingsManager.GetSetting(GameDataFolderSettingName));
 
             if (saveFileInfo.Exists && dataDirectoryInfo.Exists)
             {
@@ -839,7 +846,7 @@ namespace HELLION.Explorer
                     Description = "Select location of Data folder",
                     RootFolder = Environment.SpecialFolder.Desktop,
                     // Pre-populate the path with whatever is stored in the Properties.
-                    SelectedPath = Properties.HELLIONExplorer.Default.sGameDataFolder,
+                    SelectedPath = settingsManager.GetSetting("GameDataFolder")
                 };
                 // If the user clicked OK then set the game data path on the settings.
                 if (folderBrowserDialog1.ShowDialog() == DialogResult.OK) // && folderBrowserDialog1. CheckFolderExists)
@@ -848,8 +855,9 @@ namespace HELLION.Explorer
                 }
             }
             // Set the path and save the settings.
-            Properties.HELLIONExplorer.Default.sGameDataFolder = passedFolder;
-            Properties.HELLIONExplorer.Default.Save();
+            settingsManager.SetSetting(GameDataFolderSettingName, passedFolder);
+            // Perhaps should instead save settings on exit?
+            settingsManager.Save();
         }
 
         /// <summary>
@@ -858,8 +866,10 @@ namespace HELLION.Explorer
         /// </summary>
         internal static void VerifyGameDataFolder(bool notifySuccess = true)
         {
+            string storedDataFolderPath = settingsManager.GetSetting(GameDataFolderSettingName);
+
             // Check that the Data folder path has been defined and there's stuff there
-            if (!IsGameDataFolderValid())
+            if (!IsGameDataFolderValid(storedDataFolderPath))
             {
                 // The checks failed, throw up an error message and cancel the load
                 MessageBox.Show("There was a problem with the Data Folder - use Set Data Folder option in Tools menu."); // this needs to be massively improved!
@@ -867,7 +877,7 @@ namespace HELLION.Explorer
             }
             else if (notifySuccess)
             {
-                MessageBox.Show("Game Data folder: " + Properties.HELLIONExplorer.Default.sGameDataFolder + " seems valid.");
+                MessageBox.Show($"Game Data folder: {storedDataFolderPath} seems valid.");
             }
         }
 
@@ -880,27 +890,25 @@ namespace HELLION.Explorer
         /// Does not check the contents of the files, only the existence of them.
         /// </remarks>
         /// <returns></returns>
-        internal static bool IsGameDataFolderValid()
+        internal static bool IsGameDataFolderValid(string path)
         {
-            string StoredDataFolderPath = Properties.HELLIONExplorer.Default.sGameDataFolder.Trim();
-
             // Check GameDataFolder path in settings is not null or empty
-            if (StoredDataFolderPath == null || StoredDataFolderPath == string.Empty) return false;
+            if (path == null || path == string.Empty) return false;
 
             // Check the folder exists
-            if (!Directory.Exists(StoredDataFolderPath)) return false;
+            if (!Directory.Exists(path)) return false;
 
             // Check the Celestial Bodies file - this one is particularly critical
-            if (!File.Exists(StoredDataFolderPath + "\\CelestialBodies.json")) return false;
+            if (!File.Exists(path + "\\CelestialBodies.json")) return false;
 
             // Check the Asteroids file
-            if (!File.Exists(StoredDataFolderPath + "\\Asteroids.json")) return false;
+            if (!File.Exists(path + "\\Asteroids.json")) return false;
 
             // Check the Structures file
-            if (!File.Exists(StoredDataFolderPath + "\\Structures.json")) return false;
+            if (!File.Exists(path + "\\Structures.json")) return false;
 
             // Check the Dynamic Objects file
-            if (!File.Exists(StoredDataFolderPath + "\\DynamicObjects.json")) return false;
+            if (!File.Exists(path + "\\DynamicObjects.json")) return false;
 
             // No checks failed, assume folder is OK
             return true;
@@ -1322,16 +1330,18 @@ namespace HELLION.Explorer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-
             //try
             {
+                // Initialise the SettingsManager.
+                settingsManager.SettingsFileName = settingsFileName;
+                settingsManager.Init();
+
                 // Initialise the main form
                 MainForm = new MainForm();
 
                 // Initialise the find form.
                 FindForm = new FindForm(MainForm);
                 FindForm.Hide();
-
 
                 // Set the form's icon
                 var exe = System.Reflection.Assembly.GetExecutingAssembly();
@@ -1360,7 +1370,6 @@ namespace HELLION.Explorer
                 MainForm.Show();
 
                 ProcessCommandLineArguments(args);
-
 
                 // Start the Windows Forms message loop
                 Application.Run(); // Application.Run(new MainForm());

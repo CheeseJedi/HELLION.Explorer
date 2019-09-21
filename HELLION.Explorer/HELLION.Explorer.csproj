@@ -19,7 +19,15 @@
     </AssemblyVersionSettings>
     <AssemblyFileVersionSettings>
     </AssemblyFileVersionSettings>
-    <PublishUrl>C:\Users\James\SkyDrive\HELLIONExplorer\Published\</PublishUrl>
+    <TargetFrameworkProfile />
+    <ShouldCreateLogs>True</ShouldCreateLogs>
+    <AdvancedSettingsExpanded>False</AdvancedSettingsExpanded>
+    <AssemblyInfoVersionSettings>
+    </AssemblyInfoVersionSettings>
+    <UpdatePackageVersion>False</UpdatePackageVersion>
+    <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
+    <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
+    <PublishUrl>C:\Temp\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -35,14 +43,6 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-    <ShouldCreateLogs>True</ShouldCreateLogs>
-    <AdvancedSettingsExpanded>False</AdvancedSettingsExpanded>
-    <AssemblyInfoVersionSettings>
-    </AssemblyInfoVersionSettings>
-    <UpdatePackageVersion>False</UpdatePackageVersion>
-    <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
-    <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>4AA5D3857AB2E54C6898BED7D8217E5EC92D7104</ManifestCertificateThumbprint>
@@ -87,13 +87,15 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>HELLION.Explorer.HellionExplorerProgram</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
-      <HintPath>..\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll</HintPath>
+    <Reference Include="FastColoredTextBox, Version=2.16.24.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
+      <HintPath>..\packages\FCTB.2.16.24\lib\FastColoredTextBox.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -109,48 +111,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FindForm.cs">
+    <Compile Include="Forms\FindForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FindForm.Designer.cs">
+    <Compile Include="Forms\FindForm.Designer.cs">
       <DependentUpon>FindForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HellionExplorerProgram.cs" />
-    <Compile Include="JsonDataViewForm.cs">
+    <Compile Include="Forms\JsonDataViewForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="JsonDataViewForm.Designer.cs">
+    <Compile Include="Forms\JsonDataViewForm.Designer.cs">
       <DependentUpon>JsonDataViewForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="MainForm.cs">
+    <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ObservedGuidsForm.cs">
+    <Compile Include="Forms\ObservedGuidsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ObservedGuidsForm.Designer.cs">
+    <Compile Include="Forms\ObservedGuidsForm.Designer.cs">
       <DependentUpon>ObservedGuidsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\HELLIONExplorer.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>HELLIONExplorer.settings</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="FindForm.resx">
+    <Compile Include="Settings\Settings_Json_File.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <EmbeddedResource Include="Forms\FindForm.resx">
       <DependentUpon>FindForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="JsonDataViewForm.resx">
+    <EmbeddedResource Include="Forms\JsonDataViewForm.resx">
       <DependentUpon>JsonDataViewForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ObservedGuidsForm.resx">
+    <EmbeddedResource Include="Forms\ObservedGuidsForm.resx">
       <DependentUpon>ObservedGuidsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -158,7 +157,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\HELLIONExplorer.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -166,10 +164,6 @@
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
-    <None Include="Properties\HELLIONExplorer.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>HELLIONExplorer.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -190,9 +184,6 @@
       <Project>{ee667242-57f1-48da-8c40-84c9eda05af4}</Project>
       <Name>HELLION.StationBlueprintEditor</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="HELLION.Explorer.ico" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HellionExplorer.ico" />

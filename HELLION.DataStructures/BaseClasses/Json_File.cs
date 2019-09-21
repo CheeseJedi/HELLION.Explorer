@@ -93,7 +93,7 @@ namespace HELLION.DataStructures
         public FileInfo File
         {
             get => _file;
-            protected set
+            set
             {
                 if (_file != value)
                 {

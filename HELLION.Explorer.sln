@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "HELLION.Explorer.Setup", "HELLION.Explorer.Setup\HELLION.Explorer.Setup.vdproj", "{7AD368A9-D324-4A57-A136-06344EBA7C95}"
 EndProject
@@ -43,16 +43,16 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {DE3A5932-35E9-4450-BD95-E0B7E2C7FF0D}
-		BuildVersion_UpdateAssemblyVersion = False
-		BuildVersion_UseUniversalClock = False
-		BuildVersion_UpdateFileVersion = False
-		BuildVersion_BuildVersioningStyle = None.None.None.Increment
-		BuildVersion_StartDate = 2000/1/1
-		BuildVersion_AssemblyInfoFilename = 
-		BuildVersion_UseGlobalSettings = False
-		BuildVersion_ReplaceNonNumerics = False
-		BuildVersion_IncrementBeforeBuild = False
 		BuildVersion_DetectChanges = False
+		BuildVersion_IncrementBeforeBuild = False
+		BuildVersion_ReplaceNonNumerics = False
+		BuildVersion_UseGlobalSettings = False
+		BuildVersion_AssemblyInfoFilename = 
+		BuildVersion_StartDate = 2000/1/1
+		BuildVersion_BuildVersioningStyle = None.None.None.Increment
+		BuildVersion_UpdateFileVersion = False
+		BuildVersion_UseUniversalClock = False
+		BuildVersion_UpdateAssemblyVersion = False
+		SolutionGuid = {DE3A5932-35E9-4450-BD95-E0B7E2C7FF0D}
 	EndGlobalSection
 EndGlobal

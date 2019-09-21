@@ -51,5 +51,6 @@
         BlueprintDockingPortDefinition,
         CollisionDataFolder,
         LocalServer,
+        SettingsFile,
     };
 }
