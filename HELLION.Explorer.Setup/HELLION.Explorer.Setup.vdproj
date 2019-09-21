@@ -64,13 +64,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_AF4C8B271D59080938909751B7560396"
+        "OwnerKey" = "8:_659810CE826B65CA893B43584F3EC33C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_659810CE826B65CA893B43584F3EC33C"
+        "OwnerKey" = "8:_AF4C8B271D59080938909751B7560396"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -277,7 +277,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.1.0.102, Culture=neutral, processorArchitecture=AMD64"
+            "AssemblyAsmDisplayName" = "8:HELLION.DataStructures, Version=0.1.1.0, Culture=neutral, processorArchitecture=AMD64"
                 "ScatterAssemblies"
                 {
                     "_AF4C8B271D59080938909751B7560396"
@@ -415,15 +415,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:HELLION.Explorer"
-        "ProductCode" = "8:{4E00F36A-FB73-40EA-A165-6949D2D0591D}"
-        "PackageCode" = "8:{49D55294-C95B-446A-9890-339A4834B122}"
+        "ProductCode" = "8:{F06354DE-CEC8-4FD0-B474-5AC685C27849}"
+        "PackageCode" = "8:{E3D6BC8B-58AF-4BA7-8657-3A8AE9B34DAA}"
         "UpgradeCode" = "8:{F183209F-F0D2-48DA-A90A-31E212313BD9}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.1"
+        "ProductVersion" = "8:1.1"
         "Manufacturer" = "8:Cheeseware"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
