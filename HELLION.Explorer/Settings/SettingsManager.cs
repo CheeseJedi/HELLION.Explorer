@@ -1,4 +1,5 @@
 ﻿using HELLION.DataStructures;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,26 @@ namespace HELLION.Explorer.Settings
     /// </summary>
     public class SettingsManager : IParent_Json_File
     {
+        // Set through constructor.
         public readonly string coName;
         public readonly string appName;
+
+        public const string GameDataFolder_Setting = "GameDataFolder";
+
+        /// <summary>
+        /// The default settings dictionary. Used to populate the main settings dictionary.
+        /// </summary>
+        public static readonly Dictionary<string, string> DefaultSettings = new Dictionary<string, string>
+        {
+            {
+                GameDataFolder_Setting, null
+            }
+        };
+
+        /// <summary>
+        /// The main settings dictionary both key and value are strings.
+        /// </summary>
+        public Dictionary<string, string> Settings { get; private set; } = DefaultSettings;
 
         public string SettingsDirectoryPath
         {
@@ -23,10 +42,17 @@ namespace HELLION.Explorer.Settings
                 if (settingsDirectoryPath != value)
                 {
                     settingsDirectoryPath = value;
-
+                    UpdateSettingsDirectoryInfo();
+                    if (settingsFileName != null)
+                    {
+                        UpdateSettingsFileInfo();
+                    }
                 }
             }
         }
+        private string settingsDirectoryPath;
+        private DirectoryInfo settingsDirectoryInfo;
+
         public string SettingsFileName
         {
             get => settingsFileName;
@@ -35,18 +61,20 @@ namespace HELLION.Explorer.Settings
                 if (settingsFileName != value)
                 {
                     settingsFileName = value;
-
+                    if (settingsFileName != null)
+                    {
+                        UpdateSettingsFileInfo();
+                    }
                 }
             }
         }
 
-        private string settingsDirectoryPath;
-        private DirectoryInfo settingsDirectoryInfo;
         private string settingsFileName;
         private FileInfo settingsFileInfo;
-        string settingsFilePath;
-        private Settings_Json_File settings_Json_File;
-        private bool loadOnInit = true;
+
+        private Json_File settings_Json_File;
+
+        private readonly bool loadOnInit = true;
 
         public SettingsManager(string coName, string appName)
         {
@@ -78,63 +106,99 @@ namespace HELLION.Explorer.Settings
 
         private void UpdateSettingsFileInfo()
         {
-            settingsFilePath = Path.Combine(settingsDirectoryPath, settingsFileName);
-            settingsFileInfo = new FileInfo(settingsFilePath);
+            if (settingsDirectoryPath == null || string.IsNullOrEmpty(settingsFileName))
+            {
+                settingsFileInfo = null;
+                return;
+            }
+
+            settingsFileInfo = new FileInfo(Path.Combine(settingsDirectoryPath, settingsFileName));
             if (!settingsFileInfo.Exists)
             {
-                Debug.WriteLine($"Settings file at {settingsFilePath} does not exist.");
-                CreateDefaultSettingsFile(settingsFileInfo);
+                Debug.WriteLine($"Settings file at {settingsFileInfo.FullName} does not exist, creating new with default values.");
+                CreateNewSettingsFile(settingsFileInfo);
             }
 
         }
 
-        private void CreateDefaultSettingsFile(FileInfo fileInfo)
+        private void CreateNewSettingsFile(FileInfo fileInfo, JToken jdata = null)
         {
-            JToken jdata = JToken.FromObject(defaultSettings);
-            Settings_Json_File newFile = new Settings_Json_File(this, jdata, autoDeserialise: false);
-            newFile.File = fileInfo;
-            newFile.SaveFile();
+            Json_File newFile = new Json_File(this)
+            {
+                AutoLoadOnFileInfoSet = false,
+                File = fileInfo,
+                AutoDeserialiseOnJdataModification = false,
+                JData = jdata ?? JToken.FromObject(DefaultSettings),
+            };
+            newFile.SaveFile(createBackup: false);
             newFile.Close();
-            newFile = null;
         }
 
         public string GetSetting(string name)
         {
-            return settings_Json_File.GetSetting(name);
+            if (Settings.TryGetValue(name, out string value))
+            {
+                return value;
+            }
+            return null;
         }
 
         public void SetSetting(string name, string value)
         {
-            settings_Json_File.SetSetting(name, value);
+            Debug.WriteLine($"Settings_Json_File.SetSetting: Called - {name}, {value}");
+            Settings[name] = value;
         }
 
         public void Load()
         {
             if (settingsFileInfo.Exists)
             {
-                settings_Json_File = new Settings_Json_File(this)
+                settings_Json_File = new Json_File(this)
                 {
                     AutoLoadOnFileInfoSet = false,
-                    AutoDeserialiseOnJdataModification = true,
+                    AutoDeserialiseOnJdataModification = false,
                     File = settingsFileInfo,
                 };
                 settings_Json_File.LoadFile();
-                Debug.WriteLine("SettingsManager.Init: Json_File load error = " + settings_Json_File.LoadError);
+
+                if (settings_Json_File.LoadError)
+                {
+                    Debug.WriteLine("SettingsManager.Load: Json_File load error.");
+                }
+                // Do the de-serialisation here.
+                if (settings_Json_File.JData == null)
+                {
+                    Debug.WriteLine("SettingsManager.Load: load error - JData was null.");
+                    return;
+                }
+
+                JsonConvert.PopulateObject(settings_Json_File.JData.ToString(), Settings); // must be a better way than this.
+
+                //Settings = settings_Json_File.JData.ToObject<Dictionary<string, string>>();
+                if (Settings == null)
+                {
+                    Debug.WriteLine("SettingsManager.Init: load error - failed to de-serialise.");
+                }
                 return;
             }
-            Debug.WriteLine("SettingsManager.Init: load error - settingsFileInfo does not exist.");
+            Debug.WriteLine("SettingsManager.Load: load error - settingsFileInfo does not exist.");
         }
 
         public void Save()
         {
-            settings_Json_File.SaveFile();
+            if (!settingsFileInfo.Exists)
+            {
+                // The settings file has gone MIA!
+                // create a new one with the current in-memory settings dictionary.
+                CreateNewSettingsFile(settingsFileInfo, JToken.FromObject(Settings));
+                return;
+            }
+
+            // Do the serialisation here.
+            settings_Json_File.JData = JToken.FromObject(Settings);
+
+            settings_Json_File.SaveFile(createBackup: false);
         }
 
-        private Dictionary<string, string> defaultSettings = new Dictionary<string, string>
-        {
-            {
-                "GameDataFolder", null
-            }
-        };
     }
 }

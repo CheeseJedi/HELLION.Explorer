@@ -22,7 +22,7 @@ namespace HELLION.DataStructures
         /// <summary>
         /// Default constructor, not used directly but used by derived classes.
         /// </summary>
-        protected Json_File(IParent_Json_File ownerObject) => OwnerObject = ownerObject;
+        public Json_File(IParent_Json_File ownerObject) => OwnerObject = ownerObject;
 
         /// <summary>
         /// Constructor that takes a FileInfo and, if the file exists, triggers the load.
@@ -342,11 +342,8 @@ namespace HELLION.DataStructures
         /// <returns></returns>
         public bool SaveFile(bool createBackup = true, FileInfo file = null)
         {
-            //Debug.Print("SaveFile Called, CreateBackup="+CreateBackup.ToString());
-
             // Unless a new FileInfo was specified (SaveAs), use the existing File (Save)
             if (file == null) file = File;
-
 
             if (file.Exists && createBackup)
             {
@@ -395,7 +392,6 @@ namespace HELLION.DataStructures
             // Set the FileInfo to the new file
             File = file;
 
-
             return false;
         }
 
@@ -422,13 +418,6 @@ namespace HELLION.DataStructures
                 return true;
             }
         }
-
-
-
-
-
-
-
 
         /// <summary>
         /// 

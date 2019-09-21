@@ -13,7 +13,6 @@ using HELLION.DataStructures.Search;
 using HELLION.DataStructures.UI;
 using HELLION.DataStructures.Utilities;
 using HELLION.Explorer.Settings;
-using HELLION.StationBlueprintEditor;
 using Newtonsoft.Json.Linq;
 
 
@@ -38,7 +37,6 @@ namespace HELLION.Explorer
         const string coName = "Cheeseware";
         const string appName = "Hellion Explorer";
         const string settingsFileName = "HellionExplorerSettings.json";
-        const string GameDataFolderSettingName = "GameDataFolder";
 
         #region Form Related Objects
 
@@ -195,26 +193,26 @@ namespace HELLION.Explorer
         /// Opens a new or existing JsonDataView form for the selected (HE)TreeNode.
         /// </summary>
         /// <param name="selectedNode"></param>
-        internal static void CreateNewBlueprintEditor(Base_TN selectedNode = null)
-        {
-            ProcessStartInfo psi = new ProcessStartInfo();
+        //internal static void CreateNewBlueprintEditor(Base_TN selectedNode = null)
+        //{
+        //    ProcessStartInfo psi = new ProcessStartInfo();
 
-            StationBlueprintEditorProgram sbep = new StationBlueprintEditorProgram();
+        //    StationBlueprintEditorProgram sbep = new StationBlueprintEditorProgram();
 
-            psi.FileName = sbep.GetApplicationPath() + @"\HELLION.StationBlueprintEditor.exe";
+        //    psi.FileName = sbep.GetApplicationPath() + @"\HELLION.StationBlueprintEditor.exe";
 
-            if (selectedNode != null)
-            {
-                Debug.Print("CreateNewBlueprintEditor() - selectedNode NodeType {0} ))", selectedNode.NodeType);
-                // Check the current node actually represents a StationBlueprintFile
-                // if (selectedNode.NodeType == Base_TN_NodeType.)
+        //    if (selectedNode != null)
+        //    {
+        //        Debug.Print("CreateNewBlueprintEditor() - selectedNode NodeType {0} ))", selectedNode.NodeType);
+        //        // Check the current node actually represents a StationBlueprintFile
+        //        // if (selectedNode.NodeType == Base_TN_NodeType.)
 
-                psi.Arguments = docCurrent.GameData.FindOwningFile(selectedNode).File.FullName;
-            }
-            else Debug.Print("CreateNewBlueprintEditor() - selectedNode not set, defaulting.");
-            Process.Start(psi);
+        //        psi.Arguments = docCurrent.GameData.FindOwningFile(selectedNode).File.FullName;
+        //    }
+        //    else Debug.Print("CreateNewBlueprintEditor() - selectedNode not set, defaulting.");
+        //    Process.Start(psi);
 
-        }
+        //}
 
         #endregion
 
@@ -411,7 +409,7 @@ namespace HELLION.Explorer
             DateTime startingTime = DateTime.Now;
 
             // Check that the Data folder path has been defined and the expected files are there
-            if (!IsGameDataFolderValid(settingsManager.GetSetting(GameDataFolderSettingName)))
+            if (!IsGameDataFolderValid(settingsManager.GetSetting(SettingsManager.GameDataFolder_Setting)))
             {
                 // The checks failed, throw up an error message and cancel the load
                 MessageBox.Show("There was a problem with the Data Folder - use 'Set Data Folder' option in Tools menu.");
@@ -426,23 +424,23 @@ namespace HELLION.Explorer
             if (string.IsNullOrEmpty(sFileName))
             {
                 // Create a new OpenFileDialog box and set some parameters
-                var openFileDialog1 = new OpenFileDialog()
+                using (OpenFileDialog ofd = new OpenFileDialog())
                 {
-                    Filter = "HELLION DS Save Files|*.save|All files|*.*", // JSON Files|*.json|
-                    Title = "Open .save file",
-                    CheckFileExists = true
-                };
+                    ofd.Filter = "HELLION DS Save Files|*.save|All files|*.*"; // JSON Files|*.json|
+                    ofd.Title = "Open .save file";
+                    ofd.CheckFileExists = true;
 
-                // Show the dialog.
-                DialogResult dialogResult = openFileDialog1.ShowDialog();
+                    // Show the dialog.
+                    DialogResult dialogResult = ofd.ShowDialog();
 
-                // Exit if the user clicked Cancel
-                if (dialogResult == DialogResult.Cancel) return;
+                    // Exit if the user clicked Cancel
+                    if (dialogResult == DialogResult.Cancel) return;
 
-                // Check that the file exists when the user clicked OK
-                if (dialogResult == DialogResult.OK)
-                {
-                    sFileName = openFileDialog1.FileName;
+                    // Check that the file exists when the user clicked OK
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        sFileName = ofd.FileName;
+                    }
                 }
             }
             else
@@ -452,7 +450,6 @@ namespace HELLION.Explorer
                 {
                     // The file name passed doesn't exist
                     MessageBox.Show(string.Format("Error opening file:{1}{0}from command line - file doesn't exist.", Environment.NewLine, sFileName));
-
                     return;
                 }
             }
@@ -463,9 +460,8 @@ namespace HELLION.Explorer
                 FileClose();
             }
 
-
             saveFileInfo = new FileInfo(sFileName);
-            dataDirectoryInfo = new DirectoryInfo(settingsManager.GetSetting(GameDataFolderSettingName));
+            dataDirectoryInfo = new DirectoryInfo(settingsManager.GetSetting(SettingsManager.GameDataFolder_Setting));
 
             if (saveFileInfo.Exists && dataDirectoryInfo.Exists)
             {
@@ -497,20 +493,14 @@ namespace HELLION.Explorer
                 ObservedGuidsForm = new ObservedGuidsForm();
                 ObservedGuidsForm.Hide();
 
-
                 // TODO: Possibly needs to use the .Insert(0, node) method.
                 // Add the nodes to the TreeView control.
 
                 // TODO FINDME FIXME
 
-
-
-
                 MainForm.treeView1.Nodes.Add(docCurrent.SolarSystem.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.GameData.RootNode);
                 MainForm.treeView1.Nodes.Add(docCurrent.SearchHandler.RootNode);
-
-
 
                 // Trigger a refresh on each of the node trees.
                 //docCurrent.SolarSystem.RootNode.Refresh(includeSubTrees: true);
@@ -531,9 +521,6 @@ namespace HELLION.Explorer
 
                 // Set the star node as the selected node.
                 //MainForm.treeView1.SelectedNode = docCurrent.SolarSystem.RootNode.FirstNode;
-
-
-
 
                 // Enable the Find option, leaving the FindNext disabled.
                 MainForm.findToolStripMenuItem.Enabled = true;
@@ -568,16 +555,14 @@ namespace HELLION.Explorer
         /// passed it will perform a SaveAs operation to the new desired file name.
         /// </summary>
         /// <param name="passedFileName"></param>
-        internal static void FileSave(string passedFileName = null)
+        internal static void FileSave(FileInfo fileInfo = null)
         {
             if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
-            else
-            {
-                string newFileName = passedFileName ?? docCurrent.GameData.SaveFile.File.FullName;
-                // Call the docCurrent's save file's .Save() method.
-                docCurrent.GameData.SaveFile.SaveFile(createBackup: true);
-                RefreshMainFormTitleText();
-            }
+
+            //string newFileName = passedFileName ?? docCurrent.GameData.SaveFile.File.FullName;
+            // Call the docCurrent's save file's .Save() method.
+            docCurrent.GameData.SaveFile.SaveFile(createBackup: true, file: fileInfo ?? docCurrent.GameData.SaveFile.File);
+            RefreshMainFormTitleText();
         }
 
         /// <summary>
@@ -588,28 +573,26 @@ namespace HELLION.Explorer
             if (docCurrent == null) throw new NullReferenceException("docCurrent was null.");
             else
             {
-
                 // Display Save As dialog, with current file name passed to be used as the
                 // default file name.
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog()
+                using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    FileName = docCurrent.GameData.SaveFile.File.FullName,
-                    Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*",
-                    Title = "Save As",
+                    sfd.FileName = docCurrent.GameData.SaveFile.File.FullName;
+                    sfd.Filter = "HELLION DS Save Files|*.save|JSON Files|*.json|All files|*.*";
+                    sfd.Title = "Save As";
 
-                };
+                    // Show the dialog.
+                    DialogResult dialogResult = sfd.ShowDialog();
 
-                // Show the dialog.
-                DialogResult dialogResult = saveFileDialog1.ShowDialog();
+                    // Exit if the user clicked Cancel
+                    if (dialogResult == DialogResult.Cancel) return;
 
-                // Exit if the user clicked Cancel
-                if (dialogResult == DialogResult.Cancel) return;
-
-                // Check that the file exists when the user clicked Save As.
-                if (dialogResult == DialogResult.OK)
-                {
-                    // Call FileSave with the supplied path + file name.
-                    FileSave(saveFileDialog1.FileName);
+                    // Check that the file exists when the user clicked Save As.
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        // Call FileSave with the supplied path + file name.
+                        FileSave(new FileInfo(sfd.FileName));
+                    }
                 }
             }
         }
@@ -841,21 +824,25 @@ namespace HELLION.Explorer
                     , "Please set the Data folder location", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 // Create a new OpenFileDialog box and set some parameters
-                var folderBrowserDialog1 = new FolderBrowserDialog()
+                using (FolderBrowserDialog fbd = new FolderBrowserDialog())
                 {
-                    Description = "Select location of Data folder",
-                    RootFolder = Environment.SpecialFolder.Desktop,
-                    // Pre-populate the path with whatever is stored in the Properties.
-                    SelectedPath = settingsManager.GetSetting("GameDataFolder")
-                };
-                // If the user clicked OK then set the game data path on the settings.
-                if (folderBrowserDialog1.ShowDialog() == DialogResult.OK) // && folderBrowserDialog1. CheckFolderExists)
-                {
-                    passedFolder = folderBrowserDialog1.SelectedPath;
+                    fbd.Description = "Select location of Data folder";
+                    fbd.RootFolder = Environment.SpecialFolder.Desktop;
+                    
+                    if (settingsManager.GetSetting(SettingsManager.GameDataFolder_Setting) != null)
+                    {
+                        // Pre-populate the path with whatever is stored in the Settings.
+                        fbd.SelectedPath = settingsManager.GetSetting(SettingsManager.GameDataFolder_Setting);
+                    }
+                    // If the user clicked OK then set the game data path on the settings.
+                    if (fbd.ShowDialog() == DialogResult.OK) // && folderBrowserDialog1. CheckFolderExists)
+                    {
+                        passedFolder = fbd.SelectedPath;
+                    }
                 }
             }
             // Set the path and save the settings.
-            settingsManager.SetSetting(GameDataFolderSettingName, passedFolder);
+            settingsManager.SetSetting(SettingsManager.GameDataFolder_Setting, passedFolder);
             // Perhaps should instead save settings on exit?
             settingsManager.Save();
         }
@@ -866,7 +853,7 @@ namespace HELLION.Explorer
         /// </summary>
         internal static void VerifyGameDataFolder(bool notifySuccess = true)
         {
-            string storedDataFolderPath = settingsManager.GetSetting(GameDataFolderSettingName);
+            string storedDataFolderPath = settingsManager.GetSetting(SettingsManager.GameDataFolder_Setting);
 
             // Check that the Data folder path has been defined and there's stuff there
             if (!IsGameDataFolderValid(storedDataFolderPath))
@@ -1276,10 +1263,9 @@ namespace HELLION.Explorer
         {
             List<string> pathTokens = new List<string>(passedPath.Split('>'));
 
-            TreeNode previousNode = null;
+            TreeNode previousNode;
 
             TreeNode[] currentNodeArray = tv.Nodes.Find(pathTokens[0], false);
-
 
             if (currentNodeArray.Length > 0)
             {

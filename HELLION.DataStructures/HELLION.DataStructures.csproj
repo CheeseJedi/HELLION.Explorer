@@ -95,7 +95,6 @@
     <Compile Include="UI\Json_TN.cs" />
     <Compile Include="Document\SolarSystem.cs" />
     <Compile Include="UI\SolarSystem_TN.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Search\SearchHandler.cs" />
     <Compile Include="EmbeddedImages\EmbeddedImages_ImageList.cs" />
     <Compile Include="Search\SearchHandler_TN.cs" />
@@ -250,7 +249,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_UseUniversalClock="True" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UseGlobalSettings="False" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_StartDate="2000/1/1" BuildVersion_UpdateFileVersion="True" />
+      <UserProperties BuildVersion_UpdateFileVersion="True" BuildVersion_StartDate="2000/1/1" BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_UseGlobalSettings="False" BuildVersion_BuildVersioningStyle="None.None.None.Increment" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UseUniversalClock="True" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
